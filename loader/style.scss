@@ -1,0 +1,127 @@
+@import '../client/style/variables';
+@import '../client/style/mixins';
+
+//__APPLICATION_CUSTOM_SASS__
+
+#fruum-preview {
+  position: fixed !important;
+  z-index: 9999 !important;
+  background-color: $background-helper-base-color !important;
+  font-size: $base-grid-big !important;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  width: 0;
+  height: 99%;
+  top: 0.5%;
+  right: 0;
+  -webkit-transition: width 0.3s;
+  transition: width 0.3s;
+  &.fruum-peak {
+    width: 70px;
+    box-shadow: 0 0 4px rgba( 0, 0, 0, 0.3 ) !important;
+  }
+  &.fruum-clicked {
+    width: optimal-width() + $fruum-whitespace*2;
+    max-width: 99%;
+    box-shadow: 0 0 4px rgba( 0, 0, 0, 0.3 ) !important;
+  }
+  .fruum-nav-about {
+    position: relative;
+    height: relative-ems( 3em, $responsive-tiny-font );
+    width: 100%;
+    min-width: 250px;
+    color: $disabled-text-color;
+    font-size: $responsive-tiny-font;
+    text-indent: $logo-img-width + basegrid-mod( 12px )*2;
+    line-height: relative-ems( 3em, $responsive-tiny-font );
+    background-color: $forum-header-color;
+    background-image: $logo-img;
+    background-repeat: no-repeat;
+    background-position: relative-ems( $fruum-whitespace, $responsive-tiny-font ) 0;
+  }
+  .fruum-navigation-section {
+    padding: $small-font-basegrid relative-ems( $fruum-whitespace, $responsive-small-font );
+    width: 100%;
+    min-width: 400px;
+    background-color: $background-base-color;
+    border-bottom: 1px solid $inverted-option-color;
+    line-height: $small-font-basegrid*4;
+    font-weight: $important-font-weight;
+    font-size: $responsive-small-font;
+    color: $muted-text-color;
+    .fruum-temp-avatar {
+      $nav-temp-avatar-font: relative-ems( $responsive-tiny-font, $responsive-small-font );
+      $nav-temp-avatar-size: relative-ems( $small-font-basegrid*4, $nav-temp-avatar-font );
+      width: $nav-temp-avatar-size;
+      height: $nav-temp-avatar-size;
+      line-height: $nav-temp-avatar-size;
+      font-size: $nav-temp-avatar-font;
+      float: left;
+      margin-right: relative-ems( 1em, $nav-temp-avatar-font)/2;
+    }
+  }
+  .fruum-content-section {
+    position: relative;
+    padding: 160px $fruum-whitespace 0;
+    color: $muted-text-color;
+    min-width: 400px;
+    width: 100%;
+    font-size: 1em; // reset to base-grid
+    line-height: $avatar-medium;
+    .fruum-temp-avatar {
+      @include big-avatar-block;
+      font-weight: $base-font-weight;
+      float: left;
+      margin-right: relative-ems( $base-grid*2, $avatar-big-font);
+    }
+    .fruum-loader {
+      position: absolute;
+      top: relative-ems( 13em, $responsive-enormous-font );
+      left: relative-ems( $fruum-whitespace, $responsive-enormous-font );
+      font-size: $responsive-enormous-font;
+    }
+    .fruum-temp-title {
+      font-size: $responsive-big-font;
+    }
+  }
+}
+
+.fruum-loader {
+  position: relative;
+  display: block;
+  color: $muted-text-color;
+  font-size: 1em;
+  line-height: 1.1em;
+  height: 1.1em;
+  width: 0;
+  overflow: hidden;
+  -webkit-animation: fruum-loader 1.8s linear infinite;
+  animation:fruum-loader 1.8s linear infinite;
+}
+
+@-webkit-keyframes fruum-loader
+{
+0% {width: 0;margin-right: 2em;}
+30% {width: 0.7em; margin-right: 1.3em;}
+80% {opacity:1;width: 1.7em;margin-right: 0.3em;}
+90% {opacity:1;width: 1.7em;margin-right: 0.3em;}
+100% {opacity:0.1;width: 1.7em;margin-right: 0.3em;}
+}
+@keyframes fruum-loader
+{
+0% {width: 0;margin-right: 2em;}
+30% {width: 0.7em; margin-right: 1.3em;}
+80% {opacity:1;width: 1.7em;margin-right: 0.3em;}
+90% {opacity:1;width: 1.7em;margin-right: 0.3em;}
+100% {opacity:0.1;width: 1.7em;margin-right: 0.3em;}
+}
+
+.fruum-temp-avatar {
+  background-color: $muted-text-color;
+  color: $main-action-text-color;
+  @include block-object-shapes;
+  overflow: hidden;
+  text-align: center;
+  text-transform: uppercase;
+}

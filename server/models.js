@@ -1,0 +1,241 @@
+/******************************************************************************
+  Models
+*******************************************************************************/
+
+'use strict';
+
+var _ = require('underscore'),
+    Backbone = require('backbone'),
+    xss = require('xss');
+
+// --------------------------------- DOCUMENT ---------------------------------
+
+var Document = Backbone.Model.extend({
+  defaults: {
+    //document id
+    id: '',
+    //breadcrumb path
+    breadcrumb: [],
+    //document parent id
+    parent: '',
+    //document parent type
+    parent_type: '',
+    //category, thread, article, post, channel
+    type: '',
+    //creation date in unix timestamp
+    created: 0,
+    //last update date in unix timestamp
+    updated: 0,
+    //category initials
+    initials: '',
+    //header e.g. category or thread or article title
+    header: '',
+    //body e.g. description or post message
+    body: '',
+    //if thread is sticky
+    sticky: false,
+    //permissions
+    locked: false,
+    visible: true,
+    allow_threads: true,
+    allow_channels: true,
+    inappropriate: false,
+    //denormalized author details
+    user_id: '',
+    user_username: '',
+    user_displayname: '',
+    user_avatar: '',
+    //order
+    order: 0,
+    //total number of children
+    children_count: 0,
+    //if document is marked for deletion
+    archived: false,
+    //archived date unix timestamp
+    archived_ts: 0,
+    //metadata
+    meta: {}
+  },
+  //escape document field, with optional change comparator
+  escape: function(comparator) {
+    var body = this.get('body') || '';
+    if (comparator && comparator.get('body') === body) return;
+    //find code blocks
+    body = body.replace(/```([^`]+)```/g, function(a, b) { return '```' + _.escape(b) + '```'; });
+    body = xss(body, {
+      whiteList: {
+        a: ['href', 'title', 'target'],
+        code: []
+      }
+    });
+    //revert code blocks
+    body = body.replace(/```([^`]+)```/g, function(a, b) { return '```' + _.unescape(b) + '```'; });
+    this.set('body', body);
+  },
+  //validates that all fields are there depending on document type
+  validate: function(attrs, options) {
+    //check for use of attributes other than default fields
+    for (var key in attrs) {
+      if (this.defaults[key] === undefined)
+        return 'model contains unknown field: ' + key;
+    }
+    //parent must be always set for child documents
+    if (!attrs.parent && attrs.id != 'home') return 'parent is not set';
+    //a document cannot have its parent and id be the same
+    if (attrs.id && attrs.parent == attrs.id) return 'id is same as parent';
+    switch(attrs.type) {
+      case 'category':
+      case 'thread':
+      case 'article':
+      case 'channel':
+        if (!attrs.header) return 'header cannot be empty';
+        break;
+      case 'post':
+        if (!attrs.body) return 'body cannot be empty';
+        break;
+      default:
+        return 'type is invalid';
+    }
+  },
+  toLog: function() {
+    var log = '[doc] [' + this.get('type') + ']';
+    log += ' id:' + this.get('id');
+    log += ' parent:' + this.get('parent');
+    log += ' user_id:' + this.get('user_id');
+    switch(this.get('type')) {
+      case 'category':
+        log += ' order:' + this.get('order')
+        break;
+    }
+    return log;
+  },
+  toHome: function() {
+    this.set({
+      id: 'home',
+      parent: null,
+      breadcrumb: [],
+      type: 'category',
+      header: 'Home',
+      initials: 'HOM'
+    });
+    return this;
+  },
+  extractFlags: function() {
+    var retval = {
+      broadcast_noop: this.get('broadcast_noop'),
+      storage_noop: this.get('storage_noop')
+    }
+    this.unset('broadcast_noop');
+    this.unset('storage_noop');
+    return retval;
+  }
+});
+
+// ----------------------------------- USER -----------------------------------
+
+var User = Backbone.Model.extend({
+  defaults: {
+    //user id
+    id: '',
+    //logged in user?
+    anonymous: true,
+    //is admin?
+    admin: false,
+    //user details
+    username: '',
+    displayname: '',
+    email: '',
+    //link to avatar
+    avatar: '',
+    //creation date in unix timestamp
+    created: 0,
+    //last login date in unix timestamp
+    last_login: 0,
+    //watch list of doc ids
+    watch: [],
+    //metadata
+    meta: {}
+  },
+  setMeta: function(key, value) {
+    var meta = this.get('meta') || {};
+    meta[key] = value;
+    this.set('meta', meta);
+  },
+  getMeta: function(key) {
+    return (this.get('meta') || {})[key];
+  },
+  delMeta: function(key) {
+    var meta = this.get('meta') || {};
+    delete meta[key];
+    this.set('meta', meta);
+  },
+  needsUpdate: function(user) {
+    return this.get('username') != user.get('username') ||
+           this.get('displayname') != user.get('displayname') ||
+           this.get('avatar') != user.get('avatar');
+  },
+  toLog: function() {
+    var log = '[user] id:' + this.get('id');
+    if (this.get('admin')) {
+      log += ' (admin)'
+    }
+    if (this.get('anonymous')) {
+      log += ' (anonymous)'
+    }
+    else {
+      log += ' username:' + this.get('username');
+      log += ' displayname:' + this.get('displayname');
+    }
+    return log;
+  }
+});
+
+// -------------------------------- APPLICATION --------------------------------
+
+var Application = Backbone.Model.extend({
+  defaults: {
+    //app id
+    id: '',
+    //name
+    name: '',
+    //description
+    description: '',
+    //Website url
+    url: '',
+    //authentication url
+    auth_url: '',
+    //full page url,
+    fullpage_url: '',
+    //custom theme style
+    theme: '',
+    //tier level
+    tier: '',
+    //creation date in unix timestamp
+    created: 0,
+    //private key
+    private_key: '',
+    //api keys
+    api_keys: [],
+    //metadata
+    meta: {}
+  },
+  toLog: function() {
+    var log = '[app] id:' + this.get('id');
+    log += ' name:' + this.get('name');
+    log += ' url:' + this.get('url');
+    log += ' auth_url:' + this.get('auth_url');
+    log += ' fullpage_url:' + this.get('fullpage_url');
+    log += ' tier:' + this.get('tier');
+    log += ' theme:' + this.get('theme');
+    log += ' private_key:' + this.get('private_key');
+    log += ' api_keys:' + this.get('api_keys').length;
+    return log;
+  }
+});
+
+module.exports = {
+  //models
+  Application: Application,
+  Document: Document,
+  User: User
+};

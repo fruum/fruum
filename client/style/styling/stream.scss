@@ -1,0 +1,310 @@
+/*
+
+  Stream styling
+
+  Contents
+
+  1. Basic texts formatting
+  2. Stream system messages
+
+*/
+
+
+
+// 1. Basic texts formatting
+
+#fruum .fruum-stream-typography {
+  // set object values so that it leaves no whitespaces around it
+  margin: 0;
+  padding: 0;
+  font-size: $small-stream-default-font;
+  line-height: $small-stream-default-lineheight;
+
+  // compute stream-basegrid based on responsive-default-font
+  $default-basegrid: $small-stream-basegrid;
+
+  // force any elements included max width
+  // so that they do not extend beyond by mistake
+  * {
+    max-width: 100% !important;
+    -webkit-text-shadow: rgba(0,0,0,.01) 0 0 1px;
+    text-shadow: rgba(0,0,0,.01) 0 0 1px;
+  }
+
+  h1 {
+    font-size: $small-stream-h1;
+    font-weight: $small-stream-h1-weight;
+    line-height: $small-stream-h1-lineheight;
+    color: $important-text-color;
+    margin: 1em 0 relative-ems( $small-stream-basegrid, $small-stream-h1);
+  }
+
+  h2 {
+    font-size: $small-stream-h2;
+    font-weight: $small-stream-h2-weight;
+    line-height: $small-stream-h2-lineheight;
+    color: $important-text-color;
+    margin: 1em 0 relative-ems( $small-stream-basegrid, $small-stream-h2 )/2;
+  }
+
+  h3 {
+    font-size: $small-stream-h3;
+    font-weight: $small-stream-h3-weight;
+    line-height: $small-stream-h3-lineheight;
+    color: $important-text-color;
+    margin: 1em 0  relative-ems( $small-stream-basegrid, $small-stream-h3)/2;
+  }
+
+  h4 {
+    font-size: $small-stream-h4;
+    font-weight: $small-stream-h4-weight;
+    line-height: $small-stream-h4-lineheight;
+    color: $base-text-color;
+    margin: 1em 0 relative-ems( $small-stream-basegrid, $small-stream-h4)/2;
+  }
+
+  h5 {
+    font-size: 1em;
+    line-height: $small-stream-lineheight;
+    color: $base-text-color;
+    margin: 1em 0 0.5em;
+  }
+
+  h6 {
+    font-size: 1em;
+    line-height: $small-stream-lineheight;
+    color: $disabled-text-color;
+    margin: 1em 0 0.5em;
+  }
+
+  h1:first-child,
+  h2:first-child,
+  h3:first-child,
+  h4:first-child,
+  h5:first-child,
+  h6:first-child {
+    margin-top: 0;
+  }
+
+
+
+  p {
+    margin-bottom: $default-basegrid;
+  }
+
+  a:not([class]) {
+    color: $forum-base-color;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  em {
+    font-style: italic;
+  }
+
+  b,
+  strong {
+    font-weight: $important-font-weight;
+  }
+
+  del {
+    text-decoration: line-through;
+  }
+
+  pre,
+  code {
+    font-family: $system-fonts !important;
+    line-height: $small-stream-lineheight;
+    color: $important-text-color;
+  }
+
+  pre {
+    display: block;
+    max-width: 100%;
+    background-color: darken( $background-helper-base-color, 6% );
+    border: 1px solid $muted-text-color;
+    @include block-radius(1px);
+    padding: $default-basegrid/2;
+    margin-top: $default-basegrid;
+    margin-bottom: $default-basegrid;
+    overflow: auto;
+    white-space: pre;
+    code {
+      padding: 0;
+      background-color: transparent;
+    }
+  }
+
+  code {
+    background-color: darken( $background-helper-base-color, 5% );
+    padding: 4px $default-basegrid 2px;
+    @include block-radius(2px);
+    &:not(:first-child) {
+      margin-top: -0.5*$default-basegrid;
+    }
+  }
+
+  ol,
+  ul {
+    position: relative;
+    margin: 0 0 $default-basegrid $default-basegrid;
+    padding: 0 0 0 $default-basegrid*2;
+    list-style-position: outside;
+    color: inherit;
+    &:not(:first-child) {
+      margin-top: -0.5*$default-basegrid;
+    }
+
+    & > li {
+      position: relative;
+      max-width: 100%;
+      margin: 0;
+      padding: 0;
+      &:not(:last-child) {
+        margin-bottom: $default-basegrid;
+      }
+    }
+  }
+
+  ol { list-style-type: decimal-leading-zero; padding-left: $default-basegrid*3; }
+  ul { list-style-type: disc; }
+
+
+
+  img {
+    position: relative;
+    display: block;
+    margin: $default-basegrid 0;
+    max-width: 100%;
+  }
+
+
+
+  $table-borders: darken( $muted-text-color, 4% );
+  $table-padding: $default-basegrid;
+  table {
+    position: relative;
+    border-collapse: collapse;
+    border-spacing: 0;
+    padding: 0;
+    margin: $default-basegrid 0 $default-basegrid*2;
+    border: 1px solid $table-borders;
+
+    thead {
+      th {
+        background-color: transparent;
+        color: $important-text-color;
+        font-weight: $important-font-weight;
+        border-bottom: 1px solid $table-borders;
+      }
+    }
+
+    tr{
+      &:not(:first-child) {
+        td {
+          border-top: 1px solid $table-borders;
+        }
+      }
+      &:nth-child(even) {
+        td {
+          background-color: darken( $background-helper-base-color, 2% );
+        }
+      }
+      &:nth-child(odd) {
+        td {
+          background-color: lighten( $background-helper-base-color, 2% );
+        }
+      }
+    }
+
+    th,td {
+      padding:$table-padding/2 $table-padding;
+      &:not(:last-child) {
+        border-right: 1px solid $table-borders;
+      }
+    }
+  }
+
+
+
+  blockquote {
+    position: relative;
+    display: block;
+    width: 100%;
+    margin-top: $default-basegrid;
+    margin-bottom: $default-basegrid;
+    padding: $default-basegrid*2 $default-basegrid $default-basegrid*2;
+    border: 1px solid $muted-text-color;
+    border-left: 4px solid $disabled-text-color;
+    color: $disabled-text-color;
+    @include block-radius( 2px );
+    *:first-child {
+      margin-top: 0;
+    }
+    *:last-child {
+      margin-bottom: 0;
+    }
+    h1,h2,h3,h4,h5,h6 {
+      color: inherit;
+    }
+    > blockquote:only-child {
+      padding-left: $default-basegrid/2;
+      top: -$default-basegrid*2;
+      margin-bottom: -$default-basegrid*4;
+      left: -$default-basegrid;
+      width: calc(100% + #{$default-basegrid*2});
+      max-width: calc(100% + #{$default-basegrid*2}) !important;
+      border:none;
+      border-left: 50px solid $disabled-text-color;
+      @include block-radius( 0 );
+      &:before {
+        content: 'i';
+        font-family: $system-fonts;
+        display: block;
+        position: absolute;
+        left: -42px;
+        top: 0;
+        color: rgba( $background-helper-base-color, 0.5 );
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        z-index: 1;
+      }
+    }
+  }
+
+
+
+  hr {
+    width: 80%;
+    margin-top: $default-basegrid*2;
+    margin-bottom: $default-basegrid*2;
+    margin-left: 10%;
+    margin-right: 10%;
+    border-width: 0;
+    border-top: 1px solid $muted-text-color;
+  }
+
+
+
+  object,
+  iframe {
+    width: 100%;
+    min-height: basegrid-mod( 190px );
+    margin: $default-basegrid 0;
+  }
+}
+
+
+
+// 2. Stream system messages
+
+#fruum .fruum-stream-typography {
+  .fruum-admin-message {
+    font-style: italic;
+    color: $disabled-text-color;
+  }
+}

@@ -1,0 +1,197 @@
+/*
+
+  Fruum basic emoji from existing unicode if present
+
+  Contents
+
+*/
+
+
+
+// 1. Generic setup
+
+#fruum *[data-fruumemoji]:before {
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: normal;
+  font-style: normal;
+  color: inherit;
+}
+
+
+
+// 2. Emoji list
+
+// :D, wide-smile
+#fruum *[data-fruumemoji="wide-smile"]:before { content: '\01F600'; }
+
+// smiling-eyes-grinning
+#fruum *[data-fruumemoji="smiling-eyes-grinning"]:before { content: '\01F601'; }
+
+// tears-of-joy
+#fruum *[data-fruumemoji="tears-of-joy"]:before { content: '\01F602'; }
+
+// smiling-open-mouth
+#fruum *[data-fruumemoji="smiling-open-mouth"]:before { content: '\01F603'; }
+
+// smiling-eyes-n-open-mouth
+#fruum *[data-fruumemoji="smiling-eyes-n-open-mouth"]:before { content: '\01F604'; }
+
+// smiling-mouth-w-sweat
+#fruum *[data-fruumemoji="smiling-mouth-w-sweat"]:before { content: '\01F605'; }
+
+// xD, smiling-mouth-tight-eyes
+#fruum *[data-fruumemoji="smiling-mouth-tight-eyes"]:before { content: '\01F606'; }
+
+// angel-smile
+#fruum *[data-fruumemoji="angel-smile"]:before { content: '\01F607'; }
+
+// devil-smile
+#fruum *[data-fruumemoji="devil-smile"]:before { content: '\01F608'; }
+
+// ;), winking
+#fruum *[data-fruumemoji="winking"]:before { content: '\01F609'; }
+
+// :)
+#fruum *[data-fruumemoji="smiling-mouth-smiling-eyes"]:before { content: '\01F60A'; }
+
+// yummy delicious
+#fruum *[data-fruumemoji="yummy-delicious"]:before { content: '\01F60B'; }
+
+// relieved
+#fruum *[data-fruumemoji="relieved"]:before { content: '\01F60C'; }
+
+// smiling-heart-eyes
+#fruum *[data-fruumemoji="smiling-heart-eyes"]:before { content: '\01F60D'; }
+
+// cool
+#fruum *[data-fruumemoji="cool"]:before { content: '\01F60E'; }
+
+// smirking
+#fruum *[data-fruumemoji="smirking"]:before { content: '\01F60F'; }
+
+// neutral
+#fruum *[data-fruumemoji="neutral"]:before { content: '\01F610'; }
+
+// all-neutral
+#fruum *[data-fruumemoji="all-neutral"]:before { content: '\01F611'; }
+
+// confused
+#fruum *[data-fruumemoji="confused"]:before { content: '\01F612'; }
+
+// bored
+#fruum *[data-fruumemoji="bored"]:before { content: '\01F612'; }
+
+// cold-sweat
+#fruum *[data-fruumemoji="cold-sweat"]:before { content: '\01F613'; }
+
+// deep-thought
+#fruum *[data-fruumemoji="deep-thought"]:before { content: '\01F614'; }
+
+// confounded
+#fruum *[data-fruumemoji="confounded"]:before { content: '\01F616'; }
+
+// kissing
+#fruum *[data-fruumemoji="kissing"]:before { content: '\01F617'; }
+
+// throw-a-kiss
+#fruum *[data-fruumemoji="throw-a-kiss"]:before { content: '\01F618'; }
+
+// smiling-kissing
+#fruum *[data-fruumemoji="smiling-kissing"]:before { content: '\01F619'; }
+
+// :P
+#fruum *[data-fruumemoji="stuck-out-tongue"]:before { content: '\01F61B'; }
+
+// ;P
+#fruum *[data-fruumemoji="wink-out-tongue"]:before { content: '\01F61C'; }
+
+// xP
+#fruum *[data-fruumemoji="closed-eyes-out-tongue"]:before { content: '\01F61D'; }
+
+// :(
+#fruum *[data-fruumemoji="sad-face"]:before { content: '\01F61E'; }
+
+// worried
+#fruum *[data-fruumemoji="worried"]:before { content: '\01F61F'; }
+
+// angry
+#fruum *[data-fruumemoji="angry"]:before { content: '\01F620'; }
+
+// redface-angry
+#fruum *[data-fruumemoji="redface-angry"]:before { content: '\01F621'; }
+
+// crying
+#fruum *[data-fruumemoji="crying"]:before { content: '\01F622'; }
+
+// stand-strong
+#fruum *[data-fruumemoji="stand-strong"]:before { content: '\01F623'; }
+
+// triumphant
+#fruum *[data-fruumemoji="triumphant"]:before { content: '\01F624'; }
+
+// so-close-yet
+#fruum *[data-fruumemoji="so-close-yet"]:before { content: '\01F625'; }
+
+// frowning-open-mouth
+#fruum *[data-fruumemoji="frowning-open-mouth"]:before { content: '\01F626'; }
+
+// anguish
+#fruum *[data-fruumemoji="anguish"]:before { content: '\01F627'; }
+
+// fearful
+#fruum *[data-fruumemoji="fearful"]:before { content: '\01F628'; }
+
+// weary
+#fruum *[data-fruumemoji="weary"]:before { content: '\01F629'; }
+
+// sleepy
+#fruum *[data-fruumemoji="sleepy"]:before { content: '\01F62A'; }
+
+// tired
+#fruum *[data-fruumemoji="tired"]:before { content: '\01F62B'; }
+
+// :8, show-teeth
+#fruum *[data-fruumemoji="show-teeth"]:before { content: '\01F62C'; }
+
+// crying-loud
+#fruum *[data-fruumemoji="crying-loud"]:before { content: '\01F62D'; }
+
+// :O, open-mouth
+#fruum *[data-fruumemoji="open-mouth"]:before { content: '\01F62E'; }
+
+// :I,:| hushed
+#fruum *[data-fruumemoji="hushed"]:before { content: '\01F62F'; }
+
+// cold-sweat-fear
+#fruum *[data-fruumemoji="cold-sweat-fear"]:before { content: '\01F630'; }
+
+// 8O, screaming
+#fruum *[data-fruumemoji="screaming"]:before { content: '\01F631'; }
+
+// xO, astonished
+#fruum *[data-fruumemoji="astonished"]:before { content: '\01F632'; }
+
+// :/, flushed
+#fruum *[data-fruumemoji="flushed"]:before { content: '\01F633'; }
+
+// :z, sleeping
+#fruum *[data-fruumemoji="sleeping"]:before { content: '\01F634'; }
+
+// dizzy
+#fruum *[data-fruumemoji="dizzy"]:before { content: '\01F635'; }
+
+// no-mouth
+#fruum *[data-fruumemoji="no-mouth"]:before { content: '\01F636'; }
+
+// doctor, surgery
+#fruum *[data-fruumemoji="doctor"]:before { content: '\01F637'; }
+
+// fist
+#fruum *[data-fruumemoji="fist"]:before { content: '\0270A'; }
+
+// hi-five
+#fruum *[data-fruumemoji="hi-five"]:before { content: '\0270B'; }
+
+// victory
+#fruum *[data-fruumemoji="victory"]:before { content: '\0270C'; }

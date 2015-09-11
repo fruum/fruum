@@ -1,0 +1,60 @@
+/*
+  Add all typographic parameters for the actual text
+
+  Default supported follows:
+
+  http://typecast.com/blog/a-more-modern-scale-for-web-typography
+
+*/
+
+/* Font sizes and dimensions - large screens */
+
+$stream-default-font: 16px;
+$stream-default-lineheight: 1.375em;
+
+$stream-h1: 3em;
+$stream-h1-weight: normal;
+$stream-h1-lineheight: 1.05em;
+
+$stream-h2: 2.25em;
+$stream-h2-weight: normal;
+$stream-h2-lineheight: 1.25em;
+
+$stream-h3: 1.75em;
+$stream-h3-weight: bold;
+$stream-h3-lineheight: 1.25em;
+
+$stream-h4: 1.125em;
+$stream-h4-weight: bold;
+$stream-h4-lineheight: 1.22222222em;
+
+
+$stream-lineheight: 1.618em; // custom line-height used only within a stream
+$stream-basegrid: $base-grid*1.5;  // custom stream elements spacing
+
+
+
+/* Font sizes and dimensions - Small screens */
+
+$small-stream-default-font: 18px;
+$small-stream-default-lineheight: 1.25em;
+
+$small-stream-h1: 2em;
+$small-stream-h1-weight: bold;
+$small-stream-h1-lineheight: 1.25em;
+
+$small-stream-h2: 1.625em;
+$small-stream-h2-weight: normal;
+$small-stream-h2-lineheight: 1.15384615em;
+
+$small-stream-h3: 1.375em;
+$small-stream-h3-weight: normal;
+$small-stream-h3-lineheight: 1.13636364em;
+
+$small-stream-h4: 1.125em;
+$small-stream-h4-weight: normal;
+$small-stream-h4-lineheight: 1.11111111em;
+
+
+$small-stream-lineheight: 1.618em;
+$small-stream-basegrid: $base-grid*1.5;

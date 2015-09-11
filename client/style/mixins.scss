@@ -1,0 +1,178 @@
+/*
+
+  Generic mixins used in whole fruum
+
+  Contents
+  1. Functions
+  2. Generic mixins
+    2.1 Generic variables
+    2.2 Base block mixins
+  3. Text with line-heights
+  4. Button styles
+  5. Avatar styles
+
+
+*/
+
+
+
+// 1. Functions
+
+@function basegrid-mod( $given-dimension, $force-height: "no" ) {
+
+  @if $force-height == "no" {
+    @return $base-grid*round($given-dimension*1.3/$base-grid);
+  } @else if $force-height > $given-dimension {
+    @return $force-height;
+  } @else {
+    @return $base-grid*floor($force-height*2/$base-grid);
+  }
+}
+
+@function relative-ems( $abs-wanted, $rel-fontsize ) {
+  $multiplier: 1;
+  $divider: $rel-fontsize/1em;
+
+  @if unit($abs-wanted) == 'px' {
+    $multiplier: $abs-wanted/$base-grid;
+  } @elseif unit($abs-wanted) == 'em' {
+    $multiplier: $abs-wanted/1em;
+  }
+
+
+  @return (floor($multiplier*100/$divider)/100)*1em;
+}
+
+// optimal width based on: http://www.pearsonified.com/2012/01/characters-per-line.php
+@function optimal-width() {
+  @return ceil($cpl*($responsive-default-font/$font-ufactor));
+}
+
+
+
+// 2. Generic mixins
+
+// 2.1 Generic variables
+
+$base-object-dimension: $base-grid*4;
+
+$special-font-basegrid: 1em;
+$tiny-font-basegrid: relative-ems( $base-grid, $responsive-tiny-font );
+$small-font-basegrid: relative-ems( $base-grid, $responsive-small-font );
+$default-font-basegrid: relative-ems( $base-grid, $responsive-default-font );
+$big-font-basegrid: relative-ems( $base-grid, $responsive-big-font );
+$bigger-font-basegrid: relative-ems( $base-grid, $responsive-bigger-font );
+$large-font-basegrid: relative-ems( $base-grid, $responsive-large-font );
+$enormous-font-basegrid: relative-ems( $base-grid, $responsive-enormous-font );
+
+// 2.2 Base block mixins
+
+@mixin block-radius( $radius: 50% ) {
+  border-radius: $radius;
+  -moz-border-radius: $radius;
+  -webkit-border-radius: $radius;
+}
+
+@mixin block-object-shapes {
+  @include block-radius(50%);
+}
+
+@mixin block-object-size($relative-font: 1em) {
+  $computed-dimensions: relative-ems( $base-object-dimension, $relative-font);
+
+  height: $computed-dimensions;
+  line-height: $computed-dimensions;
+}
+
+
+@mixin block-object-default($relative-font: 1em) {
+  $computed-dimensions: relative-ems( $base-object-dimension, $relative-font);
+
+  @include block-radius( $computed-dimensions/2 );
+  min-height: $computed-dimensions;
+}
+
+@mixin block-object-action($relative-font: 1em) {
+  @include block-object-default($relative-font);
+  @include block-object-size($relative-font);
+  min-width: relative-ems( $base-object-dimension, $relative-font);
+  text-align: center;
+}
+
+
+
+// 3. Text with line-height
+
+@mixin default-font {
+  font-size: $default-font;
+  line-height: basegrid-mod( $default-font );
+}
+
+@mixin big-font {
+  font-size: $big-font;
+  line-height: basegrid-mod( $big-font );
+}
+
+@mixin bigger-font {
+  font-size: $bigger-font;
+  line-height: basegrid-mod( $bigger-font );
+}
+
+@mixin large-font {
+  font-size: $large-font;
+  line-height: basegrid-mod( $large-font );
+}
+
+@mixin enormous-font {
+  font-size: $enormous-font;
+  line-height: basegrid-mod( $enormous-font );
+}
+
+
+
+// 4. Button styles
+
+@mixin generic-button {
+  font-size: $responsive-default-font;
+  letter-spacing: 1px;
+  padding-left: $default-font-basegrid/8;
+  padding-right: $default-font-basegrid/8;
+  min-width: $default-font-basegrid*8
+}
+
+@mixin default-button-block {
+  @include generic-button;
+  @include block-object-action( $responsive-default-font );
+  border: none;
+  color: $main-action-text-color;
+  background-color: $main-action-color;
+}
+
+@mixin default-button-hover {
+  background-color: $main-action-color-highlight;
+}
+
+
+
+// 5. Avatar styles
+
+@mixin big-avatar-block {
+  width: relative-ems( $avatar-big, $avatar-big-font );
+  height: relative-ems( $avatar-big, $avatar-big-font );
+  font-size: $avatar-big-font;
+  line-height: relative-ems( $avatar-big, $avatar-big-font );
+}
+
+@mixin medium-avatar-block {
+  width: relative-ems( $avatar-medium, $avatar-medium-font );
+  height: relative-ems( $avatar-medium, $avatar-medium-font );
+  font-size: $avatar-medium-font;
+  line-height: relative-ems( $avatar-medium, $avatar-medium-font );
+}
+
+@mixin small-avatar-block {
+  width: relative-ems( $avatar-small, $avatar-small-font );
+  height: relative-ems( $avatar-small, $avatar-small-font );
+  font-size: $avatar-small-font;
+  line-height: relative-ems( $avatar-small, $avatar-small-font );
+}

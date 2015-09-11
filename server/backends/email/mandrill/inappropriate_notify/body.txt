@@ -1,0 +1,7 @@
+The following message has been reported as inappropriate by <%= reporter.displayname || reporter.username %>
+
+<%= document.header %>
+
+<%= document.body %>
+
+Link: #fruum:<%= document.breadcrumb[document.breadcrumb.length - 1] %>

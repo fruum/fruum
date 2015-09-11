@@ -1,0 +1,90 @@
+/*
+
+  Links styling
+
+  Contents
+
+  1. Base link styles
+  2. Buttons
+
+*/
+
+
+
+// 1. Base link styles
+
+#fruum .fruum-link {
+  cursor: pointer;
+  cursor: hand;
+  text-decoration: none;
+  font-size: inherit;
+  line-height: inherit;
+  &:not(.fruum-base-object) {
+    color: $main-action-color;
+  }
+
+  &.fruum-link-off:not(:hover) {
+    color: $disabled-text-color !important;
+  }
+  &:hover {
+    text-decoration: underline;
+    color: $main-action-color-highlight;
+  }
+  &.fruum-link-secondary {
+    color: $negative-action-color;
+  }
+  &.fruum-link-negative {
+    color: $forum-base-color;
+  }
+  &.fruum-button-link {
+    // inherits font-size of responsive-default-font
+    display: block;
+    line-height: $default-font-basegrid*3;
+    padding: $default-font-basegrid/2 $default-font-basegrid*2;
+  }
+}
+
+
+
+// 2. Buttons
+
+#fruum button.fruum-main-button {
+  @include default-button-block;
+  cursor: pointer;
+  cursor: hand;
+  &:hover {
+    @include default-button-hover;
+  }
+}
+
+
+
+#fruum a.fruum-secondary-button {
+  @include block-object-size( $responsive-default-font );
+  @include generic-button;
+  color: $main-action-color;
+  cursor: pointer;
+  cursor: hand;
+  &:hover {
+    text-decoration: underline;
+  }
+  &.fruum-icon:empty {
+    @include block-object-size( $responsive-bigger-font );
+    font-size: $responsive-bigger-font;
+  }
+}
+
+#fruum .fruum-secondary-button {
+  &.fruum-link-secondary {
+    color: $secondary-action-color;
+    &:hover {
+      color: $secondary-action-color-highlight;
+    }
+  }
+  &.fruum-link-negative {
+    color: $negative-action-color;
+    &:hover {
+      color: $negative-action-color-highlight;
+    }
+  }
+}

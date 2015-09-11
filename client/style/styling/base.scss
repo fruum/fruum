@@ -1,0 +1,125 @@
+/*
+
+  Base styling for fruum embeddable
+
+  Contents
+  1. Basic placement and container formatting
+  2. Areas mapping
+  3. Messaging positions
+
+*/
+
+
+
+// 1. Basic placement and container formatting
+#fruum {
+  background-color: $background-base-color !important;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  // core element for everything below!!! Please handle with care!!
+  font-size: $base-grid !important;
+  overflow: hidden;
+}
+
+body > #fruum {
+  position: fixed !important;
+  z-index: 9999 !important;
+  background-color: $background-helper-base-color !important;
+  box-shadow: 0 0 4px rgba( 0, 0, 0, 0.3 ) !important;
+  width: 99%;
+  max-width: 99%;
+  height: 99%;
+  top: 0.5%;
+  right: 0;
+  -webkit-transition: width 0.2s;
+  transition: width 0.2s;
+  &.fruum-hide {
+    width: 0;
+    overflow: hidden;
+  }
+}
+
+/* handles forum embedded in an existing element and not at end of body */
+*:not(body) > #fruum {
+  position: relative;
+  max-width: optimal-width() + 2em;
+  margin: 0 auto;
+  height: 100%;
+  min-height: 700px;
+}
+
+#fruum * {
+  box-sizing: border-box !important;
+  -webkit-box-sizing: border-box !important;
+  -moz-box-sizing: border-box !important;
+  padding: 0;
+  margin: 0;
+  font-family: $forum-fonts !important;
+}
+
+
+
+// 2. Areas mapping
+
+#fruum .fruum-content-section {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 70%;
+  overflow: auto;
+  color: $base-text-color;
+  font-size: 1em; //reset to base-grid
+  background-color: darken( $background-base-color, 0.5% );
+}
+
+#fruum .fruum-navigation-section,
+#fruum .fruum-interactions-section {
+  width: 100%;
+  font-size: 1em; //reset to base-grid
+  padding: $fruum-whitespace/2 $fruum-whitespace;
+  background-color: $background-base-color;
+  border-color: $dividers-colors;
+}
+
+#fruum .fruum-navigation-section {
+  position: relative;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+
+#fruum .fruum-interactions-section {
+  position: absolute;
+  z-index: 2;
+  border-top-width: 1px;
+  border-top-style: solid;
+  bottom: 0px;
+  left: 0px;
+}
+
+
+// 3. Messaging positions
+
+#fruum .fruum-connection-messages {
+  position: absolute;
+  width: 100%;
+  min-width: 250px;
+  z-index: 2;
+  top: 100%;
+  left: 0;
+  font-size: 1em; //reset to base-grid
+}
+
+
+
+#fruum .fruum-interaction-messages {
+  position: absolute;
+  width: 100%;
+  min-width: 250px;
+  z-index: 2;
+  bottom: 100%;
+  left: 0;
+  font-size: 1em; //reset to base-grid
+}

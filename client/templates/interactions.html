@@ -1,0 +1,363 @@
+<!-- interactions (bottom part) -->
+
+<!-- Shortcuts help -->
+<script type="text/template" id="fruum-template-interactions-help">
+  <div class="fruum-helper-container fruum-js-help" style="display: none;">
+    <div class="fruum-helper-close fruum-icon fruum-icon-close fruum-link fruum-link-secondary" data-action="help"></div>
+    <div class="fruum-helper-element">
+      <b class="fruum-helper-shortcut"><%- Fruum.utils.shortcutModifier('b') %></b>
+      Bold text
+    </div>
+    <div class="fruum-helper-element">
+      <b class="fruum-helper-shortcut"><%- Fruum.utils.shortcutModifier('i') %></b>
+      Italic text
+    </div>
+    <div class="fruum-helper-element">&nbsp;</div>
+    <div class="fruum-helper-element">
+      For text formatting we use the <a href="http://www.wikiwand.com/en/Markdown" class="fruum-link" target="_blank">Markdown format</a>. Please check it out to see all supported styling.
+    </div>
+  </div>
+</script>
+
+<!-- Messages -->
+<script type="text/template" id="fruum-template-interactions-messages">
+  <div class="fruum-interaction-messages">
+    <div class="fruum-messages fruum-message-error" style="display: none;">
+      Could not submit your request, please try again
+    </div>
+  </div>
+</script>
+
+<!-- Search mode -->
+<script type="text/template" id="fruum-template-interactions-searching">
+  <div class="fruum-interactions-footer">
+    <div class="fruum-user-account">
+      <span class="fruum-link fruum-account-settings" <% if (false) { %>data-fruumtipsy-right="Updates on topics you follow"<% } %>>
+        <% if (Fruum.utils.isLink(Fruum.user.avatar)) { %>
+        <img src="<%= Fruum.user.avatar %>" class="fruum-avatar-icon" width="56"/>
+        <% } else { %>
+        <span
+          class="fruum-avatar-icon"
+          data-initials="<%- Fruum.utils.getInitials(Fruum.user.displayname) %>">
+          <%- Fruum.utils.getInitials(Fruum.user.displayname) %>
+        </span>
+        <% } %>
+        <% if (false) { %>
+        <span class="fruum-badge">3</span>
+        <% } %>
+      </span>
+    </div>
+  </div>
+</script>
+
+<!-- Edit/Add category -->
+<script type="text/template" id="fruum-template-interactions-edit-category">
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-messages')() %>
+  <input type="hidden" data-field="type" value="category" class="fruum-js-interacting" />
+  <input type="hidden" data-field="parent" value="<%- editing.id?editing.parent:viewing.id %>" />
+  <form action="" class="fruum-interactions-form">
+    <div class="fruum-base-object fruum-base-object-compact">
+      <div class="fruum-avatar">
+        <span class="fruum-avatar-icon" data-initials="<%- Fruum.utils.printInitials(editing.initials) %>">
+          <input
+            type="text" name="category-initials" maxlength="3"
+            class="fruum-interactions-input fruum-interactions-edit-avatar"
+            data-field="initials" value="<%- editing.initials || '' %>" />
+        </span>
+      </div>
+      <div class="fruum-object-main-data">
+        <input
+          type="text"
+          class="fruum-interactions-input fruum-category-title"
+          placeholder="Category name..." data-field="header"
+          value="<%- editing.header || '' %>"/>
+        <span>
+          <textarea
+            autocomplete="off"
+            class="fruum-interactions-input fruum-secondary-data"
+            placeholder="it's about..."
+            data-field="body"><%= editing.body || '' %></textarea>
+        </span>
+      </div>
+    </div>
+    <div class="fruum-interactions-footer">
+      <div class="fruum-interactions-buttons fruum-interactions-group">
+        <% if (editing.id) { %>
+        <button class="fruum-main-button fruum-icon fruum-icon-edit" data-action="post" data-fruumtipsy-left="Update category"></button>
+        <% } else { %>
+        <button class="fruum-main-button fruum-icon fruum-icon-add" data-action="post" data-fruumtipsy-left="Add category"></button>
+        <% } %>
+        <a class="fruum-secondary-button fruum-icon fruum-icon-close fruum-link-negative" data-action="cancel" data-fruumtipsy-left="Cancel"></a>
+      </div>
+      <div class="fruum-user-account">
+        <span
+          class="fruum-helper-action"
+          data-fruumtipsy-right="View messaging shortcuts and directives"
+          data-action="help"
+        >?</span>
+      </div>
+    </div>
+  </form>
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-help')() %>
+</script>
+
+<!-- Edit/Add thread -->
+<script type="text/template" id="fruum-template-interactions-edit-thread">
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-messages')() %>
+  <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
+  <input type="hidden" data-field="type" value="thread" class="fruum-js-interacting" />
+  <form action="" class="fruum-interactions-form">
+    <input
+      class="fruum-interactions-input fruum-category-title"
+      data-field="header"
+      placeholder="thread topic..."
+      value="<%- editing.header || '' %>"
+      />
+      <div class="fruum-object-divider"></div>
+      <textarea
+        autocomplete="off"
+        class="fruum-interactions-input fruum-secondary-data"
+        placeholder="it's about..."
+        data-field="body"><%= editing.body || '' %></textarea>
+    <div class="fruum-interactions-footer">
+      <div class="fruum-interactions-buttons fruum-interactions-group">
+        <% if (editing.id) { %>
+        <button class="fruum-main-button fruum-icon fruum-icon-edit" data-action="post" data-fruumtipsy-left="Update thread"></button>
+        <% } else { %>
+        <button class="fruum-main-button fruum-icon fruum-icon-thread-add" data-action="post" data-fruumtipsy-left="Add thread"></button>
+        <% } %>
+        <a class="fruum-secondary-button fruum-link-negative fruum-icon fruum-icon-close" data-action="cancel" data-fruumtipsy-left="Cancel"></a>
+      </div>
+      <div class="fruum-user-account">
+        <span
+          class="fruum-helper-action"
+          data-fruumtipsy-right="View messaging shortcuts and directives"
+          data-action="help"
+        >?</span>
+      </div>
+    </div>
+  </form>
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-help')() %>
+</script>
+
+<!-- Edit/Add article -->
+<script type="text/template" id="fruum-template-interactions-edit-article">
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-messages')() %>
+  <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
+  <input type="hidden" data-field="type" value="article" class="fruum-js-interacting" />
+  <form action="" class="fruum-interactions-form">
+    <input
+      class="fruum-interactions-input fruum-category-title"
+      data-field="header"
+      placeholder="article title..."
+      value="<%- editing.header || '' %>"
+      />
+      <div class="fruum-object-divider"></div>
+      <textarea
+        autocomplete="off"
+        class="fruum-interactions-input fruum-secondary-data"
+        placeholder="it's about..."
+        data-field="body"><%= editing.body || '' %></textarea>
+    <div class="fruum-interactions-footer">
+      <div class="fruum-interactions-buttons fruum-interactions-group">
+        <% if (editing.id) { %>
+        <button class="fruum-main-button fruum-icon fruum-icon-edit" data-action="post" data-fruumtipsy-left="Update article"></button>
+        <% } else { %>
+        <button class="fruum-main-button fruum-icon fruum-icon-article-add" data-action="post" data-fruumtipsy-left="Add article"></button>
+        <% } %>
+        <a class="fruum-secondary-button fruum-link-negative fruum-icon fruum-icon-close" data-action="cancel" data-fruumtipsy-left="Cancel"></a>
+      </div>
+      <div class="fruum-user-account">
+        <span
+          class="fruum-helper-action"
+          data-fruumtipsy-right="View messaging shortcuts and directives"
+          data-action="help"
+        >?</span>
+      </div>
+    </div>
+  </form>
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-help')() %>
+</script>
+
+<!-- Edit/Add channel -->
+<script type="text/template" id="fruum-template-interactions-edit-channel">
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-messages')() %>
+  <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
+  <input type="hidden" data-field="type" value="channel" class="fruum-js-interacting" />
+  <form action="" class="fruum-interactions-form">
+    <input
+      autocomplete="off" class="fruum-interactions-input"
+      data-field="header"
+      placeholder="channel name..."
+      value="<%- editing.header || '' %>"
+      />
+    <div class="fruum-interactions-footer">
+      <div class="fruum-interactions-buttons fruum-interactions-group">
+        <% if (editing.id) { %>
+        <button class="fruum-main-button fruum-icon fruum-icon-edit" data-action="post" data-fruumtipsy-left="Update channel"></button>
+        <% } else { %>
+        <button class="fruum-main-button fruum-icon fruum-icon-chat-add" data-action="post" data-fruumtipsy-left="Add channel"></button>
+        <% } %>
+        <a class="fruum-secondary-button fruum-link-negative fruum-icon fruum-icon-close" data-action="cancel" data-fruumtipsy-left="Cancel"></a>
+      </div>
+      <div class="fruum-user-account">
+        <span
+          class="fruum-helper-action"
+          data-fruumtipsy-right="View messaging shortcuts and directives"
+          data-action="help"
+        >?</span>
+      </div>
+    </div>
+  </form>
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-help')() %>
+</script>
+
+<!-- Add channel post -->
+<script type="text/template" id="fruum-template-interactions-view-channel">
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-messages')() %>
+  <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
+  <form action="" class="fruum-interactions-form">
+    <% if (viewing.locked) { %>
+    <span class="fruum-helptext fruum-icon fruum-icon-locked">
+      Chat locked. You cannot participate in this chat.
+    </span>
+    <% } else { %>
+    <input type="hidden" data-field="type" value="post" class="fruum-js-interacting" />
+    <textarea
+      autocomplete="off" class="fruum-interactions-input fruum-interactions-compact fruum-js-channel-input"
+      placeholder="you say..." data-field="body" rows="1"></textarea>
+    <div class="fruum-interactions-footer fruum-interactions-footer-compact">
+      <div class="fruum-tutorial-messages fruum-tutorial-tip">press <b>Enter</b> to post</div>
+    </div>
+    <% } %>
+  </form>
+</script>
+
+<!-- Add thread post -->
+<script type="text/template" id="fruum-template-interactions-view-thread">
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-messages')() %>
+  <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
+  <form action="" class="fruum-interactions-form">
+    <% if (viewing.locked) { %>
+      <span class="fruum-helptext">
+        Thread is locked, you cannot post.
+      </span>
+    <% } else { %>
+    <input type="hidden" data-field="type" value="post" class="fruum-js-interacting" />
+    <textarea
+      autocomplete="off" class="fruum-interactions-input"
+      placeholder="you say..." data-field="body"><%= editing.body || '' %></textarea>
+    <div class="fruum-interactions-footer">
+      <div class="fruum-interactions-buttons">
+        <% if (editing.id) { %>
+        <button class="fruum-main-button fruum-icon fruum-icon-add" data-action="post" data-fruumtipsy-left="Update post"></button>
+        <a class="fruum-secondary-button fruum-link-negative fruum-icon fruum-icon-close" data-action="cancel" data-fruumtipsy-left="Cancel"></a>
+        <% } else { %>
+        <button class="fruum-main-button fruum-icon fruum-icon-add" data-action="post" data-fruumtipsy-left="Add post"></button>
+        <% } %>
+      </div>
+      <div class="fruum-user-account">
+        <span
+          class="fruum-helper-action"
+          data-fruumtipsy-right="View messaging shortcuts and directives"
+          data-action="help"
+        >?</span>
+      </div>
+    </div>
+    <% } %>
+  </form>
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-help')() %>
+</script>
+
+<!-- Admin actions -->
+<script type="text/template" id="fruum-template-interactions-admin">
+  <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
+  <form action="" class="fruum-interactions-form">
+    <div class="fruum-interactions-footer">
+      <div class="fruum-interactions-buttons">
+
+        <button class="fruum-main-button fruum-icon fruum-icon-add" data-action="add_category" data-fruumtipsy-left="Add category"></button>
+
+        <button class="fruum-main-button fruum-icon fruum-icon-article-add" data-action="add_article" data-fruumtipsy-left="Add article"></button>
+
+        <% if (viewing.allow_threads) { %>
+        <button class="fruum-main-button fruum-icon fruum-icon-thread-add" data-action="add_thread" data-fruumtipsy-left="Add thread"></button>
+        <% } %>
+        <% if (viewing.allow_channels) { %>
+        <button class="fruum-main-button fruum-icon fruum-icon-chat-add" data-action="add_channel" data-fruumtipsy-left="Add channel"></button>
+        <% } %>
+
+      </div>
+      <div class="fruum-user-account">
+        <span class="fruum-link fruum-account-settings" <% if (false) { %>data-fruumtipsy-right="Updates on topics you follow"<% } %>>
+          <% if (Fruum.utils.isLink(Fruum.user.avatar)) { %>
+          <img src="<%= Fruum.user.avatar %>" class="fruum-avatar-icon" width="56"/>
+          <% } else { %>
+          <span
+            class="fruum-avatar-icon"
+            data-initials="<%- Fruum.utils.getInitials(Fruum.user.displayname) %>">
+            <%- Fruum.utils.getInitials(Fruum.user.displayname) %>
+          </span>
+          <% } %>
+          <% if (false) { %>
+          <span class="fruum-badge">3</span>
+          <% } %>
+        </span>
+      </div>
+    </div>
+  </form>
+</script>
+
+<!-- User actions -->
+<script type="text/template" id="fruum-template-interactions-user">
+  <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
+  <form action="" class="fruum-interactions-form">
+    <div class="fruum-interactions-footer">
+      <div class="fruum-interactions-buttons">
+        <% if (viewing.allow_threads) { %>
+        <button class="fruum-main-button fruum-icon fruum-icon-thread-add" data-action="add_thread" data-fruumtipsy-left="Add thread"></button>
+        <% } %>
+        <% if (viewing.allow_channels) { %>
+        <button class="fruum-main-button fruum-icon fruum-icon-chat-add" data-action="add_channel" data-fruumtipsy-left="Add channel"></button>
+        <% } %>
+      </div>
+      <div class="fruum-user-account">
+        <span class="fruum-link fruum-account-settings" <% if (false) { %>data-fruumtipsy-right="Updates on topics you follow"<% } %>>
+          <% if (Fruum.utils.isLink(Fruum.user.avatar)) { %>
+          <img src="<%= Fruum.user.avatar %>" class="fruum-avatar-icon" width="56"/>
+          <% } else { %>
+          <span
+            class="fruum-avatar-icon"
+            data-initials="<%- Fruum.utils.getInitials(Fruum.user.displayname) %>">
+            <%- Fruum.utils.getInitials(Fruum.user.displayname) %>
+          </span>
+          <% } %>
+          <% if (false) { %>
+          <span class="fruum-badge">3</span>
+          <% } %>
+        </span>
+      </div>
+    </div>
+  </form>
+</script>
+
+<!-- Anonymous user -->
+<script type="text/template" id="fruum-template-interactions-anonymous">
+  <div class="fruum-interactions-footer">
+    <div class="fruum-interactions-buttons">
+      <span class="fruum-secondary-data">
+        You can view all public categories and threads.<br/>
+        <% if (window.fruumSettings && window.fruumSettings.login) { %>
+          To post or reply you have to <a href="<%- window.fruumSettings.login %>">login</a>.
+        <% } else { %>
+          To post or reply, please login first.
+        <% } %>
+      </span>
+    </div>
+    <div class="fruum-user-account">
+      <span class="fruum-account-settings" data-fruumtipsy-right="You are anonymous">
+        <span class="fruum-avatar-icon" data-initials="M">;)</span>
+      </span>
+    </div>
+  </div>
+</script>

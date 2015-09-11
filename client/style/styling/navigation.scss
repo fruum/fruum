@@ -1,0 +1,334 @@
+/*
+
+  Navigation section
+
+  Contents
+  1. Breadcrumb section
+  2. Navigation about section
+  3. Navigation search
+  4. Section title
+  5. Navigation filters
+    5.1 Nav counters
+
+*/
+
+
+
+// 1. Breadcrumb section
+
+#fruum .fruum-navigation-breadcrumb {
+  position: relative;
+  width: 100%;
+  font-size: 1em; // reset to base-grid
+  line-height: $avatar-medium;
+  height: $avatar-medium;
+  padding-right: 2em;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+#fruum .fruum-navigation-breadcrumb:after {
+  content: '';
+  display: table;
+  zoom: 1;
+  clear: both;
+}
+
+#fruum .fruum-navigation-breadcrumb .fruum-navigation-item {
+  /* inherits base-grid, font-size 8px */
+  position: relative;
+  float: left;
+  font-size: $responsive-small-font;
+  margin-right: relative-ems( $base-grid, $responsive-small-font);
+  color: $disabled-text-color;
+  font-weight: $important-font-weight;
+  $nav-item-margin: relative-ems( 1em, $responsive-tiny-font);
+  &.fruum-avatar-icon {
+    /* same object!! inherits base-grid, font-size 8px */
+    overflow: visible;
+    min-width: relative-ems( $base-object-dimension, $responsive-tiny-font );
+    width: auto !important;
+    height: relative-ems( $base-object-dimension, $responsive-tiny-font );
+    line-height: relative-ems( $base-object-dimension, $responsive-tiny-font );
+    margin-right: $nav-item-margin;
+    font-size: $responsive-tiny-font;
+    font-weight: $base-font-weight;
+    color: $avatar-text-color;
+  }
+  .fruum-avatar-icon {
+    $nav-avatar-font: relative-ems( $responsive-tiny-font, $responsive-small-font);
+    $nav-avatar-size: relative-ems( relative-ems($base-object-dimension, $responsive-small-font), $nav-avatar-font);
+    float: left;
+    min-width: $nav-avatar-size;
+    width: auto !important;
+    height: $nav-avatar-size;
+    line-height: $nav-avatar-size;
+    margin-right: relative-ems( $nav-item-margin, $nav-avatar-font);
+    font-size: $nav-avatar-font;
+    font-weight: $base-font-weight;
+  }
+  .fruum-icon:not(:empty):before {
+    margin-right: 0;
+  }
+  .fruum-link {
+    color: $avatar-text-color;
+  }
+}
+
+#fruum .fruum-navigation-breadcrumb .fruum-search {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+#fruum .fruum-navigation-breadcrumb .fruum-manage {
+  right: auto;
+  left: 0;
+  height: 100%;
+  font-size: 1em; // reset to base-grid
+  background-color: $background-helper-base-color;
+  &:not(.fruum-manage-display) {
+    display: none;
+  }
+  &.fruum-manage-display {
+    padding-left: 0;
+    a.fruum-link {
+      font-size: $responsive-big-font;
+    }
+  }
+  .fruum-navigation-item {
+    font-size: $responsive-small-font;
+    text-transform: uppercase;
+  }
+}
+
+
+
+// 2. Navigation about section
+
+#fruum .fruum-nav-about {
+  position: relative;
+  height: 3em;
+  width: 100%;
+  font-size: 1em; //reset to base-grid;
+  background-color: $forum-header-color;
+  background-image: $logo-img;
+  background-repeat: no-repeat;
+  background-position: 2em 0;
+}
+
+#fruum .fruum-nav-about .fruum-about-link {
+  position: relative;
+  display: block;
+  float: left;
+  margin-left: $logo-img-width+basegrid-mod( 12px )/2;
+  color: $disabled-text-color;
+  font-size: $responsive-tiny-font;
+  line-height: relative-ems( 3em, $responsive-tiny-font );
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+    &:before {
+      text-decoration: none;
+    }
+  }
+  &:before {
+    content: '|';
+    margin-right: 1em;
+  }
+}
+
+#fruum .fruum-navigation-section .fruum-nav-about {
+  box-sizing: content-box !important;
+  -webkit-box-sizing: content-box !important;
+  -moz-box-sizing: content-box !important;
+  padding-left: $fruum-whitespace;
+  padding-right: $fruum-whitespace;
+  margin-left: -$fruum-whitespace;
+}
+
+#fruum .fruum-navigation-section .fruum-nav-close {
+  $nav-close-spacing: responsive-ems( $base-grid, $responsive-big-font);
+  display: block;
+  float: right;
+  font-size: $responsive-big-font;
+  margin-left: $nav-close-spacing;
+  padding: 0 $nav-close-spacing;
+  color: $secondary-action-color !important;
+}
+
+// 2.1 Override for embedded fruum
+
+*:not(body) > #fruum {
+  .fruum-nav-about {
+    text-align: right;
+    @if $forum-logo-when-embedded == "false" {
+      background-image: none;
+    }
+    a.fruum-about-link {
+      float: none;
+      &:before {
+        display: none;
+      }
+    }
+  }
+}
+
+
+
+// 3. Navigation search
+
+#fruum .fruum-search {
+  // inherits a font-size of base-grid
+  border: 1px solid $main-action-color;
+  background-color: $main-action-color;
+  color: $base-text-color;
+  @include block-object-action($responsive-big-font);
+  font-size: $responsive-big-font;
+  line-height: relative-ems($base-object-dimension*1-2px, $responsive-big-font);
+  float: left;
+
+  input {
+    border: none;
+    background-color: transparent;
+    color: inherit;
+    width: 2px;
+    font-size: inherit; // $responsive-big-font
+    transition: width 0.2s;
+    -webkit-transition: width 0.2s;
+    -moz-transition: width 0.2s;
+  }
+
+  .fruum-link {
+    color: $disabled-text-color;
+    opacity: 0.4;
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &:not(.fruum-search-active) {
+    cursor: pointer;
+    cursor: hand;
+    &:hover {
+      border-color: $main-action-color-highlight;
+      background-color: $main-action-color-highlight;
+    }
+    input {
+      opacity: 0;
+      width: 0;
+    }
+    .fruum-link {
+      display: none;
+    }
+  }
+
+  &.fruum-icon:not(:empty):before {
+    color: $main-action-text-color;
+    margin-right: -4px;
+  }
+
+  &.fruum-search-active {
+    border-color: $disabled-text-color;
+    background-color: rgba( $background-helper-base-color, 0.2 );
+    padding: 0 $big-font-basegrid;
+    input {
+      width: $big-font-basegrid*20;
+    }
+
+    &.fruum-icon:before {
+      color: $disabled-text-color;
+      margin-right: $big-font-basegrid/2;
+    }
+
+  }
+}
+
+
+
+// 4. Section title
+
+#fruum .fruum-section-sticky {
+  width: 100%;
+  font-size: 1em; // reset to base-grid
+  &:not(.fruum-section-empty) {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+  }
+  .fruum-section-title {
+    padding-bottom: 0;
+  }
+}
+
+#fruum .fruum-section-title {
+  position: relative;
+  width: 100%;
+  padding: 0 2em 1em 0;
+  .fruum-item-actions {
+    // has a font-size of responsive-default-font
+    bottom: -$default-font-basegrid*2;
+    z-index: 1;
+  }
+}
+
+#fruum .fruum-header-message {
+  // inherits base-grid
+  font-size: $stream-default-font;
+  line-height: $stream-default-lineheight;
+  color: $disabled-text-color;
+  overflow: auto;
+  max-height: 180px;
+}
+
+
+
+// 5. Navigation filters
+
+#fruum .fruum-section-filters {
+  position: relative;
+  width: 100%;
+  font-size: $responsive-default-font;
+  line-height: $default-font-basegrid*2;
+  margin-top: $default-font-basegrid/2;
+  margin-bottom: $default-font-basegrid/2;
+}
+
+#fruum .fruum-section-filters:after {
+  content: '';
+  display: table;
+  zoom: 1;
+  clear: both;
+}
+
+#fruum .fruum-section-filters .fruum-section-nav {
+  float: right;
+  font-size: inherit; // $responsive-default-font
+  line-height: $default-font-basegrid*4;
+}
+
+
+
+// 5.1 Nav counters
+
+#fruum .fruum-section-nav {
+  // inherits a font size of $resposive-default-font
+  color: $disabled-text-color;
+}
+
+#fruum .fruum-section-nav b{
+  font-weight: $important-font-weight;
+  color: $important-text-color;
+}
+
+#fruum .fruum-section-nav .fruum-section-nav-link {
+  display: inline-block;
+  line-height: inherit;
+  opacity: 0.5;
+  cursor: pointer;
+  cursor: hand;
+  padding: 0 $default-font-basegrid/2;
+}
+
+#fruum .fruum-section-nav .fruum-section-nav-link:hover {
+  opacity: 1;
+}

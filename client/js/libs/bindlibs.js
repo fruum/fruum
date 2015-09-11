@@ -1,0 +1,9 @@
+window.Fruum = window.Fruum || {};
+window.Fruum.libs = window.Fruum.libs || {};
+window.Fruum.libs.$ = $
+window.Fruum.libs._ = _;
+window.Fruum.libs.Backbone = Backbone;
+window.Fruum.libs.Marionette = Marionette;
+window.Fruum.libs.io = window.io;
+window.Fruum.libs.moment = window.moment;
+window.Fruum.libs.marked = window.marked;

@@ -1,0 +1,9 @@
+// recalculate badge font-size
+
+body > #fruum .fruum-badge {
+  font-size: $base-grid-big*1.25;
+}
+
+*:not(body) > #fruum .fruum-badge {
+  font-size: $base-grid-medium*1.25;
+}

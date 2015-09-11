@@ -1,0 +1,39 @@
+/*
+
+  Create tags classes mixin using
+  provided color set
+
+*/
+
+$chartags-list: (A B C D E F G H I J K L M N O P Q R S T U V W X Y Z - _);
+
+#fruum .fruum-tag {
+  display: inline-block;
+  padding: $base-grid-big/2-1px $base-grid-big;
+  @include block-radius( $base-grid-big/2);
+  overflow: hidden;
+  font-size: $base-grid-big*1+2px;
+  line-height: $base-grid-big*2;
+  text-transform: uppercase;
+  font-weight: normal;
+  color: $tag-text-color;
+  background-color: $tag-default-background;
+  margin: 0 $base-grid-big/2 (-2)*($base-grid-big/2-1px);
+  &:first-child {
+    margin-left: 0;
+  }
+}
+
+#fruum .fruum-link:hover .fruum-tag {
+  text-decoration: none !important;
+}
+
+@if length($tag-colors) == 0 {
+  $tag-colors: (#d0d0d2,#f5e0e3,#d9e5f3,#c5eae9,#e9d1f2,#e5efd5,#f2ddc4,#edf9c6,#dfd1f2);
+}
+
+$chartag-list-length: length($chartags-list);
+$tag-color-length: length($tag-colors);
+@for $i from 1 through $chartag-list-length {
+  #{"#fruum .fruum-tag[data-initials^=\"" + nth($chartags-list, $i) + "\"]"} { background-color: nth($tag-colors, 1 + (($i - 1) % $tag-color-length)) }
+}

@@ -1,0 +1,41 @@
+// Basic variables and mixins
+
+@import 'variables';
+@import 'mixins';
+
+//__APPLICATION_CUSTOM_SASS__
+
+// Fruum base
+@import 'styling/base';
+@import 'styling/system';
+@import 'styling/navigation';
+@import 'styling/streamsection';
+@import 'styling/streamobject';
+@import 'styling/interactions';
+
+// Generic styles
+@import 'styling/avatars';
+@import 'styling/tags';
+@import 'styling/icons';
+@import 'styling/emoji';
+@import 'styling/linksnbuttons';
+
+
+// Fruum forum styling
+@import 'styling/stream';
+
+// Nanoscroller
+@import 'styling/nanoscroller';
+
+// Fruum tablets/mobiles
+
+// Medium screens
+
+@media (min-device-width: 1024px ) {
+  @import 'styling/base-mediumscreen';
+  @import 'styling/stream-mediumscreen';
+}
+
+@media (min-device-width: 1200px) {
+  @import 'styling/base-largescreen';
+}

@@ -1,0 +1,281 @@
+/*
+
+  Fruum messaging and system styling
+
+  Contents
+
+  1. Loader
+  2. Tipsy
+  3. System messages
+  4. Helper action
+    4.1 Helptext
+    4.2 Tutorial messages
+  5. Popup data
+  6. Badges
+
+*/
+
+
+
+// 1. Loader
+#fruum .fruum-loader {
+  position: relative;
+  display: inline-block;
+  color: $muted-text-color;
+  font-size: 1em;
+  line-height: 1.1em;
+  height: 1.1em;
+  width: 0;
+  overflow: hidden;
+  -webkit-animation: fruum-loader 1.8s linear infinite;
+  animation:fruum-loader 1.8s linear infinite;
+}
+
+@-webkit-keyframes fruum-loader
+{
+0% {width: 0;margin-right: 2em;}
+30% {width: 0.7em; margin-right: 1.3em;}
+80% {opacity:1;width: 1.7em;margin-right: 0.3em;}
+90% {opacity:1;width: 1.7em;margin-right: 0.3em;}
+100% {opacity:0.1;width: 1.7em;margin-right: 0.3em;}
+}
+@keyframes fruum-loader
+{
+0% {width: 0;margin-right: 2em;}
+30% {width: 0.7em; margin-right: 1.3em;}
+80% {opacity:1;width: 1.7em;margin-right: 0.3em;}
+90% {opacity:1;width: 1.7em;margin-right: 0.3em;}
+100% {opacity:0.1;width: 1.7em;margin-right: 0.3em;}
+}
+
+#fruum .fruum-loader:before {
+  content: '....';
+  display: block;
+  position: absolute;
+  width: auto;
+  height: 100%;
+  left: 0;
+  top: 0;
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+
+
+// 2. Tipsy
+#fruum *[data-fruumtipsy],
+#fruum *[data-fruumtipsy-left],
+#fruum *[data-fruumtipsy-right],
+#fruum *[data-fruumtipsy-center] {
+  position: relative;
+  &:hover:after {
+    content: attr(data-fruumtipsy);
+    display: block;
+    z-index: 12;
+    position: absolute;
+    width: 108px;
+    padding: basegrid-mod( 6px )/2 basegrid-mod( 6px );
+    bottom: 100%;
+    margin-bottom: 5px;
+    font-size: $small-font;
+    text-align: center;
+    line-height: basegrid-mod( $small-font, 15px );
+    background-color: #222;
+    color: #ddd;
+  }
+}
+
+#fruum *[data-fruumtipsy]:hover:after,
+#fruum *[data-fruumtipsy-center]:hover:after {
+  left: 50%;
+  margin-left: -49px;
+}
+
+#fruum *[data-fruumtipsy-center]:hover:after { content: attr(data-fruumtipsy-center); }
+
+#fruum *[data-fruumtipsy-right]:hover:after { content: attr(data-fruumtipsy-right);right: 50%; }
+#fruum *[data-fruumtipsy-left]:hover:after { content: attr(data-fruumtipsy-left);left: 50%; }
+
+
+
+// 3. System messages
+
+#fruum .fruum-messages {
+  $message-spacing: relative-ems( $base-grid, $responsive-small-font);
+  $message-whitespacing: relative-ems( $fruum-whitespace, $responsive-small-font);
+  width: 100%;
+  font-size: $responsive-small-font;
+  padding: $message-spacing $message-whitespacing;
+  background-color: $background-base-color;
+  color: $forum-message-text-color;
+
+  border-top: 1px solid $disabled-text-color;
+  border-bottom: 1px solid $disabled-text-color;
+  .fruum-loader {
+    color: inherit;
+    line-height: 1em;
+    height: 1em;
+  }
+
+  &.fruum-message-warning {
+    background-color: $forum-warning-color;
+  }
+
+  &.fruum-message-error {
+    color: $forum-message-text-color;
+    background-color: $forum-error-color;
+  }
+
+  &.fruum-messages-helper {
+    color: $muted-text-color;
+    border-top: none;
+    border-bottom: none;
+    padding: $message-spacing $message-whitespacing/2;
+  }
+}
+
+
+
+// 4. Helper action
+
+#fruum .fruum-helper-action {
+  // inherits font size of base-grid
+  display: inline-block;
+  float: right;
+  color: $muted-text-color;
+  border: 1px solid $muted-text-color;
+  font-size: $responsive-bigger-font;
+  @include block-object-action( $responsive-bigger-font );
+  @include block-radius;
+  cursor: pointer;
+  cursor: hand;
+}
+
+#fruum .fruum-helper-action:hover {
+  color: $disabled-text-color;
+  border-color: $disabled-text-color;
+}
+
+// 4.1 Helper container
+#fruum .fruum-helper-container {
+  // inherits font size of base-grid
+  $helper-container-basegrid: relative-ems( $base-grid, $responsive-small-font);
+  position: absolute;
+  width: 100%;
+  z-index: 99;
+  padding: $helper-container-basegrid $helper-container-basegrid*2 $helper-container-basegrid*4;
+  bottom: 0;
+  left: 0;
+  border-top: 1px solid $disabled-text-color;
+  background-color: $background-helper-base-color;
+  color: $base-text-color;
+  list-style-type: none;
+  font-size: $responsive-small-font;
+  line-height: $helper-container-basegrid*2;
+  .fruum-helper-element {
+    margin: $helper-container-basegrid/2 0;
+  }
+}
+
+#fruum .fruum-helper-container .fruum-helper-shortcut {
+  font-family: $system-fonts !important;
+  display: inline-block;
+  font-weight: bold;
+  width: 100px;
+  color: $base-text-color;
+}
+
+#fruum .fruum-helper-container .fruum-helper-close {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: relative-ems( $responsive-bigger-font, $responsive-small-font );
+  width: 1em;
+  height: 1em;
+  cursor: pointer;
+  cursor: hand;
+}
+
+
+// 4.2 Helptext
+#fruum .fruum-helptext {
+  // inherits font-size of base-grid
+  color: $disabled-text-color;
+  font-size: $responsive-big-font;
+}
+
+// 4.3 Tutorial messages
+
+#fruum .fruum-tutorial-messages {
+  // inherits font-size of base-grid
+  display: block;
+  color: $muted-text-color;
+  font-size: $responsive-tiny-font;
+  line-height: relative-ems( $base-grid*2, $responsive-tiny-font );
+  width: 100%;
+  text-align: left;
+  &.fruum-tutorial-tip {
+    text-align: right;
+  }
+}
+
+
+
+// 6. Popup data
+
+#fruum .fruum-popup-data {
+  position: absolute;
+  width: 95%;
+  left: 2.5%;
+  z-index: 13;
+  @include block-radius( 1px );
+  font-size: 1em; // reset to base-grid
+  padding: 1em;
+  box-shadow: 0 0 6px rgba( $main-action-color, 0.6 );
+  background-color: $background-helper-base-color;
+  input[type="text"],
+  textarea {
+    $popup-size: relative-ems( $base-grid, $responsive-tiny-font );
+    background-color: transparent;
+    color: $important-text-color;
+    border: 1px solid $dividers-colors;
+    width: 100%;
+    font-size: $responsive-tiny-font;
+    padding: $popup-size/2;
+    min-height: $popup-size*2;
+    @include block-radius( 1px );
+  }
+  textarea {
+    resize: none;
+  }
+  .fruum-link.fruum-popup-close {
+    $popup-close-basegrid: relative-ems( $base-grid, $responsive-small-font );
+    position: absolute;
+    color: $main-action-color;
+    font-size: $responsive-small-font;
+    line-height: $popup-close-basegrid*2;
+    bottom: $popup-close-basegrid/2;
+    right: $popup-close-basegrid;
+  }
+}
+
+
+
+// 7. Badges
+
+#fruum .fruum-badge {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  @include block-object-shapes;
+  font-size: 8px;
+  background-color: $forum-base-color;
+  color: $forum-message-text-color;
+  text-align: center;
+  text-decoration: none !important;
+  vertical-align: middle;
+  &.fruum-badge-info {
+    background-color: $forum-warning-color;
+  }
+}

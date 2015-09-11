@@ -1,0 +1,136 @@
+/*
+
+  Stream styling
+
+  Contents
+
+  1. Basic texts formatting
+  2. Stream system messages
+
+*/
+
+
+
+// 1. Basic texts formatting
+
+#fruum .fruum-stream-typography {
+
+  font-size: $stream-default-font;
+  line-height: $stream-default-lineheight;
+
+  // compute stream-basegrid based on responsive-default-font
+  $default-basegrid: $stream-basegrid;
+
+  h1 {
+    font-size: $stream-h1;
+    font-weight: $stream-h1-weight;
+    line-height: $stream-h1-lineheight;
+    margin-bottom: relative-ems( $stream-basegrid, $stream-h1);
+  }
+
+  h2 {
+    font-size: $stream-h2;
+    font-weight: $stream-h2-weight;
+    line-height: $stream-h2-lineheight;
+    margin-bottom: relative-ems( $stream-basegrid, $stream-h2 )/2;
+  }
+
+  h3 {
+    font-size: $stream-h3;
+    font-weight: $stream-h3-weight;
+    line-height: $stream-h3-lineheight;
+    margin-bottom: relative-ems( $stream-basegrid, $stream-h3)/2;
+  }
+
+  h4 {
+    font-size: $stream-h4;
+    font-weight: $stream-h4-weight;
+    line-height: $stream-h4-lineheight;
+    margin-bottom: relative-ems( $stream-basegrid, $stream-h4)/2;
+  }
+
+  h5 {
+    line-height: $stream-lineheight;
+  }
+
+  h6 {
+    line-height: $stream-lineheight;
+  }
+
+  p {
+    margin-bottom: $default-basegrid;
+  }
+  pre,
+  code {
+    line-height: $stream-lineheight;
+  }
+
+  pre {
+    padding: $default-basegrid/2;
+    margin-top: $default-basegrid;
+    margin-bottom: $default-basegrid;
+  }
+
+  code {
+    padding: 4px $default-basegrid 2px;
+    &:not(:first-child) {
+      margin-top: -0.5*$default-basegrid;
+    }
+  }
+
+  ol,
+  ul {
+    margin: 0 0 $default-basegrid $default-basegrid;
+    padding: 0 0 0 $default-basegrid*2;
+    &:not(:first-child) {
+      margin-top: -0.5*$default-basegrid;
+    }
+
+    & > li {
+      &:not(:last-child) {
+        margin-bottom: $default-basegrid;
+      }
+    }
+  }
+
+  ol { padding-left: $default-basegrid*3; }
+
+
+
+  img {
+    margin: $default-basegrid 0;
+  }
+
+
+
+  $table-padding: $default-basegrid;
+  table {
+    margin: $default-basegrid 0 $default-basegrid*2;
+
+    th,td {
+      padding:$table-padding/2 $table-padding;
+    }
+  }
+
+
+
+  blockquote {
+    margin-top: $default-basegrid;
+    margin-bottom: $default-basegrid;
+    padding: $default-basegrid*2 $default-basegrid $default-basegrid*2;
+  }
+
+
+
+  hr {
+    margin-top: $default-basegrid*2;
+    margin-bottom: $default-basegrid*2;
+  }
+
+
+
+  object,
+  iframe {
+    margin: $default-basegrid 0;
+  }
+}

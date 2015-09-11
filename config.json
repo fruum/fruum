@@ -1,0 +1,50 @@
+{
+  "port": 3000,
+  "static_root": "static",
+  "static_prefix": "/static",
+  "logs": "./logs",
+  "url": "http://127.0.0.1:3000",
+
+  "storage_engine": "elasticsearch",
+  "auth_engine": "remote",
+  "cache_engine": "memory_cache",
+  "email_engine": "mandrill",
+  "compress": false,
+
+  "docs": {
+    "max_category_title_size": 64,
+    "max_category_description_size": 0,
+    "max_thread_title_size": 128,
+    "max_article_title_size": 128,
+    "max_channel_name_size": 32,
+    "max_post_size": 0
+  },
+
+  "plugins": [
+    "giphy",
+    "youtube",
+    "dropbox",
+    "twitchtv",
+    "soundcloud"
+  ],
+
+  "elasticsearch": {
+    "host": "http://localhost:9200",
+    "use_bulk": true,
+    "max_children": 1000,
+    "retry_on_conflict": 3
+  },
+
+  "memory_cache": {
+    "static": 50,
+    "views": 10,
+    "default": 10
+  },
+
+  "mandrill": {
+    "api_key": "",
+    "from_email": "",
+    "from_name": "",
+    "failsafe_admins": []
+  }
+}

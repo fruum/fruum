@@ -1,0 +1,94 @@
+/*
+
+  Streams list
+
+  Contents
+
+  1. Generic elements and helpers
+    1.1 Objects lists
+    1.2 Divider
+    1.3 Helper object
+  2. Stream system messages
+    2.1 Loading
+
+*/
+
+
+
+// 1. Generic elements and helpers
+
+// 1.1 Objects list
+
+#fruum .fruum-objects-list {
+  position: relative;
+  width: 100%;
+  font-size: 1em; // reset to base-grid
+  padding: 2em $fruum-whitespace 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+// 1.2 Divider
+
+#fruum .fruum-object-divider {
+  // inherits font size of base-grid
+  position: relative;
+  width: 100%;
+  height: 1px;
+  margin-top: 0.875em;
+  margin-bottom: 4em;
+  background-color: $dividers-colors;
+}
+
+// 1.3 Helper object
+
+#fruum .fruum-helper-object {
+  .fruum-avatar-icon:not([data-initials]),
+  .fruum-avatar-icon:not(img) {
+    background-color: $muted-text-color;
+    color: $background-helper-base-color;
+    text-transform: none;
+    font-family: $avatar-font-family !important;
+  }
+  .fruum-category-title,
+  .fruum-topic-title,
+  .fruum-object-main-data,
+  .fruum-secondary-data {
+    color: $inverted-option-color;
+  }
+}
+
+
+
+// 2. Stream system messages
+
+// 2.1 Loading
+
+#fruum .fruum-is-loading {
+  background-color: $background-base-color;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  top: 0;
+  left: 0;
+  font-size: 1em; // reset to base-grid
+  padding: 2em;
+  & > div {
+    width: 100%;
+    height: 100%;
+  }
+  .fruum-loader {
+    position: absolute;
+    font-size: 60px;
+    top: 50%;
+    left: 50%;
+    margin-left: -1em;
+    margin-top: -2em;
+  }
+  .fruum-base-object {
+    top: 50%;
+    height: 11em;
+    margin-top: -5.5em;
+  }
+}

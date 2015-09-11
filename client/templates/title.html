@@ -1,0 +1,60 @@
+<!-- title template -->
+<script type="text/template" id="fruum-template-title">
+  <% if (viewing.type === 'channel' || viewing.type === 'thread' || viewing.type === 'article') { %>
+  <div>
+    <span class="fruum-topic-title">
+      <% if (!viewing.visible) { %>
+        <span class="fruum-icon fruum-icon-invisible" data-fruumtipsy-center="Private"></span>
+      <% } %>
+      <% if (viewing.locked) { %>
+        <span class="fruum-icon fruum-icon-locked" data-fruumtipsy-center="Locked"></span>
+      <% } %>
+      <% if (viewing.type == 'channel') print('#'); %><%= Fruum.utils.printHeader(viewing.header) %>
+    </span>
+    <% if (Fruum.user.admin && (viewing.type === 'thread' || viewing.type === 'article')) { %>
+    <div class="fruum-manage">
+      <a href="javascript:;" class="fruum-link fruum-manage-close fruum-icon fruum-icon-close"></a>
+
+      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit <%- viewing.type %>"></a>
+
+      <% if (viewing.visible) { %>
+      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-invisible" data-action="visible" data-fruumtipsy-right="Turn private"></a>
+      <% } else { %>
+      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-visible" data-action="visible" data-fruumtipsy-right="Turn public"></a>
+      <% } %>
+
+      <% if (viewing.locked)  { %>
+      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-unlocked" data-action="locked" data-fruumtipsy-right="Unlock posting"></a>
+      <% } else { %>
+      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-locked" data-action="locked" data-fruumtipsy-right="Lock posting"></a>
+      <% } %>
+      <a href="javascript:;" class="fruum-link fruum-link-negative fruum-icon fruum-icon-delete" data-action="delete" data-fruumtipsy-right="Delete <%- viewing.type %>"></a>
+    </div>
+    <% } else if (Fruum.user.admin && viewing.type === 'channel') { %>
+    <div class="fruum-manage">
+      <a href="javascript:;" class="fruum-link fruum-manage-close fruum-icon fruum-icon-close"></a>
+
+      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit channel"></a>
+
+        <% if (viewing.visible) { %>
+      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-invisible" data-action="visible" data-fruumtipsy-right="Turn private"></a>
+        <% } else { %>
+      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-visible" data-action="visible" data-fruumtipsy-right="Turn public"></a>
+        <% } %>
+
+      <a href="javascript:;" class="fruum-link fruum-link-negative fruum-icon fruum-icon-delete" data-action="delete" data-fruumtipsy-right="Delete channel"></a>
+    </div>
+    <% } %>
+  </div>
+  <% } %>
+  <div class="fruum-item-actions">
+    <a href="javascript:;" class="fruum-link fruum-icon fruum-icon-copy" data-action="copy_link" data-fruumtipsy-left="Copy link"></a>
+  <% if (!Fruum.user.anonymous && Fruum.user.id != viewing.user_id && viewing.type !== 'category' && viewing.type !== 'channel') { %>
+    <% if (Fruum.userUtils.isWatching(viewing.id)) { %>
+    <a href="javascript:;" class="fruum-link fruum-item-active fruum-icon fruum-icon-watch" data-action="unwatch" data-fruumtipsy-left="Unwatch"></a>
+    <% } else { %>
+    <a href="javascript:;" class="fruum-link fruum-icon fruum-icon-watch" data-action="watch" data-fruumtipsy-left="Watch"></a>
+    <% } %>
+  <% } %>
+  </div>
+</script>
