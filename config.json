@@ -10,6 +10,7 @@
   "cache_engine": "memory_cache",
   "email_engine": "mandrill",
   "compress": false,
+  "gc_msec": 604800000,
 
   "docs": {
     "max_category_title_size": 64,
