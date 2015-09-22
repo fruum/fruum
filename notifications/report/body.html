@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inappropriate content</title>
+  <!--STYLE.SCSS-->
+  </head>
+<body>
+  <table cellpadding="0" cellspacing="0" border="0" class="maincontainer">
+    <tr>
+      <td height="50">
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        <table cellpadding="0" cellspacing="0" border="0" class="maincontent">
+          <tr>
+            <td class="contentheader">
+              Content marked as inappropriate on <%- application.name || application.id %>
+            </td>
+          </tr>
+          <tr>
+            <td class="content-sumactivity content-head">
+              Hello <%- administrator.displayname || administrator.username %>,<br>
+              <b><%- reporter.displayname || reporter.username %></b> marked a post as inappropriate.
+            </td>
+          </tr>
+          <tr>
+            <td class="contentitem">
+              <h5><a href="<%- application.fullpage_url %>#v/<%- document.type === 'post'?document.parent:document.id %>" class="external-link"><%- document.header %><span class="tagname"></span></a></h5>
+              <p class="content-description"><%- document.body %></p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td height="50">
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

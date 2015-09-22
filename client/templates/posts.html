@@ -63,7 +63,7 @@
       <% } %>
     </div>
 
-    <div class="fruum-object-additional-data fruum-object-manage-data">
+    <div class="fruum-object-additional-data<% if (Fruum.user.id == user_id && !Fruum.user.anonymous) { %> fruum-object-manage-data<% } %>">
       <div class="fruum-primary-data">
         <%- user_displayname || user_username %>
       </div>

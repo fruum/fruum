@@ -30,13 +30,12 @@ $stream-h4-lineheight: 1.22222222em;
 
 
 $stream-lineheight: 1.618em; // custom line-height used only within a stream
-$stream-basegrid: $base-grid*1.5;  // custom stream elements spacing
 
 
 
 /* Font sizes and dimensions - Small screens */
 
-$small-stream-default-font: 18px;
+$small-stream-default-font: 24px;
 $small-stream-default-lineheight: 1.25em;
 
 $small-stream-h1: 2em;
@@ -57,4 +56,3 @@ $small-stream-h4-lineheight: 1.11111111em;
 
 
 $small-stream-lineheight: 1.618em;
-$small-stream-basegrid: $base-grid*1.5;

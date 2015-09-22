@@ -6,7 +6,11 @@
 
 var _ = require('underscore'),
     Backbone = require('backbone'),
-    xss = require('xss');
+    xss = require('xss'),
+    request = require('request'),
+    path = require('path'),
+    fs = require('fs'),
+    root_path = path.resolve(__dirname + '/..');
 
 // --------------------------------- DOCUMENT ---------------------------------
 
@@ -53,6 +57,8 @@ var Document = Backbone.Model.extend({
     archived: false,
     //archived date unix timestamp
     archived_ts: 0,
+    //tags
+    tags: [],
     //metadata
     meta: {}
   },
@@ -120,14 +126,15 @@ var Document = Backbone.Model.extend({
     });
     return this;
   },
-  extractFlags: function() {
-    var retval = {
-      broadcast_noop: this.get('broadcast_noop'),
-      storage_noop: this.get('storage_noop')
-    }
-    this.unset('broadcast_noop');
-    this.unset('storage_noop');
-    return retval;
+  extractTags: function() {
+    var extracted = (this.get('header') || '').match(/\[(.*?)\]/g);
+    //validate tags
+    var tags = [];
+    _.each(extracted, function(tag) {
+      if (tag && tag[0] == '[' && tag[tag.length - 1] == ']')
+        tags.push(tag.substr(1, tag.length - 2));
+    });
+    this.set('tags', tags);
   }
 });
 
@@ -151,8 +158,14 @@ var User = Backbone.Model.extend({
     created: 0,
     //last login date in unix timestamp
     last_login: 0,
+    //last logout date in unix timestamp
+    last_logout: 0,
     //watch list of doc ids
     watch: [],
+    //tags
+    tags: [],
+    //notifications
+    notifications: [],
     //metadata
     meta: {}
   },
@@ -206,6 +219,10 @@ var Application = Backbone.Model.extend({
     auth_url: '',
     //full page url,
     fullpage_url: '',
+    //notifications email
+    notifications_email: '',
+    //contact email
+    contact_email: '',
     //custom theme style
     theme: '',
     //tier level
@@ -216,6 +233,8 @@ var Application = Backbone.Model.extend({
     private_key: '',
     //api keys
     api_keys: [],
+    //tags
+    tags: [],
     //metadata
     meta: {}
   },
@@ -225,11 +244,40 @@ var Application = Backbone.Model.extend({
     log += ' url:' + this.get('url');
     log += ' auth_url:' + this.get('auth_url');
     log += ' fullpage_url:' + this.get('fullpage_url');
+    log += ' notifications_email:' + this.get('notifications_email');
+    log += ' contact_email:' + this.get('contact_email');
     log += ' tier:' + this.get('tier');
     log += ' theme:' + this.get('theme');
     log += ' private_key:' + this.get('private_key');
     log += ' api_keys:' + this.get('api_keys').length;
     return log;
+  },
+  //get sass override text from theme path
+  getThemeSass: function(callback) {
+    var theme = this.get('theme');
+    //no theme
+    if (!theme) {
+      callback('');
+    }
+    //local theme
+    else if (theme.indexOf('theme:') == 0) {
+      theme = theme.replace('theme:', '');
+      fs.readFile(root_path + '/themes/' + theme + '.scss', {encoding: 'utf8'}, function(err, data) {
+        callback(data || '');
+      });
+    }
+    //remote sass
+    else if (theme.indexOf('http://') == 0 || theme.indexOf('https://') == 0) {
+      request(theme, function(error, response, body) {
+        if (!error && response.statusCode == 200) {
+          callback(body);
+        }
+      });
+    }
+    //inline sass
+    else {
+      callback(theme);
+    }
   }
 });
 

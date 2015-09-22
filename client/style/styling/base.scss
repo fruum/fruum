@@ -46,7 +46,6 @@ body > #fruum {
   max-width: optimal-width() + 2em;
   margin: 0 auto;
   height: 100%;
-  min-height: 700px;
 }
 
 #fruum * {
@@ -70,7 +69,12 @@ body > #fruum {
   overflow: auto;
   color: $base-text-color;
   font-size: 1em; //reset to base-grid
-  background-color: darken( $background-base-color, 0.5% );
+  @if ( lightness($background-helper-base-color) > 10 ) {
+    background-color: rgba( 0, 0, 0, 0.03 );
+  } @else {
+    background-color: rgba( 0, 0, 0, 0.1 );
+  }
+
 }
 
 #fruum .fruum-navigation-section,

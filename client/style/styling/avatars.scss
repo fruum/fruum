@@ -48,14 +48,14 @@ $char-list: append($char-list, "~" );
         content: '';
         position: absolute;
         display: block;
-        width: 6px;
-        padding-top: 6px;
+        width: 0.6em;
+        padding-top: 0.6em;
         height: 0;
         background-color: $avatar-text-color;
         opacity: 0.5;
         top: 2px;
         left: 50%;
-        margin-left: -3px;
+        margin-left: -0.3em;
         @include block-radius;
       }
     }
@@ -72,7 +72,7 @@ $char-list: append($char-list, "~" );
         top: 0;
         left: 0;
         background-color: rgba( 0, 0, 0, 0.25 );
-        line-height: 1.15em;
+        line-height: 1.13;
         font-size: 250%;
         text-align: center;
         color: $avatar-text-color;

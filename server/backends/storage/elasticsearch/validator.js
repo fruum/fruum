@@ -24,5 +24,8 @@ module.exports = {
   },
   match_users: function(source, q) {
     return _.isMatch(source, q);
+  },
+  find_watch_users: function(source, q) {
+    return _.intersection(source.watch, q).length > 0;
   }
 }

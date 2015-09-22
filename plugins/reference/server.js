@@ -4,7 +4,7 @@
 
 /*
   The plugin can define the flow of the server by setting some additional attributes
-  to the document:
+  to the response payload:
     'storage_noop': Do not add/update/delete document in the database
     'broadcast_noop': Do not broadcast document to other users
 
@@ -13,7 +13,7 @@
   for a reply.
 
   For example:
-  document.set('storage_noop', true)
+  payload.storage_noop = true;
 
   The plugin takes as arguments the options as set on config.json.
   The instance parameter is an object to the server instance and contains the
@@ -27,37 +27,47 @@
 
 function ReferencePlugin(options, instance) {
   //processes the document before it is added in the database
-  this.add = function(document, callback) {
-    callback(null, document);
+  //payload: { app_id: app_id, user: User, document: Document }
+  this.add = function(payload, callback) {
+    callback(null, payload);
   }
   //processes the document before it is updated in the database
-  this.update = function(document, callback) {
-    callback(null, document);
+  //payload: { app_id: app_id, user: User, document: Document }
+  this.update = function(payload, callback) {
+    callback(null, payload);
   }
   //processes the document before it is deleted from the database
-  this.delete = function(document, callback) {
-    callback(null, document);
+  //payload: { app_id: app_id, user: User, document: Document }
+  this.delete = function(payload, callback) {
+    callback(null, payload);
   }
   //processes the document before it is archived in the database
-  this.archive = function(document, callback) {
-    callback(null, document);
+  //payload: { app_id: app_id, user: User, document: Document }
+  this.archive = function(payload, callback) {
+    callback(null, payload);
   }
   //processes the document before it is restored from the database
-  this.restore = function(document, callback) {
-    callback(null, document);
+  //payload: { app_id: app_id, user: User, document: Document }
+  this.restore = function(payload, callback) {
+    callback(null, payload);
   }
   //process a document before it is been watched
-  this.watch = function(document, callback) {
-    callback(null, document);
+  //payload: { app_id: app_id, user: User, document: Document }
+  this.watch = function(payload, callback) {
+    callback(null, payload);
   }
   //process a document before it is been unwatched
-  this.unwatch = function(document, callback) {
-    callback(null, document);
+  //payload: { app_id: app_id, user: User, document: Document }
+  this.unwatch = function(payload, callback) {
+    callback(null, payload);
   }
   //process a document before it is been reported as inappropriate
-  this.report = function(document, callback) {
-    callback(null, document);
+  //payload: { app_id: app_id, user: User, document: Document }
+  this.report = function(payload, callback) {
+    callback(null, payload);
   }
+  //triggered if plugin name is defined as a cron entry in the config.json
+  this.cron = function() {}
 }
 
 module.exports = ReferencePlugin;

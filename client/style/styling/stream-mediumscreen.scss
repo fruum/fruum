@@ -18,35 +18,33 @@
   font-size: $stream-default-font;
   line-height: $stream-default-lineheight;
 
-  // compute stream-basegrid based on responsive-default-font
-  $default-basegrid: $stream-basegrid;
 
   h1 {
     font-size: $stream-h1;
     font-weight: $stream-h1-weight;
     line-height: $stream-h1-lineheight;
-    margin-bottom: relative-ems( $stream-basegrid, $stream-h1);
+    margin-bottom: relative-ems( $stream-lineheight, $stream-h1);
   }
 
   h2 {
     font-size: $stream-h2;
     font-weight: $stream-h2-weight;
     line-height: $stream-h2-lineheight;
-    margin-bottom: relative-ems( $stream-basegrid, $stream-h2 )/2;
+    margin-bottom: relative-ems( $stream-lineheight, $stream-h2 )/2;
   }
 
   h3 {
     font-size: $stream-h3;
     font-weight: $stream-h3-weight;
     line-height: $stream-h3-lineheight;
-    margin-bottom: relative-ems( $stream-basegrid, $stream-h3)/2;
+    margin-bottom: relative-ems( $stream-lineheight, $stream-h3)/2;
   }
 
   h4 {
     font-size: $stream-h4;
     font-weight: $stream-h4-weight;
     line-height: $stream-h4-lineheight;
-    margin-bottom: relative-ems( $stream-basegrid, $stream-h4)/2;
+    margin-bottom: relative-ems( $stream-lineheight, $stream-h4)/2;
   }
 
   h5 {
@@ -58,79 +56,49 @@
   }
 
   p {
-    margin-bottom: $default-basegrid;
+    margin-bottom: $stream-lineheight;
   }
-  pre,
-  code {
-    line-height: $stream-lineheight;
-  }
+
 
   pre {
-    padding: $default-basegrid/2;
-    margin-top: $default-basegrid;
-    margin-bottom: $default-basegrid;
+    font-size: 90%;
+    margin-top: $stream-lineheight;
+    margin-bottom: $stream-lineheight;
   }
 
   code {
-    padding: 4px $default-basegrid 2px;
     &:not(:first-child) {
-      margin-top: -0.5*$default-basegrid;
+      margin-top: -0.5*$stream-lineheight;
     }
   }
 
   ol,
   ul {
-    margin: 0 0 $default-basegrid $default-basegrid;
-    padding: 0 0 0 $default-basegrid*2;
+    margin-bottom: $stream-lineheight;
     &:not(:first-child) {
-      margin-top: -0.5*$default-basegrid;
-    }
-
-    & > li {
-      &:not(:last-child) {
-        margin-bottom: $default-basegrid;
-      }
+      margin-top: -0.5*$stream-lineheight;
     }
   }
 
-  ol { padding-left: $default-basegrid*3; }
 
 
-
-  img {
-    margin: $default-basegrid 0;
-  }
-
-
-
-  $table-padding: $default-basegrid;
   table {
-    margin: $default-basegrid 0 $default-basegrid*2;
-
-    th,td {
-      padding:$table-padding/2 $table-padding;
-    }
+    margin: $stream-lineheight 0 $stream-lineheight*3/2;
   }
 
 
-
+  hr,
   blockquote {
-    margin-top: $default-basegrid;
-    margin-bottom: $default-basegrid;
-    padding: $default-basegrid*2 $default-basegrid $default-basegrid*2;
+    margin-top: $stream-lineheight;
+    margin-bottom: $stream-lineheight;
   }
 
 
 
-  hr {
-    margin-top: $default-basegrid*2;
-    margin-bottom: $default-basegrid*2;
-  }
 
-
-
+  img,
   object,
   iframe {
-    margin: $default-basegrid 0;
+    margin: $stream-lineheight 0;
   }
 }

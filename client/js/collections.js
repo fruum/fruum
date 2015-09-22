@@ -33,5 +33,8 @@ Collections
     Fruum.collections.Search = Backbone.Collection.extend({
       model: Fruum.models.Document
     });
+    Fruum.collections.Notifications = Backbone.Collection.extend({
+      model: Fruum.models.Document
+    });
   });
 })();

@@ -1,0 +1,27 @@
+/*
+
+  Fruum stream object classes
+
+  Contents
+
+  1. Basic data container and objects
+    1.1 Base object
+    1.2 Primary data
+    1.3 Secondary data
+  2. Avatar basic styling
+  3. Base elements customizations
+  4. Managing actions
+    4.1 Manage section
+    4.2 Item interactions
+
+*/
+
+#fruum .fruum-base-object {
+  // inherits font-size of base-grid
+  .fruum-object-main-data {
+    // has font-size of responsive-default-font
+    .fruum-category-title {
+      font-size: relative-ems( $responsive-big-font, $responsive-default-font);
+    }
+  }
+}

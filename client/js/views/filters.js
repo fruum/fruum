@@ -26,9 +26,17 @@ Search button
         'click @ui.search': 'onSearchOpen',
         'click @ui.search_close': 'onSearchClose'
       },
-      initialize: function() {
+      initialize: function(options) {
         _.bindAll(this, '_search');
         this.listenTo(Fruum.io, 'fruum:clear_search', this.onSearchClose);
+
+        this.notifications = options.notifications;
+        this.listenTo(this.notifications, 'reset', this.render);
+      },
+      templateHelpers: function() {
+        return {
+          has_notifications: this.notifications.length
+        }
       },
       onSearchKeyup: function(event) {
         if (this.search_timer) clearTimeout(this.search_timer);

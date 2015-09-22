@@ -41,6 +41,15 @@ Handles the top part
         'click @ui.unwatch': 'onUnwatch',
         'click @ui.copy_link': 'onCopyLink'
       },
+      initialize: function(options) {
+        this.notifications = options.notifications;
+        this.listenTo(this.notifications, 'reset', this.render);
+      },
+      templateHelpers: function() {
+        return {
+          has_notifications: this.notifications.length
+        }
+      },
       onManage: function(event) {
         Fruum.io.trigger('fruum:toggle_manage', this.ui.manage);
       },

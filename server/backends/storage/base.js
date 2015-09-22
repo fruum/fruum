@@ -60,6 +60,8 @@ module.exports = function(options) {
   this.get_user = function(app_id, id, callback) { callback(); }
   //get users based on matching attributes
   this.match_users = function(app_id, attributes, callback) { callback([]); }
+  //get users based on matching watches document ids
+  this.find_watch_users = function(app_id, watch_list, callback) { callback([]); }
 
   //delete all archived documents which are older then the UNIX timestamp
   this.gc = function(app_id, timestamp, callback) { callback(); }

@@ -40,6 +40,7 @@ function API_v1(options, instance) {
           if (document) {
             document.set(req.body);
             document.escape();
+            document.extractTags();
             storage.update(application.get('id'), document, null, function(updated_doc) {
               cache.invalidate_document(application.get('id'), updated_doc);
               res.json(updated_doc.toJSON());
@@ -48,6 +49,7 @@ function API_v1(options, instance) {
           else {
             document = new Models.Document(req.body);
             document.escape();
+            document.extractTags();
             storage.add(application.get('id'), document, function(document) {
               cache.invalidate_document(application.get('id'), document);
               res.json(document.toJSON());
@@ -80,6 +82,7 @@ function API_v1(options, instance) {
           if (document) {
             document.set(req.body);
             document.escape();
+            document.extractTags();
             storage.update(application.get('id'), document, null, function(updated_doc) {
               cache.invalidate_document(application.get('id'), updated_doc);
               res.json(updated_doc.toJSON());

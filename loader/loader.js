@@ -1,4 +1,6 @@
 (function() {
+  //namespace
+  window.Fruum = window.Fruum || {};
   //on document read
   function ready(fn) {
     if (document.readyState != 'loading'){
@@ -107,16 +109,20 @@
         (document.head || document.getElementsByTagName("head")[0]).appendChild(script);
       }
     }
+    //expose launcher
+    window.Fruum.launch = function(doc_id) {
+      if (window.Fruum.api) {
+        window.Fruum.api.open(doc_id);
+      }
+      else {
+        window.fruumSettings.view_id = doc_id;
+        launch_fruum();
+      }
+    }
     function process_click(event, link) {
       if (link) {
         event && event.preventDefault();
-        if (window.Fruum && window.Fruum.api) {
-          window.Fruum.api.open(link);
-        }
-        else {
-          window.fruumSettings.view_id = link;
-          launch_fruum();
-        }
+        window.Fruum.launch(link);
       }
     }
     function process_mouseover(event, link) {

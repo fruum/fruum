@@ -9,16 +9,16 @@ $chartags-list: (A B C D E F G H I J K L M N O P Q R S T U V W X Y Z - _);
 
 #fruum .fruum-tag {
   display: inline-block;
-  padding: $base-grid-big/2-1px $base-grid-big;
-  @include block-radius( $base-grid-big/2);
+  padding: $base-grid/2 $base-grid;
+  @include block-radius( $base-grid/2);
   overflow: hidden;
-  font-size: $base-grid-big*1+2px;
-  line-height: $base-grid-big*2;
+  font-size: $base-grid;
+  line-height: $base-grid;
   text-transform: uppercase;
   font-weight: normal;
   color: $tag-text-color;
   background-color: $tag-default-background;
-  margin: 0 $base-grid-big/2 (-2)*($base-grid-big/2-1px);
+  margin: 0 $base-grid/3 (-1)*($base-grid/2);
   &:first-child {
     margin-left: 0;
   }

@@ -1,0 +1,13 @@
+/*
+
+  Create tags classes mixin using
+  provided color set
+
+*/
+
+#fruum .fruum-tag {
+  padding: $base-grid-big/2-1px $base-grid-big;
+  font-size: $base-grid-big*1+2px;
+  line-height: $base-grid-big*2;
+  margin: 0 $base-grid-big/2 (-2)*($base-grid-big/2-1px);
+}

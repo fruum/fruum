@@ -33,7 +33,9 @@
 
 @media (min-device-width: 1024px ) {
   @import 'styling/base-mediumscreen';
+  @import 'styling/streamobject-mediumscreen';
   @import 'styling/stream-mediumscreen';
+  @import 'styling/tags-mediumscreen';
 }
 
 @media (min-device-width: 1200px) {

@@ -37,13 +37,23 @@ Breadcrumb view
         'click @ui.allow_channels': 'onAllowChannels',
         'click @ui.visible': 'onVisible'
       },
+      initialize: function(options) {
+        this.notifications = options.notifications;
+        this.listenTo(this.notifications, 'reset', this.render);
+      },
+      templateHelpers: function() {
+        return {
+          has_notifications: this.notifications.length
+        }
+      },
       onNavigate: function(event) {
         event.preventDefault();
         Fruum.io.trigger('fruum:view', { id: $(event.target).closest('[data-id]').data('id') });
       },
       onCloseSearch: function(event) {
         event.preventDefault();
-        Fruum.io.trigger('fruum:clear_search');
+        if (this.notifications.length) this.notifications.reset();
+        else Fruum.io.trigger('fruum:clear_search');
       },
       onManage: function(event) {
         Fruum.io.trigger('fruum:toggle_manage', this.ui.manage);

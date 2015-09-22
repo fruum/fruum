@@ -4,14 +4,14 @@
     <div class="fruum-avatar">
       <span class="fruum-avatar-icon" data-initials="<%- Fruum.utils.printInitials(initials) %>"><%- initials %></span>
     </div>
-    <div class="fruum-object-main-data fruum-object-manage-data">
+    <div class="fruum-object-main-data<% if (Fruum.user.admin) { %> fruum-object-manage-data<% } %>">
       <div class="fruum-category-title fruum-link">
         <% if (!visible) { %>
         <span class="fruum-icon fruum-icon-invisible" data-fruumtipsy-center="Private category"></span>
         <% } %>
         <%= Fruum.utils.printHeader(header) %>
 
-        <span class="fruum-badge fruum-badge-info" data-fruumtipsy-right="New content" style="display: none;" data-notify-id="<%- id %>">!</span>
+        <span class="fruum-badge fruum-badge-info" data-fruumtipsy-right="New content" style="display: none;" data-info-id="<%- id %>">!</span>
       </div>
     </div>
     <div class="fruum-object-additional-data">

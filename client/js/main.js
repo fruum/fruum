@@ -69,6 +69,7 @@ Main client app
         channels: '.fruum-channel-list',
         posts: '.fruum-post-list',
         search: '.fruum-search-list',
+        notifications: '.fruum-notification-list',
         interactions: '.fruum-interactions-section',
         empty: '.fruum-empty-list',
         share: '.fruum-js-region-share'
@@ -97,19 +98,23 @@ Main client app
         this.channels = new Collections.Channels();
         this.posts = new Collections.Posts();
         this.search = new Collections.Search();
+        this.notifications = new Collections.Notifications();
 
         //initialize plugins
         Fruum.utils.chain(Fruum.processors.init, this);
 
         //initialize standard regions
         this.showChildView('breadcrumb', new Views.BreadcrumbView({
-          model: this.ui_state
+          model: this.ui_state,
+          notifications: this.notifications
         }));
         this.showChildView('title', new Views.TitleView({
-          model: this.ui_state
+          model: this.ui_state,
+          notifications: this.notifications
         }));
         this.showChildView('filters', new Views.FiltersView({
-          model: this.ui_state
+          model: this.ui_state,
+          notifications: this.notifications
         }));
         this.showChildView('counters', new Views.CountersView({
           model: this.ui_state
@@ -142,6 +147,10 @@ Main client app
           collection: this.search,
           ui_state: this.ui_state
         }));
+        this.showChildView('notifications', new Views.NotificationsView({
+          collection: this.notifications,
+          ui_state: this.ui_state
+        }));
         this.showChildView('empty', new Views.EmptyView({
           model: this.ui_state
         }));
@@ -149,10 +158,16 @@ Main client app
           ui_state: this.ui_state,
           el: this.regions.share
         });
+        this.listenTo(this.notifications, 'reset', function() {
+          if (this.notifications.length) Fruum.io.trigger('fruum:clear_search');
+          this.onRefresh();
+        });
         this.listenTo(this.ui_state, 'change:loading change:searching', this.onRefresh);
         this.listenTo(this.ui_state, 'change:searching', function() {
           if (!this.ui_state.get('searching'))
             this.search.reset();
+          else
+            this.notifications.reset();
         });
         this.listenTo(this.ui_state, 'change:viewing', function() {
           var type = this.ui_state.get('viewing').type;
@@ -210,8 +225,10 @@ Main client app
               $(that.ui.message_view_error).slideDown('fast');
               return;
             }
+
             if ($(that.ui.message_view_error).is(':visible'))
               $(that.ui.message_view_error).slideUp('fast');
+
             var breadcrumb = payload.breadcrumb || [];
             var last_doc = breadcrumb.pop() || {};
             that.ui_state.set({
@@ -220,12 +237,14 @@ Main client app
               breadcrumb: breadcrumb,
               online: payload.online || {}
             });
+
             if (that.ui_state.get('viewing').id != last_doc.id) {
               that.ui_state.set({
                 viewing: last_doc,
                 editing: {}
               });
             }
+
             var categories = [], articles = [], threads = [], channels = [], posts = [];
             if (last_doc.body) {
               switch(last_doc.type) {
@@ -235,6 +254,7 @@ Main client app
                   break;
               }
             }
+
             _.each(payload.documents, function(entry) {
               switch(entry.type) {
                 case 'category':
@@ -254,12 +274,15 @@ Main client app
                   break;
               }
             });
+
             that.categories.reset(categories);
             that.articles.reset(articles);
             that.threads.reset(threads);
             that.channels.reset(channels);
             that.posts.reset(posts);
+
             that.onRefresh();
+
             if (last_doc.type === 'channel') {
               //scroll to bottom
               _.defer(that._snapBottom);
@@ -268,6 +291,12 @@ Main client app
               //scroll to top
               _.defer(that._snapTop);
             }
+
+            //remove from notifications
+            if (Fruum.userUtils.hasNotification(payload.id)) {
+              Fruum.io.trigger('fruum:unnotify', { id: payload.id });
+            }
+
             //store on local storage
             Fruum.utils.sessionStorage('fruum:view:' + window.fruumSettings.app_id, last_doc.id);
             if (that.router) that.router.navigate('v/' + last_doc.id);
@@ -292,12 +321,27 @@ Main client app
             if (!payload) return;
             that.ui_state.set('editing', {});
             that.upsertPayload(payload);
-            if (payload.type === 'thread' || payload.type === 'channel' || payload.type === 'article') {
-              Fruum.io.trigger('fruum:view', { id: payload.id });
+            var watch_id;
+            switch (payload.type) {
+              case 'thread':
+              case 'article':
+                watch_id = payload.id;
+                Fruum.io.trigger('fruum:view', { id: payload.id });
+                break;
+              case 'channel':
+                Fruum.io.trigger('fruum:view', { id: payload.id });
+                break;
+              case 'post':
+                if (payload.parent_type == 'thread' || payload.parent_type == 'article')
+                  watch_id = payload.parent;
+                that.ui_state.trigger('change:editing');
+                Fruum.io.trigger('fruum:scroll_bottom');
+                break;
+              default:
+                break;
             }
-            else if (payload.type === 'post') {
-              that.ui_state.trigger('change:editing');
-              Fruum.io.trigger('fruum:scroll_bottom');
+            if (watch_id && !Fruum.userUtils.isWatching(watch_id)) {
+              Fruum.io.trigger('fruum:watch', { id: watch_id });
             }
           }
         );
@@ -387,6 +431,57 @@ Main client app
           }
         );
 
+        // -------------------- NOTIFICATIONS --------------------
+
+        //fetch notifications
+        this.bindIO('fruum:notifications',
+          function send(payload) {
+            that.socket.emit('fruum:notifications', payload);
+          },
+          function recv(payload) {
+            if (!payload.notifications) return;
+            //update badge
+            var ids = [];
+            _.each(payload.notifications, function(document) {
+              ids.push(document.id);
+            });
+            //find not existent notifications
+            var diff = _.difference(Fruum.user.notifications || [], ids);
+            Fruum.user.notifications = ids;
+            Fruum.io.trigger('fruum:update_notify');
+            //store in collection
+            that.notifications.reset(payload.notifications);
+            //remove invalid notifications
+            _.each(diff, function(doc_id) {
+              Fruum.io.trigger('fruum:unnotify', { id: doc_id});
+            });
+          }
+        );
+
+        this.bindIO('fruum:notify',
+          function send(payload) {
+            that.socket.emit('fruum:notify', payload);
+          },
+          function recv(payload) {
+            if (payload) {
+              Fruum.userUtils.addNotification(payload.id);
+              Fruum.io.trigger('fruum:update_notify');
+            }
+          }
+        );
+
+        this.bindIO('fruum:unnotify',
+          function send(payload) {
+            that.socket.emit('fruum:unnotify', payload);
+          },
+          function recv(payload) {
+            if (payload) {
+              Fruum.userUtils.removeNotification(payload.id);
+              Fruum.io.trigger('fruum:update_notify');
+            }
+          }
+        );
+
         // -------------------- REPORT --------------------
 
         this.bindIO('fruum:report',
@@ -461,10 +556,10 @@ Main client app
         this.socket.on('fruum:dirty', function(payload) {
           that.upsertPayload(payload);
         });
-        this.socket.on('fruum:notify', function(payload) {
+        this.socket.on('fruum:info', function(payload) {
           //enable notification badge
           if (payload) {
-            that.$('[data-notify-id="' + payload.id + '"]').fadeIn();
+            that.$('[data-info-id="' + payload.id + '"]').fadeIn();
           }
         });
         this.socket.on('fruum:online', function(payload) {
@@ -502,6 +597,7 @@ Main client app
             //check if search is valid
             if (payload.q === that.ui_state.get('search') && that.ui_state.get('searching')) {
               that.search.reset(payload.results);
+              that.onRefresh();
             }
           }
         );
@@ -552,9 +648,27 @@ Main client app
       },
       onRefresh: function() {
         var viewing_type = this.ui_state.get('viewing').type;
-        if (this.ui_state.get('searching')) {
+        if (this.notifications.length) {
+          //show notifications
+          this.getRegion('empty').$el.stop(true, true).hide();
+          this.getRegion('search').$el.hide();
+          this.getRegion('categories').$el.hide();
+          this.getRegion('articles').$el.hide();
+          this.getRegion('threads').$el.hide();
+          this.getRegion('channels').$el.hide();
+          this.getRegion('divider_category_article').$el.hide();
+          this.getRegion('divider_article_thread').$el.hide();
+          this.getRegion('divider_thread_channel').$el.hide();
+          this.getRegion('posts').$el.hide();
+          this.getRegion('notifications').$el.show();
+          this.ui_state.set({
+            total_entries: this.notifications.length
+          });
+        }
+        else if (this.ui_state.get('searching')) {
           //Search mode
           this.getRegion('empty').$el.stop(true, true).hide();
+          this.getRegion('notifications').$el.hide();
           this.getRegion('categories').$el.hide();
           this.getRegion('articles').$el.hide();
           this.getRegion('threads').$el.hide();
@@ -571,6 +685,7 @@ Main client app
         else if (viewing_type === 'channel' || viewing_type === 'thread' || viewing_type === 'article') {
           //Viewing posts
           this.getRegion('empty').$el.stop(true, true).hide();
+          this.getRegion('notifications').$el.hide();
           this.getRegion('search').$el.hide();
           this.getRegion('categories').$el.hide();
           this.getRegion('articles').$el.hide();
@@ -586,6 +701,7 @@ Main client app
         }
         else if (this.categories.length || this.articles.length || this.threads.length || this.channels.length) {
           this.getRegion('empty').$el.stop(true, true).hide();
+          this.getRegion('notifications').$el.hide();
           this.getRegion('search').$el.hide();
           this.getRegion('categories').$el.show();
           this.getRegion('articles').$el.show();
@@ -617,6 +733,7 @@ Main client app
         else {
           this.getRegion('empty').$el.fadeIn('fast');
           this.getRegion('categories').$el.hide();
+          this.getRegion('notifications').$el.hide();
           this.getRegion('search').$el.hide();
           this.getRegion('articles').$el.hide();
           this.getRegion('threads').$el.hide();
@@ -726,9 +843,17 @@ Main client app
       calculateViewRegions: function() {
         this.calculate_regions_timer = null;
         //find all object elements
+        var entries_cls = '';
+        if (this.notifications.length)
+          entries_cls = '.fruum-js-entry-notification';
+        else if (this.ui_state.get('searching'))
+          entries_cls = '.fruum-js-entry-search';
+        else
+          entries_cls = '.fruum-js-entry-default';
+
         var top = this.getRegion('content').$el.offset().top,
             bottom = top + this.getRegion('content').$el.height(),
-            entries = this.$(this.ui_state.get('searching')?'.fruum-js-entry-search':'.fruum-js-entry-default'),
+            entries = this.$(entries_cls),
             start = 0,
             end = entries.length;
         for (var i = 0; i < entries.length; ++i) {

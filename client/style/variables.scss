@@ -85,18 +85,18 @@ $dividers-colors: #CCCCCC; // Space dividers colors
 $important-text-color: #141410; // important text color
 $base-text-color: #303027; // basic text color
 $disabled-text-color: lighten($base-text-color, 25%); // disabled text color
-$muted-text-color: #EAEAE1; // muted text color
+$muted-text-color: #E9E9DA; // muted text color
 $inverted-option-color: #CCCCCC; // inverted option color
 
-$main-action-color: #0F1011; // main action color
+$main-action-color: #EB064C; // main action color
 $main-action-color-highlight: lighten($main-action-color, 15%); // main action highlight color
 $main-action-text-color: #FFFFFF; // main action text color
 
-$secondary-action-color: #E80413; // secondary action color
+$secondary-action-color: #151617; // secondary action color
 $secondary-action-color-highlight: lighten($secondary-action-color, 15%); //secondary action highlight color
 $secondary-action-text: #FFFFFF; // secondary action text color
 
-$negative-action-color: #2B66EF; // negative action color
+$negative-action-color: #621916; // negative action color
 $negative-action-color-highlight: lighten($negative-action-color, 15%); // negative action highlight color
 
 $muted-action-color: #EFF1C7; // muted action color
@@ -104,10 +104,10 @@ $muted-action-color: #EFF1C7; // muted action color
 
 /* System colors */
 $forum-base-color: #F5003A; // forum main color, used as main links color inside your content
-$forum-header-color: #181818; // forum header color
+$forum-header-color: #2A2A2A; // forum header color
 $forum-warning-color: #EDE39C; // forum warning color
 $forum-error-color: #E36056; // forum error color
-$forum-message-text-color: #303027; // forum error color
+$forum-message-text-color: #303027; // forum messages color
 
 
 

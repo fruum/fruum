@@ -4,6 +4,9 @@
 
   Contents
 
+  1. Generic setup
+  2. Emoji list
+
 */
 
 
@@ -11,8 +14,8 @@
 // 1. Generic setup
 
 #fruum *[data-fruumemoji]:before {
-  font-size: inherit;
-  line-height: inherit;
+  font-size: 130%;
+  line-height: 1;
   font-weight: normal;
   font-style: normal;
   color: inherit;

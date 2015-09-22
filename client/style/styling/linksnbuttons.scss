@@ -14,27 +14,28 @@
 // 1. Base link styles
 
 #fruum .fruum-link {
-  cursor: pointer;
-  cursor: hand;
   text-decoration: none;
   font-size: inherit;
   line-height: inherit;
   &:not(.fruum-base-object) {
-    color: $main-action-color;
+    color: $secondary-action-color;
   }
-
   &.fruum-link-off:not(:hover) {
     color: $disabled-text-color !important;
   }
   &:hover {
     text-decoration: underline;
-    color: $main-action-color-highlight;
+    color: $secondary-action-color-highlight;
+    &:not(.fruum-link-disabled) {
+      cursor: pointer;
+      cursor: hand;
+    }
   }
   &.fruum-link-secondary {
     color: $negative-action-color;
   }
   &.fruum-link-negative {
-    color: $forum-base-color;
+    color: $negative-action-color;
   }
   &.fruum-button-link {
     // inherits font-size of responsive-default-font
@@ -49,28 +50,57 @@
 // 2. Buttons
 
 #fruum button.fruum-main-button {
-  @include default-button-block;
+  &:not(.fruum-link) {
+    @include default-button-block;
+    &:hover {
+      @include default-button-hover;
+    }
+  }
   cursor: pointer;
   cursor: hand;
-  &:hover {
-    @include default-button-hover;
+  &.fruum-link {
+    font-size: $responsive-big-font;
+    letter-spacing: 1px;
+    @include block-object-size( $responsive-big-font );
+    background-color: transparent;
+    border: 0;
+    color: $main-action-color;
+    &:hover {
+      color: $main-action-color-highlight;
+    }
+  }
+  // reset letter spacing in case of icon button
+  &:empty {
+    letter-spacing: 0;
+  }
+  &:not(.fruum-link):not(:empty) {
+    padding-left: 0.6em;
+    padding-right: 0.6em;
   }
 }
 
 
 
+#fruum button.fruum-secondary-button,
 #fruum a.fruum-secondary-button {
-  @include block-object-size( $responsive-default-font );
   @include generic-button;
-  color: $main-action-color;
+  &:not([class*="fruum-link"]) {
+    @include block-object-action( $responsive-default-font );
+    border: none;
+    color: $secondary-action-text;
+    background-color: $secondary-action-color;
+    &:hover {
+      background-color: $secondary-action-color-highlight;
+    }
+  }
   cursor: pointer;
   cursor: hand;
-  &:hover {
+  &.fruum-link:hover {
     text-decoration: underline;
   }
-  &.fruum-icon:empty {
-    @include block-object-size( $responsive-bigger-font );
-    font-size: $responsive-bigger-font;
+  &:not(.fruum-link):not(:empty) {
+    padding-left: 0.6em;
+    padding-right: 0.6em;
   }
 }
 

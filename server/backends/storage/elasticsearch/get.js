@@ -6,17 +6,15 @@
 
 var _ = require('underscore'),
     validators = require('./validator'),
-    Utils = require('./util'),
     Models = require('../../../models');
 
-module.exports = function(options, client) {
-  var utils = new Utils(options, client);
+module.exports = function(options, client, self) {
 
   // -------------------------------- GET SINGLE--------------------------------
 
-  this.get = function(app_id, id, callback) {
+  self.get = function(app_id, id, callback) {
     client.get({
-      index: utils.toIndex(app_id),
+      index: self.toIndex(app_id),
       type: 'doc',
       id: id,
       refresh: true
@@ -33,9 +31,9 @@ module.exports = function(options, client) {
 
   // ------------------------------ GET MULTIPLE -------------------------------
 
-  this.mget = function(app_id, id_array, callback) {
+  self.mget = function(app_id, id_array, callback) {
     client.mget({
-      index: utils.toIndex(app_id),
+      index: self.toIndex(app_id),
       type: 'doc',
       refresh: true,
       body: {
@@ -57,13 +55,13 @@ module.exports = function(options, client) {
 
   // -------------------------------- CHILDREN ---------------------------------
 
-  this.children = function(app_id, document, callback) {
+  self.children = function(app_id, document, callback) {
     var order = 'desc';
     if (document.get('parent_type') == 'thread' ||
         document.get('parent_type') == 'artile') order = 'asc';
     var id = document.get('id');
     client.search({
-      index: utils.toIndex(app_id),
+      index: self.toIndex(app_id),
       type: 'doc',
       refresh: true,
       body: {

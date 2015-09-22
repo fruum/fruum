@@ -1,7 +1,7 @@
 <!-- breadcrumb template -->
 <script type="text/template" id="fruum-template-breadcrumb">
   <% if (!viewing.id) { %>
-  <% } else if (searching) { %>
+  <% } else if (searching || has_notifications) { %>
     <div class="fruum-navigation-item fruum-js-search-close" >
       <span class="fruum-avatar-icon fruum-link">
         <span class="fruum-icon fruum-icon-left"></span>
@@ -21,11 +21,11 @@
         <% } else { %>
         <%- viewing.initials %>
         <% } %>
-      </span><%- viewing.header %>
+      </span><%= Fruum.utils.printHeader(viewing.header) %>
     </div>
     <% } else if (breadcrumb.length) { %>
     <div class="fruum-navigation-item fruum-link fruum-js-navigate" data-id="<%- breadcrumb[breadcrumb.length - 1].id %>" >
-        back to <%- breadcrumb[breadcrumb.length - 1].header %>
+        back to <%= Fruum.utils.printHeader(breadcrumb[breadcrumb.length - 1].header) %>
     </div>
     <% } %>
     <% if (Fruum.user.admin && viewing.type === 'category') { %>

@@ -48,6 +48,12 @@ Utilities
     Fruum.utils.printInitials = function(initials) {
       return (initials || '').toUpperCase();
     }
+    //Print tags
+    Fruum.utils.tagify = function(text) {
+      return text.replace(/\[(.*?)\]/g, function(a,b) {
+        return '<span class="fruum-tag" data-initials="' + b.toUpperCase()[0] + '">' + b + '</span>';
+      });
+    }
     //Markdown display
     Fruum.utils.print = function(post) {
       //remove escaping of > and ` used by markdown
@@ -62,9 +68,7 @@ Utilities
       //emojify
       text = Fruum.emoji.convert(_.escape(text || ''));
       //tagify
-      text = text.replace(/\[(.*?)\]/g, function(a,b) {
-        return '<span class="fruum-tag" data-initials="' + b.toUpperCase()[0] + '">' + b + '</span>';
-      });
+      text = Fruum.utils.tagify(text);
       return text;
     }
     //If computer is mac

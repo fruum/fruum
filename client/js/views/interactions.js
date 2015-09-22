@@ -19,14 +19,18 @@ Handles the bottom input part
         add_article: '[data-action="add_article"]',
         add_thread: '[data-action="add_thread"]',
         add_channel: '[data-action="add_channel"]',
+        add_post: '[data-action="add_post"]',
         cancel: '[data-action="cancel"]',
         help: '[data-action="help"]',
         help_panel: '.fruum-js-help',
+        show_notifications: '.fruum-js-show-notifications',
+        avatar_container: '.fruum-js-avatar-container',
         field_parent: '[data-field="parent"]',
         field_type: '[data-field="type"]',
         field_initials: '[data-field="initials"]',
         field_header: '[data-field="header"]',
         field_body: '[data-field="body"]',
+        field_notifications: '[data-field="notifications"]',
         channel_input: '.fruum-js-channel-input'
       },
       modelEvents: {
@@ -45,13 +49,16 @@ Handles the bottom input part
         'click @ui.add_article': 'onAddArticle',
         'click @ui.add_channel': 'onAddChannel',
         'click @ui.add_category': 'onAddCategory',
-        'click @ui.cancel': 'onCancel'
+        'click @ui.add_post': 'onAddPost',
+        'click @ui.cancel': 'onCancel',
+        'click @ui.show_notifications': 'onShowNotifications'
       },
       initialize: function(options) {
         this.mode = '';
         this.ui_state = this.model;
         this.collections = options.collections;
         this.listenTo(Fruum.io, 'fruum:resize', this.onResize);
+        this.listenTo(Fruum.io, 'fruum:update_notify', this.onUpdateNotify);
       },
       getTemplate: function() {
         if (Fruum.user.anonymous) return '#fruum-template-interactions-anonymous';
@@ -65,6 +72,8 @@ Handles the bottom input part
             return '#fruum-template-interactions-edit-thread';
           case 'channel':
             return '#fruum-template-interactions-edit-channel';
+          case 'post':
+            return '#fruum-template-interactions-edit-post';
         }
         switch(this.ui_state.get('viewing').type) {
           case 'thread':
@@ -110,6 +119,18 @@ Handles the bottom input part
               this.ui_state.get('navigation_height') + 1
             );
             break;
+        }
+      },
+      onUpdateNotify: function() {
+        var notifications = Fruum.userUtils.countNotifications();
+        if (notifications > 0) {
+          this.ui.field_notifications.html(notifications).fadeIn();
+          this.ui.avatar_container.removeClass('fruum-link-disabled').
+            attr('data-fruumtipsy-right', this.ui.avatar_container.attr('data-fruumtipsy-original'));
+        }
+        else {
+          this.ui.field_notifications.html(notifications).fadeOut();
+          this.ui.avatar_container.addClass('fruum-link-disabled').removeAttr('data-fruumtipsy-right');
         }
       },
       _getEasing: function() {
@@ -190,6 +211,11 @@ Handles the bottom input part
         if (event.metaKey || event.ctrlKey) {
           var selection = null;
           switch(event.which) {
+            case 13: //enter
+              if (this.ui_state.get('editing').type == 'post') {
+                this.onPost(event);
+              }
+              break;
             case 66: //b
             case 73: //i
               selection = (this.ui.field_body.getSelection() || {}).text;
@@ -243,6 +269,14 @@ Handles the bottom input part
         });
         this.ui.field_header.focus();
       },
+      onAddPost: function(event) {
+        event.preventDefault();
+        this.ui_state.set('editing', {
+          type: 'post',
+          parent: this.ui_state.get('viewing').id
+        });
+        this.ui.field_body.focus();
+      },
       onPost: function(event) {
         event.preventDefault();
         var id = this.ui_state.get('editing').id || '';
@@ -272,6 +306,12 @@ Handles the bottom input part
           type: this.ui.field_type.val() || '',
           order: order
         });
+      },
+      onShowNotifications: function(event) {
+        event && event.preventDefault();
+        if (Fruum.userUtils.countNotifications()) {
+          Fruum.io.trigger('fruum:notifications', { ids: Fruum.user.notifications });
+        }
       }
     });
   });

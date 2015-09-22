@@ -6,16 +6,14 @@
 
 var _ = require('underscore'),
     validators = require('./validator'),
-    Utils = require('./util'),
     logger = require('../../../logger'),
     Models = require('../../../models');
 
-module.exports = function(options, client) {
-  var utils = new Utils(options, client);
+module.exports = function(options, client, self) {
 
   // ------------------------------ LIST APPS ----------------------------------
 
-  this.list_apps = function(callback) {
+  self.list_apps = function(callback) {
     var values = [];
     client.search({
       index: 'applications',
@@ -35,7 +33,7 @@ module.exports = function(options, client) {
 
   // -------------------------------- ADD APP ----------------------------------
 
-  this.add_app = function(application, callback) {
+  self.add_app = function(application, callback) {
     //update creation date
     var app_id = application.get('id');
     client.create({
@@ -51,7 +49,7 @@ module.exports = function(options, client) {
       else {
         //create index
         client.indices.create({
-          index: utils.toIndex(app_id)
+          index: self.toIndex(app_id)
         }, function(error, response) {
           if (error) {
             logger.error(app_id, 'add_index', error);
@@ -60,7 +58,7 @@ module.exports = function(options, client) {
           else {
             //add mapping for users
             client.indices.putMapping({
-              index: utils.toIndex(app_id),
+              index: self.toIndex(app_id),
               type: 'user',
               body: {
                 user: {
@@ -74,6 +72,7 @@ module.exports = function(options, client) {
                     avatar: { type: 'string', index: 'not_analyzed' },
                     created: { type: 'long' },
                     last_login: { type: 'long' },
+                    last_logout: { type: 'long' },
                     meta: { type: 'object', enabled: false }
                   }
                 }
@@ -85,7 +84,7 @@ module.exports = function(options, client) {
             });
             //add mapping for doc
             client.indices.putMapping({
-              index: utils.toIndex(app_id),
+              index: self.toIndex(app_id),
               type: 'doc',
               body: {
                 doc: {
@@ -125,7 +124,7 @@ module.exports = function(options, client) {
               else {
                 var home_document = (new Models.Document()).toHome();
                 client.create({
-                  index: utils.toIndex(app_id),
+                  index: self.toIndex(app_id),
                   type: 'doc',
                   id: home_document.get('id'),
                   body: home_document.toJSON()
@@ -145,7 +144,7 @@ module.exports = function(options, client) {
 
   // ------------------------------- UPDATE APP --------------------------------
 
-  this.update_app = function(application, attributes, callback) {
+  self.update_app = function(application, attributes, callback) {
     var app_id = application.get('id');
     client.update({
       index: 'applications',
@@ -169,7 +168,7 @@ module.exports = function(options, client) {
 
   // ------------------------------- DELETE APP --------------------------------
 
-  this.delete_app = function(application, callback) {
+  self.delete_app = function(application, callback) {
     var app_id = application.get('id');
     client.delete({
       index: 'applications',
@@ -184,7 +183,7 @@ module.exports = function(options, client) {
         callback(application);
         //delete documents and users or index
         client.indices.delete({
-          index: utils.toIndex(app_id)
+          index: self.toIndex(app_id)
         }, function(error, response) {
           if (error) logger.error(app_id, 'delete_index', error);
         });
@@ -194,7 +193,7 @@ module.exports = function(options, client) {
 
   // --------------------------------- GET APP ---------------------------------
 
-  this.get_app = function(app_id, callback) {
+  self.get_app = function(app_id, callback) {
     client.get({
       index: 'applications',
       type: 'info',
@@ -211,7 +210,7 @@ module.exports = function(options, client) {
 
   // -------------------------- GET APP FROM API_KEY ---------------------------
 
-  this.get_api_key = function(api_key, callback) {
+  self.get_api_key = function(api_key, callback) {
     client.search({
       index: 'applications',
       type: 'info',

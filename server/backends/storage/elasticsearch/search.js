@@ -6,21 +6,91 @@
 
 var _ = require('underscore'),
     validators = require('./validator'),
-    Utils = require('./util'),
     Models = require('../../../models');
 
 function endsWith(str, suffix) {
   return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }
 
-module.exports = function(options, client) {
-  var utils = new Utils(options, client);
+module.exports = function(options, client, self) {
 
   // -------------------------------- SEARCH -----------------------------------
 
-  this.search = function(app_id, q, callback) {
+  function _fuzzy(q) {
+    return {
+      bool: {
+        should: [
+          {
+            bool: {
+              must: [
+                { match: { type: 'thread' } },
+                { match: { header: q } }
+              ]
+            }
+          },
+          {
+            bool: {
+              must: [
+                { match: { type: 'thread' } },
+                { match: { body: q } }
+              ]
+            }
+          },
+          {
+            bool: {
+              must: [
+                { match: { type: 'article' } },
+                { match: { header: q } }
+              ]
+            }
+          },
+          {
+            bool: {
+              must: [
+                { match: { type: 'article' } },
+                { match: { body: q } }
+              ]
+            }
+          },
+          {
+            bool: {
+              must: [
+                { match: { type: 'post' } },
+                { match: { body: q } }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+  function _tag(q) {
+    return {
+      bool: {
+        should: [
+          {
+            bool: {
+              must: [
+                { match: { tags: q } }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+
+  self.search = function(app_id, q, callback) {
+    var query = {}, no_highlight = false;
+    if (q && q[0] == '[' && q[q.length - 1] == ']') {
+      query = _tag(q.substr(1, q.length - 2));
+      no_highlight = true;
+    }
+    else {
+      query = _fuzzy(q);
+    }
     client.search({
-      index: utils.toIndex(app_id),
+      index: self.toIndex(app_id),
       type: 'doc',
       body: {
         from: 0,
@@ -37,52 +107,7 @@ module.exports = function(options, client) {
                 ]
               }
             },
-            query: {
-              bool: {
-                should: [
-                  {
-                    bool: {
-                      must: [
-                        { match: { type: 'thread' } },
-                        { match: { header: q } }
-                      ]
-                    }
-                  },
-                  {
-                    bool: {
-                      must: [
-                        { match: { type: 'thread' } },
-                        { match: { body: q } }
-                      ]
-                    }
-                  },
-                  {
-                    bool: {
-                      must: [
-                        { match: { type: 'article' } },
-                        { match: { header: q } }
-                      ]
-                    }
-                  },
-                  {
-                    bool: {
-                      must: [
-                        { match: { type: 'article' } },
-                        { match: { body: q } }
-                      ]
-                    }
-                  },
-                  {
-                    bool: {
-                      must: [
-                        { match: { type: 'post' } },
-                        { match: { body: q } }
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
+            query: query
           }
         },
         highlight: {
@@ -98,7 +123,10 @@ module.exports = function(options, client) {
       var results = [];
       if (!error && response && response.hits && response.hits.hits) {
         _.each(response.hits.hits, function(hit) {
-          if (hit.highlight) {
+          if (no_highlight) {
+            results.push(new Models.Document(hit._source));
+          }
+          else if (hit.highlight) {
             var found = false;
             if (hit.highlight.header && hit.highlight.header.length) {
               found = true;
@@ -119,15 +147,22 @@ module.exports = function(options, client) {
 
   // --------------------------- SEARCH ON FIELDS ------------------------------
 
-  this.search_attributes = function(app_id, attributes, callback) {
-    var matches = [], not_matches = [];
+  self.search_attributes = function(app_id, attributes, callback) {
+    var matches = [], not_matches = [], filter = {};
     for (var key in attributes) {
       var term = {},
           value = attributes[key],
           range = key.match(/__lte|__lt|__gte|__gt/),
           negative = key.match(/__not/);
 
-      if (range && range.length) {
+      if (key === 'ids') {
+        filter = {
+          ids: {
+            values: value
+          }
+        }
+      }
+      else if (range && range.length) {
         var term_val = {};
         range = range[0];
         key = key.replace(range, '');
@@ -149,15 +184,20 @@ module.exports = function(options, client) {
       }
     }
     client.search({
-      index: utils.toIndex(app_id),
+      index: self.toIndex(app_id),
       type: 'doc',
       body: {
         from: 0,
         size: options.elasticsearch.max_children,
         query: {
-          bool: {
-            must: matches,
-            must_not: not_matches
+          filtered: {
+            filter: filter,
+            query: {
+              bool: {
+                must: matches,
+                must_not: not_matches
+              }
+            }
           }
         }
       }

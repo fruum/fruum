@@ -6,7 +6,11 @@
 #fruum-preview {
   position: fixed !important;
   z-index: 9999 !important;
-  background-color: $background-helper-base-color !important;
+  @if ( lightness( $background-helper-base-color) > 10 ) {
+    background-color: darken( $background-helper-base-color, 0.03 ) !important;
+  } @else {
+    background-color: darken( $background-helper-base-color, 0.1 ) !important;
+  }
   font-size: $base-grid-big !important;
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -44,8 +48,8 @@
     padding: $small-font-basegrid relative-ems( $fruum-whitespace, $responsive-small-font );
     width: 100%;
     min-width: 400px;
-    background-color: $background-base-color;
-    border-bottom: 1px solid $inverted-option-color;
+    background-color: $background-helper-base-color;
+    border-bottom: 1px solid $dividers-colors;
     line-height: $small-font-basegrid*4;
     font-weight: $important-font-weight;
     font-size: $responsive-small-font;
@@ -57,8 +61,16 @@
       height: $nav-temp-avatar-size;
       line-height: $nav-temp-avatar-size;
       font-size: $nav-temp-avatar-font;
-      float: left;
       margin-right: relative-ems( 1em, $nav-temp-avatar-font)/2;
+      float: left;
+    }
+    .fruum-temp-search {
+      float: right;
+      border: 1px solid $disabled-text-color;
+      @include block-radius;
+      width: 4*$small-font-basegrid;
+      height: 4*$small-font-basegrid;
+      text-align: center;
     }
   }
   .fruum-content-section {
@@ -77,12 +89,33 @@
     }
     .fruum-loader {
       position: absolute;
+      color: $muted-text-color;
       top: relative-ems( 13em, $responsive-enormous-font );
       left: relative-ems( $fruum-whitespace, $responsive-enormous-font );
       font-size: $responsive-enormous-font;
     }
-    .fruum-temp-title {
-      font-size: $responsive-big-font;
+  }
+  .fruum-temp-title {
+    font-size: $responsive-big-font;
+    line-height: 4*$big-font-basegrid;
+  }
+  .fruum-interaction-section {
+    position: absolute;
+    min-width: 400px;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    padding: $fruum-whitespace/2 $fruum-whitespace;
+    background-color: $background-helper-base-color;
+    border-top: 1px solid $dividers-colors;
+    color: $muted-text-color;
+    .fruum-temp-avatar {
+      width: $default-font-basegrid*4;
+      height: $default-font-basegrid*4;
+      line-height: $default-font-basegrid*4;
+      font-size: $responsive-default-font;
+      float: right;
+
     }
   }
 }

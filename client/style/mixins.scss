@@ -137,7 +137,7 @@ $enormous-font-basegrid: relative-ems( $base-grid, $responsive-enormous-font );
   letter-spacing: 1px;
   padding-left: $default-font-basegrid/8;
   padding-right: $default-font-basegrid/8;
-  min-width: $default-font-basegrid*8
+  min-width: $default-font-basegrid*8;
 }
 
 @mixin default-button-block {

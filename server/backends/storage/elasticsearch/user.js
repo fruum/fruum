@@ -6,18 +6,16 @@
 
 var _ = require('underscore'),
     validators = require('./validator'),
-    Utils = require('./util'),
     logger = require('../../../logger'),
     Models = require('../../../models');
 
-module.exports = function(options, client) {
-  var utils = new Utils(options, client);
+module.exports = function(options, client, self) {
 
   // ------------------------------- ADD USER ----------------------------------
 
-  this.add_user = function(app_id, user, callback) {
+  self.add_user = function(app_id, user, callback) {
     client.create({
-      index: utils.toIndex(app_id),
+      index: self.toIndex(app_id),
       type: 'user',
       id: user.get('id'),
       body: user.toJSON()
@@ -34,10 +32,10 @@ module.exports = function(options, client) {
 
   // ---------------------------- UPDATE USER ----------------------------------
 
-  this.update_user = function(app_id, user, attributes, callback) {
-    var user_id = user.get('id'), that = this;
+  self.update_user = function(app_id, user, attributes, callback) {
+    var user_id = user.get('id');
     client.update({
-      index: utils.toIndex(app_id),
+      index: self.toIndex(app_id),
       type: 'user',
       id: user_id,
       retryOnConflict: options.elasticsearch.retry_on_conflict,
@@ -54,7 +52,7 @@ module.exports = function(options, client) {
         if (!attributes ||
             (attributes && (attributes.username || attributes.displayname || attributes.avatar)))
         {
-          utils.bulk_update(
+          self.bulk_update(
             app_id,
             user_id, //q
             ['user_id'], //fields
@@ -74,9 +72,9 @@ module.exports = function(options, client) {
 
   // ------------------------------- GET USER ----------------------------------
 
-  this.get_user = function(app_id, id, callback) {
+  self.get_user = function(app_id, id, callback) {
     client.get({
-      index: utils.toIndex(app_id),
+      index: self.toIndex(app_id),
       type: 'user',
       id: id,
       refresh: true
@@ -90,9 +88,9 @@ module.exports = function(options, client) {
     });
   }
 
-  // ------------------------------- MATCH USERS ----------------------------------
+  // ------------------------------- MATCH USERS -------------------------------
 
-  this.match_users = function(app_id, attributes, callback) {
+  self.match_users = function(app_id, attributes, callback) {
     var matches = [];
     for (var key in attributes) {
       var entry = {};
@@ -102,7 +100,7 @@ module.exports = function(options, client) {
       });
     }
     client.search({
-      index: utils.toIndex(app_id),
+      index: self.toIndex(app_id),
       type: 'user',
       body: {
         from: 0,
@@ -129,4 +127,34 @@ module.exports = function(options, client) {
       callback(results);
     });
   }
+
+  // ---------------------FIND USERS THAT ARE WATCHING -------------------------
+
+  self.find_watch_users = function(app_id, watch_list, callback) {
+    client.search({
+      index: self.toIndex(app_id),
+      type: 'user',
+      body: {
+        from: 0,
+        size: options.elasticsearch.max_children,
+        query: {
+          multi_match: {
+            query: watch_list,
+            fields: ['watch']
+          }
+        }
+      }
+    }, function(error, response) {
+      var results = [];
+      if (!error && response && response.hits && response.hits.hits) {
+        _.each(response.hits.hits, function(hit) {
+          if (validators.find_watch_users(hit._source, watch_list)) {
+            results.push(new Models.User(hit._source));
+          }
+        });
+      }
+      callback(results);
+    });
+  }
+
 }

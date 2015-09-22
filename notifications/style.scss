@@ -1,0 +1,137 @@
+@import '../client/style/variables';
+
+//__APPLICATION_CUSTOM_SASS__
+
+body {
+  background-color: #fff;
+  margin: 0;
+  padding: 0;
+  font-size: 8px;
+  text-align: center;
+}
+
+.maincontainer {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.maincontent {
+  width: 550px;
+  padding: 0;
+  margin: 0;
+  @if ( lightness($background-helper-base-color) > 10 ) {
+    background-color: darken( $background-helper-base-color, 3% );
+  } @else {
+    background-color: darken( $background-helper-base-color, 10% );
+  }
+  font-family: $forum-fonts;
+  color: $base-text-color;
+  td {
+    border-left: 1px solid $dividers-colors;
+    border-right: 1px solid $dividers-colors;
+  }
+  tr:first-child td {
+    border-top: 1px solid $dividers-colors;
+  }
+  tr:last-child td {
+    border-bottom: 1px solid $dividers-colors;
+  }
+}
+
+.contentheader {
+  background-color: $forum-header-color;
+  color: $forum-base-color;
+  font-size: $responsive-bigger-font;
+  padding: 15px 20px;
+  border-bottom: 1px solid $dividers-colors;
+}
+
+.content-head {
+  border-bottom: 1px solid $dividers-colors;
+  background-color: $background-helper-base-color;
+}
+
+.content-footer {
+  border-top: 1px solid $dividers-colors;
+  background-color: $background-helper-base-color;
+}
+
+.content-sumactivity {
+  color: $disabled-text-color;
+  font-size: $responsive-big-font;
+  padding: 30px 20px;
+}
+
+.contentitem {
+  padding-top: 0;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 20px;
+  &:first-child {
+    padding-top: 20px;
+  }
+  h5 {
+    margin:0;
+    padding: 0;
+    font-size: $responsive-big-font;
+    .external-link {
+      color: $secondary-action-color;
+    }
+  }
+}
+
+.disclaimeritem {
+  padding: 4px 6px;
+  font-size: $responsive-tiny-font;
+  background-color: $disabled-text-color;
+  color: $background-helper-base-color;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+}
+
+.external-link {
+  color: $main-action-color;
+  text-decoration: none;
+}
+
+.internal-link {
+  color: $main-action-color;
+  text-decoration: none;
+}
+
+p {
+  color: $disabled-text-color;
+  font-size: $responsive-default-font;
+  margin-bottom: 10px;
+  margin-top: 4px;
+}
+
+.contentdivider {
+  border-top: 1px solid $dividers-colors;
+  height: 20px;
+  font-size: $responsive-small-font;
+}
+
+.content-helpitem {
+  padding: 10px 20px 20px;
+  font-size: $responsive-small-font;
+}
+
+.contentinfo {
+  padding: 5px 20px;
+  color: $disabled-text-color;
+  font-size: $responsive-tiny-font;
+  a {
+    color: $main-action-color;
+    text-decoration: none;
+  }
+}
+
+.footer-disclaimer {
+  color: #888;
+  font-size: 1.5em;
+  padding: 5px 21px;
+}

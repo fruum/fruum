@@ -6,14 +6,13 @@
 
 var _ = require('underscore'),
     validators = require('./validator'),
-    Utils = require('./util'),
     logger = require('../../../logger');
 
-module.exports = function(options, client) {
-  var utils = new Utils(options, client);
-  this.gc = function(app_id, timestamp, callback) {
+module.exports = function(options, client, self) {
+
+  self.gc = function(app_id, timestamp, callback) {
     client.search({
-      index: utils.toIndex(app_id),
+      index: self.toIndex(app_id),
       type: 'doc',
       refresh: true,
       body: {
@@ -66,7 +65,7 @@ module.exports = function(options, client) {
           _.each(response.hits.hits, function(hit) {
             if (validators.delete(hit._source, timestamp)) {
               body.push({
-                index: utils.toIndex(app_id),
+                index: self.toIndex(app_id),
                 type: 'doc',
                 id: hit._source.id
               });

@@ -1,6 +1,7 @@
 <!-- title template -->
 <script type="text/template" id="fruum-template-title">
-  <% if (viewing.type === 'channel' || viewing.type === 'thread' || viewing.type === 'article') { %>
+  <% if (!searching && !has_notifications) { %>
+    <% if (viewing.type === 'channel' || viewing.type === 'thread' || viewing.type === 'article') { %>
   <div>
     <span class="fruum-topic-title">
       <% if (!viewing.visible) { %>
@@ -49,7 +50,7 @@
   <% } %>
   <div class="fruum-item-actions">
     <a href="javascript:;" class="fruum-link fruum-icon fruum-icon-copy" data-action="copy_link" data-fruumtipsy-left="Copy link"></a>
-  <% if (!Fruum.user.anonymous && Fruum.user.id != viewing.user_id && viewing.type !== 'category' && viewing.type !== 'channel') { %>
+  <% if (!Fruum.user.anonymous && viewing.type !== 'channel') { %>
     <% if (Fruum.userUtils.isWatching(viewing.id)) { %>
     <a href="javascript:;" class="fruum-link fruum-item-active fruum-icon fruum-icon-watch" data-action="unwatch" data-fruumtipsy-left="Unwatch"></a>
     <% } else { %>
@@ -57,4 +58,9 @@
     <% } %>
   <% } %>
   </div>
+  <% } else if (has_notifications) { %>
+  <span class="fruum-topic-title">
+    Updates on topics I watch
+  </span>
+  <% } %>
 </script>

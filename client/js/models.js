@@ -51,6 +51,8 @@ Models
         archived: false,
         //archived date unix timestamp
         archived_ts: 0,
+        //tags
+        tags: [],
         //metadata
         meta: {}
       }
@@ -99,6 +101,24 @@ Models
       },
       isWatching: function(docid) {
         return Fruum.user.watch && Fruum.user.watch.indexOf(docid) >= 0;
+      },
+      hasNotification: function(docid) {
+        return Fruum.user.notifications && Fruum.user.notifications.indexOf(docid) >= 0;
+      },
+      addNotification: function(docid) {
+        if (!docid) return;
+        Fruum.user.notifications = Fruum.user.notifications || [];
+        if (Fruum.user.notifications.indexOf(docid) < 0)
+          Fruum.user.notifications.push(docid);
+      },
+      removeNotification: function(docid) {
+        if (!docid || !Fruum.user.notifications) return;
+        var index = Fruum.user.notifications.indexOf(docid);
+        if (index >= 0) Fruum.user.notifications.splice(index, 1);
+      },
+      countNotifications: function() {
+        if (!Fruum.user.notifications) return 0;
+        return Fruum.user.notifications.length;
       }
     }
     //Application details

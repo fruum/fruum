@@ -21,12 +21,22 @@
     "max_post_size": 0
   },
 
+  "cron": {
+    "_help": "https://www.npmjs.com/package/cron",
+    "_timezone": "America/Los_Angeles",
+    "digest": "* * 1 * * *",
+    "monitor": "* * */2 * * *"
+  },
+
   "plugins": [
     "giphy",
     "youtube",
     "dropbox",
     "twitchtv",
-    "soundcloud"
+    "soundcloud",
+    "digest",
+    "report",
+    "monitor"
   ],
 
   "elasticsearch": {
@@ -42,10 +52,18 @@
     "default": 10
   },
 
+  "notifications": {
+    "defaults": {
+      "from": {
+        "email": "",
+        "name": "Fruum notifications"
+      },
+      "administrators": []
+    }
+  },
+
   "mandrill": {
-    "api_key": "",
-    "from_email": "",
-    "from_name": "",
-    "failsafe_admins": []
+    "api_key": ""
   }
+
 }

@@ -9,23 +9,22 @@ var _ = require('underscore'),
     slug = require('slug'),
     logger = require('../../../logger');
 
-module.exports = function(options, client) {
-  var that = this;
+module.exports = function(options, client, self) {
   //helpers
-  that.toIndex = function(app_id) {
+  self.toIndex = function(app_id) {
     return 'app:' + app_id;
   }
   //try to find a unique slug based on header (truncate to max 64 characters)
-  this.unique = function(app_id, document, doc_id, counter, callback) {
+  self.unique = function(app_id, document, doc_id, counter, callback) {
     var new_id = doc_id + (counter?'-' + counter:'');
     client.exists({
-      index: that.toIndex(app_id),
+      index: self.toIndex(app_id),
       type: 'doc',
       id: new_id,
       refresh: true
     }, function(error, exists) {
       if (exists === true) {
-        that.unique(app_id, document, doc_id, counter + 1, callback);
+        self.unique(app_id, document, doc_id, counter + 1, callback);
       }
       else {
         document.set('id', new_id);
@@ -34,10 +33,10 @@ module.exports = function(options, client) {
     });
   }
   //find a unique slug for the document id
-  this.slugify = function(app_id, document, callback) {
+  self.slugify = function(app_id, document, callback) {
     var existing_id = document.get('id');
     if (existing_id && existing_id.length > 2) {
-      this.unique(app_id, document, existing_id, 0, callback);
+      self.unique(app_id, document, existing_id, 0, callback);
       return;
     }
     if (document.get('type') == 'post' || !document.get('header')) {
@@ -45,14 +44,14 @@ module.exports = function(options, client) {
       callback(document);
       return;
     }
-    this.unique(app_id, document, slug(
+    self.unique(app_id, document, slug(
       document.get('header').substr(0, 64).toLowerCase().replace(/\[(.*?)\]/g, '')
     ), 0, callback);
   }
   //count search results based on qsl
-  this.count = function(app_id, body_qsl, callback) {
+  self.count = function(app_id, body_qsl, callback) {
     client.count({
-      index: that.toIndex(app_id),
+      index: self.toIndex(app_id),
       type: 'doc',
       refresh: true,
       body: body_qsl
@@ -68,7 +67,7 @@ module.exports = function(options, client) {
     });
   }
   //bulk operations
-  this.bulk_update = function(app_id, q, fields, attributes, validator, callback) {
+  self.bulk_update = function(app_id, q, fields, attributes, validator, callback) {
     var body_qsl = {
       query: {
         multi_match: {
@@ -77,13 +76,13 @@ module.exports = function(options, client) {
         }
       }
     }
-    this.count(app_id, body_qsl, function(count) {
+    self.count(app_id, body_qsl, function(count) {
       body_qsl = _.extend(body_qsl, {
         from: 0,
         size: Math.max(count, options.elasticsearch.max_children)
       });
       client.search({
-        index: that.toIndex(app_id),
+        index: self.toIndex(app_id),
         type: 'doc',
         refresh: true,
         body: body_qsl
@@ -97,7 +96,7 @@ module.exports = function(options, client) {
             _.each(response.hits.hits, function(hit) {
               if (validator(hit._source, q)) {
                 body.push({ update: {
-                  _index: that.toIndex(app_id),
+                  _index: self.toIndex(app_id),
                   _type: 'doc',
                   _id: hit._source.id
                 }});
@@ -105,7 +104,7 @@ module.exports = function(options, client) {
               }
             });
             client.bulk({
-              index: that.toIndex(app_id),
+              index: self.toIndex(app_id),
               type: 'doc',
               refresh: true,
               body: body
@@ -128,7 +127,7 @@ module.exports = function(options, client) {
             _.each(response.hits.hits, function(hit) {
               if (validator(hit._source, q)) {
                 body.push({
-                  index: that.toIndex(app_id),
+                  index: self.toIndex(app_id),
                   type: 'doc',
                   id: hit._source.id,
                   retryOnConflict: options.elasticsearch.retry_on_conflict,
@@ -154,7 +153,7 @@ module.exports = function(options, client) {
       });
     });
   }
-  this.bulk_delete = function(app_id, q, fields, validator, callback) {
+  self.bulk_delete = function(app_id, q, fields, validator, callback) {
     var body_qsl = {
       query: {
         multi_match: {
@@ -163,13 +162,13 @@ module.exports = function(options, client) {
         }
       }
     }
-    this.count(app_id, body_qsl, function(count) {
+    self.count(app_id, body_qsl, function(count) {
       body_qsl = _.extend(body_qsl, {
         from: 0,
         size: Math.max(count, options.elasticsearch.max_children)
       });
       client.search({
-        index: that.toIndex(app_id),
+        index: self.toIndex(app_id),
         type: 'doc',
         refresh: true,
         body: body_qsl
@@ -183,14 +182,14 @@ module.exports = function(options, client) {
             _.each(response.hits.hits, function(hit) {
               if (validator(hit._source, q)) {
                 body.push({ delete: {
-                  _index: that.toIndex(app_id),
+                  _index: self.toIndex(app_id),
                   _type: 'doc',
                   _id: hit._source.id
                 }});
               }
             });
             client.bulk({
-              index: that.toIndex(app_id),
+              index: self.toIndex(app_id),
               type: 'doc',
               refresh: true,
               body: body
@@ -213,7 +212,7 @@ module.exports = function(options, client) {
             _.each(response.hits.hits, function(hit) {
               if (validator(hit._source, q)) {
                 body.push({
-                  index: that.toIndex(app_id),
+                  index: self.toIndex(app_id),
                   type: 'doc',
                   id: hit._source.id
                 });

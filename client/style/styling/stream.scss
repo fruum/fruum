@@ -20,8 +20,7 @@
   font-size: $small-stream-default-font;
   line-height: $small-stream-default-lineheight;
 
-  // compute stream-basegrid based on responsive-default-font
-  $default-basegrid: $small-stream-basegrid;
+
 
   // force any elements included max width
   // so that they do not extend beyond by mistake
@@ -31,12 +30,18 @@
     text-shadow: rgba(0,0,0,.01) 0 0 1px;
   }
 
+  // remove last child bottom margin if it exists
+
+  > *:last-child {
+    margin-bottom: 0;
+  }
+
   h1 {
     font-size: $small-stream-h1;
     font-weight: $small-stream-h1-weight;
     line-height: $small-stream-h1-lineheight;
     color: $important-text-color;
-    margin: 1em 0 relative-ems( $small-stream-basegrid, $small-stream-h1);
+    margin: 1em 0 relative-ems( $small-stream-lineheight, $small-stream-h1);
   }
 
   h2 {
@@ -44,7 +49,7 @@
     font-weight: $small-stream-h2-weight;
     line-height: $small-stream-h2-lineheight;
     color: $important-text-color;
-    margin: 1em 0 relative-ems( $small-stream-basegrid, $small-stream-h2 )/2;
+    margin: 1em 0 relative-ems( $small-stream-lineheight, $small-stream-h2 )/2;
   }
 
   h3 {
@@ -52,7 +57,7 @@
     font-weight: $small-stream-h3-weight;
     line-height: $small-stream-h3-lineheight;
     color: $important-text-color;
-    margin: 1em 0  relative-ems( $small-stream-basegrid, $small-stream-h3)/2;
+    margin: 1em 0  relative-ems( $small-stream-lineheight, $small-stream-h3)/2;
   }
 
   h4 {
@@ -60,7 +65,7 @@
     font-weight: $small-stream-h4-weight;
     line-height: $small-stream-h4-lineheight;
     color: $base-text-color;
-    margin: 1em 0 relative-ems( $small-stream-basegrid, $small-stream-h4)/2;
+    margin: 1em 0 relative-ems( $small-stream-lineheight, $small-stream-h4)/2;
   }
 
   h5 {
@@ -89,7 +94,7 @@
 
 
   p {
-    margin-bottom: $default-basegrid;
+    margin-bottom: $small-stream-lineheight;
   }
 
   a:not([class]) {
@@ -126,9 +131,9 @@
     background-color: darken( $background-helper-base-color, 6% );
     border: 1px solid $muted-text-color;
     @include block-radius(1px);
-    padding: $default-basegrid/2;
-    margin-top: $default-basegrid;
-    margin-bottom: $default-basegrid;
+    padding: 0.5em;
+    margin-top: $small-stream-lineheight;
+    margin-bottom: $small-stream-lineheight;
     overflow: auto;
     white-space: pre;
     code {
@@ -139,22 +144,22 @@
 
   code {
     background-color: darken( $background-helper-base-color, 5% );
-    padding: 4px $default-basegrid 2px;
+    padding: 4px 0.3em 2px;
     @include block-radius(2px);
     &:not(:first-child) {
-      margin-top: -0.5*$default-basegrid;
+      margin-top: -0.5*$small-stream-lineheight;
     }
   }
 
   ol,
   ul {
     position: relative;
-    margin: 0 0 $default-basegrid $default-basegrid;
-    padding: 0 0 0 $default-basegrid*2;
+    margin: 0 0 $small-stream-lineheight 1.5em;
+    padding: 0 0 0 0.5em;
     list-style-position: outside;
     color: inherit;
     &:not(:first-child) {
-      margin-top: -0.5*$default-basegrid;
+      margin-top: -0.5*$small-stream-lineheight;
     }
 
     & > li {
@@ -163,12 +168,12 @@
       margin: 0;
       padding: 0;
       &:not(:last-child) {
-        margin-bottom: $default-basegrid;
+        margin-bottom: 1em;
       }
     }
   }
 
-  ol { list-style-type: decimal-leading-zero; padding-left: $default-basegrid*3; }
+  ol { list-style-type: decimal-leading-zero; padding-left: 2em; }
   ul { list-style-type: disc; }
 
 
@@ -176,20 +181,20 @@
   img {
     position: relative;
     display: block;
-    margin: $default-basegrid 0;
+    margin: $small-stream-lineheight 0;
     max-width: 100%;
   }
 
 
 
   $table-borders: darken( $muted-text-color, 4% );
-  $table-padding: $default-basegrid;
+  $table-padding: 0.5em;
   table {
     position: relative;
     border-collapse: collapse;
     border-spacing: 0;
     padding: 0;
-    margin: $default-basegrid 0 $default-basegrid*2;
+    margin: $small-stream-lineheight 0 $small-stream-lineheight*3/2;
     border: 1px solid $table-borders;
 
     thead {
@@ -217,10 +222,15 @@
           background-color: lighten( $background-helper-base-color, 2% );
         }
       }
+      &:hover {
+        th,td {
+          background-color: darken( $background-helper-base-color, 1%);
+        }
+      }
     }
 
     th,td {
-      padding:$table-padding/2 $table-padding;
+      padding: $table-padding $table-padding;
       &:not(:last-child) {
         border-right: 1px solid $table-borders;
       }
@@ -233,9 +243,9 @@
     position: relative;
     display: block;
     width: 100%;
-    margin-top: $default-basegrid;
-    margin-bottom: $default-basegrid;
-    padding: $default-basegrid*2 $default-basegrid $default-basegrid*2;
+    margin-top: $small-stream-lineheight;
+    margin-bottom: $small-stream-lineheight;
+    padding: 1em;
     border: 1px solid $muted-text-color;
     border-left: 4px solid $disabled-text-color;
     color: $disabled-text-color;
@@ -250,12 +260,12 @@
       color: inherit;
     }
     > blockquote:only-child {
-      padding-left: $default-basegrid/2;
-      top: -$default-basegrid*2;
-      margin-bottom: -$default-basegrid*4;
-      left: -$default-basegrid;
-      width: calc(100% + #{$default-basegrid*2});
-      max-width: calc(100% + #{$default-basegrid*2}) !important;
+      padding-left: 1em;
+      top: -1em;
+      margin-bottom: -2em;
+      left: -1em;
+      width: calc(100% + 2em);
+      max-width: calc(100% + 2em) !important;
       border:none;
       border-left: 50px solid $disabled-text-color;
       @include block-radius( 0 );
@@ -265,7 +275,7 @@
         display: block;
         position: absolute;
         left: -42px;
-        top: 0;
+        top: 0.5em;
         color: rgba( $background-helper-base-color, 0.5 );
         width: 30px;
         height: 30px;
@@ -280,8 +290,8 @@
 
   hr {
     width: 80%;
-    margin-top: $default-basegrid*2;
-    margin-bottom: $default-basegrid*2;
+    margin-top: $small-stream-lineheight;
+    margin-bottom: $small-stream-lineheight;
     margin-left: 10%;
     margin-right: 10%;
     border-width: 0;
@@ -294,7 +304,14 @@
   iframe {
     width: 100%;
     min-height: basegrid-mod( 190px );
-    margin: $default-basegrid 0;
+    margin: $small-stream-lineheight 0;
+  }
+
+
+
+  // magic for lonely emoji posts
+  *:only-child [data-fruumemoji]:only-child:before {
+    font-size: 250%;
   }
 }
 

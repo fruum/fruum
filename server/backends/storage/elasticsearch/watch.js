@@ -6,17 +6,15 @@
 
 var _ = require('underscore'),
     validators = require('./validator'),
-    Utils = require('./util'),
     logger = require('../../../logger');
 
-module.exports = function(options, client, driver) {
-  var utils = new Utils(options, client);
+module.exports = function(options, client, self) {
 
   // -------------------------------- WATCH ------------------------------------
 
-  this.watch = function(app_id, document, user, callback) {
+  self.watch = function(app_id, document, user, callback) {
     //get latest user
-    driver.get_user(app_id, user.get('id'), function(latest_user) {
+    self.get_user(app_id, user.get('id'), function(latest_user) {
       if (!latest_user) {
         callback();
       }
@@ -25,7 +23,9 @@ module.exports = function(options, client, driver) {
             doc_id = document.get('id');
         if (watchlist.indexOf(doc_id) == -1) {
           watchlist.push(doc_id);
-          driver.update_user(app_id, latest_user, { watch: watchlist }, function() {
+          user.set('watch', watchlist);
+          self.update_user(app_id, latest_user, { watch: watchlist }, function() {
+            logger.info(app_id, 'watch:' + doc_id, user);
             callback(document);
           });
         }
@@ -38,9 +38,9 @@ module.exports = function(options, client, driver) {
 
   // -------------------------------- UNWATCH ----------------------------------
 
-  this.unwatch = function(app_id, document, user, callback) {
+  self.unwatch = function(app_id, document, user, callback) {
     //get latest user
-    driver.get_user(app_id, user.get('id'), function(latest_user) {
+    self.get_user(app_id, user.get('id'), function(latest_user) {
       if (!latest_user) {
         callback();
       }
@@ -49,7 +49,9 @@ module.exports = function(options, client, driver) {
             doc_id = document.get('id');
         if (watchlist.indexOf(doc_id) >= 0) {
           watchlist = _.without(watchlist, doc_id);
-          driver.update_user(app_id, latest_user, { watch: watchlist }, function() {
+          user.set('watch', watchlist);
+          self.update_user(app_id, latest_user, { watch: watchlist }, function() {
+            logger.info(app_id, 'unwatch:' + doc_id, user);
             callback(document);
           });
         }

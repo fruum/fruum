@@ -5,17 +5,13 @@
 'use strict';
 
 var _ = require('underscore'),
-    Utils = require('./util'),
-    Applications = require('./application'),
     logger = require('../../../logger');
 
-module.exports = function(options, client, driver) {
-  var utils = new Utils(options, client);
-  var applications = new Applications(options, client);
+module.exports = function(options, client, self) {
 
   // -------------------------------- SETUP -- ---------------------------------
 
-  this.setup = function() {
+  self.setup = function() {
     client.indices.create({
       index: 'applications'
     }, function(error, response) {
@@ -40,6 +36,8 @@ module.exports = function(options, client, driver) {
                 created: { type: 'long' },
                 tier: { type: 'string', index: 'not_analyzed' },
                 private_key: { type: 'string', index: 'not_analyzed' },
+                notifications_email: { type: 'string', index: 'not_analyzed' },
+                contact_email: { type: 'string', index: 'not_analyzed' },
                 meta: { type: 'object', enabled: false }
               }
             }
@@ -51,7 +49,7 @@ module.exports = function(options, client, driver) {
 
   // --------------------------------- MIGRATE ---------------------------------
 
-  this.migrate = function() {
+  self.migrate = function() {
     //SAMPLE MIGRATION, e.g. adding a new mapping after setup
 
     /*
@@ -68,12 +66,12 @@ module.exports = function(options, client, driver) {
     }, function(error, response) {
       console.log(error?error:response);
     });
-    driver.list_apps(function(apps) {
+    self.list_apps(function(apps) {
       _.each(apps, function(app) {
         var app_id = app.get('id');
         //add mapping for users
         client.indices.putMapping({
-          index: utils.toIndex(app_id),
+          index: self.toIndex(app_id),
           type: 'user',
           body: {
             user: {
@@ -87,7 +85,7 @@ module.exports = function(options, client, driver) {
         });
         //add mapping for doc
         client.indices.putMapping({
-          index: utils.toIndex(app_id),
+          index: self.toIndex(app_id),
           type: 'doc',
           body: {
             doc: {
@@ -106,11 +104,11 @@ module.exports = function(options, client, driver) {
 
   // -------------------------------- TEARDOWN ---------------------------------
 
-  this.teardown = function() {
-    applications.list_apps(function(apps) {
+  self.teardown = function() {
+    self.list_apps(function(apps) {
       _.each(apps, function(app) {
         client.indices.delete({
-          index: utils.toIndex(app.get('id'))
+          index: self.toIndex(app.get('id'))
         }, function(error, response) {
           if (error) {
             logger.error(0, 'teardown_app', error);

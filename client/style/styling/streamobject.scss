@@ -50,6 +50,7 @@
     max-width: 45%;
     white-space: nowrap;
     text-overflow: ellipsis;
+    color: $base-text-color;
   }
   .fruum-secondary-data {
     // has a font-size of responsive-small-font
@@ -76,7 +77,7 @@
       font-size: relative-ems( $responsive-small-font, $responsive-default-font );
     }
     .fruum-category-title {
-      font-size: relative-ems( $responsive-big-font, $responsive-default-font);
+      font-size: 1em;
     }
   }
   .fruum-object-meta {
@@ -199,7 +200,6 @@
   left: auto;
   right: 0;
   top: 0;
-  background-color: rgba( $background-helper-base-color, 0.9 );
   text-align: right;
   font-size: $responsive-bigger-font;
   opacity: 0.15;
@@ -210,6 +210,7 @@
   }
   &.fruum-manage-display {
     width: auto;
+    background-color: rgba( $background-helper-base-color, 0.9 );
     padding-left: $bigger-font-basegrid;
     padding-right: $bigger-font-basegrid*5;
     opacity: 1;

@@ -9,7 +9,6 @@ var path = require('path'),
     express = require('express'),
     bodyParser = require('body-parser'),
     compress = require('compression'),
-    request = require('request'),
     app = express(),
     http = require('http').Server(app),
     sass = require('node-sass'),
@@ -19,7 +18,7 @@ var path = require('path'),
     buildify = require('buildify'),
     logger = require('./logger');
 
-function FruumServer(options) {
+function FruumServer(options, cli_cmd) {
   logger.system("Starting Fruum");
   options = options || {};
   //defaults
@@ -28,6 +27,7 @@ function FruumServer(options) {
   );
   options.static_prefix = options.static_prefix || '/static';
   options.port = options.port || 3000;
+  options.gc_msec = options.gc_msec || 3600000;
   options.storage_engine = options.storage_engine || 'base';
   options.auth_engine = options.auth_engine || 'base';
   options.email_engine = options.email_engine || 'base';
@@ -53,6 +53,11 @@ function FruumServer(options) {
     fs.mkdirSync(options.logs);
   }
 
+  //suppress plugins on CLI
+  if (cli_cmd) delete options.plugins;
+
+  // ------------------------------ SERVER SETUP -------------------------------
+
   //enable CORS
   app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -67,61 +72,55 @@ function FruumServer(options) {
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
 
+  // ------------------------------ ENGINE START -------------------------------
+
   //start Engine
   var ENGINE = require('./engine');
-  var engine = new ENGINE(options, {
+  var instance = {
     server: app
-  });
+  }
+  var engine = new ENGINE(options, instance);
 
   // ----------------------------- COMMAND LINE --------------------------------
 
-  if (options.setup) {
-    //database setup
-    engine.setup();
-    return;
-  }
-  if (options.migrate) {
-    //database migrate
-    engine.migrate();
-    return;
-  }
-  if (options.teardown) {
-    //database teardown
-    engine.teardown();
-    return;
-  }
-  if (options.app) {
-    //register new app
-    switch (options.app.action) {
-      case 'list':
-        engine.list_apps();
+  if (cli_cmd) {
+    switch (cli_cmd.action) {
+      case 'setup':
+        engine.setup();
         break;
-      case 'gc':
-        engine.gc(options.app.app_id);
+      case 'migrate':
+        engine.migrate();
         break;
-      case 'add':
-        engine.add_app(options.app);
-        break;
-      case 'update':
-        engine.update_app(options.app);
-        break;
-      case 'delete':
-        engine.delete_app(options.app);
+      case 'teardown':
+        engine.teardown();
         break;
       case 'create_api_key':
-        engine.create_api_key(options.app);
-        break;
-      case 'delete_api_key':
-        engine.delete_api_key(options.app);
+        engine.create_api_key(cli_cmd.params);
         break;
       case 'list_api_keys':
-        engine.list_api_keys(options.app);
+        engine.list_api_keys(cli_cmd.params);
+        break;
+      case 'delete_api_key':
+        engine.delete_api_key(cli_cmd.params);
+        break;
+      case 'add_app':
+        engine.add_app(cli_cmd.params);
+        break;
+      case 'update_app':
+        engine.update_app(cli_cmd.params);
+        break;
+      case 'delete_app':
+        engine.delete_app(cli_cmd.params);
+        break;
+      case 'list_apps':
+        engine.list_apps();
+        break;
+      case 'gc_app':
+        engine.gc(cli_cmd.params.app_id);
         break;
     }
     return;
   }
-
-  // ------------------------------ SERVER MODE --------------------------------
 
   // -------------------------------- PLUGINS ----------------------------------
 
@@ -131,7 +130,7 @@ function FruumServer(options) {
     //loop through plugins, initialize them and put them in the appropriate
     //plugin bucket
     _.each(options.plugins, function(plugin_name) {
-      //check if server plugin exists
+      //check if plugin exists
       try {
         var path = __dirname + '/../plugins/' + plugin_name + '/';
         //check for javascript
@@ -172,6 +171,7 @@ function FruumServer(options) {
     'client/js/views/channels.js',
     'client/js/views/interactions.js',
     'client/js/views/search.js',
+    'client/js/views/notifications.js',
     'client/js/views/share.js',
     'client/js/views/empty.js'
   ];
@@ -205,32 +205,6 @@ function FruumServer(options) {
         callback(application, cache_key);
       });
     });
-  }
-  //get sass override text from theme path
-  function get_sass_override(theme, callback) {
-    //no theme
-    if (!theme) {
-      callback('');
-    }
-    //local theme
-    else if (theme.indexOf('theme:') == 0) {
-      theme = theme.replace('theme:', '');
-      fs.readFile(fruum_root + '/themes/' + theme + '.scss', {encoding: 'utf8'}, function(err, data) {
-        callback(data || '');
-      });
-    }
-    //remote sass
-    else if (theme.indexOf('http://') == 0 || theme.indexOf('https://') == 0) {
-      request(theme, function(error, response, body) {
-        if (!error && response.statusCode == 200) {
-          callback(body);
-        }
-      });
-    }
-    //inline sass
-    else {
-      callback(theme);
-    }
   }
 
   // -------------------------------- FRUUM.JS ---------------------------------
@@ -311,6 +285,7 @@ function FruumServer(options) {
           'client/templates/breadcrumb.html',
           'client/templates/interactions.html',
           'client/templates/search.html',
+          'client/templates/notifications.html',
           'client/templates/categories.html',
           'client/templates/loading.html',
           'client/templates/threads.html',
@@ -336,7 +311,7 @@ function FruumServer(options) {
   app.get('/fruum.css', function(req, res) {
     req_api_key_and_application(req, res, 'fruum.css', function(application, cache_key) {
       var benchmark = Date.now();
-      get_sass_override(application.get('theme'), function(overrides) {
+      application.getThemeSass(function(overrides) {
         var main_sass = fs.readFileSync(client_root + '/style/fruum.scss', {encoding: 'utf8'});
         main_sass = main_sass.replace('//__APPLICATION_CUSTOM_SASS__', overrides);
         sass.render({
@@ -373,7 +348,7 @@ function FruumServer(options) {
   app.get('/loader.js', function(req, res) {
     req_api_key_and_application(req, res, 'loader.js', function(application, cache_key) {
       var benchmark = Date.now();
-      get_sass_override(application.get('theme'), function(overrides) {
+      application.getThemeSass(function(overrides) {
         var main_sass = fs.readFileSync(loader_root + '/style.scss', {encoding: 'utf8'});
         main_sass = main_sass.replace('//__APPLICATION_CUSTOM_SASS__', overrides);
         sass.render({
@@ -437,7 +412,7 @@ function FruumServer(options) {
     });
     socket.on('fruum:auth', function(payload) {
       //authenticate
-      engine.auth(socket, payload || {}, function() {
+      engine.authenticate(socket, payload || {}, function() {
         //bind callbacks on successful auth
         if (socket.fruum_user) {
           socket.on('fruum:view', function(payload) {
@@ -467,6 +442,15 @@ function FruumServer(options) {
           socket.on('fruum:unwatch', function(payload) {
             engine.unwatch(socket, payload || {});
           });
+          socket.on('fruum:notifications', function(payload) {
+            engine.notifications(socket, payload || {});
+          });
+          socket.on('fruum:notify', function(payload) {
+            engine.notify(socket, payload || {});
+          });
+          socket.on('fruum:unnotify', function(payload) {
+            engine.unnotify(socket, payload || {});
+          });
           socket.on('fruum:report', function(payload) {
             engine.report(socket, payload || {});
           });
@@ -483,5 +467,19 @@ function FruumServer(options) {
   http.listen(process.env.PORT || options.port, function(){
     logger.system("Listening connection on port " + (process.env.PORT || options.port));
   });
+
+  // -------------------------------- GC ---------------------------------------
+
+  function gc_apps() {
+    logger.system("Running garbage collector");
+    instance.storage.list_apps(function(apps) {
+      _.each(apps, function(application) {
+        logger.system("Garbage collecting " + application.get('id'));
+        instance.storage.gc(application.get('id'), Date.now() - options.gc_msec, function() {});
+      });
+    });
+  }
+  setInterval(gc_apps, Math.min(12 * 3600000, options.gc_msec));
+  gc_apps();
 }
 module.exports = FruumServer;

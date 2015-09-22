@@ -13,7 +13,7 @@
       <% } %>
     </div>
 
-    <div class="fruum-object-main-data fruum-object-manage-data">
+    <div class="fruum-object-main-data<% if (Fruum.user.admin || (Fruum.user.id == user_id && !Fruum.user.anonymous)) { %> fruum-object-manage-data<% } %>">
       <div class="fruum-category-title fruum-link">
         <% if (!visible) { %>
         <span class="fruum-icon fruum-icon-invisible" data-fruumtipsy-center="Topic is private"></span>
@@ -38,11 +38,13 @@
       </div><span class="fruum-secondary-data">
         <% if (children_count) { %>
           <%- children_count %> posts, last one <%- Fruum.libs.moment(parseInt(updated)).fromNow() %>
+        <% } else if (created != updated) { %>
+          updated <%- Fruum.libs.moment(parseInt(updated)).fromNow() %>
         <% } else { %>
           created <%- Fruum.libs.moment(parseInt(updated)).fromNow() %>
         <% } %>
 
-        <span class="fruum-badge fruum-badge-info" data-fruumtipsy-right="New posts" style="display: none;" data-notify-id="<%- id %>">!</span>
+        <span class="fruum-badge fruum-badge-info" data-fruumtipsy-right="New posts" style="display: none;" data-info-id="<%- id %>">!</span>
 
       </span>
     </div>

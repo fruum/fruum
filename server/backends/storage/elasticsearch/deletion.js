@@ -6,16 +6,14 @@
 
 var _ = require('underscore'),
     validators = require('./validator'),
-    Utils = require('./util'),
     logger = require('../../../logger');
 
-module.exports = function(options, client) {
-  var utils = new Utils(options, client);
+module.exports = function(options, client, self) {
 
   // --------------------------------- DELETE ----------------------------------
 
-  this.delete = function(app_id, document, callback) {
-    utils.bulk_delete(
+  self.delete = function(app_id, document, callback) {
+    self.bulk_delete(
       app_id,
       document.get('id'), //q
       ['id', 'parent', 'breadcrumb'], //fields
@@ -29,8 +27,8 @@ module.exports = function(options, client) {
 
   // --------------------------------- ARCHIVE ----------------------------------
 
-  this.archive = function(app_id, document, callback) {
-    utils.bulk_update(
+  self.archive = function(app_id, document, callback) {
+    self.bulk_update(
       app_id,
       document.get('id'), //q
       ['id', 'parent', 'breadcrumb'], //fields
@@ -45,8 +43,8 @@ module.exports = function(options, client) {
 
   // -------------------------------- RESTORE ----------------------------------
 
-  this.restore = function(app_id, document, callback) {
-    utils.bulk_update(
+  self.restore = function(app_id, document, callback) {
+    self.bulk_update(
       app_id,
       document.get('id'), //q
       ['id', 'parent', 'breadcrumb'], //fields

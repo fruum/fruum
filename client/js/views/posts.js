@@ -60,12 +60,18 @@ Posts view
         Fruum.io.trigger('fruum:report', { id: this.model.get('id') });
       },
       onLink: function(event) {
-        var href = $(event.target).attr('href');
-        if (href && href.indexOf('#fruum:') == 0) {
+        var href = $(event.target).attr('href') || '';
+        if (href.indexOf('#fruum:') == 0) {
+          event && event.preventDefault();
           href = href.replace('#fruum:', '');
           Fruum.api.open(href);
-          event.preventDefault();
         }
+        else if (href.toLowerCase().indexOf('http://') == 0 ||
+                 href.toLowerCase().indexOf('https://') == 0)
+       {
+         event && event.preventDefault();
+         window.open(href, '_blank');
+       }
       }
     }));
     Fruum.views.PostEmptyView = TRANSITION(Marionette.ItemView.extend({

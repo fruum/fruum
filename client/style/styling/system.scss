@@ -232,7 +232,7 @@
   @include block-radius( 1px );
   font-size: 1em; // reset to base-grid
   padding: 1em;
-  box-shadow: 0 0 6px rgba( $main-action-color, 0.6 );
+  box-shadow: 0 0 6px rgba( $base-text-color, 0.6 );
   background-color: $background-helper-base-color;
   input[type="text"],
   textarea {
@@ -268,14 +268,16 @@
   display: inline-block;
   width: 14px;
   height: 14px;
+  line-height: 14px;
   @include block-object-shapes;
   font-size: 8px;
-  background-color: $forum-base-color;
-  color: $forum-message-text-color;
+  background-color: $main-action-color;
+  color: $main-action-text-color;
   text-align: center;
   text-decoration: none !important;
-  vertical-align: middle;
+  vertical-align: bottom;
   &.fruum-badge-info {
+    color: $forum-message-text-color;
     background-color: $forum-warning-color;
   }
 }

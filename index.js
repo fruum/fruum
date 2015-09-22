@@ -21,6 +21,8 @@ var cli = cliArgs([
   { name: 'fullpage-url', type: String, description: 'Full page url <url>' },
   { name: 'theme', type: String, description: 'Custom theme <string>' },
   { name: 'tier', type: String, description: 'Application tier <string>' },
+  { name: 'notifications-email', type: String, description: 'Application notifications email <string>' },
+  { name: 'contact-email', type: String, description: 'Application contact email <string>' },
   { name: 'delete-app', type: String, description: 'Delete app <app_id>' },
   { name: 'create-api-key', type: String, description: 'Create API key <app_id>' },
   { name: 'list-api-keys', type: String, description: 'List API keys <app_id>' },
@@ -28,7 +30,7 @@ var cli = cliArgs([
   { name: 'gc-app', type: String, description: 'Purge archived docs of <app_id>' }
 ]);
 //parse command line values
-var options = cli.parse();
+var options = cli.parse(), cli_cmd;
 
 if (options.help) {
   console.log(cli.getUsage({
@@ -38,75 +40,91 @@ if (options.help) {
 }
 else {
   if (options.setup) {
-    config.setup = true;
+    cli_cmd = { action: 'setup' };
   }
   else if (options.migrate) {
-    config.migrate = true;
+    cli_cmd = { action: 'migrate' };
   }
   else if (options.teardown) {
-    config.teardown = true;
+    cli_cmd = { action: 'teardown' };
   }
   else if (options['create-api-key']) {
-    config.app = {
+    cli_cmd = {
       action: 'create_api_key',
-      app_id: options['create-api-key']
+      params: {
+        app_id: options['create-api-key']
+      }
     }
   }
   else if (options['list-api-keys']) {
-    config.app = {
+    cli_cmd = {
       action: 'list_api_keys',
-      app_id: options['list-api-keys']
+      params: {
+        app_id: options['list-api-keys']
+      }
     }
   }
   else if (options['delete-api-key']) {
-    config.app = {
+    cli_cmd = {
       action: 'delete_api_key',
-      api_key: options['delete-api-key']
+      params: {
+        api_key: options['delete-api-key']
+      }
     }
   }
   else if (options['add-app']) {
-    config.app = {
-      action: 'add',
-      app_id: options['add-app'],
-      name: options.name,
-      description: options.description,
-      url: options.url,
-      auth_url: options['auth-url'],
-      fullpage_url: options['fullpage-url'],
-      theme: options.theme,
-      tier: options.tier
+    cli_cmd = {
+      action: 'add_app',
+      params: {
+        app_id: options['add-app'],
+        name: options.name,
+        description: options.description,
+        url: options.url,
+        auth_url: options['auth-url'],
+        fullpage_url: options['fullpage-url'],
+        notifications_email: options['notifications-email'],
+        contact_email: options['contact-email'],
+        theme: options.theme,
+        tier: options.tier
+      }
     }
   }
   else if (options['update-app']) {
-    config.app = {
-      action: 'update',
-      app_id: options['update-app'],
-      name: options.name,
-      description: options.description,
-      url: options.url,
-      auth_url: options['auth-url'],
-      fullpage_url: options['fullpage-url'],
-      theme: options.theme,
-      tier: options.tier
+    cli_cmd = {
+      action: 'update_app',
+      params: {
+        app_id: options['update-app'],
+        name: options.name,
+        description: options.description,
+        url: options.url,
+        auth_url: options['auth-url'],
+        fullpage_url: options['fullpage-url'],
+        notifications_email: options['notifications-email'],
+        contact_email: options['contact-email'],
+        theme: options.theme,
+        tier: options.tier
+      }
     }
   }
   else if (options['delete-app']) {
-    config.app = {
-      action: 'delete',
-      app_id: options['delete-app']
+    cli_cmd = {
+      action: 'delete_app',
+      params: {
+        app_id: options['delete-app']
+      }
     }
   }
   else if (options['list-apps']) {
-    config.app = {
-      action: 'list'
-    }
+    cli_cmd = { action: 'list_apps' };
   }
   else if (options['gc-app']) {
-    config.app = {
-      action: 'gc',
-      app_id: options['gc-app']
+    cli_cmd = {
+      action: 'gc_app',
+      params: {
+        app_id: options['gc-app']
+      }
     }
   }
   //run the server
-  var server = new FruumServer(config);
+  var server = new FruumServer(config, cli_cmd);
 }

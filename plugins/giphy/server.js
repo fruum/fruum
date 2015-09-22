@@ -6,7 +6,8 @@
 var giphy = require('giphy-api')();
 
 function GiphyProcessor(options) {
-  this.add = function(document, callback) {
+  this.add = function(payload, callback) {
+    var document = payload.document;
     if (document.get('type') === 'post') {
       var body = document.get('body');
       if (body.indexOf('/giphy ') === 0) {
@@ -20,12 +21,12 @@ function GiphyProcessor(options) {
               '![' + body + '](' + res.data.image_url + ')'
             );
           }
-          callback(null, document);
+          callback(null, payload);
         });
         return;
       }
     }
-    callback(null, document);
+    callback(null, payload);
   }
 }
 
