@@ -27,6 +27,7 @@ var cli = cliArgs([
   { name: 'create-api-key', type: String, description: 'Create API key <app_id>' },
   { name: 'list-api-keys', type: String, description: 'List API keys <app_id>' },
   { name: 'delete-api-key', type: String, description: 'List API keys <api_key>' },
+  { name: 'reset-users', type: String, description: 'Delete all users of app <api_key>' },
   { name: 'gc-app', type: String, description: 'Purge archived docs of <app_id>' }
 ]);
 //parse command line values
@@ -122,6 +123,14 @@ else {
       action: 'gc_app',
       params: {
         app_id: options['gc-app']
+      }
+    }
+  }
+  else if (options['reset-users']) {
+    cli_cmd = {
+      action: 'reset_users',
+      params: {
+        app_id: options['reset-users']
       }
     }
   }

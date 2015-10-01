@@ -54,33 +54,13 @@ Categories view
         event.preventDefault();
         event.stopPropagation();
         Fruum.io.trigger('fruum:close_manage');
-        var collection = this.model.collection;
-        if (!collection) return;
-        var index = collection.models.indexOf(this.model);
-        if (index <= 0) return;
-        var prev_model = collection.models[index - 1];
-        Fruum.io.trigger('fruum:field', {
-          id: this.model.get('id'), field: 'order', value: prev_model.get('order')
-        });
-        Fruum.io.trigger('fruum:field', {
-          id: prev_model.get('id'), field: 'order', value: this.model.get('order')
-        });
+        Fruum.utils.orderUp(this.model, event.shiftKey);
       },
       onDown: function(event) {
         event.preventDefault();
         event.stopPropagation();
         Fruum.io.trigger('fruum:close_manage');
-        var collection = this.model.collection;
-        if (!collection) return;
-        var index = collection.models.indexOf(this.model);
-        if (index + 1 >= collection.models.length) return;
-        var next_model = collection.models[index + 1];
-        Fruum.io.trigger('fruum:field', {
-          id: this.model.get('id'), field: 'order', value: next_model.get('order')
-        });
-        Fruum.io.trigger('fruum:field', {
-          id: next_model.get('id'), field: 'order', value: this.model.get('order')
-        });
+        Fruum.utils.orderDown(this.model, event.shiftKey);
       },
       onDelete: function(event) {
         event.preventDefault();

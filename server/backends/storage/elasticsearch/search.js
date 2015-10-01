@@ -92,6 +92,7 @@ module.exports = function(options, client, self) {
     client.search({
       index: self.toIndex(app_id),
       type: 'doc',
+      refresh: true,
       body: {
         from: 0,
         size: 20,
@@ -147,59 +148,17 @@ module.exports = function(options, client, self) {
 
   // --------------------------- SEARCH ON FIELDS ------------------------------
 
-  self.search_attributes = function(app_id, attributes, callback) {
-    var matches = [], not_matches = [], filter = {};
-    for (var key in attributes) {
-      var term = {},
-          value = attributes[key],
-          range = key.match(/__lte|__lt|__gte|__gt/),
-          negative = key.match(/__not/);
 
-      if (key === 'ids') {
-        filter = {
-          ids: {
-            values: value
-          }
-        }
-      }
-      else if (range && range.length) {
-        var term_val = {};
-        range = range[0];
-        key = key.replace(range, '');
-        range = range.replace('__', '');
-        term_val[key] = {};
-        term_val[key][range] = value;
-        matches.push({ range: term_val });
-      }
-      else if (negative && negative.length) {
-        var term_val = {};
-        key = key.replace(negative, '');
-        term_val[key] = value;
-        not_matches.push({ term: term_val });
-      }
-      else {
-        var term_val = {};
-        term_val[key] = value;
-        matches.push({ term: term_val });
-      }
-    }
+
+  self.search_attributes = function(app_id, attributes, callback) {
     client.search({
       index: self.toIndex(app_id),
       type: 'doc',
+      refresh: true,
       body: {
         from: 0,
         size: options.elasticsearch.max_children,
-        query: {
-          filtered: {
-            filter: filter,
-            query: {
-              bool: {
-                must: matches,
-                must_not: not_matches
-              }
-            }
-          }
-        }
+        query: self.createSearchQSL(attributes)
       }
     }, function(error, response) {
       var results = [];
@@ -209,6 +168,26 @@ module.exports = function(options, client, self) {
         });
       }
       callback(results);
+    });
+  }
+
+  self.count_attributes = function(app_id, attributes, callback) {
+    client.count({
+      index: self.toIndex(app_id),
+      type: 'doc',
+      refresh: true,
+      body: {
+        query: self.createSearchQSL(attributes)
+      }
+    }, function(error, response) {
+      if (error) {
+        logger.error(app_id, 'count_attributes', error);
+        callback(0);
+        return;
+      }
+      else {
+        callback(response.count || 0);
+      }
     });
   }
 }

@@ -3,15 +3,17 @@
   <% if (!searching && !has_notifications) { %>
     <% if (viewing.type === 'channel' || viewing.type === 'thread' || viewing.type === 'article') { %>
   <div>
-    <span class="fruum-topic-title">
-      <% if (!viewing.visible) { %>
-        <span class="fruum-icon fruum-icon-invisible" data-fruumtipsy-center="Private"></span>
-      <% } %>
-      <% if (viewing.locked) { %>
-        <span class="fruum-icon fruum-icon-locked" data-fruumtipsy-center="Locked"></span>
-      <% } %>
-      <% if (viewing.type == 'channel') print('#'); %><%= Fruum.utils.printHeader(viewing.header) %>
-    </span>
+    <div class="fruum-stream-typography">
+      <h4>
+        <% if (!viewing.visible) { %>
+          <span class="fruum-icon fruum-icon-invisible" data-fruumtipsy-center="Private"></span>
+        <% } %>
+        <% if (viewing.locked) { %>
+          <span class="fruum-icon fruum-icon-locked" data-fruumtipsy-center="Locked"></span>
+        <% } %>
+        <% if (viewing.type == 'channel') print('#'); %><%= Fruum.utils.printHeader(viewing.header) %>
+      </h4>
+    </div>
     <% if (Fruum.user.admin && (viewing.type === 'thread' || viewing.type === 'article')) { %>
     <div class="fruum-manage">
       <a href="javascript:;" class="fruum-link fruum-manage-close fruum-icon fruum-icon-close"></a>
@@ -59,8 +61,8 @@
   <% } %>
   </div>
   <% } else if (has_notifications) { %>
-  <span class="fruum-topic-title">
-    Updates on topics I watch
-  </span>
+  <div class="fruum-stream-typography">
+    <h4>Updates on topics I watch</h4>
+  </div>
   <% } %>
 </script>

@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your <%- date %> <%- application.name || application.id %> forum digest</title>
+  <title><%- date %> <%- application.name || application.id %> forum notification</title>
   <!--STYLE.SCSS-->
   </head>
 <body>
@@ -17,25 +17,29 @@
         <table cellpadding="0" cellspacing="0" border="0" class="maincontent">
           <tr>
             <td class="contentheader">
-              Your <%- application.name || application.id %> forum digest
+              Your <%- application.name || application.id %> forum notifications
             </td>
           </tr>
           <tr>
             <td class="content-sumactivity content-head">
-              Hello,there are updates on <b><%- streams.length %> streams</b> you watch since your last visit.
-            </td>
-          </tr>
-          <% _.each(streams, function(value, key) { %>
-          <tr>
-            <td class="contentitem">
-              <h5><a href="<%- application.fullpage_url %>#!v/<%- value.document.parent %>" class="external-link"><%- value.document.header %><span class="tagname"></span></a></h5>
-              <p class="content-description"><%- value.document.body %></p>
-              <% if (value.replies) { %>
-              <span class="disclaimeritem">and <%- value.replies %> more replies</span>
+              Hello, <b><%- document.user_displayname || document.user_username %></b>
+              <% if (document.type === 'article') { %>
+                added a new article on a category you watch.
+              <% } else if (document.type === 'channel') { %>
+                added a new channel on a category you watch.
+              <% } else if (document.type === 'category') { %>
+                added a new sub-category on a category you watch.
+              <% } else { %>
+                replied to a topic you watch.
               <% } %>
             </td>
           </tr>
-          <% }); %>
+          <tr>
+            <td class="contentitem">
+              <h5><a href="<%- application.fullpage_url %>#!v/<%- document.parent %>" class="external-link"><%- document.header %><span class="tagname"></span></a></h5>
+              <p class="content-description"><%= document.body %></p>
+            </td>
+          </tr>
           <tr>
             <td class="content-footer content-sumactivity">
               There could be something else of importance at <b><%- application.name || application.id %> forum</b>, so <a href="<%- application.fullpage_url %>" class="external-link">drop a visit</a>!

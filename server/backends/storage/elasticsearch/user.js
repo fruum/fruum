@@ -47,8 +47,13 @@ module.exports = function(options, client, self) {
         logger.error(app_id, 'update_user', error);
       }
       else {
-        if (attributes) user.set(attributes);
-        logger.info(app_id, 'update_user', user);
+        if (attributes) {
+          user.set(attributes);
+          logger.info(app_id, 'update_user_attributes: ' + user.get('username'), attributes);
+        }
+        else {
+          logger.info(app_id, 'update_user', user);
+        }
         if (!attributes ||
             (attributes && (attributes.username || attributes.displayname || attributes.avatar)))
         {
@@ -102,6 +107,7 @@ module.exports = function(options, client, self) {
     client.search({
       index: self.toIndex(app_id),
       type: 'user',
+      refresh: true,
       body: {
         from: 0,
         size: options.elasticsearch.max_children,
@@ -134,6 +140,7 @@ module.exports = function(options, client, self) {
     client.search({
       index: self.toIndex(app_id),
       type: 'user',
+      refresh: true,
       body: {
         from: 0,
         size: options.elasticsearch.max_children,

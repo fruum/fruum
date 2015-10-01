@@ -48,7 +48,8 @@ module.exports = function(options, instance, self) {
           delete app_applications[app_id];
         }
         //update last logout timestamp
-        storage.update_user(app_id, user, { last_logout: Date.now() }, function() {});
+        if (user.get('id'))
+          storage.update_user(app_id, user, { last_logout: Date.now() }, function() {});
       }
       user.set('socket', null);
       delete socket.fruum_user;
@@ -119,7 +120,7 @@ module.exports = function(options, instance, self) {
     if (payload.user) {
       //authenticate user
       auth.authenticate(app_applications[app_id], payload.user, function(auth_user) {
-        if (auth_user) {
+        if (auth_user && !auth_user.get('anonymous')) {
           //update user object with authentication results
           user.set(auth_user.toJSON());
           //check for updating user details

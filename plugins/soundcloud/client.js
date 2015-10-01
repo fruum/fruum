@@ -5,8 +5,8 @@
 (function() {
   'use strict';
   window.Fruum.plugins.push(function () {
-    var $ = Fruum.libs.$,
-        _ = Fruum.libs._,
+    var $ = window.Fruum.libs.$,
+        _ = window.Fruum.libs._,
         template = _.template($('#fruum-plugin-template-soundcloud').html()),
         re = /soundcloud.com\/[a-zA-Z0-9-_]+\/[a-zA-Z0-9-_]+/gi;
 

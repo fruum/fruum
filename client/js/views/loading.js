@@ -24,6 +24,7 @@ Loader helper view
       onShow: function() {
         this.timer = null;
         this.$el.parent().stop(true,true).fadeIn(1);
+        this.$content.stop(true,true).fadeOut(1);
       },
       onLoading: function() {
         var state = this.model.get('loading');
@@ -38,6 +39,7 @@ Loader helper view
               this.timer = null;
             }
             this.$el.parent().stop(true,true).fadeIn(1);
+            this.$content.stop(true,true).fadeOut(1);
           }
           else {
             if (!this.timer) this.timer = setTimeout(this.onShow, 1000);

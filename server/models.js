@@ -6,6 +6,7 @@
 
 var _ = require('underscore'),
     Backbone = require('backbone'),
+    marked = require('marked'),
     xss = require('xss'),
     request = require('request'),
     path = require('path'),
@@ -135,6 +136,20 @@ var Document = Backbone.Model.extend({
         tags.push(tag.substr(1, tag.length - 2));
     });
     this.set('tags', tags);
+  },
+  isSearchable: function() {
+    return this.get('visible') &&
+           this.get('type') != 'channel' &&
+           this.get('parent_type') != 'channel' &&
+           !this.get('archived') &&
+           !this.get('inappropriate');
+  },
+  toRobot: function() {
+    var json = this.toJSON();
+    //remove escaping of > and ` used by markdown
+    json.body = (json.body || '').replace(/&gt;/g, '>').replace(/&#x60;/g, '`');
+    json.body = marked(json.body);
+    return json;
   }
 });
 
@@ -185,6 +200,8 @@ var User = Backbone.Model.extend({
   needsUpdate: function(user) {
     return this.get('username') != user.get('username') ||
            this.get('displayname') != user.get('displayname') ||
+           this.get('email') != user.get('email') ||
+           this.get('admin') != user.get('admin') ||
            this.get('avatar') != user.get('avatar');
   },
   toLog: function() {
@@ -198,6 +215,7 @@ var User = Backbone.Model.extend({
     else {
       log += ' username:' + this.get('username');
       log += ' displayname:' + this.get('displayname');
+      log += ' email:' + this.get('email');
     }
     return log;
   }

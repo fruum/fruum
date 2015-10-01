@@ -110,22 +110,22 @@ $pointer-dimensions: basegrid-mod( 12px );
 #fruum textarea.fruum-interactions-input {
   border: none !important;
   background-color: $background-base-color;
+  color: $base-text-color;
   padding: 0;
-  font-size: $responsive-default-font;
-  line-height: $big-font-basegrid*3;
+  font-size: $small-stream-default-font;
+  line-height: $small-stream-default-lineheight;
   width: 100%;
-  min-height: $big-font-basegrid*3;
+  min-height: $small-stream-default-lineheight;
 }
 
 #fruum textarea.fruum-interactions-input {
   resize:none;
   overflow: auto;
-  min-height: $default-font-basegrid*17.5;
-  color: $base-text-color;
+  min-height: $small-stream-default-lineheight*9.5;
 }
 
 #fruum textarea.fruum-interactions-input.fruum-interactions-compact {
-  min-height:$default-font-basegrid*4.5;
+  min-height: $small-stream-default-lineheight*1.5;
 
 }
 
@@ -140,16 +140,6 @@ $pointer-dimensions: basegrid-mod( 12px );
   text-transform: inherit;
 }
 
-#fruum .fruum-interactions-form {
-  .fruum-object-main-data {
-    .fruum-interactions-input.fruum-category-title {
-      font-size: relative-ems( $responsive-big-font, $responsive-default-font );
-    }
-    .fruum-interactions-input.fruum-secondary-data {
-      font-size: 1em;
-    }
-  }
-}
 
 
 #fruum .fruum-interactions-footer {
@@ -158,7 +148,6 @@ $pointer-dimensions: basegrid-mod( 12px );
   .fruum-user-account {
     float: right;
     width: 12%;
-    padding-left: 2em;
   }
   .fruum-interactions-buttons {
     float: left;
@@ -172,29 +161,22 @@ $pointer-dimensions: basegrid-mod( 12px );
       margin-left: $default-font-basegrid;
     }
   }
+  // this covers the case that there is an interaction open
+  &:not(:only-child) {
+    margin-top: $base-grid;
+  }
 }
 
 
 
 // 3.1 Custom inputs
 
-#fruum .fruum-category-title,
 #fruum .fruum-interactions-input.fruum-category-title,
 #fruum .fruum-interactions-input.fruum-category-title {
-  font-size: $responsive-big-font;
-  line-height: $big-font-basegrid*3;
+  font-size: $small-stream-h4;
+  line-height: $small-stream-h4-lineheight;
+  font-weight: $small-stream-h4-weight;
   color: $base-text-color;
-  font-weight: $important-font-weight;
-}
-
-#fruum .fruum-interactions-input.fruum-topic-title,
-#fruum .fruum-interactions-input.fruum-topic-title,
-#fruum .fruum-topic-title {
-  font-size: $responsive-big-font;
-  line-height: $big-font-basegrid*3;
-  color: $base-text-color;
-  font-weight: $important-font-weight;
-  outline: none;
 }
 
 
@@ -207,14 +189,11 @@ $pointer-dimensions: basegrid-mod( 12px );
   height: $avatar-medium;
   line-height: $avatar-medium;
 
-  .fruum-account-settings,
-  .fruum-button-link {
-    display: block;
-    float: right;
-  }
   .fruum-account-settings {
     position: relative;
-    max-width: 63%;
+    display: block;
+    max-width: 100%;
+    text-align: right;
   }
 
   .fruum-badge {

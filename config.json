@@ -1,16 +1,24 @@
 {
+  "----------------------- SERVER SETUP -----------------------": "",
+
   "port": 3000,
   "static_root": "static",
   "static_prefix": "/static",
   "logs": "./logs",
+  "compress": false,
+
+  "---------------------- HOSTING ADDRESS -----------------------": "",
+
   "url": "http://127.0.0.1:3000",
+
+  "---------------------- BACKEND DRIVERS ----------------------": "",
 
   "storage_engine": "elasticsearch",
   "auth_engine": "remote",
   "cache_engine": "memory_cache",
   "email_engine": "mandrill",
-  "compress": false,
-  "gc_msec": 604800000,
+
+  "--------------------- DOCUMENT SETTINGS --------------------- ": "",
 
   "docs": {
     "max_category_title_size": 64,
@@ -21,36 +29,7 @@
     "max_post_size": 0
   },
 
-  "cron": {
-    "_help": "https://www.npmjs.com/package/cron",
-    "_timezone": "America/Los_Angeles",
-    "digest": "* * 1 * * *",
-    "monitor": "* * */2 * * *"
-  },
-
-  "plugins": [
-    "giphy",
-    "youtube",
-    "dropbox",
-    "twitchtv",
-    "soundcloud",
-    "digest",
-    "report",
-    "monitor"
-  ],
-
-  "elasticsearch": {
-    "host": "http://localhost:9200",
-    "use_bulk": true,
-    "max_children": 1000,
-    "retry_on_conflict": 3
-  },
-
-  "memory_cache": {
-    "static": 50,
-    "views": 10,
-    "default": 10
-  },
+  "--------------------- NOTIFICATION SETTINGS --------------------- ": "",
 
   "notifications": {
     "defaults": {
@@ -60,6 +39,65 @@
       },
       "administrators": []
     }
+  },
+
+  "------------------- PLUGIN SCHEDULED TASKS -------------------": "",
+
+  "cron": {
+    "_help": "https://github.com/tejasmanohar/node-schedule/wiki/Cron-style-Scheduling",
+    "garbage_collect": "0 0 */4 * * *",
+    "monitor": "0 0 */4 * * *"
+  },
+
+  "------------------------ ACTIVE PLUGIN  ------------------------": "",
+
+  "plugins": [
+    "giphy",
+    "youtube",
+    "vimeo",
+    "dropbox",
+    "twitchtv",
+    "soundcloud",
+    "report",
+    "monitor",
+    "notify",
+    "garbage_collect"
+  ],
+
+  "------------------------ PLUGIN SETTINGS  ------------------------": "",
+
+  "elasticsearch": {
+    "host": "http://localhost:9200",
+    "use_bulk": true,
+    "max_children": 1000,
+    "retry_on_conflict": 3
+  },
+
+  "garbage_collect": {
+    "keep_archived_for": {
+      "seconds": 0,
+      "minutes": 0,
+      "hours": 0,
+      "days": 0,
+      "weeks": 1,
+      "months": 0,
+      "years": 0
+    },
+    "keep_chat_for": {
+      "seconds": 0,
+      "minutes": 0,
+      "hours": 0,
+      "days": 1,
+      "weeks": 0,
+      "months": 0,
+      "years": 0
+    }
+  },
+
+  "memory_cache": {
+    "static": 50,
+    "views": 10,
+    "default": 10
   },
 
   "mandrill": {

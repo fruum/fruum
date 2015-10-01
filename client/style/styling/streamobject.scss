@@ -76,8 +76,11 @@
       overflow: visible;
       font-size: relative-ems( $responsive-small-font, $responsive-default-font );
     }
-    .fruum-category-title {
-      font-size: 1em;
+    &.fruum-secondary-data {
+      margin-left: 0;
+      margin-top: 0;
+      margin-bottom: 0;
+      color: $base-text-color;
     }
   }
   .fruum-object-meta {

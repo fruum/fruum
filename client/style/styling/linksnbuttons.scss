@@ -55,6 +55,9 @@
     &:hover {
       @include default-button-hover;
     }
+    &:active {
+      @include button-active;
+    }
   }
   cursor: pointer;
   cursor: hand;
@@ -91,6 +94,9 @@
     background-color: $secondary-action-color;
     &:hover {
       background-color: $secondary-action-color-highlight;
+    }
+    &:active {
+      @include button-active;
     }
   }
   cursor: pointer;

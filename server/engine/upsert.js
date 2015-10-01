@@ -131,27 +131,30 @@ module.exports = function(options, instance, self) {
           if (!plugin_payload.broadcast_noop) self._broadcast(user, document);
           return;
         }
-        storage.add(app_id, document, function(new_document) {
-          if (new_document) {
-            //success
-            cache.invalidate_document(app_id, new_document);
-            cache.invalidate_document(app_id, parent_doc);
-            socket.emit('fruum:add', new_document.toJSON());
-            if (!plugin_payload.broadcast_noop) {
-              self._broadcast(user, new_document);
-              self._broadcast(user, parent_doc, 'fruum:info');
-              self._broadcastNotifications(user, new_document);
+        //count number of child documents
+        storage.count_attributes(app_id, { parent: parent_doc.get('id') }, function(total) {
+          storage.add(app_id, document, function(new_document) {
+            if (new_document) {
+              //success
+              cache.invalidate_document(app_id, new_document);
+              cache.invalidate_document(app_id, parent_doc);
+              socket.emit('fruum:add', new_document.toJSON());
+              if (!plugin_payload.broadcast_noop) {
+                self._broadcast(user, new_document);
+                self._broadcast(user, parent_doc, 'fruum:info');
+                self._broadcastNotifications(user, new_document);
+              }
+              //update parent counter`
+              storage.update(app_id, parent_doc, {
+                updated: now,
+                children_count: total + 1
+              }, function() {});
             }
-            //update parent counter`
-            storage.update(app_id, parent_doc, {
-              updated: now,
-              children_count: parent_doc.get('children_count')|0 + 1
-            }, function() {});
-          }
-          else {
-            //fail
-            socket.emit('fruum:add');
-          }
+            else {
+              //fail
+              socket.emit('fruum:add');
+            }
+          });
         });
       });
     });

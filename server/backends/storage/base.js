@@ -17,6 +17,8 @@ module.exports = function(options) {
   this.update_app = function(application, attributes, callback) { callback(application); };
   //remove app
   this.delete_app = function(application, callback) { callback(application); };
+  //reset users
+  this.reset_users = function(application, callback) { callback(); }
   //get app
   this.get_app = function(app_id, callback) { callback(); }
   //get app from api_key
@@ -47,6 +49,8 @@ module.exports = function(options) {
   this.search = function(app_id, q, callback) { callback([]); }
   //search on specific fields
   this.search_attributes = function(app_id, attributes, callback) { callback([]); }
+  //count search on specific fields
+  this.count_attributes = function(app_id, attributes, callback) { callback(0); }
   //watch document
   this.watch = function(app_id, document, user, callback) { callback(); }
   //un-watch document
@@ -64,5 +68,7 @@ module.exports = function(options) {
   this.find_watch_users = function(app_id, watch_list, callback) { callback([]); }
 
   //delete all archived documents which are older then the UNIX timestamp
-  this.gc = function(app_id, timestamp, callback) { callback(); }
+  this.gc_archived = function(app_id, timestamp, callback) { callback(); }
+  //delete all channel chat documents which are older then the UNIX timestamp
+  this.gc_chat = function(app_id, timestamp, callback) { callback(); }
 }

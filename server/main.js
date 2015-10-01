@@ -27,7 +27,6 @@ function FruumServer(options, cli_cmd) {
   );
   options.static_prefix = options.static_prefix || '/static';
   options.port = options.port || 3000;
-  options.gc_msec = options.gc_msec || 3600000;
   options.storage_engine = options.storage_engine || 'base';
   options.auth_engine = options.auth_engine || 'base';
   options.email_engine = options.email_engine || 'base';
@@ -114,6 +113,9 @@ function FruumServer(options, cli_cmd) {
         break;
       case 'list_apps':
         engine.list_apps();
+        break;
+      case 'reset_users':
+        engine.reset_users(cli_cmd.params);
         break;
       case 'gc_app':
         engine.gc(cli_cmd.params.app_id);
@@ -399,6 +401,26 @@ function FruumServer(options, cli_cmd) {
     });
   });
 
+  // ----------------------------------- SEO -----------------------------------
+
+  function get_robot(req, res) {
+    var app_id = req.params.app_id,
+        doc_id = req.params.doc_id || 'home';
+    engine.robot(app_id, doc_id, function(response) {
+      //get template
+      fs.readFile(__dirname + '/../loader/robot.html', 'utf8', function(err, data) {
+        if (err) {
+          res.status(500).send('Could not load template');
+          return;
+        }
+        var template = _.template(data || '');
+        res.send(template(response));
+      });
+    });
+  }
+  app.get('/robot/:app_id/v/:doc_id', get_robot);
+  app.get('/robot/:app_id', get_robot);
+
   // ---------------------------------- STATIC ---------------------------------
 
   app.use(options.static_prefix, express.static(options.static_root));
@@ -468,18 +490,5 @@ function FruumServer(options, cli_cmd) {
     logger.system("Listening connection on port " + (process.env.PORT || options.port));
   });
 
-  // -------------------------------- GC ---------------------------------------
-
-  function gc_apps() {
-    logger.system("Running garbage collector");
-    instance.storage.list_apps(function(apps) {
-      _.each(apps, function(application) {
-        logger.system("Garbage collecting " + application.get('id'));
-        instance.storage.gc(application.get('id'), Date.now() - options.gc_msec, function() {});
-      });
-    });
-  }
-  setInterval(gc_apps, Math.min(12 * 3600000, options.gc_msec));
-  gc_apps();
 }
 module.exports = FruumServer;

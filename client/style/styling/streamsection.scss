@@ -23,9 +23,12 @@
   position: relative;
   width: 100%;
   font-size: 1em; // reset to base-grid
-  padding: 2em $fruum-whitespace 0;
+  padding: 2em $fruum-whitespace;
   margin-top: 0;
   margin-bottom: 0;
+  > .fruum-subobject-list {
+    font-size: 1em;
+  }
 }
 
 // 1.2 Divider
@@ -50,8 +53,6 @@
     text-transform: none;
     font-family: $avatar-font-family !important;
   }
-  .fruum-category-title,
-  .fruum-topic-title,
   .fruum-object-main-data,
   .fruum-secondary-data {
     color: $inverted-option-color;

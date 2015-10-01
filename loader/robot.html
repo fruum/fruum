@@ -1,0 +1,9 @@
+<% _.each(documents, function(doc) { %>
+  <% if (doc.type == 'post') { %>
+    <p><%= doc.body %></p>
+    <p>by <%= doc.user_displayname || doc.user_username %></p>
+  <% } else { %>
+    <h1><a href="?_escaped_fragment_=v/<%= doc.id %>"><%- doc.header %></a></h1>
+    <p><%= doc.body %></p>
+  <% } %>
+<% }) %>

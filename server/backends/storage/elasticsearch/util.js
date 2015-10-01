@@ -234,4 +234,53 @@ module.exports = function(options, client, self) {
       });
     });
   }
+
+  self.createSearchQSL = function(attributes) {
+    var matches = [], not_matches = [], filter = {};
+    for (var key in attributes) {
+      var term = {},
+          value = attributes[key],
+          range = key.match(/__lte|__lt|__gte|__gt/),
+          negative = key.match(/__not/);
+
+      if (key === 'ids') {
+        filter = {
+          ids: {
+            values: value
+          }
+        }
+      }
+      else if (range && range.length) {
+        var term_val = {};
+        range = range[0];
+        key = key.replace(range, '');
+        range = range.replace('__', '');
+        term_val[key] = {};
+        term_val[key][range] = value;
+        matches.push({ range: term_val });
+      }
+      else if (negative && negative.length) {
+        var term_val = {};
+        key = key.replace(negative, '');
+        term_val[key] = value;
+        not_matches.push({ term: term_val });
+      }
+      else {
+        var term_val = {};
+        term_val[key] = value;
+        matches.push({ term: term_val });
+      }
+    }
+    return {
+      filtered: {
+        filter: filter,
+        query: {
+          bool: {
+            must: matches,
+            must_not: not_matches
+          }
+        }
+      }
+    }
+  }
 }

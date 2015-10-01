@@ -33,9 +33,9 @@
       </span>
       <% } %>
       <% if (Fruum.userUtils.countNotifications()) { %>
-      <span class="fruum-badge" data-field="notifications"><%= Fruum.userUtils.countNotifications() %></span>
+      <span class="fruum-badge fruum-js-show-notifications" data-field="notifications"><%= Fruum.userUtils.countNotifications() %></span>
       <% } else { %>
-      <span class="fruum-badge" data-field="notifications" style="display:none;"></span>
+      <span class="fruum-badge fruum-js-show-notifications" data-field="notifications" style="display:none;"></span>
       <% } %>
     </span>
   </div>

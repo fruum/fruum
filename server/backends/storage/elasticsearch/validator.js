@@ -19,8 +19,11 @@ module.exports = {
   children: function (source, q) {
     return source.parent == q && !source.archived;
   },
-  delete: function (source, q) {
+  gc_archived: function (source, q) {
     return source.archived == true && source.archived_ts <= q;
+  },
+  gc_chat: function (source, q) {
+    return source.type == 'post' && source.parent_type == 'channel' && source.updated <= q;
   },
   match_users: function(source, q) {
     return _.isMatch(source, q);

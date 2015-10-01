@@ -5,8 +5,8 @@
 (function() {
   'use strict';
   window.Fruum.plugins.push(function () {
-    var $ = Fruum.libs.$,
-        _ = Fruum.libs._,
+    var $ = window.Fruum.libs.$,
+        _ = window.Fruum.libs._,
         template = _.template($('#fruum-plugin-template-twitchtv').html()),
         re = /www.twitch.tv\/[a-zA_Z0-9_]+/gi;
 

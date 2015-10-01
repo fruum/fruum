@@ -2,18 +2,23 @@
 <script type="text/template" id="fruum-template-channel">
   <div class="fruum-base-object fruum-base-object-compact fruum-js-entry-default">
     <div class="fruum-object-main-data<% if (Fruum.user.admin || (Fruum.user.id == user_id && !Fruum.user.anonymous)) { %> fruum-object-manage-data<% } %>">
-      <a class="fruum-link fruum-topic-title fruum-js-navigate">
-        <% if (!visible) { %>
-        <span class="fruum-icon fruum-icon-invisible" data-fruumtipsy-left="Private channel"></span>
-        <% } %>
-        #<%= Fruum.utils.printHeader(header) %>
+      <div class="fruum-stream-typography">
+        <h4>
+          <a href="<%- Fruum.utils.permaLink(id) %>" class="fruum-link fruum-js-navigate">
+            <% if (!visible) { %>
+            <span class="fruum-icon fruum-icon-invisible" data-fruumtipsy-left="Private channel"></span>
+            <% } %>
+            #<%= Fruum.utils.printHeader(header) %>
 
-      <span class="fruum-secondary-data">
-        , <span data-channel-members="<%- id %>"><%- online[id] || 0 %></span> members online
+            <span class="fruum-secondary-data">
+              , <span data-channel-members="<%- id %>"><%- online[id] || 0 %></span> members online
 
-        <span class="fruum-badge fruum-badge-info" data-fruumtipsy-right="New messages" style="display: none;" data-info-id="<%- id %>">!</span>
+              <span class="fruum-badge fruum-badge-info" data-fruumtipsy-right="New messages" style="display: none;" data-info-id="<%- id %>">!</span>
 
-      </span>
+            </span>
+          </a>
+        </h4>
+      </div>
     </div>
     <% if (Fruum.user.admin) { %>
     <div class="fruum-manage fruum-js-manage">

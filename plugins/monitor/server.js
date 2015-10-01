@@ -50,9 +50,8 @@ function Monitor(options, instance) {
       application.get('id'),
       {
         archived: false,
-        updated__gte: last_monitor_ts,
-        updated__lt: now,
-        type__not: 'post'
+        created__gte: last_monitor_ts,
+        created__lt: now
       },
       function(documents) {
         if (documents.length) {

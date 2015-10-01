@@ -5,13 +5,17 @@
       <span class="fruum-avatar-icon" data-initials="<%- Fruum.utils.printInitials(initials) %>"><%- initials %></span>
     </div>
     <div class="fruum-object-main-data<% if (Fruum.user.admin) { %> fruum-object-manage-data<% } %>">
-      <div class="fruum-category-title fruum-link">
-        <% if (!visible) { %>
-        <span class="fruum-icon fruum-icon-invisible" data-fruumtipsy-center="Private category"></span>
-        <% } %>
-        <%= Fruum.utils.printHeader(header) %>
+      <div class="fruum-stream-typography">
+        <h4>
+          <a href="<%- Fruum.utils.permaLink(id) %>"  class="fruum-link">
+            <% if (!visible) { %>
+            <span class="fruum-icon fruum-icon-invisible" data-fruumtipsy-center="Private category"></span>
+            <% } %>
+            <%= Fruum.utils.printHeader(header) %>
 
-        <span class="fruum-badge fruum-badge-info" data-fruumtipsy-right="New content" style="display: none;" data-info-id="<%- id %>">!</span>
+            <span class="fruum-badge fruum-badge-info" data-fruumtipsy-right="New content" style="display: none;" data-info-id="<%- id %>">!</span>
+          </a>
+        </h4>
       </div>
     </div>
     <div class="fruum-object-additional-data">
@@ -41,9 +45,11 @@
           <span class="fruum-avatar-icon">&nbsp;<span class="fruum-icon fruum-icon-edit"></span>&nbsp;</span>
         </div>
         <div class="fruum-object-main-data">
-          <span class="fruum-category-title">
-            A message from our writers and bloggers
-          </span>
+          <div class="fruum-stream-typography">
+            <h4>
+              A message from our writers and bloggers
+            </h4>
+          </div>
         </div>
         <div class="fruum-object-additional-data">
           <span class="fruum-secondary-data">
@@ -55,9 +61,11 @@
           <span class="fruum-avatar-icon">OH!</span>
         </div>
         <div class="fruum-object-main-data">
-          <span class="fruum-category-title">
-            Got us on that fleeting moment!
-          </span>
+          <div class="fruum-stream-typography">
+            <h4>
+              Got us on that fleeting moment!
+            </h4>
+          </div>
         </div>
         <div class="fruum-object-additional-data">
           <span class="fruum-secondary-data">
@@ -73,9 +81,11 @@
           <span class="fruum-avatar-icon">&nbsp;<span class="fruum-icon fruum-icon-edit"></span>&nbsp;</span>
         </div>
         <div class="fruum-object-main-data">
-          <span class="fruum-category-title">
-            A message from our writers and bloggers
-          </span>
+          <div class="fruum-stream-typography">
+            <h4>
+              A message from our writers and bloggers
+            </h4>
+          </div>
         </div>
         <div class="fruum-object-additional-data">
           <span class="fruum-secondary-data">

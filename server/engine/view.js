@@ -14,6 +14,7 @@ module.exports = function(options, instance, self) {
   // --------------------------------- VIEW ------------------------------------
 
   function process_view(app_id, user, id, response) {
+    if (!user.get('socket')) return;
     user.set('viewing', id);
     user.get('socket').emit('fruum:view', response);
     //store previous values
@@ -53,6 +54,37 @@ module.exports = function(options, instance, self) {
         'fruum:online', online
       );
     }
+  }
+
+  self.robot = function(app_id, doc_id, callback) {
+    var response = {
+      parent: {},
+      documents: []
+    };
+    storage.get(app_id, doc_id, function(viewing_doc) {
+      if (viewing_doc && viewing_doc.isSearchable() && viewing_doc.get('type') != 'post') {
+        response.parent = viewing_doc.toRobot();
+        switch(viewing_doc.get('type')) {
+          case 'thread':
+          case 'article':
+            response.documents.push(viewing_doc.toRobot());
+            break;
+        }
+        //get children
+        storage.children(app_id, viewing_doc, function(children_docs) {
+          _.each(children_docs, function(document) {
+            if (document.isSearchable())
+            {
+              response.documents.push(document.toRobot());
+            }
+          });
+          callback(response);
+        });
+      }
+      else {
+        callback(response);
+      }
+    });
   }
 
   self.view = function(socket, payload) {

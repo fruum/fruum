@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Activity report</title>
+  <title>Administrator report</title>
   <!--STYLE.SCSS-->
   </head>
 <body>
@@ -17,20 +17,20 @@
         <table cellpadding="0" cellspacing="0" border="0" class="maincontent">
           <tr>
             <td class="contentheader">
-              Activity report on <%- application.name || application.id %>
+              Administrator's report on <%- application.name || application.id %>
             </td>
           </tr>
           <tr>
             <td class="content-sumactivity content-head">
-              Hello <%- administrator.displayname || administrator.username %>,<br>
-              there are <b><% documents.length %></b> updates on your communication streams.
+              Hello <%- administrator.username %> admin,<br>
+              there are <b><%- documents.length %></b> updates on your communication streams.
             </td>
           </tr>
           <% _.each(documents, function(document) { %>
           <tr>
             <td class="contentitem">
-              <h5><a href="<%- application.fullpage_url %>#v/<%- document.id %>" class="external-link"><%- document.header %><span class="tagname"></span></a></h5>
-              <p class="content-description"><%- document.type.toUpperCase() %></p>
+              <h5><a href="<%- application.fullpage_url %>#!v/<%- document.parent %>" class="external-link"><%- document.header %><span class="tagname"></span></a></h5>
+              <p class="content-description"><%- document.body %></p>
             </td>
           </tr>
           <% }); %>

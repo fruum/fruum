@@ -27,7 +27,7 @@ Handles sharing functionality
           this.$el.css('top', (el_caller.offset().top - this.$el.parent().offset().top) + 'px')
         }
         this.$el.show().find('textarea').
-          val((Fruum.application.fullpage_url || '') + '#v/' + this.ui_state.get('viewing').id).
+          val((Fruum.application.fullpage_url || '') + '#!v/' + this.ui_state.get('viewing').id).
           focus().
           select();
       },

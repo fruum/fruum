@@ -149,4 +149,19 @@ module.exports = function(options, instance, self) {
       }
     });
   }
+
+  // ------------------------------- RESET USERS -------------------------------
+
+  self.reset_users = function(payload) {
+    storage.get_app(payload.app_id, function(application) {
+      if (!application) {
+        logger.error(payload.app_id, 'reset_users: Invalid app_id', payload);
+      }
+      else {
+        storage.reset_users(application, function() {
+          logger.info(payload.app_id, 'reset_users', application);
+        });
+      }
+    });
+  }
 }

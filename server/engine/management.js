@@ -40,6 +40,6 @@ module.exports = function(options, instance, self) {
 
   self.gc = function(app_id) {
     logger.system('Delete archived documents');
-    storage.gc(app_id, Date.now(), function() {});
+    storage.gc_archived(app_id, Date.now(), function() {});
   }
 }

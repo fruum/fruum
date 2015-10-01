@@ -1,0 +1,38 @@
+/*
+
+  Interactions section
+
+  Contents
+  1. Interaction forms
+  2. Custom inputs
+
+*/
+
+
+// 1. Interaction forms
+
+#fruum input.fruum-interactions-input,
+#fruum textarea.fruum-interactions-input {
+  font-size: $stream-default-font;
+  line-height: $stream-default-lineheight;
+  min-height: $stream-default-lineheight;
+}
+
+#fruum textarea.fruum-interactions-input {
+  min-height: $stream-default-lineheight*9.5;
+}
+
+#fruum textarea.fruum-interactions-input.fruum-interactions-compact {
+  min-height: $stream-default-lineheight*1.5;
+}
+
+
+
+// 2. Custom inputs
+
+#fruum .fruum-interactions-input.fruum-category-title,
+#fruum .fruum-interactions-input.fruum-category-title {
+  font-size: $stream-h4;
+  line-height: $stream-h4-lineheight;
+  font-weight: $stream-h4-weight;
+}

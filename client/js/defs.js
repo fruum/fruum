@@ -17,4 +17,8 @@
   window.Fruum.processors.transmit = [];
   window.Fruum.processors.receive = [];
   window.Fruum.processors.init = [];
+  window.Fruum.messages = {
+    private: 'Only administrators will be able to see this!',
+    public: 'Everybody will be able to see this!'
+  };
 })();

@@ -54,6 +54,11 @@
         window.fruumSettings.history = true;
     }
 
+    //force restore
+    if (window.fruumSettings.history && window.fruumSettings.restore == undefined) {
+      window.fruumSettings.restore = true;
+    }
+
     var el_preview = document.getElementById('fruum-preview');
     var loaded = false;
 
@@ -157,23 +162,33 @@
       bind_event('a[fruum-link]', 'mouseout', function(e) {
         process_mouseout(e, is_fruum_attr(this));
       });
-      //check for fruum hastag no url
-      if (window.location.hash && window.fruumSettings.history) {
-        if (window.location.hash.indexOf('#v/') == 0) {
-          window.fruumSettings.view_id = window.location.hash.replace('#v/', '');
-          launch_fruum();
-        }
-      }
-      //check session storage
-      else if (window.sessionStorage && window.sessionStorage.getItem) {
-        try {
-          if (window.sessionStorage.getItem('fruum:open:' + window.fruumSettings.app_id)|0) {
+      //check for fruum hastag on url
+      if (window.fruumSettings.restore) {
+        if (window.location.hash && window.fruumSettings.history) {
+          if (window.location.hash.indexOf('#!v/') == 0) {
+            window.fruumSettings.view_id = window.location.hash.replace('#!v/', '');
             launch_fruum();
           }
         }
-        catch(err) {}
+        //check session storage
+        else if (window.sessionStorage && window.sessionStorage.getItem) {
+          try {
+            if (window.sessionStorage.getItem('fruum:open:' + window.fruumSettings.app_id)|0) {
+              launch_fruum();
+            }
+          }
+          catch(err) {}
+        }
       }
     }
-    else launch_fruum();
+    else {
+      //check for fruum hastag no url
+      if (window.location.hash && window.fruumSettings.history) {
+        if (window.location.hash.indexOf('#!v/') == 0) {
+          window.fruumSettings.view_id = window.location.hash.replace('#!v/', '');
+        }
+      }
+      launch_fruum();
+    }
   });
 })();

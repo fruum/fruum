@@ -84,6 +84,9 @@
 
   table {
     margin: $stream-lineheight 0 $stream-lineheight*3/2;
+    th,td {
+      font-size: 1em;
+    }
   }
 
 

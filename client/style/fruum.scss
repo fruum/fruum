@@ -1,9 +1,10 @@
 // Basic variables and mixins
 
 @import 'variables';
-@import 'mixins';
 
 //__APPLICATION_CUSTOM_SASS__
+
+@import 'mixins';
 
 // Fruum base
 @import 'styling/base';
@@ -34,6 +35,7 @@
 @media (min-device-width: 1024px ) {
   @import 'styling/base-mediumscreen';
   @import 'styling/streamobject-mediumscreen';
+  @import 'styling/interactions-mediumscreen';
   @import 'styling/stream-mediumscreen';
   @import 'styling/tags-mediumscreen';
 }

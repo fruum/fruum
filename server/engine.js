@@ -7,7 +7,7 @@
 var fs = require('fs'),
     _ = require('underscore'),
     async = require('async'),
-    CronJob = require('cron').CronJob,
+    schedule = require('node-schedule'),
     logger = require('./logger');
 
 function Engine(options, instance) {
@@ -48,6 +48,16 @@ function Engine(options, instance) {
     unwatch: [],
     report: []
   };
+
+  //schedule cron on plugin
+  function cronify(name, plugin, crondef) {
+    logger.system('Scheduling cronjob for ' + name + ' at ' + crondef);
+    var j = schedule.scheduleJob(crondef, function() {
+      logger.system('Running cronjob: ' + name);
+      plugin.cron();
+    });
+  }
+
   if (options.plugins) {
     //loop through plugins, initialize them and put them in the appropriate
     //plugin bucket
@@ -60,6 +70,7 @@ function Engine(options, instance) {
           try {
             var plugin = require(path + 'server');
             plugin = new plugin(options, instance);
+            logger.system('Using server plugin: ' + plugin_name);
             if (plugin.add) plugins.add.push(plugin.add);
             if (plugin.update) plugins.update.push(plugin.update);
             if (plugin.delete) plugins.delete.push(plugin.delete);
@@ -69,11 +80,8 @@ function Engine(options, instance) {
             if (plugin.unwatch) plugins.unwatch.push(plugin.unwatch);
             if (plugin.report) plugins.report.push(plugin.report);
             if (plugin.cron && options.cron[plugin_name]) {
-              new CronJob(
-                options.cron[plugin_name], plugin.cron, null, true, options.cron['_timezone']
-              );
+              cronify(plugin_name, plugin, options.cron[plugin_name]);
             }
-            logger.system('Using server plugin: ' + plugin_name);
           }
           catch(err) {
             logger.system(err);
@@ -102,7 +110,6 @@ function Engine(options, instance) {
   this.cache = cache;
   this.storage = storage;
   this.auth = auth;
-  this.cache = cache;
   this.email = email;
   this.plugins = plugins;
   this.app_users = app_users;

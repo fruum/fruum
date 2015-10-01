@@ -241,4 +241,30 @@ module.exports = function(options, client, self) {
       callback();
     });
   }
+
+  // ---------------------------- RESET USERS ------------------------------
+
+  self.reset_users = function(application, callback) {
+    var app_id = application.get('id');
+    client.deleteByQuery({
+      index: self.toIndex(app_id),
+      type: 'user',
+      body: {
+        query: {
+          bool : {
+            must: [{ match_all: {}}]
+          }
+        }
+      }
+    }, function(error, response) {
+      if (error) {
+        logger.error(app_id, 'reset_users', error);
+      }
+      else {
+        logger.info(app_id, 'reset_users', response);
+      }
+      callback();
+    });
+  }
+
 }

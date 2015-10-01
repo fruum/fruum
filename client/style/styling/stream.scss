@@ -196,7 +196,6 @@
     padding: 0;
     margin: $small-stream-lineheight 0 $small-stream-lineheight*3/2;
     border: 1px solid $table-borders;
-
     thead {
       th {
         background-color: transparent;
@@ -230,6 +229,7 @@
     }
 
     th,td {
+      font-size: 2.5em;
       padding: $table-padding $table-padding;
       &:not(:last-child) {
         border-right: 1px solid $table-borders;

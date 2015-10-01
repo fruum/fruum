@@ -81,16 +81,19 @@ Main client app
       },
       initialize: function() {
         var that = this;
+        //saves scroll state for viewed documents
+        this.scroll_history = {};
+
         _.bindAll(this,
           'resize', 'onScroll', 'calculateViewRegions',
-          '_scrollTop', '_scrollBottom', '_snapTop', '_snapBottom'
+          '_scrollTop', '_scrollBottom', '_snapTop', '_snapBottom',
+          'restoreScrollState', 'saveScrollState'
         );
         $(window).resize(function() {
           Fruum.io.trigger('fruum:resize');
         });
         //models
         while(this._consumeData());
-        this.socket = io(remote_host);
         this.ui_state = new Models.UIState();
         this.categories = new Collections.Categories();
         this.threads = new Collections.Threads();
@@ -99,6 +102,7 @@ Main client app
         this.posts = new Collections.Posts();
         this.search = new Collections.Search();
         this.notifications = new Collections.Notifications();
+        this.socket = io(remote_host);
 
         //initialize plugins
         Fruum.utils.chain(Fruum.processors.init, this);
@@ -206,6 +210,8 @@ Main client app
 
         this.bindIO('fruum:view',
           function send(payload) {
+            //save previous scroll pos
+            that.saveScrollState();
             //grab some meta data from the trigger
             var loading = payload.origin || 'view';
             //remove metadata
@@ -274,7 +280,6 @@ Main client app
                   break;
               }
             });
-
             that.categories.reset(categories);
             that.articles.reset(articles);
             that.threads.reset(threads);
@@ -289,7 +294,10 @@ Main client app
             }
             else {
               //scroll to top
-              _.defer(that._snapTop);
+              if (that.hasScrollState())
+                _.defer(that.restoreScrollState);
+              else
+                _.defer(that._snapTop);
             }
 
             //remove from notifications
@@ -299,7 +307,7 @@ Main client app
 
             //store on local storage
             Fruum.utils.sessionStorage('fruum:view:' + window.fruumSettings.app_id, last_doc.id);
-            if (that.router) that.router.navigate('v/' + last_doc.id);
+            if (that.router) that.router.navigate('!v/' + last_doc.id);
           }
         );
 
@@ -604,7 +612,6 @@ Main client app
 
         // ----------------- START -----------------
 
-        this.ui_state.set('loading', 'Connecting');
         this.socket.on('connect', function() {
           that.socket.emit('fruum:auth', window.fruumSettings);
         });
@@ -612,8 +619,6 @@ Main client app
           if (!Fruum.__permanent_abort)
             $(that.ui.message_reconnect).slideDown('fast');
         });
-
-        this.onRefresh();
 
         setInterval(function() {
           while(that._consumeData());
@@ -641,6 +646,11 @@ Main client app
 
         //store open state
         Fruum.utils.sessionStorage('fruum:open:' + window.fruumSettings.app_id, 1);
+
+        //start with loading state open
+        this.ui_state.set('loading', 'connect');
+        this.onRefresh();
+        Fruum.io.trigger('fruum:resize');
       },
       onScroll: function() {
         if (this.calculate_regions_timer) return;
@@ -886,8 +896,25 @@ Main client app
           });
         }
       },
+      saveScrollState: function() {
+        var view_id = this.ui_state.get('viewing').id;
+        if (view_id)
+          this.scroll_history[view_id] = this._getScrollTop();
+      },
+      restoreScrollState: function() {
+        var view_id = this.ui_state.get('viewing').id;
+        if (this.scroll_history[view_id]) {
+          this._snapTo(this.scroll_history[view_id]);
+        }
+      },
+      hasScrollState: function() {
+        return this.scroll_history[this.ui_state.get('viewing').id];
+      },
+      _getScrollTop: function() {
+        return this.getRegion('content').$el.find('.nano-content').scrollTop();
+      },
       isContentOnBottom: function() {
-        var el = this.getRegion('content').$el;
+        var el = this.getRegion('content').$el.find('.nano-content');
         return (el.get(0).scrollHeight - el.scrollTop()) <= el.outerHeight() + 60;
       },
       //smooth scroll bottom
@@ -899,6 +926,10 @@ Main client app
       _scrollTop: function() {
         var el = this.getRegion('content').$el.find('.nano-content');
         el.stop(true, true).delay(1).animate({ scrollTop: 0 }, 'fast');
+      },
+      //hard scroll to position
+      _snapTo: function(top) {
+        this.getRegion('content').$el.nanoScroller({ scrollTop: top });
       },
       //hard scroll bottom
       _snapBottom: function() {
@@ -961,7 +992,7 @@ Main client app
         this.router = new Marionette.AppRouter({
           controller: this,
           appRoutes: {
-            'v/:id': 'onRouteView'
+            '!v/:id': 'onRouteView'
           }
         });
         Backbone.history.start();

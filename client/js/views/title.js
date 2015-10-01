@@ -9,6 +9,7 @@ Handles the top part
     //libraries
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
+        Messages = Fruum.messages,
         Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette;
     //View
@@ -103,7 +104,7 @@ Handles the top part
       onVisible: function(event) {
         event.preventDefault();
         var viewing = this.model.get('viewing');
-        if (viewing.id) {
+        if (viewing.id && confirm(viewing.visible?Messages.private:Messages.public)) {
           Fruum.io.trigger('fruum:field', {
             id: viewing.id,
             field: 'visible',

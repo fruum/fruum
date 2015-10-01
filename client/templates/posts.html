@@ -115,7 +115,7 @@
       <span class="fruum-secondary-data">
         <%- Fruum.libs.moment(parseInt(created)).fromNow() %>
       </span>
-      <% if (created != updated) { %>
+      <% if (created != updated && viewing.id != id) { %>
       <span class="fruum-secondary-data">EDITED</span>
       <% } %>
 

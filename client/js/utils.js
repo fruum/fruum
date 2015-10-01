@@ -5,9 +5,10 @@ Utilities
 (function() {
   'use strict';
   window.Fruum.require.push(function () {
-    var marked = Fruum.libs.marked;
-    var _ = Fruum.libs._;
-    var $ = Fruum.libs.$;
+    var marked = Fruum.libs.marked,
+        _ = Fruum.libs._,
+        $ = Fruum.libs.$;
+
     //Make Marionette itemviews work without the parent div
     Fruum.utils.marionette_itemview_without_tag = function(view) {
       return view.extend({
@@ -71,6 +72,17 @@ Utilities
       text = Fruum.utils.tagify(text);
       return text;
     }
+    Fruum.utils.permaLink = function(doc_id) {
+      return Fruum.application.fullpage_url + '#!v/' + doc_id;
+    }
+    Fruum.utils.printSummary = function(text) {
+      text = Fruum.utils.print(text).
+        replace(/(<h[123456]\b[^>]*>)[^<>]*(<\/h[123456]>)/gi, '').
+        replace(/<(?:.|\n)*?>/gm, '');
+      if (text.length > 170)
+        text = text.substr(0, 170) + '...';
+      return text;
+    }
     //If computer is mac
     Fruum.utils.isMac = function() {
       return (navigator.platform || '').match(/(Mac|iPhone|iPod|iPad)/i)?true:false;
@@ -100,6 +112,79 @@ Utilities
           else return window.sessionStorage.getItem(key);
         }
         catch(err) {}
+      }
+    },
+    //move categories/articles up/down
+    Fruum.utils.orderUp = function(model, top) {
+      if (!model || !model.collection) return;
+      var collection = model.collection;
+      var index = collection.models.indexOf(model);
+      if (index <= 0) return;
+      if (top) {
+        var reorder = [{
+          id: model.get('id'),
+          order: 1
+        }], order = 1;
+        collection.each(function(m) {
+          if (m != model) {
+            order++;
+            reorder.push({
+              id: m.get('id'),
+              order: order
+            });
+          }
+        });
+        _.each(reorder, function(entry) {
+          Fruum.io.trigger('fruum:field', {
+            id: entry.id, field: 'order', value: entry.order
+          });
+        });
+      }
+      else {
+        var prev_model = collection.models[index - 1];
+        Fruum.io.trigger('fruum:field', {
+          id: model.get('id'), field: 'order', value: prev_model.get('order')
+        });
+        Fruum.io.trigger('fruum:field', {
+          id: prev_model.get('id'), field: 'order', value: model.get('order')
+        });
+      }
+    },
+    Fruum.utils.orderDown = function(model, bottom) {
+      if (!model || !model.collection) return;
+      var collection = model.collection;
+      var index = collection.models.indexOf(model);
+      if (index + 1 >= collection.models.length) return;
+      if (bottom) {
+        var reorder = [], order = 0;
+        collection.each(function(m) {
+          if (m != model) {
+            order++;
+            reorder.push({
+              id: m.get('id'),
+              order: order
+            });
+          }
+        });
+        order++;
+        reorder.push({
+          id: model.get('id'),
+          order: order
+        });
+        _.each(reorder, function(entry) {
+          Fruum.io.trigger('fruum:field', {
+            id: entry.id, field: 'order', value: entry.order
+          });
+        });
+      }
+      else {
+        var next_model = collection.models[index + 1];
+        Fruum.io.trigger('fruum:field', {
+          id: model.get('id'), field: 'order', value: next_model.get('order')
+        });
+        Fruum.io.trigger('fruum:field', {
+          id: next_model.get('id'), field: 'order', value: model.get('order')
+        });
       }
     }
   });
