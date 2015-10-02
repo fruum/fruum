@@ -1,11 +1,3 @@
 <script type="text/template" id="fruum-plugin-template-twitchtv">
-  <div>
-    <object bgcolor="#000000" data="//www-cdn.jtvnw.net/swflibs/TwitchPlayer.swf">
-      <param name="movie" value="http://www-cdn.jtvnw.net/swflibs/TwitchPlayer.swf" />
-      <param name="allowScriptAccess" value="always" />
-      <param name="allowNetworking" value="all" />
-      <param name="allowFullScreen" value="true" />
-      <param name="flashvars" value="channel=<%- channel %>&auto_play=false" />
-    </object>
-  </div>
+  <iframe src="<%- channel %>/embed" frameborder="0" scrolling="no"></iframe>
 </script>

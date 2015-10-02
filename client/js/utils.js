@@ -6,8 +6,7 @@ Utilities
   'use strict';
   window.Fruum.require.push(function () {
     var marked = Fruum.libs.marked,
-        _ = Fruum.libs._,
-        $ = Fruum.libs.$;
+        _ = Fruum.libs._;
 
     //Make Marionette itemviews work without the parent div
     Fruum.utils.marionette_itemview_without_tag = function(view) {
