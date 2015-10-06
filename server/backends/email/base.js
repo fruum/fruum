@@ -12,43 +12,25 @@ var sass = require('node-sass'),
 
 module.exports = function(options) {
 
-  // ---------------------------------- SEND -----------------------------------
+  /*
+  Summary:
+  Send an email
 
-  //message is { subject: '', html: '' }
+  Parameters:
+  - application: Application model
+  - user: Receiver user model
+  - message: an object describing the message as
+    {
+        subject: string,
+        html: html body message
+    }
+  - callback: function callback to trigger when done
+  */
   this.send = function(application, user, message, callback) {
     logger.system('Sending email to: <' + user.get('username') + '> ' + user.get('email'));
     logger.system('Subject: ' + message.subject);
     logger.system(message.html);
     callback();
-  }
-
-  // ---------------------------------- UTILS ----------------------------------
-
-  //exlude users with no email address
-  this.filter_users_with_email = function(users) {
-    var recipients = [];
-    _.each(users, function(user) {
-      if (user.get('email')) {
-        recipients.push(user);
-      }
-    });
-    return recipients;
-  }
-
-  //get a list of administrators or admins defaults as defined on config.json
-  this.administrators_or_defaults = function(administrators) {
-    administrators = this.filter_users_with_email(administrators);
-    if (!administrators.length) {
-      //add failsafe admins
-      _.each(options.notifications.defaults.administrators, function(email) {
-        administrators.push(new Models.User({
-          username: 'admin',
-          displayname: 'Administrator',
-          email: email
-        }));
-      });
-    }
-    return administrators;
   }
 
 }

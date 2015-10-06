@@ -8,9 +8,9 @@ var express = require('express'),
     Models = require('./models');
 
 function API_v1(options, instance) {
-  var storage = instance.storage;
-  var cache = instance.cache;
-  var router = express.Router();
+  var storage = instance.storage,
+      engine = instance.engine,
+      router = express.Router();
   function get_app(req, res, callback) {
     if (!req.params.api_key) {
       res.json({ error: 'missing_api_key' });
@@ -42,7 +42,7 @@ function API_v1(options, instance) {
             document.escape();
             document.extractTags();
             storage.update(application.get('id'), document, null, function(updated_doc) {
-              cache.invalidate_document(application.get('id'), updated_doc);
+              engine.invalidateDocument(application.get('id'), updated_doc);
               res.json(updated_doc.toJSON());
             });
           }
@@ -51,7 +51,7 @@ function API_v1(options, instance) {
             document.escape();
             document.extractTags();
             storage.add(application.get('id'), document, function(document) {
-              cache.invalidate_document(application.get('id'), document);
+              engine.invalidateDocument(application.get('id'), document);
               res.json(document.toJSON());
             });
           }
@@ -84,7 +84,7 @@ function API_v1(options, instance) {
             document.escape();
             document.extractTags();
             storage.update(application.get('id'), document, null, function(updated_doc) {
-              cache.invalidate_document(application.get('id'), updated_doc);
+              engine.invalidateDocument(application.get('id'), updated_doc);
               res.json(updated_doc.toJSON());
             });
           }
@@ -102,7 +102,7 @@ function API_v1(options, instance) {
         storage.get(application.get('id'), id, function(document) {
           if (document) {
             storage.delete(application.get('id'), document, function() {
-              cache.invalidate_document(application.get('id'), document);
+              engine.invalidateDocument(application.get('id'), document);
               res.json(document.toJSON());
             });
           }

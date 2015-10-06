@@ -11,7 +11,7 @@ var _ = require('underscore'),
 function ElasticSearch(options) {
   _.extend(this, new Base(options));
   options.elasticsearch = options.elasticsearch || {};
-  options.elasticsearch.host = options.elasticsearch.host || 'localhost:9200';
+  options.elasticsearch.host = options.elasticsearch.host || 'http://localhost:9200';
   options.elasticsearch.max_children = options.elasticsearch.max_children || 1000;
   options.elasticsearch.retry_on_conflict = options.elasticsearch.retry_on_conflict || 0;
   var client = new elasticsearch.Client({

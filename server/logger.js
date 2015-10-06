@@ -31,5 +31,8 @@ module.exports = {
   },
   error: function(app_id, reason, object) {
     logger.error(build_log(app_id, reason, object));
+  },
+  level: function(level) {
+    logger.level = level;
   }
 };

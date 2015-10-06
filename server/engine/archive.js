@@ -8,7 +8,7 @@ var _ = require('underscore'),
     logger = require('../logger');
 
 module.exports = function(options, instance, self) {
-  var cache = self.cache,
+  var engine = instance.engine,
       storage = self.storage,
       plugins = self.plugins;
 
@@ -44,7 +44,7 @@ module.exports = function(options, instance, self) {
           return;
         }
         storage.delete(app_id, document, function() {
-          cache.invalidate_document(app_id, document);
+          self.invalidateDocument(app_id, document);
           socket.emit('fruum:delete', document.toJSON());
           if (!plugin_payload.broadcast_noop) self._broadcast(user, document, 'fruum:delete');
         });
@@ -84,7 +84,7 @@ module.exports = function(options, instance, self) {
           return;
         }
         storage.archive(app_id, document, function() {
-          cache.invalidate_document(app_id, document);
+          self.invalidateDocument(app_id, document);
           socket.emit('fruum:archive', document.toJSON());
           if (!plugin_payload.broadcast_noop) self._broadcast(user, document, 'fruum:archive');
         });
@@ -124,7 +124,7 @@ module.exports = function(options, instance, self) {
           return;
         }
         storage.restore(app_id, document, function() {
-          cache.invalidate_document(app_id, document);
+          self.invalidateDocument(app_id, document);
           socket.emit('fruum:restore', document.toJSON());
           if (!plugin_payload.broadcast_noop) self._broadcast(user, document, 'fruum:restore');
         });

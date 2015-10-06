@@ -93,7 +93,7 @@ module.exports = function(options, instance, self) {
         app_id = socket.app_id,
         user = socket.fruum_user;
     if (user) {
-      cache.get_cached_response(app_id, user, id,
+      self.getCachedResponse(app_id, user, id,
         //cache hit
         function(data) {
           process_view(app_id, user, id, data);
@@ -108,7 +108,7 @@ module.exports = function(options, instance, self) {
             online: {}
           };
           storage.get(app_id, id, function(viewing_doc) {
-            if (viewing_doc) {
+            if (viewing_doc && !viewing_doc.get('archived')) {
               //get breadcrumb
               storage.mget(app_id, viewing_doc.get('breadcrumb'), function(breadcrumb) {
                 //get children
@@ -143,7 +143,7 @@ module.exports = function(options, instance, self) {
                       online: {}
                     };
                   }
-                  cache.cache_response(app_id, user, id, response);
+                  self.cacheResponse(app_id, user, id, response);
                   process_view(app_id, user, id, response);
                 });
               });

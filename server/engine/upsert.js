@@ -10,6 +10,7 @@ var _ = require('underscore'),
 
 module.exports = function(options, instance, self) {
   var cache = self.cache,
+      engine = self.engine,
       storage = self.storage,
       plugins = self.plugins;
 
@@ -136,8 +137,8 @@ module.exports = function(options, instance, self) {
           storage.add(app_id, document, function(new_document) {
             if (new_document) {
               //success
-              cache.invalidate_document(app_id, new_document);
-              cache.invalidate_document(app_id, parent_doc);
+              self.invalidateDocument(app_id, new_document);
+              self.invalidateDocument(app_id, parent_doc);
               socket.emit('fruum:add', new_document.toJSON());
               if (!plugin_payload.broadcast_noop) {
                 self._broadcast(user, new_document);
@@ -245,7 +246,7 @@ module.exports = function(options, instance, self) {
         }
         storage.update(app_id, doc_to_update, null, function(updated_document) {
           if (updated_document) {
-            cache.invalidate_document(app_id, updated_document);
+            self.invalidateDocument(app_id, updated_document);
             socket.emit('fruum:update', updated_document.toJSON());
             if (!plugin_payload.broadcast_noop) self._broadcast(user, updated_document);
             //update parent timestamp
@@ -292,7 +293,7 @@ module.exports = function(options, instance, self) {
       if (payload.field == 'visible') {
         storage.update_subtree(app_id, document, attributes, function(updated_document) {
           if (updated_document) {
-            cache.invalidate_document(app_id, updated_document);
+            self.invalidateDocument(app_id, updated_document);
             socket.emit('fruum:field', updated_document.toJSON());
             self._broadcast(user, updated_document);
           }
@@ -304,7 +305,7 @@ module.exports = function(options, instance, self) {
       else {
         storage.update(app_id, document, attributes, function(updated_document) {
           if (updated_document) {
-            cache.invalidate_document(app_id, updated_document);
+            self.invalidateDocument(app_id, updated_document);
             socket.emit('fruum:field', updated_document.toJSON());
             self._broadcast(user, updated_document);
           }

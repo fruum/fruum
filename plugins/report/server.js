@@ -16,7 +16,7 @@ function Report(options, instance) {
     instance.storage.get_app(payload.app_id, function(application) {
       //find admins
       instance.storage.match_users(payload.app_id, { admin: true }, function(administrators) {
-        administrators = instance.email.administrators_or_defaults(administrators);
+        administrators = instance.engine.administratorsOrDefaults(administrators);
         if (application && administrators.length) {
           //get email template
           instance.engine.notificationTemplate(application, 'report', function(email_template) {

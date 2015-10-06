@@ -21,7 +21,7 @@ module.exports = function(options, instance, self) {
       }
       else {
         var api_keys = application.get('api_keys') || [];
-        var key = uuid.v1();
+        var key = payload.using || uuid.v1();
         api_keys.push(key);
         storage.update_app(application, { api_keys: api_keys }, function(updated_application) {
           if (updated_application) {

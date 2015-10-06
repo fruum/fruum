@@ -18,7 +18,7 @@ var path = require('path'),
     buildify = require('buildify'),
     logger = require('./logger');
 
-function FruumServer(options, cli_cmd) {
+function FruumServer(options, cli_cmd, ready) {
   logger.system("Starting Fruum");
   options = options || {};
   //defaults
@@ -488,6 +488,7 @@ function FruumServer(options, cli_cmd) {
 
   http.listen(process.env.PORT || options.port, function(){
     logger.system("Listening connection on port " + (process.env.PORT || options.port));
+    ready && ready();
   });
 
 }

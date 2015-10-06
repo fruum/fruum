@@ -3,9 +3,11 @@
 *******************************************************************************/
 
 //load the settings
-var config = require('./settings');
-var FruumServer = require('./server/main.js');
-var cliArgs = require('command-line-args');
+var config = require('./settings'),
+    FruumServer = require('./server/main.js'),
+    logger = require('./server/logger'),
+    cliArgs = require('command-line-args');
+
 var cli = cliArgs([
   { name: 'help', type: Boolean, description: 'Print usage instructions' },
   { name: 'setup', type: Boolean, description: 'Setup database (should be called once)' },
@@ -25,10 +27,12 @@ var cli = cliArgs([
   { name: 'contact-email', type: String, description: 'Application contact email <string>' },
   { name: 'delete-app', type: String, description: 'Delete app <app_id>' },
   { name: 'create-api-key', type: String, description: 'Create API key <app_id>' },
+  { name: 'using', type: String, description: 'Combined with --create-api-key to explicitely define the api key' },
   { name: 'list-api-keys', type: String, description: 'List API keys <app_id>' },
   { name: 'delete-api-key', type: String, description: 'List API keys <api_key>' },
   { name: 'reset-users', type: String, description: 'Delete all users of app <api_key>' },
-  { name: 'gc-app', type: String, description: 'Purge archived docs of <app_id>' }
+  { name: 'gc-app', type: String, description: 'Purge archived docs of <app_id>' },
+  { name: 'log-level', type: String, description: 'Set log level [info, debug, error]' }
 ]);
 //parse command line values
 var options = cli.parse(), cli_cmd;
@@ -53,7 +57,8 @@ else {
     cli_cmd = {
       action: 'create_api_key',
       params: {
-        app_id: options['create-api-key']
+        app_id: options['create-api-key'],
+        using: options['using']
       }
     }
   }
@@ -78,15 +83,15 @@ else {
       action: 'add_app',
       params: {
         app_id: options['add-app'],
-        name: options.name,
-        description: options.description,
-        url: options.url,
+        name: options['name'],
+        description: options['description'],
+        url: options['url'],
         auth_url: options['auth-url'],
         fullpage_url: options['fullpage-url'],
         notifications_email: options['notifications-email'],
         contact_email: options['contact-email'],
-        theme: options.theme,
-        tier: options.tier
+        theme: options['theme'],
+        tier: options['tier']
       }
     }
   }
@@ -95,15 +100,15 @@ else {
       action: 'update_app',
       params: {
         app_id: options['update-app'],
-        name: options.name,
-        description: options.description,
-        url: options.url,
+        name: options['name'],
+        description: options['description'],
+        url: options['url'],
         auth_url: options['auth-url'],
         fullpage_url: options['fullpage-url'],
         notifications_email: options['notifications-email'],
         contact_email: options['contact-email'],
-        theme: options.theme,
-        tier: options.tier
+        theme: options['theme'],
+        tier: options['tier']
       }
     }
   }
@@ -133,6 +138,10 @@ else {
         app_id: options['reset-users']
       }
     }
+  }
+  //set log level
+  if (options['log-level']) {
+    logger.level(options['log-level']);
   }
   //run the server
   var server = new FruumServer(config, cli_cmd);

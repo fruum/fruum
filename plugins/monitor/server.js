@@ -14,7 +14,7 @@ function Monitor(options, instance) {
   function report(application, documents) {
     //get admins
     instance.storage.match_users(application.get('id'), { admin: true }, function(administrators) {
-      administrators = instance.email.administrators_or_defaults(administrators);
+      administrators = instance.engine.administratorsOrDefaults(administrators);
       if (administrators.length) {
         instance.engine.notificationTemplate(application, 'monitor', function(email_template) {
           var context = {

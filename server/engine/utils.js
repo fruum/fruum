@@ -7,6 +7,10 @@
 var _ = require('underscore'),
     logger = require('../logger');
 
+function _gen_cache_key(app_id, admin, doc_id) {
+  return app_id + ':' + (admin|0) + ':' + doc_id;
+}
+
 module.exports = function(options, instance, self) {
   var app_users = self.app_users,
       app_applications = self.app_applications;
@@ -80,4 +84,59 @@ module.exports = function(options, instance, self) {
     });
   }
 
+  // ------------------------------ CACHE UTILS --------------------------------
+
+  //high level function add document to cache
+  self.cacheResponse = function(app_id, user, doc_id, response) {
+    if (!user) return;
+    self.cache.put('views', _gen_cache_key(app_id, user.get('admin'), doc_id), response);
+  }
+  self.invalidateCache = function(app_id, doc_id) {
+    self.cache.del('views', _gen_cache_key(app_id, true, doc_id));
+    self.cache.del('views', _gen_cache_key(app_id, false, doc_id));
+  }
+  self.invalidateDocument = function(app_id, document) {
+    self.invalidateCache(app_id, document.get('id'));
+    self.invalidateCache(app_id, document.get('parent'));
+  }
+  self.getCachedResponse = function(app_id, user, doc_id, hit, miss) {
+    if (!user) return;
+    var key = _gen_cache_key(app_id, user.get('admin'), doc_id);
+    var data = self.cache.get('views', key);
+    if (data) {
+      hit && hit(data);
+    }
+    else {
+      miss && miss();
+    }
+  }
+
+  // ---------------------------------- EMAIL UTILS ----------------------------
+
+  //exlude users with no email address
+  self.filterUsersWithEmail = function(users) {
+    var recipients = [];
+    _.each(users, function(user) {
+      if (user.get('email')) {
+        recipients.push(user);
+      }
+    });
+    return recipients;
+  }
+
+  //get a list of administrators or admins defaults as defined on config.json
+  self.administratorsOrDefaults = function(administrators) {
+    administrators = self.filterUsersWithEmail(administrators);
+    if (!administrators.length) {
+      //add failsafe admins
+      _.each(options.notifications.defaults.administrators, function(email) {
+        administrators.push(new Models.User({
+          username: 'admin',
+          displayname: 'Administrator',
+          email: email
+        }));
+      });
+    }
+    return administrators;
+  }
 }

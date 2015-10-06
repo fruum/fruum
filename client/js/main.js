@@ -75,6 +75,8 @@ Main client app
         share: '.fruum-js-region-share'
       },
       events: {
+        'keydown input, textarea': 'onInterceptKeyboard',
+        'keyup input, textarea': 'onInterceptKeyboard',
         'click @ui.close': 'onClose',
         'click @ui.restore_undo': 'onRestore',
         'click @ui.message_view_error > a': 'onGoHome'
@@ -955,6 +957,9 @@ Main client app
         return false;
       },
 
+      onInterceptKeyboard: function(event) {
+        event.stopPropagation();
+      },
       onGoHome: function(event) {
         event && event.preventDefault();
         Fruum.io.trigger('fruum:view', { id: 'home' });
