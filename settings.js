@@ -11,4 +11,10 @@ try {
 }
 catch(e) {}
 
-module.exports = config;
+module.exports = function(options) {
+  var final = config;
+  if (options && options['config']) {
+    final = _.extend(final, require(options['config']));
+  }
+  return final;
+};

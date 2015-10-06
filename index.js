@@ -32,7 +32,8 @@ var cli = cliArgs([
   { name: 'delete-api-key', type: String, description: 'List API keys <api_key>' },
   { name: 'reset-users', type: String, description: 'Delete all users of app <api_key>' },
   { name: 'gc-app', type: String, description: 'Purge archived docs of <app_id>' },
-  { name: 'log-level', type: String, description: 'Set log level [info, debug, error]' }
+  { name: 'log-level', type: String, description: 'Set log level [info, debug, error]' },
+  { name: 'config', type: String, description: 'Use custom config file' }
 ]);
 //parse command line values
 var options = cli.parse(), cli_cmd;
@@ -144,5 +145,5 @@ else {
     logger.level(options['log-level']);
   }
   //run the server
-  var server = new FruumServer(config, cli_cmd);
+  var server = new FruumServer(config(options), cli_cmd);
 }

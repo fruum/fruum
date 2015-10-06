@@ -8,19 +8,12 @@ var _ = require('underscore'),
     Base = require('./base'),
     Models = require('../../models');
 
-function FileAuth(options) {
+function ReferenceAuth(options) {
   _.extend(this, new Base(options));
   this.authenticate = function(application, user_payload, callback) {
-    var user_id = user_payload.id || _.random(1, 1000);
-    callback(new Models.User({
-      id: '' + user_id,
-      anonymous: false,
-      admin: true,
-      username: 'user' + user_id,
-      displayname: 'First Last' + user_id,
-      avatar: '',
-      email: ''
-    }));
+    user_payload = user_payload || {};
+    user_payload = user_payload.id || '' + _.random(1, 1000)
+    callback(new Models.User(user_payload));
   }
 }
-module.exports = FileAuth;
+module.exports = ReferenceAuth;

@@ -1,0 +1,13 @@
+{
+  "port": 3000,
+  "url": "http://127.0.0.1:3000",
+
+  "storage_engine": "elasticsearch",
+  "auth_engine": "reference",
+  "cache_engine": "memory_cache",
+  "email_engine": "base",
+
+  "elasticsearch": {
+    "host": "http://localhost:9200"
+  }
+}
