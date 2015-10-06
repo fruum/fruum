@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/fruum/fruum.svg)](https://travis-ci.org/fruum/fruum)
+
 # Fruum
 
 ___
