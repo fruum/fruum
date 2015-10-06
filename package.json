@@ -11,7 +11,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "./node_modules/.bin/jasmine-node tests"
+    "test": "sh tests/run.sh"
   },
   "engines": {
     "node": ">=4.1"
@@ -27,6 +27,7 @@
     "express": "^4.13.3",
     "giphy-api": "^1.0.8",
     "jasmine-node": "^1.14.5",
+    "jsdom": "^6.5.1",
     "juice": "^1.5.0",
     "mandrill-api": "^1.0.45",
     "marked": "^0.3.5",
