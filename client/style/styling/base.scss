@@ -17,6 +17,7 @@
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
+  text-align: left;
   // core element for everything below!!! Please handle with care!!
   font-size: $base-grid !important;
   overflow: hidden;
@@ -70,11 +71,10 @@ body > #fruum {
   color: $base-text-color;
   font-size: 1em; //reset to base-grid
   @if ( lightness($background-helper-base-color) > 10 ) {
-    background-color: rgba( 0, 0, 0, 0.03 );
+    background-color: rgba( 0, 0, 0, 0.02 );
   } @else {
     background-color: rgba( 0, 0, 0, 0.1 );
   }
-
 }
 
 #fruum .fruum-navigation-section,

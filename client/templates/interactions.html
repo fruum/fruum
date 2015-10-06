@@ -114,18 +114,22 @@
   <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
   <input type="hidden" data-field="type" value="thread" class="fruum-js-interacting" />
   <form action="" class="fruum-interactions-form">
-    <input
-      class="fruum-interactions-input fruum-category-title"
-      data-field="header"
-      placeholder="thread topic..."
-      value="<%- editing.header || '' %>"
-      />
-      <div class="fruum-object-divider"></div>
-      <textarea
-        autocomplete="off"
-        class="fruum-interactions-input fruum-secondary-data"
-        placeholder="it's about..."
-        data-field="body"><%= editing.body || '' %></textarea>
+    <div class="fruum-stream-typography">
+      <input
+        class="fruum-interactions-input fruum-category-title"
+        data-field="header"
+        placeholder="thread topic..."
+        value="<%- editing.header || '' %>"
+        />
+    </div>
+    <div class="fruum-object-divider"></div>
+    <div class="fruum-stream-typography">
+        <textarea
+          autocomplete="off"
+          class="fruum-interactions-input fruum-secondary-data"
+          placeholder="it's about..."
+          data-field="body"><%= editing.body || '' %></textarea>
+    </div>
     <div class="fruum-interactions-footer">
       <div class="fruum-interactions-buttons fruum-interactions-group">
         <% if (editing.id) { %>
@@ -153,18 +157,22 @@
   <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
   <input type="hidden" data-field="type" value="article" class="fruum-js-interacting" />
   <form action="" class="fruum-interactions-form">
-    <input
-      class="fruum-interactions-input fruum-category-title"
-      data-field="header"
-      placeholder="article title..."
-      value="<%- editing.header || '' %>"
-      />
-      <div class="fruum-object-divider"></div>
+    <div class="fruum-stream-typography">
+      <input
+        class="fruum-interactions-input fruum-category-title"
+        data-field="header"
+        placeholder="article title..."
+        value="<%- editing.header || '' %>"
+        />
+    </div>
+    <div class="fruum-object-divider"></div>
+    <div class="fruum-stream-typography">
       <textarea
         autocomplete="off"
         class="fruum-interactions-input fruum-secondary-data"
         placeholder="it's about..."
         data-field="body"><%= editing.body || '' %></textarea>
+    </div>
     <div class="fruum-interactions-footer">
       <div class="fruum-interactions-buttons fruum-interactions-group">
         <% if (editing.id) { %>
@@ -192,12 +200,14 @@
   <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
   <input type="hidden" data-field="type" value="channel" class="fruum-js-interacting" />
   <form action="" class="fruum-interactions-form">
-    <input
-      autocomplete="off" class="fruum-interactions-input"
-      data-field="header"
-      placeholder="channel name..."
-      value="<%- editing.header || '' %>"
-      />
+    <div class="fruum-stream-typography">
+      <input
+        autocomplete="off" class="fruum-interactions-input"
+        data-field="header"
+        placeholder="channel name..."
+        value="<%- editing.header || '' %>"
+        />
+    </div>
     <div class="fruum-interactions-footer">
       <div class="fruum-interactions-buttons fruum-interactions-group">
         <% if (editing.id) { %>
@@ -230,9 +240,11 @@
     </span>
     <% } else { %>
     <input type="hidden" data-field="type" value="post" class="fruum-js-interacting" />
-    <textarea
-      autocomplete="off" class="fruum-interactions-input fruum-interactions-compact fruum-js-channel-input"
-      placeholder="you say..." data-field="body" rows="1"></textarea>
+    <div class="fruum-stream-typography">
+      <textarea
+        autocomplete="off" class="fruum-interactions-input fruum-interactions-compact fruum-js-channel-input"
+        placeholder="you say..." data-field="body" rows="1"></textarea>
+    </div>
     <div class="fruum-interactions-footer fruum-interactions-footer-compact">
       <div class="fruum-tutorial-messages fruum-tutorial-tip">press <b>Enter</b> to post</div>
     </div>
@@ -251,9 +263,11 @@
       </span>
     <% } else { %>
     <input type="hidden" data-field="type" value="post" class="fruum-js-interacting" />
-    <textarea
-      autocomplete="off" class="fruum-interactions-input"
-      placeholder="you say..." data-field="body"><%= editing.body || '' %></textarea>
+    <div class="fruum-stream-typography">
+      <textarea
+        autocomplete="off" class="fruum-interactions-input"
+        placeholder="you say..." data-field="body"><%= editing.body || '' %></textarea>
+    </div>
     <div class="fruum-interactions-footer">
       <div class="fruum-interactions-buttons">
         <% if (editing.id) { %>
