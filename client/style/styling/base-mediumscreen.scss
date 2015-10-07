@@ -4,5 +4,5 @@ body > #fruum {
 
 *:not(body) > #fruum {
   font-size: $base-grid-big !important;
-  max-width: optimal-width() + $fruum-whitespace*2;
+  max-width: optimal-width-big() + $fruum-whitespace*2;
 }

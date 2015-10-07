@@ -48,6 +48,10 @@
   @return ceil($cpl*($responsive-default-font/$font-ufactor));
 }
 
+@function optimal-width-big() {
+  @return ceil($cpl*($responsive-big-font/$font-ufactor));
+}
+
 
 
 // 2. Generic mixins
