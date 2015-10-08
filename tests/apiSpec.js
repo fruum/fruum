@@ -57,8 +57,7 @@ describe("API call", function() {
     request({
       method: 'DELETE',
       url: url + '/api/v1/testkey/docs/foo_id',
-      json: true,
-      body: payload
+      json: true
     }, function(err, res, body) {
       expect(err).toBe(null);
       expect(body).toEqual(jasmine.objectContaining(payload));

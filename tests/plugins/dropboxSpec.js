@@ -1,7 +1,7 @@
 window = {};
 window.Fruum = {};
 window.Fruum.plugins = [];
-eval(require('fs').readFileSync(__dirname + '/../plugins/dropbox/client.js', 'utf8'));
+eval(require('fs').readFileSync(__dirname + '/../../plugins/dropbox/client.js', 'utf8'));
 var plugin = new window.Fruum.plugins[0]();
 
 describe("Dropbox plugin", function() {

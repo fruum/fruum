@@ -1,5 +1,6 @@
 window = {};
 window.Fruum = {};
+window.Fruum.plugins = [];
 window.Fruum.libs = {
   _: {
     template: function() { return function(context) {
@@ -8,13 +9,12 @@ window.Fruum.libs = {
   },
   $: function() { this.html = function() {}; return this; }
 };
-window.Fruum.plugins = [];
-eval(require('fs').readFileSync(__dirname + '/../plugins/soundcloud/client.js', 'utf8'));
+eval(require('fs').readFileSync(__dirname + '/../../plugins/twitchtv/client.js', 'utf8'));
 var plugin = new window.Fruum.plugins[0]();
 
-describe("Soundcloud plugin", function() {
+describe("Twitchtv plugin", function() {
   it("properly embeds", function() {
-    var share = 'https://soundcloud.com/dubstep/bullet-train-by-stephen-swartz';
+    var share = 'http://www.twitch.tv/tarik_tv';
     expect(plugin.post_content(share)).toEqual(
       '<embed>' + share + '</embed>'
     );
@@ -30,6 +30,5 @@ describe("Soundcloud plugin", function() {
     expect(plugin.post_content('foo ' + share + ' bar ' + share)).toEqual(
       'foo <embed>' + share + '</embed> bar <embed>' + share + '</embed>'
     );
-
   });
 });
