@@ -21,7 +21,7 @@ module.exports = function(options, instance, self) {
 
     if (user.get('anonymous')) {
       logger.error(app_id, 'report_anonymous_noperm', user);
-      socket.disconnect();
+      socket.emit('fruum:report');
       return;
     }
     storage.get(app_id, id, function(document) {

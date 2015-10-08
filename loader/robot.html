@@ -1,9 +1,14 @@
+<h1><%- parent.header %></h1>
+<%= parent.body %>
+
 <% _.each(documents, function(doc) { %>
   <% if (doc.type == 'post') { %>
-    <p><%= doc.body %></p>
-    <p>by <%= doc.user_displayname || doc.user_username %></p>
+    <%= doc.body %>
+    <br>
+    by <%= doc.user_displayname || doc.user_username %>
   <% } else { %>
-    <h1><a href="?_escaped_fragment_=v/<%= doc.id %>"><%- doc.header %></a></h1>
-    <p><%= doc.body %></p>
+    <h2><a href="<%- application.fullpage_url %>#!v/<%= doc.id %>"><%- doc.header %></a></h2>
+    <%= doc.body %>
   <% } %>
+  <br>
 <% }) %>

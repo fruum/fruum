@@ -29,7 +29,7 @@ module.exports = function(options, instance, self) {
     });
     if (user.get('anonymous')) {
       logger.error(app_id, 'add_anonymous_noperm', user);
-      socket.disconnect();
+      socket.emit('fruum:add');
       return;
     }
     if (!document.isValid()) {
@@ -40,12 +40,12 @@ module.exports = function(options, instance, self) {
     }
     if (document.get('type') == 'category' && !user.get('admin')) {
       logger.error(app_id, 'add_category_noperm', user);
-      socket.disconnect();
+      socket.emit('fruum:add');
       return;
     }
     if (document.get('type') == 'article' && !user.get('admin')) {
       logger.error(app_id, 'add_article_noperm', user);
-      socket.disconnect();
+      socket.emit('fruum:add');
       return;
     }
     //get parent
@@ -170,7 +170,7 @@ module.exports = function(options, instance, self) {
         document = new Models.Document(payload);
     if (user.get('anonymous')) {
       logger.error(app_id, 'update_anonymous_noperm', user);
-      socket.disconnect();
+      socket.emit('fruum:update');
       return;
     }
     if (!document.isValid()) {
@@ -187,17 +187,17 @@ module.exports = function(options, instance, self) {
       }
       if (doc_to_update.get('type') == 'category' && !user.get('admin')) {
         logger.error(app_id, 'update_category_noperm', user);
-        socket.disconnect();
+        socket.emit('fruum:update');
         return;
       }
       if (doc_to_update.get('type') == 'article' && !user.get('admin')) {
         logger.error(app_id, 'update_article_noperm', user);
-        socket.disconnect();
+        socket.emit('fruum:update');
         return;
       }
       if (!user.get('admin') && doc_to_update.get('user_id') != user.get('id')) {
         logger.error(app_id, 'update_noperm', user);
-        socket.disconnect();
+        socket.emit('fruum:update');
         return;
       }
       var now = Date.now();

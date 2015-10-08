@@ -22,7 +22,7 @@ module.exports = function(options, instance, self) {
 
     if (user.get('anonymous')) {
       logger.error(app_id, 'notifications_anonymous_noperm', user);
-      socket.disconnect();
+      socket.emit('fruum:notifications');
       return;
     }
     if (payload.ids && payload.ids.length) {
@@ -51,7 +51,7 @@ module.exports = function(options, instance, self) {
 
     if (user.get('anonymous')) {
       logger.error(app_id, 'unnotify_anonymous_noperm', user);
-      socket.disconnect();
+      socket.emit('fruum:unnotify');
       return;
     }
     if ((user.get('notifications') || []).indexOf(payload.id) != -1) {

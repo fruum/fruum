@@ -64,12 +64,6 @@ module.exports = function(options, instance, self) {
     storage.get(app_id, doc_id, function(viewing_doc) {
       if (viewing_doc && viewing_doc.isSearchable() && viewing_doc.get('type') != 'post') {
         response.parent = viewing_doc.toRobot();
-        switch(viewing_doc.get('type')) {
-          case 'thread':
-          case 'article':
-            response.documents.push(viewing_doc.toRobot());
-            break;
-        }
         //get children
         storage.children(app_id, viewing_doc, function(children_docs) {
           _.each(children_docs, function(document) {

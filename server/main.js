@@ -406,17 +406,26 @@ function FruumServer(options, cli_cmd, ready) {
   function get_robot(req, res) {
     var app_id = req.params.app_id,
         doc_id = req.params.doc_id || 'home';
-    engine.robot(app_id, doc_id, function(response) {
-      //get template
-      fs.readFile(__dirname + '/../loader/robot.html', 'utf8', function(err, data) {
-        if (err) {
-          res.status(500).send('Could not load template');
-          return;
-        }
-        var template = _.template(data || '');
-        res.send(template(response));
+
+    engine.get_app(app_id, function(application) {
+      if (!application) {
+        res.status(404).send('Invalid app_id');
+        return;
+      }
+      engine.robot(app_id, doc_id, function(response) {
+        //get template
+        fs.readFile(__dirname + '/../loader/robot.html', 'utf8', function(err, data) {
+          if (err) {
+            res.status(500).send('Could not load template');
+            return;
+          }
+          var template = _.template(data || '');
+          response.application = application.toJSON();
+          res.send(template(response));
+        });
       });
     });
+
   }
   app.get('/robot/:app_id/v/:doc_id', get_robot);
   app.get('/robot/:app_id', get_robot);

@@ -15,7 +15,7 @@ module.exports = function(options, instance, self) {
   self.search = function(socket, payload) {
     if (!payload.q) {
       logger.error(socket.app_id, 'Missing search query', payload);
-      socket.disconnect();
+      socket.emit('fruum:search');
       return;
     }
     var app_id = socket.app_id,

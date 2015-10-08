@@ -21,7 +21,7 @@ module.exports = function(options, instance, self) {
 
     if (user.get('anonymous')) {
       logger.error(app_id, 'watch_anonymous_noperm', user);
-      socket.disconnect();
+      socket.emit('fruum:watch');
       return;
     }
     storage.get(app_id, id, function(document) {
@@ -57,7 +57,7 @@ module.exports = function(options, instance, self) {
 
     if (user.get('anonymous')) {
       logger.error(app_id, 'unwatch_anonymous_noperm', user);
-      socket.disconnect();
+      socket.emit('fruum:unwatch');
       return;
     }
     storage.get(app_id, id, function(document) {
