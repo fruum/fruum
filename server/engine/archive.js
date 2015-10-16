@@ -15,7 +15,7 @@ module.exports = function(options, instance, self) {
   // -------------------------------- DELETE -----------------------------------
 
   self.delete = function(socket, payload) {
-    if (!self._validate_payload_id(socket, payload, 'delete')) return;
+    if (!self.validatePayloadID(socket, payload, 'delete')) return;
     var app_id = socket.app_id,
         id = payload.id,
         user = socket.fruum_user;
@@ -40,13 +40,13 @@ module.exports = function(options, instance, self) {
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:delete', document.toJSON());
-          if (!plugin_payload.broadcast_noop) self._broadcast(user, document, 'fruum:delete');
+          if (!plugin_payload.broadcast_noop) self.broadcast(user, document, 'fruum:delete');
           return;
         }
         storage.delete(app_id, document, function() {
           self.invalidateDocument(app_id, document);
           socket.emit('fruum:delete', document.toJSON());
-          if (!plugin_payload.broadcast_noop) self._broadcast(user, document, 'fruum:delete');
+          if (!plugin_payload.broadcast_noop) self.broadcast(user, document, 'fruum:delete');
         });
       });
     });
@@ -55,7 +55,7 @@ module.exports = function(options, instance, self) {
   // -------------------------------- ARCHIVE -----------------------------------
 
   self.archive = function(socket, payload) {
-    if (!self._validate_payload_id(socket, payload, 'archive')) return;
+    if (!self.validatePayloadID(socket, payload, 'archive')) return;
     var app_id = socket.app_id,
         id = payload.id,
         user = socket.fruum_user;
@@ -80,13 +80,13 @@ module.exports = function(options, instance, self) {
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:archive', document.toJSON());
-          if (!plugin_payload.broadcast_noop) self._broadcast(user, document, 'fruum:archive');
+          if (!plugin_payload.broadcast_noop) self.broadcast(user, document, 'fruum:archive');
           return;
         }
         storage.archive(app_id, document, function() {
           self.invalidateDocument(app_id, document);
           socket.emit('fruum:archive', document.toJSON());
-          if (!plugin_payload.broadcast_noop) self._broadcast(user, document, 'fruum:archive');
+          if (!plugin_payload.broadcast_noop) self.broadcast(user, document, 'fruum:archive');
         });
       });
     });
@@ -95,7 +95,7 @@ module.exports = function(options, instance, self) {
   // ------------------------------- RESTORE -----------------------------------
 
   self.restore = function(socket, payload) {
-    if (!self._validate_payload_id(socket, payload, 'restore')) return;
+    if (!self.validatePayloadID(socket, payload, 'restore')) return;
     var app_id = socket.app_id,
         id = payload.id,
         user = socket.fruum_user;
@@ -120,13 +120,13 @@ module.exports = function(options, instance, self) {
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:restore', document.toJSON());
-          if (!plugin_payload.broadcast_noop) self._broadcast(user, document, 'fruum:restore');
+          if (!plugin_payload.broadcast_noop) self.broadcast(user, document, 'fruum:restore');
           return;
         }
         storage.restore(app_id, document, function() {
           self.invalidateDocument(app_id, document);
           socket.emit('fruum:restore', document.toJSON());
-          if (!plugin_payload.broadcast_noop) self._broadcast(user, document, 'fruum:restore');
+          if (!plugin_payload.broadcast_noop) self.broadcast(user, document, 'fruum:restore');
         });
       });
     });

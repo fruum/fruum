@@ -14,7 +14,7 @@ module.exports = function(options, instance, self) {
   // -------------------------------- WATCH ------------------------------------
 
   self.watch = function(socket, payload) {
-    if (!self._validate_payload_id(socket, payload, 'watch')) return;
+    if (!self.validatePayloadID(socket, payload, 'watch')) return;
     var app_id = socket.app_id,
         id = payload.id,
         user = socket.fruum_user;
@@ -50,7 +50,7 @@ module.exports = function(options, instance, self) {
   }
 
   self.unwatch = function(socket, payload) {
-    if (!self._validate_payload_id(socket, payload, 'unwatch')) return;
+    if (!self.validatePayloadID(socket, payload, 'unwatch')) return;
     var app_id = socket.app_id,
         id = payload.id,
         user = socket.fruum_user;

@@ -36,3 +36,11 @@ describe("Tags", function() {
     );
   });
 });
+
+describe("Mentions", function() {
+  it("are highlighted", function() {
+    expect(Fruum.utils.mentions('Hello @foo @γιολο')).toBe(
+      'Hello **@foo** **@γιολο**'
+    );
+  });
+});

@@ -22,10 +22,7 @@ Handles the top part
         delete: '[data-action="delete"]',
         locked: '[data-action="locked"]',
         allow_threads: '[data-action="allow_threads"]',
-        allow_channels: '[data-action="allow_channels"]',
-        watch: '[data-action="watch"]',
-        unwatch: '[data-action="unwatch"]',
-        copy_link: '[data-action="copy_link"]'
+        allow_channels: '[data-action="allow_channels"]'
       },
       modelEvents: {
         'change:viewing change:searching': 'render'
@@ -37,10 +34,7 @@ Handles the top part
         'click @ui.allow_threads': 'onAllowThreads',
         'click @ui.allow_channels': 'onAllowChannels',
         'click @ui.visible': 'onVisible',
-        'click @ui.locked': 'onLocked',
-        'click @ui.watch': 'onWatch',
-        'click @ui.unwatch': 'onUnwatch',
-        'click @ui.copy_link': 'onCopyLink'
+        'click @ui.locked': 'onLocked'
       },
       initialize: function(options) {
         this.notifications = options.notifications;
@@ -53,20 +47,6 @@ Handles the top part
       },
       onManage: function(event) {
         Fruum.io.trigger('fruum:toggle_manage', this.ui.manage);
-      },
-      onWatch: function(event) {
-        event.preventDefault();
-        var viewing = this.model.get('viewing');
-        if (viewing.id) Fruum.io.trigger('fruum:watch', { id: viewing.id });
-      },
-      onUnwatch: function(event) {
-        event.preventDefault();
-        var viewing = this.model.get('viewing');
-        if (viewing.id) Fruum.io.trigger('fruum:unwatch', { id: viewing.id });
-      },
-      onCopyLink: function(event) {
-        event.preventDefault();
-        Fruum.io.trigger('fruum:share', $(event.target));
       },
       onAllowThreads: function(event) {
         event.preventDefault();

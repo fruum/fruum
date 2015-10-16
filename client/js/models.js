@@ -32,6 +32,8 @@ Models
         body: '',
         //if category/thread is sticky
         sticky: false,
+        //if article is a blogpost
+        is_blog: false,
         //permissions
         locked: false,
         visible: true,
@@ -75,6 +77,7 @@ Models
         interacting: false,
         searching: false,
         visible: false,
+        connected: false,
 
         navigation_height: 0,
         interactions_height: 0,

@@ -99,6 +99,7 @@ module.exports = function(options, client, self) {
                     header: { type: 'string' },
                     body: { type: 'string' },
                     sticky: { type: 'boolean' },
+                    is_blog: { type: 'boolean' },
                     locked: { type: 'boolean' },
                     visible: { type: 'boolean' },
                     allow_threads: { type: 'boolean' },

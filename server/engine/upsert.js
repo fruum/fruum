@@ -17,7 +17,7 @@ module.exports = function(options, instance, self) {
   // --------------------------------- ADD -------------------------------------
 
   self.add = function(socket, payload) {
-    if (!self._validate_payload_id(socket, null, 'add')) return;
+    if (!self.validatePayloadID(socket, null, 'add')) return;
     var app_id = socket.app_id,
         user = socket.fruum_user,
         document = new Models.Document(payload);
@@ -129,7 +129,7 @@ module.exports = function(options, instance, self) {
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:add', document.toJSON());
-          if (!plugin_payload.broadcast_noop) self._broadcast(user, document);
+          if (!plugin_payload.broadcast_noop) self.broadcast(user, document);
           return;
         }
         //count number of child documents
@@ -141,9 +141,9 @@ module.exports = function(options, instance, self) {
               self.invalidateDocument(app_id, parent_doc);
               socket.emit('fruum:add', new_document.toJSON());
               if (!plugin_payload.broadcast_noop) {
-                self._broadcast(user, new_document);
-                self._broadcast(user, parent_doc, 'fruum:info');
-                self._broadcastNotifications(user, new_document);
+                self.broadcast(user, new_document);
+                self.broadcast(user, parent_doc, 'fruum:info');
+                self.broadcastNotifications(user, new_document);
               }
               //update parent counter`
               storage.update(app_id, parent_doc, {
@@ -164,7 +164,7 @@ module.exports = function(options, instance, self) {
   // --------------------------------- UPDATE ----------------------------------
 
   self.update = function(socket, payload) {
-    if (!self._validate_payload_id(socket, payload, 'update')) return;
+    if (!self.validatePayloadID(socket, payload, 'update')) return;
     var app_id = socket.app_id,
         user = socket.fruum_user,
         document = new Models.Document(payload);
@@ -213,6 +213,12 @@ module.exports = function(options, instance, self) {
           });
           break;
         case 'article':
+          doc_to_update.set({
+            header: document.get('header'),
+            body: document.get('body'),
+            is_blog: document.get('is_blog')
+          });
+          break;
         case 'thread':
           doc_to_update.set({
             header: document.get('header'),
@@ -241,14 +247,14 @@ module.exports = function(options, instance, self) {
         doc_to_update = plugin_payload.document || doc_to_update;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:update', doc_to_update.toJSON());
-          if (!plugin_payload.broadcast_noop) self._broadcast(user, doc_to_update);
+          if (!plugin_payload.broadcast_noop) self.broadcast(user, doc_to_update);
           return;
         }
         storage.update(app_id, doc_to_update, null, function(updated_document) {
           if (updated_document) {
             self.invalidateDocument(app_id, updated_document);
             socket.emit('fruum:update', updated_document.toJSON());
-            if (!plugin_payload.broadcast_noop) self._broadcast(user, updated_document);
+            if (!plugin_payload.broadcast_noop) self.broadcast(user, updated_document);
             //update parent timestamp
             storage.update(
               app_id,
@@ -268,7 +274,7 @@ module.exports = function(options, instance, self) {
   // --------------------------- UPDATE FIELD ----------------------------------
 
   self.field = function(socket, payload) {
-    if (!self._validate_payload_id(socket, payload, 'field')) return;
+    if (!self.validatePayloadID(socket, payload, 'field')) return;
     var app_id = socket.app_id,
         id = payload.id,
         user = socket.fruum_user;
@@ -295,7 +301,7 @@ module.exports = function(options, instance, self) {
           if (updated_document) {
             self.invalidateDocument(app_id, updated_document);
             socket.emit('fruum:field', updated_document.toJSON());
-            self._broadcast(user, updated_document);
+            self.broadcast(user, updated_document);
           }
           else {
             socket.emit('fruum:field');
@@ -307,7 +313,7 @@ module.exports = function(options, instance, self) {
           if (updated_document) {
             self.invalidateDocument(app_id, updated_document);
             socket.emit('fruum:field', updated_document.toJSON());
-            self._broadcast(user, updated_document);
+            self.broadcast(user, updated_document);
           }
           else {
             socket.emit('fruum:field');

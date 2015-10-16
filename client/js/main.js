@@ -49,7 +49,8 @@ Main client app
         message_view_error: '.fruum-js-message-view-error',
         restore_undo: '.fruum-js-restore-undo',
         sticky_section: '.fruum-section-sticky',
-        close: '.fruum-js-panel-close'
+        close: '.fruum-js-panel-close',
+        maximize: '.fruum-js-panel-maximize'
       },
       regions: {
         navigation: '.fruum-js-navigation-section',
@@ -78,6 +79,7 @@ Main client app
         'keydown input, textarea': 'onInterceptKeyboard',
         'keyup input, textarea': 'onInterceptKeyboard',
         'click @ui.close': 'onClose',
+        'click @ui.maximize': 'onMaximize',
         'click @ui.restore_undo': 'onRestore',
         'click @ui.message_view_error > a': 'onGoHome'
       },
@@ -160,6 +162,16 @@ Main client app
         this.showChildView('empty', new Views.EmptyView({
           model: this.ui_state
         }));
+        this.showChildView('interactions', new Views.InteractionsView({
+          model: this.ui_state,
+          collections: {
+            categories: this.categories,
+            threads: this.threads,
+            articles: this.articles,
+            channels: this.channels,
+            posts: this.posts
+          }
+        }));
         new Views.ShareView({
           ui_state: this.ui_state,
           el: this.regions.share
@@ -219,16 +231,14 @@ Main client app
             //remove metadata
             delete payload.origin;
             that.ui_state.set({
-              loading: loading,
-              interacting: true
+              loading: loading
             });
             that.socket.emit('fruum:view', payload);
           },
           function recv(payload) {
             if (!payload) {
               that.ui_state.set({
-                loading: '',
-                interacting: false
+                loading: ''
               });
               $(that.ui.message_view_error).slideDown('fast');
               return;
@@ -241,14 +251,19 @@ Main client app
             var last_doc = breadcrumb.pop() || {};
             that.ui_state.set({
               loading: '',
-              interacting: false,
               breadcrumb: breadcrumb,
               online: payload.online || {}
             });
 
             if (that.ui_state.get('viewing').id != last_doc.id) {
               that.ui_state.set({
-                viewing: last_doc,
+                viewing: last_doc
+              });
+            }
+
+            //reset edit
+            if (that.ui_state.get('viewing').id != that.ui_state.get('editing').parent) {
+              that.ui_state.set({
                 editing: {}
               });
             }
@@ -537,16 +552,7 @@ Main client app
           }
           Fruum.user = payload.user || Fruum.user;
           Fruum.application = payload.application || Fruum.application;
-          that.showChildView('interactions', new Views.InteractionsView({
-            model: that.ui_state,
-            collections: {
-              categories: that.categories,
-              threads: that.threads,
-              articles: that.articles,
-              channels: that.channels,
-              posts: that.posts
-            }
-          }));
+          that.ui_state.set('connected', true);
           that.onRefresh();
           if (window.fruumSettings.view_id == '*') window.fruumSettings.view_id = undefined;
           Fruum.io.trigger('fruum:view', {
@@ -618,6 +624,7 @@ Main client app
           that.socket.emit('fruum:auth', window.fruumSettings);
         });
         this.socket.on('disconnect', function() {
+          that.ui_state.set('connected', false);
           if (!Fruum.__permanent_abort)
             $(that.ui.message_reconnect).slideDown('fast');
         });
@@ -633,6 +640,7 @@ Main client app
         //remove hide button on full page mode
         if (window.fruumSettings.fullpage) {
           this.$(this.ui.close).remove();
+          this.$(this.ui.maximize).remove();
         }
         //if history is enabled enable it
         if (window.fruumSettings.history) {
@@ -818,7 +826,8 @@ Main client app
         //check breadcrumb update
         else if (payload.id === viewing.id) {
           if (payload.body != viewing.body ||
-              payload.header != viewing.header)
+              payload.header != viewing.header ||
+              payload.is_blog != viewing.is_blog)
           {
             this.ui_state.set('viewing', {});
             Fruum.io.trigger('fruum:view', {id: payload.id});
@@ -978,6 +987,16 @@ Main client app
         this.socket.disconnect();
         this.$el.stop(true, true).delay(1000).fadeOut(1);
         Fruum.utils.sessionStorage('fruum:open:' + window.fruumSettings.app_id, 0);
+      },
+      onMaximize: function(event) {
+        event && event.preventDefault();
+        this.$el.toggleClass('fruum-takeover');
+        if (this.$el.hasClass('fruum-takeover')) {
+          this.$(this.ui.maximize).removeClass('fruum-icon-left').addClass('fruum-icon-right');
+        }
+        else {
+          this.$(this.ui.maximize).removeClass('fruum-icon-right').addClass('fruum-icon-left');
+        }
       },
       onOpen: function() {
         if (!this.$el.hasClass('fruum-hide')) return;

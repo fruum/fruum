@@ -31,11 +31,12 @@ Handles the bottom input part
         field_header: '[data-field="header"]',
         field_body: '[data-field="body"]',
         field_notifications: '[data-field="notifications"]',
+        field_is_blog: '[data-field="is_blog"]',
         channel_input: '.fruum-js-channel-input'
       },
       modelEvents: {
         'change:editing change:viewing change:searching': 'onChange',
-        'change:interacting': 'onInteracting'
+        'change:interacting change:connected': 'onInteracting'
       },
       events: {
         'focus @ui.field_initials': 'onInitialFocus',
@@ -51,14 +52,20 @@ Handles the bottom input part
         'click @ui.add_category': 'onAddCategory',
         'click @ui.add_post': 'onAddPost',
         'click @ui.cancel': 'onCancel',
-        'click @ui.show_notifications': 'onShowNotifications'
+        'click @ui.show_notifications': 'onShowNotifications',
+        //capture changes and store them
+        'keyup @ui.field_body': 'onKeyBody',
+        'keyup @ui.field_header': 'onKeyHeader',
+        'keyup @ui.field_initials': 'onKeyInitials',
+        'change @ui.field_is_blog': 'onKeyIsBlog'
       },
       initialize: function(options) {
-        this.mode = '';
         this.ui_state = this.model;
         this.collections = options.collections;
         this.listenTo(Fruum.io, 'fruum:resize', this.onResize);
         this.listenTo(Fruum.io, 'fruum:update_notify', this.onUpdateNotify);
+        this.onAttach = this.onDomRefresh = this.onInteracting;
+        this.mode = this._getMode();
       },
       getTemplate: function() {
         if (Fruum.user.anonymous) return '#fruum-template-interactions-anonymous';
@@ -86,10 +93,12 @@ Handles the bottom input part
         return '#fruum-template-interactions-user';
       },
       onInteracting: function() {
-        if (this.ui_state.get('interacting')) {
+        if (this.ui_state.get('interacting') || !this.ui_state.get('connected')) {
+          this.$('input, textarea').attr('disabled', 'disabled');
           this.$el.parent().addClass('fruum-interaction-unavailable');
         }
         else {
+          this.$('input, textarea').removeAttr('disabled');
           this.$el.parent().removeClass('fruum-interaction-unavailable');
         }
       },
@@ -141,10 +150,14 @@ Handles the bottom input part
         }
         return 'easeInOutBack'
       },
+      _getMode: function() {
+        if (Fruum.user.anonymous) return 'anonymous';
+        return this.ui_state.get('viewing').type + ':' +
+               this.ui_state.get('editing').type + ':' +
+               this.ui_state.get('searching');
+      },
       onChange: function() {
-        var new_mode = this.ui_state.get('viewing').type + ':' +
-          this.ui_state.get('editing').type + ':' +
-          this.ui_state.get('searching') + ':' + Fruum.user.anonymous;
+        var new_mode = this._getMode();
         if (new_mode === this.mode) {
           this.render();
           if (this.ui_state.get('viewing').type === 'channel') {
@@ -304,6 +317,7 @@ Handles the bottom input part
           header: this.ui.field_header.val() || '',
           body: this.ui.field_body.val() || '',
           type: this.ui.field_type.val() || '',
+          is_blog: this.ui.field_is_blog.is(':checked'),
           order: order
         });
       },
@@ -312,6 +326,23 @@ Handles the bottom input part
         if (Fruum.userUtils.countNotifications()) {
           Fruum.io.trigger('fruum:notifications', { ids: Fruum.user.notifications });
         }
+      },
+
+      onKeyBody: function() {
+        var editing = this.ui_state.get('editing');
+        editing.body = this.ui.field_body.val() || '';
+      },
+      onKeyHeader: function() {
+        var editing = this.ui_state.get('editing');
+        editing.header = this.ui.field_header.val() || '';
+      },
+      onKeyInitials: function() {
+        var editing = this.ui_state.get('editing');
+        editing.initials = this.ui.field_initials.val() || '';
+      },
+      onKeyIsBlog: function() {
+        var editing = this.ui_state.get('editing');
+        editing.is_blog = this.ui.field_is_blog.is(':checked');
       }
     });
   });

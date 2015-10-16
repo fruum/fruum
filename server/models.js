@@ -39,6 +39,8 @@ var Document = Backbone.Model.extend({
     body: '',
     //if thread is sticky
     sticky: false,
+    //if article is a blogpost
+    is_blog: false,
     //permissions
     locked: false,
     visible: true,

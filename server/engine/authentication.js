@@ -36,8 +36,8 @@ module.exports = function(options, instance, self) {
         //remove from channel
         if (user.get('channel_id') && user.get('channel_parent')) {
           var online = {};
-          online[user.get('channel_id')] = self._countNormalUsers(app_id, user.get('channel_id'));
-          self._broadcastRaw(
+          online[user.get('channel_id')] = self.countNormalUsers(app_id, user.get('channel_id'));
+          self.broadcastRaw(
             app_id, user.get('channel_parent'),
             'fruum:online', online
           );

@@ -29,8 +29,8 @@ module.exports = function(options, instance, self) {
       var doc_id = response.breadcrumb[response.breadcrumb.length - 1].id;
       var parent_id = response.breadcrumb[response.breadcrumb.length - 2].id;
       var online = {};
-      online[doc_id] = self._countNormalUsers(app_id, doc_id);
-      self._broadcastRaw(
+      online[doc_id] = self.countNormalUsers(app_id, doc_id);
+      self.broadcastRaw(
         app_id, parent_id,
         'fruum:online', online
       );
@@ -48,8 +48,8 @@ module.exports = function(options, instance, self) {
     //check for user leaving the channel
     if (prev_channel_id && prev_channel_parent) {
       var online = {};
-      online[prev_channel_id] = self._countNormalUsers(app_id, prev_channel_id);
-      self._broadcastRaw(
+      online[prev_channel_id] = self.countNormalUsers(app_id, prev_channel_id);
+      self.broadcastRaw(
         app_id, prev_channel_parent,
         'fruum:online', online
       );
@@ -82,7 +82,7 @@ module.exports = function(options, instance, self) {
   }
 
   self.view = function(socket, payload) {
-    if (!self._validate_payload_id(null, payload, 'view')) return;
+    if (!self.validatePayloadID(null, payload, 'view')) return;
     var id = payload.id,
         app_id = socket.app_id,
         user = socket.fruum_user;
@@ -113,7 +113,7 @@ module.exports = function(options, instance, self) {
                       response.documents.push(document.toJSON());
                       if (document.get('type') == 'channel') {
                         var doc_id = document.get('id');
-                        response.online[doc_id] = self._countNormalUsers(app_id, doc_id);
+                        response.online[doc_id] = self.countNormalUsers(app_id, doc_id);
                       }
                     }
                   });

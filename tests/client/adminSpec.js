@@ -38,6 +38,25 @@ describe("Admin client", function() {
     });
   });
 
+  it("creates blog article", function(done) {
+    admin_connect(function(socket) {
+      var payload = {
+        parent: 'home',
+        type: 'article',
+        header: 'foo',
+        body: 'bar',
+        is_blog: true
+      }
+      socket.emit('fruum:add', payload);
+      socket.on('fruum:add', function(payload) {
+        socket.removeListener('fruum:add', this);
+        expect(payload).toEqual(jasmine.objectContaining(payload));
+        socket.disconnect();
+        done();
+      });
+    });
+  });
+
   it("respects parent", function(done) {
     admin_connect(function(socket) {
       var payload = {

@@ -14,7 +14,7 @@ module.exports = function(options, instance, self) {
   // -------------------------------- REPORT -----------------------------------
 
   self.report = function(socket, payload) {
-    if (!self._validate_payload_id(socket, payload, 'report')) return;
+    if (!self.validatePayloadID(socket, payload, 'report')) return;
     var app_id = socket.app_id,
         id = payload.id,
         user = socket.fruum_user;

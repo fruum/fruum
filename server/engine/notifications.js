@@ -44,7 +44,7 @@ module.exports = function(options, instance, self) {
   }
 
   self.unnotify = function(socket, payload) {
-    if (!self._validate_payload_id(socket, payload, 'unnotify')) return;
+    if (!self.validatePayloadID(socket, payload, 'unnotify')) return;
     var app_id = socket.app_id,
         id = payload.id,
         user = socket.fruum_user;

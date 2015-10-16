@@ -11,6 +11,7 @@ Posts view
         _ = Fruum.libs._,
         Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette,
+        Messages = Fruum.messages,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
     //View
     Fruum.views.PostView = TRANSITION(Marionette.ItemView.extend({
@@ -57,7 +58,8 @@ Posts view
       },
       onReport: function(event) {
         event.preventDefault();
-        Fruum.io.trigger('fruum:report', { id: this.model.get('id') });
+        if (confirm(Messages.report))
+          Fruum.io.trigger('fruum:report', { id: this.model.get('id') });
       },
       onLink: function(event) {
         var href = $(event.target).attr('href') || '';
