@@ -23,11 +23,13 @@
         </h4>
       </div>
     </div>
+    <% if (is_blog) { %>
     <div class="fruum-object-additional-data">
       <span class="fruum-primary-data">
         <%- user_displayname || user_username %> <%- Fruum.libs.moment(parseInt(created)).fromNow() %>
       </span>
     </div>
+    <% } %>
     <div class="fruum-object-main-data fruum-secondary-data">
       <%= Fruum.utils.printSummary(body) %>
     </div>

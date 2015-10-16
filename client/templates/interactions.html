@@ -90,9 +90,9 @@
     <div class="fruum-interactions-footer">
       <div class="fruum-interactions-buttons fruum-interactions-group">
         <% if (editing.id) { %>
-        <button class="fruum-secondary-button fruum-icon fruum-icon-edit" data-action="post"></button>
+        <button class="fruum-secondary-button" data-action="post">Edit</button>
         <% } else { %>
-        <button class="fruum-secondary-button fruum-icon fruum-icon-add" data-action="post"></button>
+        <button class="fruum-secondary-button" data-action="post">Add</button>
         <% } %>
         <a class="fruum-secondary-button fruum-link-negative" data-action="cancel">cancel</a>
       </div>
@@ -135,7 +135,7 @@
         <% if (editing.id) { %>
         <button class="fruum-main-button" data-action="post">update</button>
         <% } else { %>
-        <button class="fruum-main-button fruum-icon fruum-icon-add" data-action="post"></button>
+        <button class="fruum-main-button" data-action="post">Add</button>
         <% } %>
         <a class="fruum-secondary-button fruum-link-negative" data-action="cancel">cancel</a>
       </div>
@@ -176,10 +176,14 @@
     <div class="fruum-interactions-footer">
       <div class="fruum-interactions-buttons fruum-interactions-group">
         <% if (editing.id) { %>
-        <button class="fruum-secondary-button fruum-icon fruum-icon-edit" data-action="post"></button>
+        <button class="fruum-secondary-button" data-action="post">Edit</button>
         <% } else { %>
-        <button class="fruum-secondary-button fruum-icon fruum-icon-add" data-action="post"></button>
+        <button class="fruum-secondary-button" data-action="post">Add</button>
         <% } %>
+        <input id="fruum-is-blog" type="checkbox" class="fruum-interactions-checkbox" data-field="is_blog"
+        <% if (editing.is_blog) { %>checked="checked"<% } %>
+        />
+        <label for="fruum-is-blog" class="fruum-interactions-label">as blog article</label>
         <a class="fruum-secondary-button fruum-link-negative" data-action="cancel">cancel</a>
       </div>
       <div class="fruum-user-account">
@@ -213,7 +217,7 @@
         <% if (editing.id) { %>
         <button class="fruum-main-button" data-action="post">update</button>
         <% } else { %>
-        <button class="fruum-main-button fruum-icon fruum-icon-add" data-action="post"></button>
+        <button class="fruum-main-button" data-action="post">Add</button>
         <% } %>
         <a class="fruum-secondary-button fruum-link-negative" data-action="cancel">cancel</a>
       </div>
@@ -318,15 +322,15 @@
     <div class="fruum-interactions-footer">
       <div class="fruum-interactions-buttons">
 
-        <button class="fruum-secondary-button fruum-icon fruum-icon-add" data-action="add_category" data-fruumtipsy-left="Add category">Category</button>
+        <button class="fruum-main-button" data-action="add_category">Category</button>
 
-        <button class="fruum-secondary-button fruum-icon fruum-icon-add" data-action="add_article" data-fruumtipsy-left="Add article">Article</button>
+        <button class="fruum-main-button" data-action="add_article">Article</button>
 
         <% if (viewing.allow_threads) { %>
-        <button class="fruum-main-button fruum-icon fruum-icon-add" data-action="add_thread" data-fruumtipsy-left="Add thread">Thread</button>
+        <button class="fruum-main-button" data-action="add_thread">Thread</button>
         <% } %>
         <% if (viewing.allow_channels) { %>
-        <button class="fruum-main-button fruum-icon fruum-icon-add" data-action="add_channel" data-fruumtipsy-left="Add channel">Channel</button>
+        <button class="fruum-main-button" data-action="add_channel">Channel</button>
         <% } %>
 
       </div>
@@ -342,10 +346,10 @@
     <div class="fruum-interactions-footer">
       <div class="fruum-interactions-buttons">
         <% if (viewing.allow_threads) { %>
-        <button class="fruum-main-button fruum-icon fruum-icon-add" data-action="add_thread" data-fruumtipsy-left="Add thread">Thread</button>
+        <button class="fruum-main-button" data-action="add_thread">Thread</button>
         <% } %>
         <% if (viewing.allow_channels) { %>
-        <button class="fruum-main-button fruum-icon fruum-icon-add" data-action="add_channel" data-fruumtipsy-left="Add channel">Channel</button>
+        <button class="fruum-main-button" data-action="add_channel">Channel</button>
         <% } %>
       </div>
       <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')() %>

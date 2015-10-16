@@ -90,10 +90,15 @@
   &:not([class*="fruum-link"]) {
     @include block-object-action( $responsive-default-font );
     border: none;
-    color: $secondary-action-text;
-    background-color: $secondary-action-color;
+    font-weight: $important-font-weight;
+    color: $secondary-action-color;
+    background-color: darken( $background-helper-base-color, 2% );
+    transition: background-color 0.2s;
+    -moz-transition: background-color 0.2s;
+    -webkit-transition: background-color 0.2s;
     &:hover {
-      background-color: $secondary-action-color-highlight;
+      color: $secondary-action-text;
+      background-color: $secondary-action-color;
     }
     &:active {
       @include button-active;

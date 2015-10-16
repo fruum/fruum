@@ -8,6 +8,7 @@
   2. Interaction states
   3. Interaction forms
     3.1 Custom inputs
+    3.2 Checkbox
   4. User account section
 
 */
@@ -177,6 +178,54 @@ $pointer-dimensions: basegrid-mod( 12px );
   line-height: $small-stream-h4-lineheight;
   font-weight: $small-stream-h4-weight;
   color: $base-text-color;
+}
+
+
+
+// 3.1 Checkboxes
+
+#fruum .fruum-interactions-checkbox {
+  display: none;
+  & + .fruum-interactions-label {
+    position: relative;
+    font-size: $responsive-default-font;
+    font-weight: $important-font-weight;
+    color: $secondary-action-color;
+    padding-left: 1.7em;
+    cursor: pointer;
+    cursor: hand;
+    &:before {
+      content: '';
+      position: absolute;
+      display: block;
+      top: 0;
+      left: 0;
+      width: 1em;
+      height: 1em;
+      margin-right: 0.3em;
+      border: 0.2em solid $disabled-text-color;
+      @include block-radius( 2px );
+    }
+    &:hover {
+      color: $secondary-action-color-highlight;
+      text-decoration: underline;
+    }
+  }
+  &:checked + .fruum-interactions-label {
+    color: $secondary-action-color-highlight;
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0.3em;
+      left: 0.3em;
+      width: 0.7em;
+      height: 0.7em;
+      background-color: $secondary-action-color-highlight;
+      @include block-radius( 2px );
+    }
+
+  }
 }
 
 

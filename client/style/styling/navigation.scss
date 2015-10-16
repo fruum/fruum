@@ -121,7 +121,7 @@
   position: relative;
   display: block;
   float: left;
-  margin-left: $logo-img-width+$base-grid*2;
+  margin-left: $logo-img-width;
   color: $disabled-text-color;
   font-size: $responsive-tiny-font;
   line-height: $tiny-font-basegrid*3;
@@ -147,7 +147,7 @@
   margin-left: -$fruum-whitespace;
 }
 
-#fruum .fruum-navigation-section .fruum-nav-close {
+#fruum .fruum-navigation-section .fruum-nav-system {
   display: block;
   float: right;
   font-size: $responsive-big-font;
@@ -180,15 +180,21 @@
 
 #fruum .fruum-search {
   // inherits a font-size of base-grid
-  border: 1px solid $secondary-action-color;
-  box-shadow: inset 0 0 2px rgba( $secondary-action-color, 0.6 );
+  // border: 1px solid $secondary-action-color;
+  // box-shadow: inset 0 0 2px rgba( $secondary-action-color, 0.6 );
   background-color: transparent;
   color: $secondary-action-color;
   @include block-object-action($responsive-big-font);
   font-size: $responsive-big-font;
-  line-height: relative-ems($base-object-dimension*1-2px, $responsive-big-font);
+  line-height: relative-ems($base-object-dimension, $responsive-big-font);
   float: left;
-
+  &.fruum-icon:before {
+    margin-right: -4px;
+    color: inherit;
+    font-size: 140% !important;
+    cursor: pointer;
+    cursor: hand;
+  }
   input {
     border: none;
     background-color: transparent;
@@ -223,22 +229,17 @@
     }
   }
 
-  &.fruum-icon:not(:empty):before {
-    color: $secondary-action-color;
-    margin-right: -4px;
-  }
-
   &.fruum-search-active {
-    border-color: $disabled-text-color;
-    box-shadow: inset 0 0 2px rgba( $disabled-text-color, 0.3 );
+    border-bottom: 1px solid $dividers-colors;
+    //box-shadow: inset 0 0 2px rgba( $disabled-text-color, 0.3 );
     background-color: rgba( $background-helper-base-color, 0.2 );
     padding: 0 $big-font-basegrid;
     input {
-      width: $big-font-basegrid*20;
+      width: $big-font-basegrid*30;
     }
 
     &.fruum-icon:before {
-      color: $disabled-text-color;
+      color: $dividers-colors;
       margin-right: $big-font-basegrid/2;
     }
 
@@ -266,11 +267,6 @@
   position: relative;
   width: 100%;
   padding: 0 2em 1em 0;
-  .fruum-item-actions {
-    // has a font-size of responsive-default-font
-    bottom: -$default-font-basegrid*2;
-    z-index: 1;
-  }
 }
 
 #fruum .fruum-header-message {
@@ -293,19 +289,23 @@
   line-height: $default-font-basegrid*2;
   margin-top: $default-font-basegrid/2;
   margin-bottom: $default-font-basegrid/2;
-}
+  &:after {
+    content: '';
+    display: table;
+    zoom: 1;
+    clear: both;
+  }
 
-#fruum .fruum-section-filters:after {
-  content: '';
-  display: table;
-  zoom: 1;
-  clear: both;
-}
+  .fruum-section-nav {
+    float: right;
+    font-size: inherit; // $responsive-default-font
+    line-height: $default-font-basegrid*4;
+  }
 
-#fruum .fruum-section-filters .fruum-section-nav {
-  float: right;
-  font-size: inherit; // $responsive-default-font
-  line-height: $default-font-basegrid*4;
+  .fruum-item-actions {
+    // has a font-size of responsive-default-font
+    font-size: 1em;
+  }
 }
 
 

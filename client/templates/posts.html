@@ -91,9 +91,9 @@
       <% } %>
       <div class="fruum-item-actions">
         <% if (Fruum.user.id != user_id) { %>
-        <a href="javascript:;" class="fruum-link fruum-icon fruum-icon-flag" data-action="report" data-fruumtipsy-left="Report"></a>
+        <a href="javascript:;" class="fruum-link" data-action="report">report</a>
           <% if (Fruum.user.admin) { %>
-        <a href="javascript:;" class="fruum-link fruum-icon fruum-icon-delete" data-action="inappropriate" data-fruumtipsy-left="<% if (inappropriate) { print('Undo mark as inappropriate') } else { print('Mark as inappropriate'); } %>"></a>
+        <a href="javascript:;" class="fruum-link" data-action="inappropriate"><% if (inappropriate) { print('mark as proper') } else { print('inappropriate post'); } %></a>
           <% } %>
         <% } %>
       </div>
@@ -106,7 +106,8 @@
 <script type="text/template" id="fruum-template-post-master">
   <div class="fruum-base-object">
 
-    <% if (user_id) { %>
+    <% if (viewing.id == id && viewing.type == 'article' && !viewing.is_blog) { %>
+    <% } else if (user_id) { %>
     <div class="fruum-object-additional-data fruum-object-manage-data">
 
       <div class="fruum-primary-data">
@@ -151,9 +152,9 @@
       <% } %>
       <div class="fruum-item-actions">
         <% if (Fruum.user.id != user_id) { %>
-        <a href="javascript:;" class="fruum-link fruum-icon fruum-icon-flag" data-action="report" data-fruumtipsy-left="Report"></a>
+        <a href="javascript:;" class="fruum-link" data-action="report">report</a>
           <% if (Fruum.user.admin) { %>
-        <a href="javascript:;" class="fruum-link fruum-icon fruum-icon-delete" data-action="inappropriate" data-fruumtipsy-left="<% if (inappropriate) { print('Undo mark as inappropriate') } else { print('Mark as inappropriate'); } %>"></a>
+        <a href="javascript:;" class="fruum-link" data-action="inappropriate"><% if (inappropriate) { print('mark as proper') } else { print('inappropriate post'); } %></a>
           <% } %>
         <% } %>
       </div>

@@ -92,7 +92,7 @@ $enormous-font-basegrid: relative-ems( $base-grid, $responsive-enormous-font );
 @mixin block-object-default($relative-font: 1em) {
   $computed-dimensions: relative-ems( $base-object-dimension, $relative-font);
 
-  @include block-radius( $computed-dimensions/2 );
+  @include block-radius( 1px );
   min-height: $computed-dimensions;
 }
 
@@ -148,12 +148,18 @@ $enormous-font-basegrid: relative-ems( $base-grid, $responsive-enormous-font );
   @include generic-button;
   @include block-object-action( $responsive-default-font );
   border: none;
-  color: $main-action-text-color;
-  background-color: $main-action-color;
+  font-weight: $important-font-weight;
+  color: $main-action-color;
+  background-color: darken( $background-helper-base-color, 2% );
+  transition: background-color 0.2s;
+  -moz-transition: background-color 0.2s;
+  -webkit-transition: background-color 0.2s;
 }
 
 @mixin default-button-hover {
-  background-color: $main-action-color-highlight;
+  color: $main-action-text-color;
+  background-color: $main-action-color;
+
 }
 
 @mixin button-active {

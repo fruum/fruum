@@ -16,8 +16,8 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   width: 0;
-  height: 99%;
-  top: 0.5%;
+  height: 100%;
+  top: 0;
   right: 0;
   -webkit-transition: width 0.3s;
   transition: width 0.3s;
@@ -37,7 +37,7 @@
     min-width: 250px;
     color: $disabled-text-color;
     font-size: $responsive-tiny-font;
-    text-indent: $logo-img-width + basegrid-mod( 12px )*2;
+    text-indent: $logo-img-width;
     line-height: relative-ems( 3em, $responsive-tiny-font );
     background-color: $forum-header-color;
     background-image: $logo-img;

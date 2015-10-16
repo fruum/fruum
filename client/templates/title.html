@@ -1,7 +1,7 @@
 <!-- title template -->
 <script type="text/template" id="fruum-template-title">
-  <% if (!searching && !has_notifications) { %>
-    <% if (viewing.type === 'channel' || viewing.type === 'thread' || viewing.type === 'article') { %>
+<% if (!searching && !has_notifications) { %>
+  <% if (viewing.type === 'channel' || viewing.type === 'thread' || viewing.type === 'article') { %>
   <div>
     <div class="fruum-stream-typography">
       <h4>
@@ -50,19 +50,9 @@
     <% } %>
   </div>
   <% } %>
-  <div class="fruum-item-actions">
-    <a href="javascript:;" class="fruum-link fruum-icon fruum-icon-copy" data-action="copy_link" data-fruumtipsy-left="Copy link"></a>
-  <% if (!Fruum.user.anonymous && viewing.type !== 'channel') { %>
-    <% if (Fruum.userUtils.isWatching(viewing.id)) { %>
-    <a href="javascript:;" class="fruum-link fruum-item-active fruum-icon fruum-icon-watch" data-action="unwatch" data-fruumtipsy-left="Unwatch"></a>
-    <% } else { %>
-    <a href="javascript:;" class="fruum-link fruum-icon fruum-icon-watch" data-action="watch" data-fruumtipsy-left="Watch"></a>
-    <% } %>
-  <% } %>
-  </div>
-  <% } else if (has_notifications) { %>
+<% } else if (has_notifications) { %>
   <div class="fruum-stream-typography">
     <h4>Updates on topics I watch</h4>
   </div>
-  <% } %>
+<% } %>
 </script>

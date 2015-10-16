@@ -1,5 +1,15 @@
 <!-- counters template -->
 <script type="text/template" id="fruum-template-counters">
+  <div class="fruum-item-actions">
+    <a href="javascript:;" class="fruum-link" data-action="copy_link">copy link</a>
+  <% if (!Fruum.user.anonymous && viewing.type !== 'channel') { %>
+    <% if (Fruum.userUtils.isWatching(viewing.id)) { %>
+    <a href="javascript:;" class="fruum-link fruum-item-active" data-action="unwatch">unwatch</a>
+    <% } else { %>
+    <a href="javascript:;" class="fruum-link" data-action="watch">watch</a>
+    <% } %>
+  <% } %>
+  </div>
   <div class="fruum-section-nav">
     <span class="fruum-section-nav-link fruum-icon fruum-icon-up fruum-js-filter-up" data-fruumtipsy-right="click for top of thread"></span>
     <span class="fruum-section-counts"><b><%- viewing_from %>-<%- viewing_to %></b>/<%- total_entries %></span>

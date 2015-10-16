@@ -26,13 +26,13 @@
   position: relative;
   display: block;
   width: 100%;
-  padding-bottom: 2em;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
   &.fruum-base-object-compact {
     padding-bottom: 0;
-    margin-bottom: 1em;
   }
   &.fruum-base-object-compactup {
-    margin-top: -3em;
+    margin-top: -2em;
   }
   &:after {
     content: '';
@@ -202,7 +202,7 @@
   height: $bigger-font-basegrid*3;
   left: auto;
   right: 0;
-  top: 0;
+  top: -0.285em;
   text-align: right;
   font-size: $responsive-bigger-font;
   opacity: 0.15;
@@ -272,21 +272,25 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  height: $default-font-basegrid*2;
-  line-height: $default-font-basegrid*2;
-  font-size: $responsive-default-font;
-  a.fruum-icon:not(:hover) {
-    opacity: 0.2;
+  height: $tiny-font-basegrid*2;
+  line-height: $tiny-font-basegrid*2;
+  font-size: $responsive-tiny-font;
+  a:not(:hover) {
+    opacity: 0.4;
   }
   a.fruum-link:not(:first-child) {
-    margin-left: $default-font-basegrid/2;
+    margin-left: $tiny-font-basegrid*2;
   }
-  a.fruum-icon.fruum-item-active:not(:hover) {
-    opacity: 0.8;
+  a.fruum-item-active:not(:hover) {
+    color: $base-text-color;
+    opacity: 0.5;
   }
 }
 
 #fruum .fruum-base-object .fruum-avatar:first-child ~ .fruum-item-actions {
   // has a font-size of responsive-default-font
-  left: relative-ems( $avatar-big, $responsive-default-font) + $default-font-basegrid*2;
+  left: relative-ems( $avatar-big, $responsive-tiny-font) + $tiny-font-basegrid*2;
 }
+
+#fruum .fruum-base-object .fruum-item-actions { opacity: 0.5; }
+#fruum .fruum-base-object:hover .fruum-item-actions { opacity: 1; }
