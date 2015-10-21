@@ -37,12 +37,9 @@
     min-width: 250px;
     color: $disabled-text-color;
     font-size: $responsive-tiny-font;
-    text-indent: $logo-img-width;
     line-height: relative-ems( 3em, $responsive-tiny-font );
     background-color: $forum-header-color;
-    background-image: $logo-img;
-    background-repeat: no-repeat;
-    background-position: relative-ems( $fruum-whitespace, $responsive-tiny-font ) 0;
+    padding-left: $tiny-font-basegrid*2;
   }
   .fruum-navigation-section {
     padding: $small-font-basegrid relative-ems( $fruum-whitespace, $responsive-small-font );
@@ -66,11 +63,8 @@
     }
     .fruum-temp-search {
       float: right;
-      border: 1px solid $disabled-text-color;
-      @include block-radius;
-      width: 4*$small-font-basegrid;
-      height: 4*$small-font-basegrid;
-      text-align: center;
+      text-align: right;
+      color: $dividers-colors;
     }
   }
   .fruum-content-section {

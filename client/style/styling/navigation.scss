@@ -112,16 +112,12 @@
   width: 100%;
   font-size: 1em; //reset to base-grid;
   background-color: $forum-header-color;
-  background-image: $logo-img;
-  background-repeat: no-repeat;
-  background-position: 2em 0;
 }
 
 #fruum .fruum-nav-about .fruum-about-link {
   position: relative;
   display: block;
   float: left;
-  margin-left: $logo-img-width;
   color: $disabled-text-color;
   font-size: $responsive-tiny-font;
   line-height: $tiny-font-basegrid*3;
@@ -131,10 +127,6 @@
     &:before {
       text-decoration: none;
     }
-  }
-  &:before {
-    content: '|';
-    margin-right: 1em;
   }
 }
 
@@ -162,9 +154,6 @@
 *:not(body) > #fruum {
   .fruum-nav-about {
     text-align: right;
-    @if $forum-logo-when-embedded == "false" {
-      background-image: none;
-    }
     a.fruum-about-link {
       float: none;
       &:before {

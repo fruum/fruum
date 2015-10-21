@@ -7,3 +7,7 @@ body > #fruum .fruum-badge {
 *:not(body) > #fruum .fruum-badge {
   font-size: $base-grid-medium*1.25;
 }
+
+// Responsive on medium
+
+#fruum .fruum-hidelarge { display: none; }

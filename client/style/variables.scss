@@ -85,7 +85,7 @@ $dividers-colors: #EDEDED; //F4EAF5; //CCCCCC; // Space dividers colors
 $important-text-color: darken( #E5E4E5, 75%); //#141410; // important text color
 $base-text-color: darken( #E5E4E5, 55%); //#303027; // basic text color
 $disabled-text-color: lighten($base-text-color, 25%); // disabled text color
-$muted-text-color: #E5E4E5; //E9E9DA; // muted text color
+$muted-text-color: #DAD9DA; //E9E9DA; // muted text color
 $inverted-option-color: #EDEDED; //CCCCCC; // inverted option color
 
 $main-action-color: #383E45; //EB064C; // main action color
@@ -110,13 +110,6 @@ $forum-error-color: #FFA1B7; //E36056; // forum error color
 $forum-message-text-color: #383E45; // forum messages color
 
 
-
-/* Logo */
-$logo-img: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEYAAAAYCAMAAABwdHsxAAABklBMVEUAAAAMDAxSUlIAAACAgIAAAAAPDw9JSUktLS1RABANAAMAAAAAAABPT080NDRaWlpNTU1NTU0MDAwFBQWGhoZ1dXV+fn5zc3Nubm6Li4tcXFxJAAxZWVk+Pj4vDBQCAgI4ODgnJycaGhoHLyYXFxcVAAUQEBACAgIAAAAAAAAAAAAAAAD///8AAADy8vL5+fnz8/P4+Pjr6+soKCji4uL7+/v/AEf/AEH4ADvY2Ni/v7+mpqaWlpaTk5Pv7+/t7e3k5OTd3d3V1dXS0tK0tLSkpKSioqKOjo7/AD70ADkfHx/vABv4///x///19fXn5+fQ2NfMzMzDw8O6urq5ubmvr6+fn5+bn52VQ1aLPU9GRkb/AELzAEH4ADz+ADvWADLOADGbBSeWABXz///r///K9+/e3t7Z2dmo08nGxsa7u7uqqqqXl5eblpaRgYWCgoKcc314enl0dHRpaWmLR1qOLEh+Q0XoADfpADX/ADIdJiX/ACGLACH0ABxpABlaABblAAstAAsFBQWjAAXXAACwAABxq6m4AAAALHRSTlMAcbxw4LxxvLy8cRQKyb68vLdpXO3p5+Ti4M/Lwby8vK2Wf3xxcWhlLyodAaSjVGcAAAHKSURBVDjL7ZHnUyJBEMVhuVNB9AyXc459LbvA7oFEOQXEnHPOOecc/m9fV0G5W1b5gdJvvqqd6ddT/evpWduDbtenR9d69TlfiruTTPqeL6bSY6I8zXumclRXMTM1NI43fsmXUlwLTGsotLi61dPT+8bpdL5XoMdQkaI8KSqE+ZA1pe8UpawMCUl+tGAqqoDxq2rDxsVhJpPq109WkJj9C8lJNb4pMT4EtWTSMwvmbTY7Obr7T5Qam4HrQ2Ef9v9SuQ7jFZPEwvg80qDCMlPuP3VfGukhw+jf35wg8kn/OmTDCRSJSYppk1cUjDCLzRi7gAOBQEtvZnAwPTIyfL6ExHy91+vViOLLMHNiMBOH/URahCgaQ7bEMtNreWBpN6an9QMJWojUZsIiL4Mb+cVIs45umCBuEqzBhX6YKb+DOF+T6h1jyDjFvodEpClbGY6jIGeSmKmmHfygHw3cZkwBQfWoPtZT+rDgFuhaWp3JqCEsCUwam0ZQbpnpOaGDVI8ObA8cYT8LMGsxD7Mvyhzq8nDUxzAac3WXylpHhLk9wRyvtGAKgSl1QN9cLpdD9NWeVYHd7sgFN43bgvnzkl7Y7kC/Sn7aHnSPugLMB3TfcRnvZAAAAABJRU5ErkJggg==);
-$logo-img-width: 70px;
-$logo-img-height: $base-grid*3;
-
-$forum-logo-when-embedded: "true"; // show/hide logo if forum is embedded in a page and not docked
 
 /* Avatar variables */
 $avatar-font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;

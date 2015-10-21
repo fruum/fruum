@@ -8,8 +8,10 @@
   2. Tipsy
   3. System messages
   4. Helper action
-    4.1 Helptext
-    4.2 Tutorial messages
+    4.1 Helper container
+    4.2 Helptext
+    4.3 Tutorial messages
+    4.4 Options list
   5. Popup data
   6. Badges
 
@@ -220,20 +222,71 @@
   }
 }
 
+// 4.4 Options list
+
+#fruum .fruum-options-list {
+  width: 100%;
+  color: $forum-message-text-color;
+  padding-top: 1em;
+  &.fruum-options-twocolumns {
+    .fruum-option-item {
+      width: 48%;
+      &:nth-child(odd) {float: left;}
+      &:nth-child(even) {
+        float: right;
+        &:after {
+          content: '';
+          display: table;
+          clear: both;
+        }
+      }
+      &.fruum-option-empty {
+        width: 100%;
+        clear: both;
+      }
+    }
+  }
+}
+
+#fruum .fruum-option-item {
+  padding-bottom: $small-font-basegrid;
+  font-size: $responsive-small-font;
+  font-weight: $complementary-font-weight;
+  line-height: $small-font-basegrid*2;
+  cursor: pointer;
+  cursor: hand;
+  height:$small-font-basegrid*3;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  &.fruum-option-selected,
+  &:hover {
+    font-weight: $important-font-weight;
+  }
+  &.fruum-option-empty {
+    color: $muted-text-color;
+    font-weight: $important-font-weight;
+  }
+}
 
 
-// 6. Popup data
+
+// 5. Popup data
 
 #fruum .fruum-popup-data {
   position: absolute;
   width: 95%;
   left: 2.5%;
+  max-height: 80em;
   z-index: 13;
   @include block-radius( 1px );
   font-size: 1em; // reset to base-grid
   padding: 1em;
   box-shadow: 0 0 6px rgba( $base-text-color, 0.6 );
   background-color: $background-helper-base-color;
+  &.fruum-popup-half {
+    width: 47.5%;
+  }
   input[type="text"],
   textarea {
     $popup-size: relative-ems( $base-grid, $responsive-tiny-font );
@@ -262,7 +315,7 @@
 
 
 
-// 7. Badges
+// 6. Badges
 
 #fruum .fruum-badge {
   display: inline-block;

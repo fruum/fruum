@@ -72,6 +72,13 @@
       color: $main-action-color-highlight;
     }
   }
+  &.fruum-cta-button {
+    background-color: $main-action-color;
+    color: $main-action-text-color;
+    &:hover {
+      background-color: $main-action-color-highlight;
+    }
+  }
   // reset letter spacing in case of icon button
   &:empty {
     letter-spacing: 0;

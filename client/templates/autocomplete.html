@@ -1,0 +1,19 @@
+<!-- Emoji autocomplete -->
+<script type="text/template" id="fruum-template-autocomplete-emoji">
+  <div class="fruum-tutorial-messages">Select with <b>arrows</b>, <b>enter</b> to use, <b>esc</b> to exit</div>
+  <div class="fruum-options-list fruum-options-twocolumns">
+    <% _.each(list, function(item) { %>
+    <div class="fruum-option-item" data-item="<%- item.key %>"><span data-fruumemoji="<%- item.icon %>"></span><%- item.emoji %></div>
+    <% }); %>
+  </div>
+</script>
+
+<!-- User autocomplete -->
+<script type="text/template" id="fruum-template-autocomplete-user">
+  <div class="fruum-tutorial-messages">Select with <b>arrows</b>, <b>enter</b> to use, <b>esc</b> to exit</div>
+  <div class="fruum-options-list fruum-options-twocolumns">
+    <% _.each(list, function(item) { %>
+    <div class="fruum-option-item" data-item="<%- item.key %>"><%- item.username %></div>
+    <% }); %>
+  </div>
+</script>

@@ -28,7 +28,13 @@
 // Nanoscroller
 @import 'styling/nanoscroller';
 
-// Fruum tablets/mobiles
+// Fruum smartphones
+
+@media (max-device-width: 1024px ) {
+  @import 'styling/system-smallscreen';
+}
+
+// Fruum tablets/large-screens
 
 // Medium screens
 
