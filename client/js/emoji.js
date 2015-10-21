@@ -96,12 +96,9 @@ Emoji support
       });
     }
   }
-
-  window.Fruum.emoji.re = '';
+  var keys = [];
   for (var key in window.Fruum.emoji.symbols) {
-    if (!(key[0] == ':' && key[key.length - 1] == ':')) {
-      window.Fruum.emoji.re += escape_re(key) + '|';
-    }
+    keys.push(escape_re(key));
   }
-  window.Fruum.emoji.re = RegExp('(?:^|\\s)(' + window.Fruum.emoji.re + ':(.+):+)', 'g');
+  window.Fruum.emoji.re = RegExp('(?:^|\\s)(' + keys.join('|') + ')', 'g');
 })();

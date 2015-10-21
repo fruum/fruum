@@ -8,7 +8,7 @@ Utilities
     var marked = Fruum.libs.marked,
         _ = Fruum.libs._;
 
-    var re_mention = new RegExp(['(^|\\s)@[.+-_0-9A-Za-z\xaa\xb5\xba\xc0-\xd6\xd8-\xf6',
+    var at_user = ['@[.+-_0-9A-Za-z\xaa\xb5\xba\xc0-\xd6\xd8-\xf6',
       '\xf8-\u02c1\u02c6-\u02d1\u02e0-\u02e4\u02ec\u02ee\u0370-\u0374\u0376',
       '-\u0377\u037a-\u037d\u0386\u0388-\u038a\u038c\u038e-\u03a1\u03a3-',
       '\u03f5\u03f7-\u0481\u048a-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05d0',
@@ -71,7 +71,10 @@ Utilities
       '\ufb3c\ufb3e\ufb40-\ufb41\ufb43-\ufb44\ufb46-\ufbb1\ufbd3-\ufd3d\ufd50',
       '-\ufd8f\ufd92-\ufdc7\ufdf0-\ufdfb\ufe70-\ufe74\ufe76-\ufefc\uff21',
       '-\uff3a\uff41-\uff5a\uff66-\uffbe\uffc2-\uffc7\uffca-\uffcf\uffd2',
-      '-\uffd7\uffda-\uffdc]+'].join(''), 'g');
+      '-\uffd7\uffda-\uffdc]+'].join('');
+
+    var re_mention = new RegExp('(^|\\s)' + at_user, 'g'),
+        re_autocomplete_user = new RegExp('\\B' + at_user + '$');
 
     //Make Marionette itemviews work without the parent div
     Fruum.utils.marionette_itemview_without_tag = function(view) {
@@ -129,6 +132,16 @@ Utilities
         return ret;
       });
       return text;
+    }
+    //get autocomplete for @user
+    Fruum.utils.autocompleteUser = function(text) {
+      var m = (text || '').match(re_autocomplete_user);
+      if (m) return m[0];
+    }
+    //get autocomplete for emoji
+    Fruum.utils.autocompleteEmoji = function(text) {
+      var m = (text || '').match(/\B:([\-+\w]*)$/);
+      if (m && m[0].length > 1) return m[0];
     }
     //Markdown display
     Fruum.utils.print = function(post) {

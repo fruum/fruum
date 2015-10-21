@@ -164,4 +164,32 @@ module.exports = function(options, client, self) {
     });
   }
 
+  // --------------------------------- SEARCH ----------------------------------
+
+  self.search_users = function(app_id, q, callback) {
+    client.search({
+      index: self.toIndex(app_id),
+      type: 'user',
+      refresh: true,
+      body: {
+        from: 0,
+        size: 20,
+        query: {
+          match_phrase_prefix: {
+            username: {
+              query: q
+            }
+          }
+        }
+      }
+    }, function(error, response) {
+      var results = [];
+      if (!error && response && response.hits && response.hits.hits) {
+        _.each(response.hits.hits, function(hit) {
+          results.push(new Models.User(hit._source));
+        });
+      }
+      callback(results);
+    });
+  }
 }

@@ -44,3 +44,18 @@ describe("Mentions", function() {
     );
   });
 });
+
+describe("Autocomplete", function() {
+  it("works for @user", function() {
+    expect(Fruum.utils.autocompleteUser('Hello @foo @γιολο')).toBe(
+      '@γιολο'
+    );
+    expect(Fruum.utils.autocompleteUser('Hello @foo bar')).toBeUndefined();
+  });
+  it("works for :emoji", function() {
+    expect(Fruum.utils.autocompleteEmoji('Hello :foo:')).toBeUndefined();
+    expect(Fruum.utils.autocompleteEmoji('Hello :')).toBeUndefined();
+    expect(Fruum.utils.autocompleteEmoji('Hello :f')).toBe(':f');
+    expect(Fruum.utils.autocompleteEmoji('Hello :f: bar')).toBeUndefined();
+  });
+});

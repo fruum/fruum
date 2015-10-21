@@ -618,6 +618,15 @@ Main client app
           }
         );
 
+        this.bindIO('fruum:autocomplete',
+          function send(payload) {
+            that.socket.emit('fruum:autocomplete', payload);
+          },
+          function recv(payload) {
+            if (payload) Fruum.io.trigger('fruum:autocomplete_results', payload);
+          }
+        );
+
         // ----------------- START -----------------
 
         this.socket.on('connect', function() {

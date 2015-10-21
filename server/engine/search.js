@@ -33,4 +33,29 @@ module.exports = function(options, instance, self) {
       });
     });
   }
+
+  // -------------------------------- AUTOCOMPLETE -----------------------------
+
+  self.autocomplete = function(socket, payload) {
+    if (!payload.q) {
+      logger.error(socket.app_id, 'Missing autocomplete query', payload);
+      socket.emit('fruum:autocomplete');
+      return;
+    }
+    var app_id = socket.app_id;
+    storage.search_users(socket.app_id, payload.q, function(users) {
+      var response = [];
+      _.each(users, function(user) {
+        response.push({
+          username: user.get('username'),
+          displayname: user.get('displayname'),
+          avatar: user.get('avatar')
+        });
+      });
+      socket.emit('fruum:autocomplete', {
+        q: payload.q,
+        results: response
+      });
+    });
+  }
 }

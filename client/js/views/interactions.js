@@ -54,6 +54,7 @@ Handles the bottom input part
         'click @ui.cancel': 'onCancel',
         'click @ui.show_notifications': 'onShowNotifications',
         //capture changes and store them
+        'blur @ui.field_body': 'onBodyBlur',
         'keyup @ui.field_body': 'onKeyBody',
         'keyup @ui.field_header': 'onKeyHeader',
         'keyup @ui.field_initials': 'onKeyInitials',
@@ -66,6 +67,9 @@ Handles the bottom input part
         this.listenTo(Fruum.io, 'fruum:update_notify', this.onUpdateNotify);
         this.onAttach = this.onDomRefresh = this.onInteracting;
         this.mode = this._getMode();
+        this.autocomplete_view = new Fruum.views.AutocompleteView({
+          interactions: this
+        });
       },
       getTemplate: function() {
         if (Fruum.user.anonymous) return '#fruum-template-interactions-anonymous';
@@ -102,6 +106,8 @@ Handles the bottom input part
           this.$el.parent().removeClass('fruum-interaction-unavailable');
         }
       },
+      onRender: function() {
+      },
       onHelp: function() {
         if (this.ui.help_panel.is(':visible'))
           this.ui.help_panel.slideUp('show', 'easeInOutBack');
@@ -111,10 +117,12 @@ Handles the bottom input part
       onChannelKey: function(event) {
         switch(event.which) {
           case 13: //Enter
-            this.onPost(event);
+            if (!event._autocomplete_consumed)
+              this.onPost(event);
             break;
           case 27: //Escape
-            this.ui.channel_input.val('').blur();
+            if (!event._autocomplete_consumed)
+              this.ui.channel_input.val('').blur();
             break;
         }
       },
@@ -214,6 +222,9 @@ Handles the bottom input part
           this.onInitialsKeydown(event);
         }
       },
+      onBodyBlur: function(event) {
+        this.autocomplete_view.hide();
+      },
       onInitialFocus: function() {
         this.ui.field_initials.select();
       },
@@ -246,6 +257,7 @@ Handles the bottom input part
             event.preventDefault();
           }
         }
+        this.autocomplete_view.onKey(event);
       },
       onCancel: function() {
         this.ui_state.set('editing', {});

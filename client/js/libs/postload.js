@@ -20,3 +20,12 @@ if (window.__markedjs__)
 delete window.___socket_io___;
 delete window.__momentjs__;
 delete window.__markedjs__;
+
+if (window.__define__) {
+	window.define = window.__define__;
+	delete window.__define__;
+}
+if (window.__exports__) {
+	window.exports = window.__exports__;
+	delete window.__exports__;
+}

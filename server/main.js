@@ -171,6 +171,7 @@ function FruumServer(options, cli_cmd, ready) {
     'client/js/views/threads.js',
     'client/js/views/articles.js',
     'client/js/views/channels.js',
+    'client/js/views/autocomplete.js',
     'client/js/views/interactions.js',
     'client/js/views/search.js',
     'client/js/views/notifications.js',
@@ -286,6 +287,7 @@ function FruumServer(options, cli_cmd, ready) {
         .concat(_.union([
           'client/templates/breadcrumb.html',
           'client/templates/interactions.html',
+          'client/templates/autocomplete.html',
           'client/templates/search.html',
           'client/templates/notifications.html',
           'client/templates/categories.html',
@@ -487,6 +489,9 @@ function FruumServer(options, cli_cmd, ready) {
           });
           socket.on('fruum:search', function(payload) {
             engine.search(socket, payload || {});
+          });
+          socket.on('fruum:autocomplete', function(payload) {
+            engine.autocomplete(socket, payload || {});
           });
         }
       });

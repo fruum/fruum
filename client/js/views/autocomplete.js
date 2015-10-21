@@ -1,0 +1,205 @@
+/******************************************************************************
+ Autocomplete
+*******************************************************************************/
+
+(function() {
+  'use strict';
+  window.Fruum.require.push(function () {
+    Fruum.views = Fruum.views || {};
+    //libraries
+    var $ = Fruum.libs.$,
+        _ = Fruum.libs._,
+        Backbone = Fruum.libs.Backbone,
+        Marionette = Fruum.libs.Marionette;
+
+    Fruum.views.AutocompleteView = Marionette.View.extend({
+      $el_root: $('#fruum'),
+      el: '.fruum-js-autocomplete',
+      template_autocomplete_user: _.template($('#fruum-template-autocomplete-user').html()),
+      template_autocomplete_emoji: _.template($('#fruum-template-autocomplete-emoji').html()),
+      events: {
+        'mousedown [data-item]': 'onSelect'
+      },
+      initialize: function(options) {
+        _.bindAll(this, 'onTimer');
+        this.interactions = options.interactions;
+        this.listenTo(Fruum.io, 'fruum:autocomplete_results', this.onResults);
+        this.match = '';
+        this.items = [];
+      },
+      onKey: function(event) {
+        //reset timer
+        if (this.timer) {
+          clearTimeout(this.timer);
+          this.timer = null;
+        }
+        switch(event.which) {
+          case 38: //up
+          case 40: //down
+          case 37: //left
+          case 39: //right
+          case 13: //enter
+          case 27: //escape
+            this.onShortcut(event);
+            break;
+          default:
+            this.timer = setTimeout(this.onTimer, 250);
+            break;
+        }
+      },
+      onShortcut: function(event) {
+        if (!this.$el.is(':visible')) return;
+        switch(event.which) {
+          case 27: //escape
+          {
+            event._autocomplete_consumed = true;
+            this.$el.hide();
+            this.match = '';
+            break;
+          }
+          case 13: //enter
+          {
+            var el = this.$('.fruum-option-selected');
+            if (el.length) {
+              this.onSelect({ target: el });
+              this.hide();
+              event.preventDefault();
+              event._autocomplete_consumed = true;
+            }
+            break;
+          }
+          case 38: //up
+          case 40: //down
+          case 37: //left
+          case 39: //right
+          {
+            var el = this.$('.fruum-option-selected');
+            if (!el.length) {
+              //select first element
+              this.$('[data-item]:first').addClass('fruum-option-selected');
+            }
+            else {
+              var last_item = el.data('item');
+              var index = this.items.indexOf(last_item);
+              switch(event.which) {
+                case 38: //up
+                  index = Math.max(0, index - 2);
+                  break;
+                case 40: //down
+                  index = Math.min(this.items.length - 1, index + 2);
+                  break;
+                case 37: //left
+                  index = Math.max(0, index - 1);
+                  break;
+                case 39: //right
+                  index = Math.min(this.items.length - 1, index + 1);
+                  break;
+              }
+              if (this.items[index]) {
+                el.removeClass('fruum-option-selected');
+                this.$('[data-item="' + this.items[index] + '"]').addClass('fruum-option-selected');
+                event.preventDefault();
+              }
+            }
+            event._autocomplete_consumed = true;
+            break;
+          }
+        }
+      },
+      hide: function() {
+        this.$el.hide();
+        this.match = '';
+        if (this.timer) {
+          clearTimeout(this.timer);
+          this.timer = null;
+        }
+      },
+      onResults: function(payload) {
+        //are we still relevant?
+        if (payload.q !== this.match) return;
+        //do we have results?
+        if (payload && payload.results && payload.results.length) {
+          var list = [], hash = {};
+          this.items = [];
+          _.each(payload.results, function(item) {
+            if (hash[item.username]) return;
+            hash[item.username] = true;
+            list.push({
+              key: '@' + item.username,
+              username: item.username,
+              displayname: item.displayname
+            });
+            this.items.push('@' + item.username);
+          }, this);
+          this.$el.html(
+            this.template_autocomplete_user({
+              list: list
+            })
+          ).show();
+          this.positionPanel();
+        }
+        else {
+          this.$el.hide();
+        }
+      },
+      onSelect: function(event) {
+        var item = $(event.target).closest('[data-item]').data('item'),
+            field = this.interactions.ui.field_body;
+        if (item && this.match) {
+          field.val(
+            field.val().replace(new RegExp(_.escape(this.match) + '$'), item + ' ')
+          );
+          _.defer( (function() { field.focus(); }).bind(this) );
+        }
+      },
+      onTimer: function() {
+        this.timer = null;
+        var text = this.interactions.ui.field_body.val(), match;
+        //find emoji
+        match = Fruum.utils.autocompleteEmoji(text);
+        if (match) {
+          this.match = match;
+          var list = [];
+          this.items = [];
+          _.each(Fruum.emoji.symbols, function(value, key) {
+            if (key.indexOf(match) === 0) {
+              this.items.push(key);
+              list.push({
+                key: key,
+                emoji: key,
+                icon: value
+              });
+            }
+          }, this);
+          if (list.length) {
+            this.$el.html(
+              this.template_autocomplete_emoji({ list: list })
+            ).show();
+            this.positionPanel();
+          }
+          else {
+            this.$el.hide();
+          }
+          return;
+        }
+        //find user
+        match = Fruum.utils.autocompleteUser(text);
+        if (match) {
+          this.match = match;
+          Fruum.io.trigger('fruum:autocomplete', { q: match });
+          return;
+        }
+        //nothing found
+        this.match = '';
+        this.$el.hide();
+      },
+      positionPanel: function() {
+        this.$el.css('top', (
+          this.interactions.ui.field_body.offset().top -
+          this.$el_root.offset().top -
+          this.$el.outerHeight()
+        ) + 'px');
+      },
+    });
+  });
+})();

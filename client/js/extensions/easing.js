@@ -5,7 +5,8 @@ Easing jquery plugin
 (function() {
   'use strict';
   window.Fruum.require.push(function () {
-    var $ = Fruum.libs.$;
+    var $ = Fruum.libs.$,
+        _ = Fruum.libs._;
 
     $.easing = _.extend($.easing, {
     	easeInQuad: function (x, t, b, c, d) {

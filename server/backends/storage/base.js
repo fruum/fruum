@@ -371,6 +371,17 @@ module.exports = function(options) {
   */
   this.find_watch_users = function(app_id, watch_list, callback) { callback([]); }
 
+  /*
+  Summary:
+  Search users matching q
+
+  Parameters:
+  - app_id: the application id
+  - q: query to search
+  - callback: function callback, passing a list of user models that match q
+  */
+  this.search_users = function(app_id, q, callback) { callback([]); }
+
   // ---------------------------------- GC -------------------------------------
 
   /*
