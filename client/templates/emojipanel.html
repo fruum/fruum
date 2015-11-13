@@ -1,0 +1,10 @@
+<!-- Emoji panel -->
+<script type="text/template" id="fruum-template-emojipanel">
+  <div class="fruum-options-list fruum-options-multicolumns fruum-options-selectable">
+    <% _.each(window.Fruum.emoji.symbols, function(value, key) { %>
+      <% if (key[0] == ':' && key[key.length - 1] == ':') { %>
+    <div class="fruum-option-item" data-item="<%- key %>"><span data-fruumemoji="<%- value %>"></span></div>
+      <% } %>
+    <% }); %>
+  </div>
+</script>

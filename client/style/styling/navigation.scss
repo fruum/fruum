@@ -294,6 +294,10 @@
   .fruum-item-actions {
     // has a font-size of responsive-default-font
     font-size: 1em;
+    margin-top: 0;
+    width: auto;
+    float: left;
+    line-height: $default-font-basegrid*4; 
   }
 }
 

@@ -28,7 +28,7 @@
           <% _.each(streams, function(value, key) { %>
           <tr>
             <td class="contentitem">
-              <h5><a href="<%- application.fullpage_url %>#!v/<%- value.document.parent %>" class="external-link"><%- value.document.header %><span class="tagname"></span></a></h5>
+              <h5><a href="<%- getShareURL(value.document.parent) %>" class="external-link"><%- value.document.header %><span class="tagname"></span></a></h5>
               <p class="content-description"><%- value.document.body %></p>
               <% if (value.replies) { %>
               <span class="disclaimeritem">and <%- value.replies %> more replies</span>

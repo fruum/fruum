@@ -6,11 +6,11 @@
     <div class="fruum-helper-close fruum-icon fruum-icon-close fruum-link fruum-link-secondary" data-action="help"></div>
     <div class="fruum-helper-element">
       <b class="fruum-helper-shortcut"><%- Fruum.utils.shortcutModifier('b') %></b>
-      Bold text
+      <b>Bold text</b>
     </div>
     <div class="fruum-helper-element">
       <b class="fruum-helper-shortcut"><%- Fruum.utils.shortcutModifier('i') %></b>
-      Italic text
+      <i>Italic text</i>
     </div>
     <div class="fruum-helper-element">&nbsp;</div>
     <div class="fruum-helper-element">
@@ -99,7 +99,6 @@
       <div class="fruum-user-account">
         <span
           class="fruum-helper-action"
-          data-fruumtipsy-right="View messaging shortcuts and directives"
           data-action="help"
         >?</span>
       </div>
@@ -142,9 +141,9 @@
       <div class="fruum-user-account">
         <span
           class="fruum-helper-action"
-          data-fruumtipsy-right="View messaging shortcuts and directives"
           data-action="help"
         >?</span>
+        <span class="fruum-helper-action fruum-icon fruum-icon-emoji"   data-action="emojipanel"></span>
       </div>
     </div>
   </form>
@@ -189,9 +188,9 @@
       <div class="fruum-user-account">
         <span
           class="fruum-helper-action"
-          data-fruumtipsy-right="View messaging shortcuts and directives"
           data-action="help"
         >?</span>
+        <span class="fruum-helper-action fruum-icon fruum-icon-emoji"   data-action="emojipanel"></span>
       </div>
     </div>
   </form>
@@ -224,7 +223,6 @@
       <div class="fruum-user-account">
         <span
           class="fruum-helper-action"
-          data-fruumtipsy-right="View messaging shortcuts and directives"
           data-action="help"
         >?</span>
       </div>
@@ -249,11 +247,21 @@
         autocomplete="off" class="fruum-interactions-input fruum-interactions-compact fruum-js-channel-input"
         placeholder="you say..." data-field="body" rows="1"></textarea>
     </div>
-    <div class="fruum-interactions-footer fruum-interactions-footer-compact">
-      <div class="fruum-tutorial-messages fruum-tutorial-tip">press <b>Enter</b> to post</div>
+    <div class="fruum-interactions-footer">
+      <div class="fruum-interactions-buttons">
+        <span class="fruum-secondary-data">press <b>Enter</b> to reply</span>
+      </div>
+      <div class="fruum-user-account">
+        <span
+          class="fruum-helper-action"
+          data-action="help"
+        >?</span>
+        <span class="fruum-helper-action fruum-icon fruum-icon-emoji" data-action="emojipanel"></span>
+      </div>
     </div>
     <% } %>
   </form>
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-help')() %>
 </script>
 
 <!-- Add thread post -->
@@ -284,9 +292,9 @@
       <div class="fruum-user-account">
         <span
           class="fruum-helper-action"
-          data-fruumtipsy-right="View messaging shortcuts and directives"
           data-action="help"
         >?</span>
+        <span class="fruum-helper-action fruum-icon fruum-icon-emoji" data-action="emojipanel"></span>
       </div>
     </div>
     <% } %>

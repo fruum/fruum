@@ -85,26 +85,28 @@
       </div>
     </div>
 
-    <% if (!Fruum.user.anonymous) { %>
-      <% if (Fruum.user.id == user_id) { %>
-        <a href="javascript:;" class="fruum-manage fruum-link fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit post"></a>
-      <% } %>
-      <div class="fruum-item-actions">
-        <% if (Fruum.user.id != user_id) { %>
-        <a href="javascript:;" class="fruum-link" data-action="report">report</a>
-          <% if (Fruum.user.admin) { %>
-        <a href="javascript:;" class="fruum-link" data-action="inappropriate"><% if (inappropriate) { print('mark as proper') } else { print('inappropriate post'); } %></a>
-          <% } %>
-        <% } %>
-      </div>
+    <% if (!Fruum.user.anonymous && Fruum.user.id == user_id) { %>
+    <a href="javascript:;" class="fruum-manage fruum-link fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit post"></a>
     <% } %>
+    <div class="fruum-item-actions">
+      <a href="javascript:;" class="fruum-link" data-action="share">share</a>
+    <% if (!Fruum.user.anonymous) { %>
+      <% if (Fruum.user.id != user_id && !Fruum.user.admin) { %>
+      <a href="javascript:;" class="fruum-link fruum-maintain-action" data-action="report">report</a>
+      <% } %>
+      <% if (Fruum.user.admin) { %>
+      <a href="javascript:;" class="fruum-link fruum-maintain-action" data-action="delete">delete</a>
+      <a href="javascript:;" class="fruum-link fruum-maintain-action" data-action="inappropriate"><% if (inappropriate) { print('show post') } else { print('hide post'); } %></a>
+      <% } %>
+    <% } %>
+    </div>
 
   </div>
 </script>
 
 <!-- post first entry template -->
 <script type="text/template" id="fruum-template-post-master">
-  <div class="fruum-base-object">
+  <div class="fruum-base-object fruum-js-entry-default">
 
     <% if (viewing.id == id && viewing.type == 'article' && !viewing.is_blog) { %>
     <% } else if (user_id) { %>
@@ -146,19 +148,21 @@
       </div>
     </div>
 
-    <% if (!Fruum.user.anonymous) { %>
-      <% if (Fruum.user.id == user_id) { %>
-        <a href="javascript:;" class="fruum-manage fruum-link fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit post"></a>
-      <% } %>
-      <div class="fruum-item-actions">
-        <% if (Fruum.user.id != user_id) { %>
-        <a href="javascript:;" class="fruum-link" data-action="report">report</a>
-          <% if (Fruum.user.admin) { %>
-        <a href="javascript:;" class="fruum-link" data-action="inappropriate"><% if (inappropriate) { print('mark as proper') } else { print('inappropriate post'); } %></a>
-          <% } %>
-        <% } %>
-      </div>
+    <% if (!Fruum.user.anonymous && Fruum.user.id == user_id) { %>
+    <a href="javascript:;" class="fruum-manage fruum-link fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit post"></a>
     <% } %>
+    <div class="fruum-item-actions">
+      <a href="javascript:;" class="fruum-link" data-action="share">share</a>
+      <% if (!Fruum.user.anonymous) { %>
+        <% if (Fruum.user.id != user_id  && !Fruum.user.admin) { %>
+      <a href="javascript:;" class="fruum-link fruum-maintain-action" data-action="report">report</a>
+        <% } %>
+        <% if (Fruum.user.admin) { %>
+      <a href="javascript:;" class="fruum-link fruum-maintain-action" data-action="delete">delete</a>
+      <a href="javascript:;" class="fruum-link fruum-maintain-action" data-action="inappropriate"><% if (inappropriate) { print('show post') } else { print('hide post'); } %></a>
+        <% } %>
+      <% } %>
+    </div>
 
   </div>
 </script>

@@ -7,7 +7,7 @@
     <br>
     by <%= doc.user_displayname || doc.user_username %>
   <% } else { %>
-    <h2><a href="<%- application.fullpage_url %>#!v/<%= doc.id %>"><%- doc.header %></a></h2>
+    <h2><a href="<%- getShareURL(doc.id) %>"><%- doc.header %></a></h2>
     <%= doc.body %>
   <% } %>
   <br>

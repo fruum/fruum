@@ -5,6 +5,7 @@
   Contents
 
   1. Loader
+    1.1 Loader mini
   2. Tipsy
   3. System messages
   4. Helper action
@@ -23,44 +24,104 @@
 #fruum .fruum-loader {
   position: relative;
   display: inline-block;
-  color: $muted-text-color;
-  font-size: 1em;
-  line-height: 1.1em;
-  height: 1.1em;
-  width: 0;
+  height: 10px;
+  transform: skewX(-20deg);
+  -moz-transform: skewX(-20deg);
+  -webkit-transform: skewX(-20deg);
   overflow: hidden;
-  -webkit-animation: fruum-loader 1.8s linear infinite;
-  animation:fruum-loader 1.8s linear infinite;
+  animation: fruum-loader 1.4s linear infinite;
+  -webkit-animation: fruum-loader 1.4s linear infinite;
+  opacity: 0;
 }
 
-@-webkit-keyframes fruum-loader
-{
-0% {width: 0;margin-right: 2em;}
-30% {width: 0.7em; margin-right: 1.3em;}
-80% {opacity:1;width: 1.7em;margin-right: 0.3em;}
-90% {opacity:1;width: 1.7em;margin-right: 0.3em;}
-100% {opacity:0.1;width: 1.7em;margin-right: 0.3em;}
+@keyframes fruum-loader {
+    0% {width: 10px;opacity:0;}
+  30% { width: 20px;opacity:1;}
+  88% {width: 72px;opacity: 1;}
+  92% {width: 72px;opacity: 1;}
+  99.9% {width: 72px;opacity: 0.1;}
+  100% {width:10px;opacity: 0;}
 }
-@keyframes fruum-loader
-{
-0% {width: 0;margin-right: 2em;}
-30% {width: 0.7em; margin-right: 1.3em;}
-80% {opacity:1;width: 1.7em;margin-right: 0.3em;}
-90% {opacity:1;width: 1.7em;margin-right: 0.3em;}
-100% {opacity:0.1;width: 1.7em;margin-right: 0.3em;}
+
+@-webkit-keyframes fruum-loader {
+    0% {width: 10px;opacity:0;}
+  30% { width: 20px;opacity:1;}
+  88% {width: 72px;opacity: 1;}
+  92% {width: 72px;opacity: 1;}
+  99.9% {width: 72px;opacity: 0.1;}
+  100% {width:10px;opacity: 0;}
 }
 
 #fruum .fruum-loader:before {
-  content: '....';
-  display: block;
+  content: '';
   position: absolute;
-  width: auto;
-  height: 100%;
-  left: 0;
-  top: 0;
+  display: block;
+  top: 2px;
+  left: -8px;
+  width: 80px;
+  height: 80px;
+  border: 6px dotted $muted-text-color;
+}
+
+#fruum .fruum-loader:after {
+  position: absolute;
+  display: block;
+  content: '';
+  top: 1px;
+  right: 0;
+  width:8px;
+  height: 8px;
+  background-color: $forum-base-color;
+  z-index: 1;
+}
+
+// 1.1 Loader mini
+#fruum .fruum-mini-loader {
+  position: relative;
+  display: inline-block;
+  height: 1em;
+  font-size:1em;
+  overflow: hidden;
+  opacity: 0;
   color: inherit;
-  font-size: inherit;
-  line-height: inherit;
+  animation: fruum-mini-loader 1s linear infinite;
+  -webkit-animation: fruum-mini-loader 1s linear infinite;
+  &:before {
+    content: '...';
+    position: relative;
+    width: 2em;
+    display: inline-block;
+    color: inherit;
+    font-size: inherit;
+  }
+  &:after {
+    content: '';
+    position: absolute;
+    display: block;
+    right: 0;
+    bottom: 0.08em;
+    width: 0.15em;
+    height: 0.2em;
+    background-color: $forum-base-color;
+  }
+}
+
+@keyframes fruum-mini-loader {
+    0% {width: 0;opacity:0;}
+  30% { width: 0.4em;opacity:1;}
+  88% {width: 1.4em;opacity: 1;}
+  92% {width: 1.4em;opacity: 1;}
+  99.9% {width: 1.4em;opacity: 0.1;}
+  100% {width:0;opacity: 0;}
+}
+
+@-webkit-keyframes fruum-mini-loader {
+  0% {width: 0;opacity:0;}
+  30% { width: 0.4em;opacity:1;}
+  88% {width: 1.4em;opacity: 1;}
+  92% {width: 1.4em;opacity: 1;}
+  99.9% {width: 1.4em;opacity: 0.1;}
+  100% {width:0;opacity: 0;}
 }
 
 
@@ -152,6 +213,9 @@
   @include block-radius;
   cursor: pointer;
   cursor: hand;
+  &:not(:last-child) {
+    margin-left: $base-grid;
+  }
 }
 
 #fruum .fruum-helper-action:hover {
@@ -246,13 +310,27 @@
       }
     }
   }
+  &.fruum-options-multicolumns {
+    .fruum-option-item {
+      float: left;
+      width: auto;
+      margin-right: 0.6em;
+    }
+  }
+  &.fruum-options-selectable {
+    .fruum-option-item:hover {
+      @include block-radius(1px);
+      background-color: $muted-text-color;
+    }
+  }
 }
 
 #fruum .fruum-option-item {
-  padding-bottom: $small-font-basegrid;
+  display: block;
+  margin-bottom: $small-font-basegrid;
   font-size: $responsive-small-font;
   font-weight: $complementary-font-weight;
-  line-height: $small-font-basegrid*2;
+  line-height: $small-font-basegrid*3;
   cursor: pointer;
   cursor: hand;
   height:$small-font-basegrid*3;
@@ -278,6 +356,7 @@
   width: 95%;
   left: 2.5%;
   max-height: 80em;
+  max-width: 750px;
   z-index: 13;
   @include block-radius( 1px );
   font-size: 1em; // reset to base-grid
@@ -286,6 +365,27 @@
   background-color: $background-helper-base-color;
   &.fruum-popup-half {
     width: 47.5%;
+  }
+  &.fruum-popup-docked-bottomright {
+    left: auto;
+    right: $fruum-whitespace;
+    &:before,
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-top: $base-grid solid $background-helper-base-color;
+      border-left: $base-grid dashed transparent;
+      border-right: $base-grid dashed transparent;
+      bottom: -1*$base-grid;
+      right: $base-grid*3.5+1px;
+    }
+    &:before {
+      border-top-color: rgba( $base-text-color, 0.2 );
+      bottom: -1*$base-grid - 1px;
+    }
   }
   input[type="text"],
   textarea {

@@ -269,9 +269,9 @@
 // 4.2 Item interactions
 
 #fruum .fruum-item-actions {
-  position: absolute;
-  bottom: 0;
-  left: 0;
+  position: relative;
+  width: 100%;
+  
   height: $tiny-font-basegrid*2;
   line-height: $tiny-font-basegrid*2;
   font-size: $responsive-tiny-font;
@@ -285,11 +285,14 @@
     color: $base-text-color;
     opacity: 0.5;
   }
+  a.fruum-maintain-action {
+    float: right;
+  }
 }
 
 #fruum .fruum-base-object .fruum-avatar:first-child ~ .fruum-item-actions {
   // has a font-size of responsive-default-font
-  left: relative-ems( $avatar-big, $responsive-tiny-font) + $tiny-font-basegrid*2;
+  padding-left: relative-ems( $avatar-big, $responsive-tiny-font) + $tiny-font-basegrid*2;
 }
 
 #fruum .fruum-base-object .fruum-item-actions { opacity: 0.5; }

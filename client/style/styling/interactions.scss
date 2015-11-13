@@ -148,11 +148,11 @@ $pointer-dimensions: basegrid-mod( 12px );
   width: 100%;
   .fruum-user-account {
     float: right;
-    width: 12%;
+    width: 20%;
   }
   .fruum-interactions-buttons {
     float: left;
-    width: 88%;
+    width: 80%;
     text-align: left;
     &:not(.fruum-interactions-group) > *:not(:first-child) {
       // has font-size of responsive-default-font
@@ -160,6 +160,10 @@ $pointer-dimensions: basegrid-mod( 12px );
     }
     &.fruum-interactions-group > *:not(:first-child) {
       margin-left: $default-font-basegrid;
+    }
+    .fruum-secondary-data:only-child {
+      // font-size of small-font
+      line-height: $small-font-basegrid*4;
     }
   }
   // this covers the case that there is an interaction open
