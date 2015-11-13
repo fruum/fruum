@@ -27,6 +27,10 @@ Main client app
   }
   //when all dependencies have been loaded, start the app
   function run() {
+    Fruum.application = {
+      fullpage_url: window.fruumSettings.fullpage_url,
+      pushstate: window.fruumSettings.fullpage_url && window.fruumSettings.pushstate
+    }
     //libraries
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
@@ -305,7 +309,14 @@ Main client app
 
             that.onRefresh();
 
-            if (last_doc.type === 'channel') {
+            if (that.ui_state.get('jumpto_post') > 0) {
+              var jumpto_post = that.ui_state.get('jumpto_post');
+              that.ui_state.set('jumpto_post', 0);
+              _.defer(function() {
+                that.jumpToPost(jumpto_post);
+              });
+            }
+            else if (last_doc.type === 'channel') {
               //scroll to bottom
               _.defer(that._snapBottom);
             }
@@ -324,7 +335,7 @@ Main client app
 
             //store on local storage
             Fruum.utils.sessionStorage('fruum:view:' + window.fruumSettings.app_id, last_doc.id);
-            if (that.router) that.router.navigate('!v/' + last_doc.id);
+            if (that.router) that.router.navigate('v/' + last_doc.id);
           }
         );
 
@@ -551,7 +562,6 @@ Main client app
             return;
           }
           Fruum.user = payload.user || Fruum.user;
-          Fruum.application = payload.application || Fruum.application;
           that.ui_state.set('connected', true);
           that.onRefresh();
           if (window.fruumSettings.view_id == '*') window.fruumSettings.view_id = undefined;
@@ -951,6 +961,10 @@ Main client app
       _snapTo: function(top) {
         this.getRegion('content').$el.nanoScroller({ scrollTop: top });
       },
+      //hard scroll to el
+      _snapToEl: function(el) {
+        this.getRegion('content').$el.nanoScroller({ scrollTo: el });
+      },
       //hard scroll bottom
       _snapBottom: function() {
         this.getRegion('content').$el.nanoScroller({ scrollBottom: true });
@@ -977,6 +991,11 @@ Main client app
 
       onInterceptKeyboard: function(event) {
         event.stopPropagation();
+      },
+      jumpToPost: function(index) {
+        if (index > 0) {
+          this._snapToEl(this.getRegion('posts').$el.find('.fruum-js-entry-default').eq(index - 1));
+        }
       },
       onGoHome: function(event) {
         event && event.preventDefault();
@@ -1025,14 +1044,34 @@ Main client app
         this.router = new Marionette.AppRouter({
           controller: this,
           appRoutes: {
-            '!v/:id': 'onRouteView'
+            'v/:id': 'onRouteView',
+            'v/:id/': 'onRouteView',
+            'v/:id/:post': 'onRouteViewPost'
           }
         });
-        Backbone.history.start();
+        if (Fruum.application.pushstate) {
+          Backbone.history.start({
+            pushState: true,
+            root: Fruum.utils.getLocation(Fruum.application.fullpage_url).pathname
+          });
+        }
+        else {
+          Backbone.history.start();
+        }
       },
       onRouteView: function(id) {
+        this.ui_state.set('jumpto_post', 0);
         if (id && this.ui_state.get('viewing').id !== id) {
           Fruum.io.trigger('fruum:view', {id: id});
+        }
+      },
+      onRouteViewPost: function(id, post) {
+        if (id && this.ui_state.get('viewing').id !== id) {
+          this.ui_state.set('jumpto_post', post);
+          Fruum.io.trigger('fruum:view', {id: id});
+        }
+        else {
+          this.jumpToPost(post);
         }
       }
     });

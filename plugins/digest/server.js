@@ -31,6 +31,7 @@ function Digest(options, instance) {
         total_replies: total_replies,
         date: moment(new Date()).format('D MMM YYYY'),
         application: application.toJSON(),
+        getShareURL: application.getShareURL.bind(application),
         user: user.toJSON(),
         streams: hash_map
       }

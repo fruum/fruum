@@ -29,8 +29,8 @@ function get_queue(queue) {
   return queues[queue] || queues.default;
 }
 
-module.exports = function(options) {
-  _.extend(this, new Base(options));
+module.exports = function(options, storage) {
+  _.extend(this, new Base(options, storage));
   if (options.memory_cache) {
     queues.static.max_size = queues.static.max_size || options.memory_cache.static;
     queues.views.max_size = queues.views.max_size || options.memory_cache.views;

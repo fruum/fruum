@@ -22,12 +22,12 @@ Handles sharing functionality
         this.listenTo(Fruum.io, 'fruum:share', this.onShare);
         this.listenTo(Fruum.io, 'fruum:view', this.onView);
       },
-      onShare: function(el_caller) {
+      onShare: function(el_caller, post_index) {
         if (el_caller) {
           this.$el.css('top', (el_caller.offset().top - this.$el.parent().offset().top) + 'px')
         }
         this.$el.show().find('textarea').
-          val((Fruum.application.fullpage_url || '') + '#!v/' + this.ui_state.get('viewing').id).
+          val(Fruum.utils.permaLink(this.ui_state.get('viewing').id, post_index)).
           focus().
           select();
       },

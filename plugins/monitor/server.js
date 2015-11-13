@@ -20,6 +20,7 @@ function Monitor(options, instance) {
           var context = {
             date: moment(new Date()).format('D MMM YYYY'),
             application: application.toJSON(),
+            getShareURL: application.getShareURL.bind(application),
             documents: _.map(documents, function(doc) { return doc.toJSON(); }),
             administrator: {}
           };

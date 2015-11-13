@@ -1,6 +1,6 @@
 {
   "name": "Fruum",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "homepage": "https://fruum.github.io",
   "description": "An embeddable communications hub for your forum, documentation, and real‐time chat streams",
   "license": "Apache-2.0",
@@ -30,6 +30,7 @@
     "juice": "^1.5.1",
     "mandrill-api": "^1.0.45",
     "marked": "^0.3.5",
+    "md5": "^2.0.0",
     "moment": "^2.10.6",
     "node-sass": "^3.3.3",
     "node-schedule": "^0.2.9",

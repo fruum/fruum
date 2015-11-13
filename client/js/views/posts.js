@@ -19,6 +19,8 @@ Posts view
         edit: '[data-action="edit"]',
         report: '[data-action="report"]',
         inappropriate: '[data-action="inappropriate"]',
+        delete: '[data-action="delete"]',
+        share: '[data-action="share"]',
         links: 'a[href]'
       },
       modelEvents: {
@@ -28,6 +30,8 @@ Posts view
         'click @ui.edit': 'onEdit',
         'click @ui.report': 'onReport',
         'click @ui.inappropriate': 'onInappropriate',
+        'click @ui.delete': 'onDelete',
+        'click @ui.share': 'onShare',
         'click @ui.links': 'onLink'
       },
       initialize: function(options) {
@@ -55,6 +59,15 @@ Posts view
           field: 'inappropriate',
           value: !this.model.get('inappropriate')
         });
+      },
+      onShare: function(event) {
+        event.preventDefault();
+        var post_index = this.model.collection.models.indexOf(this.model) + 1;
+        Fruum.io.trigger('fruum:share', $(event.target), post_index);
+      },
+      onDelete: function(event) {
+        event.preventDefault();
+        Fruum.io.trigger('fruum:archive', { id: this.model.get('id') });
       },
       onReport: function(event) {
         event.preventDefault();

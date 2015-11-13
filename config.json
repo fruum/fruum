@@ -46,18 +46,21 @@
   "cron": {
     "_help": "https://github.com/tejasmanohar/node-schedule/wiki/Cron-style-Scheduling",
     "garbage_collect": "0 0 */4 * * *",
-    "monitor": "0 0 */4 * * *"
+    "monitor": "0 0 0 * * *"
   },
 
   "------------------------ ACTIVE PLUGIN  ------------------------": "",
 
   "plugins": [
+    "mozilla_persona",
     "giphy",
     "youtube",
     "vimeo",
     "dropbox",
     "twitchtv",
     "soundcloud",
+    "imgur",
+    "imagelinks",
     "report",
     "monitor",
     "notify",
@@ -102,6 +105,11 @@
 
   "mandrill": {
     "api_key": ""
+  },
+
+  "mozilla_persona": {
+    "_help": "A regural expression to match admin emails",
+    "admins": "@"
   }
 
 }

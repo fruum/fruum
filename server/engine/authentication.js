@@ -74,10 +74,7 @@ module.exports = function(options, instance, self) {
       app_users[app_id] = app_users[app_id] || [];
       app_users[app_id].push(user);
       socket.emit('fruum:auth', {
-        user: user.toJSON(),
-        application: {
-          fullpage_url: app.get('fullpage_url')
-        }
+        user: user.toJSON()
       });
       //add additional data
       user.set({

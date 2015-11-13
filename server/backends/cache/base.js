@@ -4,7 +4,7 @@
 
 'use strict';
 
-module.exports = function(options) {
+module.exports = function(options, storage) {
   /*
   Summary:
   Store a value in the cache

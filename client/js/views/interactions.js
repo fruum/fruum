@@ -22,6 +22,7 @@ Handles the bottom input part
         add_post: '[data-action="add_post"]',
         cancel: '[data-action="cancel"]',
         help: '[data-action="help"]',
+        emoji_panel: '[data-action="emojipanel"]',
         help_panel: '.fruum-js-help',
         show_notifications: '.fruum-js-show-notifications',
         avatar_container: '.fruum-js-avatar-container',
@@ -45,6 +46,7 @@ Handles the bottom input part
         'keydown @ui.channel_input': 'onChannelKey',
         'blur @ui.field_header': 'onHeaderBlur',
         'click @ui.help': 'onHelp',
+        'click @ui.emoji_panel': 'onEmojiPanel',
         'click @ui.post': 'onPost',
         'click @ui.add_thread': 'onAddThread',
         'click @ui.add_article': 'onAddArticle',
@@ -68,6 +70,9 @@ Handles the bottom input part
         this.onAttach = this.onDomRefresh = this.onInteracting;
         this.mode = this._getMode();
         this.autocomplete_view = new Fruum.views.AutocompleteView({
+          interactions: this
+        });
+        this.emojipanel_view = new Fruum.views.EmojiPanelView({
           interactions: this
         });
       },
@@ -107,8 +112,13 @@ Handles the bottom input part
         }
       },
       onRender: function() {
+        this.emojipanel_view.hide();
+      },
+      onEmojiPanel: function() {
+        this.emojipanel_view.toggle();
       },
       onHelp: function() {
+        this.emojipanel_view.hide();
         if (this.ui.help_panel.is(':visible'))
           this.ui.help_panel.slideUp('show', 'easeInOutBack');
         else

@@ -172,6 +172,7 @@ function FruumServer(options, cli_cmd, ready) {
     'client/js/views/articles.js',
     'client/js/views/channels.js',
     'client/js/views/autocomplete.js',
+    'client/js/views/emojipanel.js',
     'client/js/views/interactions.js',
     'client/js/views/search.js',
     'client/js/views/notifications.js',
@@ -288,6 +289,7 @@ function FruumServer(options, cli_cmd, ready) {
           'client/templates/breadcrumb.html',
           'client/templates/interactions.html',
           'client/templates/autocomplete.html',
+          'client/templates/emojipanel.html',
           'client/templates/search.html',
           'client/templates/notifications.html',
           'client/templates/categories.html',
@@ -388,6 +390,9 @@ function FruumServer(options, cli_cmd, ready) {
             css = _.escape(css).replace(/\n/g, '');
             var cache_data = js.replace(/"/g,  "'").replace('__css__', css).
                               replace('__app_id__', application.get('id')).
+                              replace('__fullpage_url__', application.get('fullpage_url')).
+                              replace('__pushstate__', application.get('pushstate')?'1':'0').
+                              replace('__sso__', application.get('auth_url')?'1':'0').
                               replace('__html__', html).
                               replace('__url__', options.url);
             logger.info(
@@ -423,6 +428,7 @@ function FruumServer(options, cli_cmd, ready) {
           }
           var template = _.template(data || '');
           response.application = application.toJSON();
+          response.getShareURL = application.getShareURL.bind(application);
           res.send(template(response));
         });
       });

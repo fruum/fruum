@@ -70,6 +70,7 @@ Models
         total_entries: 0,
         viewing_from: 0,
         viewing_to: 0,
+        jumpto_post: 0,
 
         search: '',
         loading: '',
@@ -123,10 +124,6 @@ Models
         if (!Fruum.user.notifications) return 0;
         return Fruum.user.notifications.length;
       }
-    }
-    //Application details
-    Fruum.application = {
-      fullpage_url: ''
     }
     //Cross view communication channel
     Fruum.io = _.clone(Backbone.Events);

@@ -143,6 +143,32 @@ Utilities
       var m = (text || '').match(/\B:([\-+\w]*)$/);
       if (m && m[0].length > 1) return m[0];
     }
+    //analyze url
+    Fruum.utils.getLocation = function(href) {
+      var match = href.match(/^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)(\/[^?#]*)(\?[^#]*|)(#.*|)$/);
+      if (match) {
+        return {
+          protocol: match[1],
+          host: match[2],
+          hostname: match[3],
+          port: match[4],
+          pathname: match[5],
+          search: match[6],
+          hash: match[7]
+        }
+      }
+      else {
+        return {
+          protocol: '',
+          host: '',
+          hostname: '',
+          port: '',
+          pathname: '',
+          search: '',
+          hash: ''
+        }
+      }
+    }
     //Markdown display
     Fruum.utils.print = function(post) {
       //remove escaping of > and ` used by markdown
@@ -162,8 +188,12 @@ Utilities
       text = Fruum.utils.tagify(text);
       return text;
     }
-    Fruum.utils.permaLink = function(doc_id) {
-      return Fruum.application.fullpage_url + '#!v/' + doc_id;
+    Fruum.utils.permaLink = function(doc_id, post_index) {
+      var ret = Fruum.application.fullpage_url +
+                (Fruum.application.pushstate?'':'#') +
+                'v/' + doc_id;
+      if (post_index > 0) ret += '/' + post_index;
+      return ret;
     }
     Fruum.utils.printSummary = function(text) {
       text = Fruum.utils.print(text).

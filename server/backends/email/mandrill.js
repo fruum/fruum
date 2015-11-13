@@ -9,8 +9,8 @@ var _ = require('underscore'),
     logger = require('../../logger'),
     mandrill = require('mandrill-api/mandrill');
 
-module.exports = function(options) {
-  _.extend(this, new Base(options));
+module.exports = function(options, storage) {
+  _.extend(this, new Base(options, storage));
 
   //abort if we do not have an api key
   if (!options.mandrill.api_key) return;

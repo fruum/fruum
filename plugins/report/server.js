@@ -23,6 +23,7 @@ function Report(options, instance) {
             var context = {
               date: moment(new Date()).format('D MMM YYYY'),
               application: application.toJSON(),
+              getShareURL: application.getShareURL.bind(application),
               document: payload.document.toJSON(),
               reporter: payload.user.toJSON(),
               administrator: {}

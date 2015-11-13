@@ -239,6 +239,8 @@ var Application = Backbone.Model.extend({
     auth_url: '',
     //full page url,
     fullpage_url: '',
+    //pushstate support
+    pushstate: false,
     //notifications email
     notifications_email: '',
     //contact email
@@ -264,6 +266,7 @@ var Application = Backbone.Model.extend({
     log += ' url:' + this.get('url');
     log += ' auth_url:' + this.get('auth_url');
     log += ' fullpage_url:' + this.get('fullpage_url');
+    log += ' pushstate:' + this.get('pushstate');
     log += ' notifications_email:' + this.get('notifications_email');
     log += ' contact_email:' + this.get('contact_email');
     log += ' tier:' + this.get('tier');
@@ -297,6 +300,18 @@ var Application = Backbone.Model.extend({
     //inline sass
     else {
       callback(theme);
+    }
+  },
+  //prepare full page url for share links
+  getShareURL: function(doc_id) {
+    if (this.get('pushstate')) {
+      var url = this.get('fullpage_url') || '';
+      if (url.length && url[url.length - 1] !== '/')
+        url += '/';
+      return url + 'v/' + doc_id;
+    }
+    else {
+      return this.get('fullpage_url') + '#v/' + doc_id;
     }
   }
 });

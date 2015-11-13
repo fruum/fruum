@@ -98,6 +98,7 @@ function Notify(options, instance) {
     var context = {
       date: moment(new Date()).format('D MMM YYYY'),
       application: application.toJSON(),
+      getShareURL: application.getShareURL.bind(application),
       user: user.toJSON(),
       document: document.toJSON()
     }

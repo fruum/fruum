@@ -32,6 +32,7 @@ module.exports = function(options, client, self) {
                 url: { type: 'string', index: 'not_analyzed' },
                 auth_url: { type: 'string', index: 'not_analyzed' },
                 fullpage_url: { type: 'string', index: 'not_analyzed' },
+                pushstate: { type: 'boolean' },
                 theme: { type: 'string', index: 'not_analyzed' },
                 created: { type: 'long' },
                 tier: { type: 'string', index: 'not_analyzed' },

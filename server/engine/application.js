@@ -99,6 +99,7 @@ module.exports = function(options, instance, self) {
       url: payload.url || '',
       auth_url: payload.auth_url || '',
       fullpage_url: payload.fullpage_url || '',
+      pushstate: payload.pushstate === 'true',
       notifications_email: payload.notifications_email || '',
       contact_email: payload.contact_email || '',
       theme: payload.theme || '',
@@ -124,6 +125,7 @@ module.exports = function(options, instance, self) {
         if (payload.url != undefined) application.set('url', payload.url);
         if (payload.auth_url != undefined) application.set('auth_url', payload.auth_url);
         if (payload.fullpage_url != undefined) application.set('fullpage_url', payload.fullpage_url);
+        if (payload.pushstate != undefined) application.set('pushstate', payload.pushstate === 'true');
         if (payload.notifications_email != undefined) application.set('notifications_email', payload.notifications_email);
         if (payload.contact_email != undefined) application.set('contact_email', payload.contact_email);
         if (payload.theme != undefined) application.set('theme', payload.theme);

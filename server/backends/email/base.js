@@ -10,7 +10,7 @@ var sass = require('node-sass'),
     logger = require('../../logger'),
     Models = require('../../models');
 
-module.exports = function(options) {
+module.exports = function(options, storage) {
 
   /*
   Summary:

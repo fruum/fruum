@@ -19,7 +19,7 @@
         up: '.fruum-js-filter-up',
         watch: '[data-action="watch"]',
         unwatch: '[data-action="unwatch"]',
-        copy_link: '[data-action="copy_link"]'
+        share: '[data-action="share"]'
       },
       modelEvents: {
         'change:total_entries change:viewing_from change:viewing_to change:viewing change:editing': 'render'
@@ -29,7 +29,7 @@
         'click @ui.up': 'onUp',
         'click @ui.watch': 'onWatch',
         'click @ui.unwatch': 'onUnwatch',
-        'click @ui.copy_link': 'onCopyLink'
+        'click @ui.share': 'onShare'
       },
       onDown: function() {
         Fruum.io.trigger('fruum:scroll_bottom');
@@ -47,7 +47,7 @@
         var viewing = this.model.get('viewing');
         if (viewing.id) Fruum.io.trigger('fruum:unwatch', { id: viewing.id });
       },
-      onCopyLink: function(event) {
+      onShare: function(event) {
         event.preventDefault();
         Fruum.io.trigger('fruum:share', $(event.target));
       },

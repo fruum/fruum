@@ -24,11 +24,11 @@ function Engine(options, instance) {
   logger.system("Using email engine: " + options.email_engine);
   var EmailEngine = require('./backends/email/' + options.email_engine);
 
-  //Engine instances (storage and authentication)
+  //Engine instances
   var storage = new StorageEngine(options);
-  var auth = new AuthEngine(options);
-  var cache = new CacheEngine(options);
-  var email = new EmailEngine(options);
+  var auth = new AuthEngine(options, storage);
+  var cache = new CacheEngine(options, storage);
+  var email = new EmailEngine(options, storage);
 
   //register backends to instance
   instance.storage = storage;
