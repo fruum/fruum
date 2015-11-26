@@ -4,7 +4,7 @@
 [![Dependencies Status](https://david-dm.org/fruum/fruum.svg)](https://david-dm.org/fruum/fruum)
 
 An embeddable communications hub for your forum, documentation, and real‐time chat streams, built
-on node.js.
+on [node.js](https://nodejs.org).
 
 ### Features
 
