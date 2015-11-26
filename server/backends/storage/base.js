@@ -307,6 +307,22 @@ module.exports = function(options) {
   */
   this.unwatch = function(app_id, document, user, callback) { callback(); }
 
+  // -------------------------------- REACTION ---------------------------------
+
+  /*
+  Summary:
+  Add user reaction
+
+  Parameters:
+  - app_id: the application id
+  - document: Document model to unwatch
+  - user: User model who is unwatching the document
+  - reaction: Reaction string, e.g. "up", "down"
+  - callback: function callback, passing the document as parameter on success,
+    undefined on error
+  */
+  this.react = function(app_id, document, user, reaction, callback) { callback(); }
+
   // ---------------------------------- USERS ----------------------------------
 
   /*

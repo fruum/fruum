@@ -188,6 +188,11 @@ Utilities
       text = Fruum.utils.tagify(text);
       return text;
     }
+    Fruum.utils.printReaction = function(count) {
+      if (!count) return '';
+      if (count < 1000) return '' + count;
+      return (count / 1000).toFixed(1) + 'K';
+    }
     Fruum.utils.permaLink = function(doc_id, post_index) {
       var ret = Fruum.application.fullpage_url +
                 (Fruum.application.pushstate?'':'#') +

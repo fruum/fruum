@@ -35,4 +35,22 @@ describe("Anonymous client", function() {
       });
     });
   });
+
+  it("cannot add reactions", function(done) {
+    anonymous_connect(function(socket) {
+      load_fixture(function() {
+        var payload = {
+          id: 'thread',
+          reaction: 'up'
+        }
+        socket.emit('fruum:react', payload);
+        socket.on('fruum:react', function(payload) {
+          socket.removeListener('fruum:react', this);
+          expect(payload).toBeUndefined();
+          socket.disconnect();
+          done();
+        });
+      });
+    });
+  });
 });

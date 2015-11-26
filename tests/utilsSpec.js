@@ -59,3 +59,14 @@ describe("Autocomplete", function() {
     expect(Fruum.utils.autocompleteEmoji('Hello :f: bar')).toBeUndefined();
   });
 });
+
+describe("Reactions", function() {
+  it("are formated", function() {
+    expect(Fruum.utils.printReaction(0)).toBe('');
+    expect(Fruum.utils.printReaction(1)).toBe('1');
+    expect(Fruum.utils.printReaction(10)).toBe('10');
+    expect(Fruum.utils.printReaction(999)).toBe('999');
+    expect(Fruum.utils.printReaction(1000)).toBe('1.0K');
+    expect(Fruum.utils.printReaction(1100)).toBe('1.1K');
+  });
+});

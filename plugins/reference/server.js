@@ -66,6 +66,11 @@ function ReferencePlugin(options, instance) {
   this.report = function(payload, callback) {
     callback(null, payload);
   }
+  //process a document before a user reaction is registered
+  //payload: { app_id: app_id, user: User, reaction: type, document: Document }
+  this.react = function(payload, callback) {
+    callback(null, payload);
+  }
   //triggered if plugin name is defined as a cron entry in the config.json
   this.cron = function() {}
 }

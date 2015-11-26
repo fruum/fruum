@@ -401,6 +401,18 @@ Main client app
           }
         );
 
+        // ------------------- REACTION -------------------
+
+        this.bindIO('fruum:react',
+          function send(payload) {
+            that.socket.emit('fruum:react', payload);
+          },
+          function recv(payload) {
+            if (!payload) return;
+            that.upsertPayload(payload);
+          }
+        );
+
         // ------------------- DELETION -------------------
 
         this.bindIO('fruum:archive',
@@ -852,6 +864,10 @@ Main client app
             Fruum.io.trigger('fruum:view', {id: payload.id});
           }
           else {
+            //check for reaction changes on first post
+            if (this.posts.get(payload.id)) {
+              this.posts.add(payload, {merge: true});
+            }
             this.ui_state.set('viewing', payload, { silent: true });
             this.ui_state.trigger('change:viewing');
             this.onRefresh();

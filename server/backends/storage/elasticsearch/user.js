@@ -15,7 +15,7 @@ module.exports = function(options, client, self) {
 
   self.add_user = function(app_id, user, callback) {
     client.create({
-      index: self.toIndex(app_id),
+      index: self.toAppIndex(app_id),
       type: 'user',
       id: user.get('id'),
       body: user.toJSON()
@@ -35,7 +35,7 @@ module.exports = function(options, client, self) {
   self.update_user = function(app_id, user, attributes, callback) {
     var user_id = user.get('id');
     client.update({
-      index: self.toIndex(app_id),
+      index: self.toAppIndex(app_id),
       type: 'user',
       id: user_id,
       retryOnConflict: options.elasticsearch.retry_on_conflict,
@@ -79,7 +79,7 @@ module.exports = function(options, client, self) {
 
   self.get_user = function(app_id, id, callback) {
     client.get({
-      index: self.toIndex(app_id),
+      index: self.toAppIndex(app_id),
       type: 'user',
       id: id,
       refresh: true
@@ -105,7 +105,7 @@ module.exports = function(options, client, self) {
       });
     }
     client.search({
-      index: self.toIndex(app_id),
+      index: self.toAppIndex(app_id),
       type: 'user',
       refresh: true,
       body: {
@@ -138,7 +138,7 @@ module.exports = function(options, client, self) {
 
   self.find_watch_users = function(app_id, watch_list, callback) {
     client.search({
-      index: self.toIndex(app_id),
+      index: self.toAppIndex(app_id),
       type: 'user',
       refresh: true,
       body: {
@@ -168,7 +168,7 @@ module.exports = function(options, client, self) {
 
   self.search_users = function(app_id, q, callback) {
     client.search({
-      index: self.toIndex(app_id),
+      index: self.toAppIndex(app_id),
       type: 'user',
       refresh: true,
       body: {

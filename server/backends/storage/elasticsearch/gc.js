@@ -40,7 +40,7 @@ module.exports = function(options, client, self) {
       _.each(hits, function(hit) {
         if (validator(hit._source, timestamp)) {
           body.push({
-            index: self.toIndex(app_id),
+            index: self.toAppIndex(app_id),
             type: 'doc',
             id: hit._source.id
           });
@@ -60,7 +60,7 @@ module.exports = function(options, client, self) {
 
   self.gc_archived = function(app_id, timestamp, callback) {
     client.search({
-      index: self.toIndex(app_id),
+      index: self.toAppIndex(app_id),
       type: 'doc',
       refresh: true,
       body: {
@@ -93,7 +93,7 @@ module.exports = function(options, client, self) {
 
   self.gc_chat = function(app_id, timestamp, callback) {
     client.search({
-      index: self.toIndex(app_id),
+      index: self.toAppIndex(app_id),
       type: 'doc',
       refresh: true,
       body: {

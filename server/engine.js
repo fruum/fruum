@@ -46,6 +46,7 @@ function Engine(options, instance) {
     restore: [],
     watch: [],
     unwatch: [],
+    react: [],
     report: []
   };
 
@@ -78,6 +79,7 @@ function Engine(options, instance) {
             if (plugin.archive) plugins.archive.push(plugin.archive);
             if (plugin.watch) plugins.watch.push(plugin.watch);
             if (plugin.unwatch) plugins.unwatch.push(plugin.unwatch);
+            if (plugin.react) plugins.react.push(plugin.react);
             if (plugin.report) plugins.report.push(plugin.report);
             if (plugin.cron && options.cron[plugin_name]) {
               cronify(plugin_name, plugin, options.cron[plugin_name]);
@@ -100,6 +102,7 @@ function Engine(options, instance) {
   plugins.archive = async.compose.apply(async.compose, plugins.archive);
   plugins.watch = async.compose.apply(async.compose, plugins.watch);
   plugins.unwatch = async.compose.apply(async.compose, plugins.unwatch);
+  plugins.react = async.compose.apply(async.compose, plugins.react);
   plugins.report = async.compose.apply(async.compose, plugins.report);
 
   //User collection per app
@@ -130,6 +133,7 @@ function Engine(options, instance) {
   new require('./engine/watch')(options, instance, this);
   new require('./engine/search')(options, instance, this);
   new require('./engine/notifications')(options, instance, this);
+  new require('./engine/reactions')(options, instance, this);
   new require('./engine/report')(options, instance, this);
 
 }

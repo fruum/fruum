@@ -21,11 +21,13 @@ Handles the bottom input part
         add_channel: '[data-action="add_channel"]',
         add_post: '[data-action="add_post"]',
         cancel: '[data-action="cancel"]',
+        preview: '[data-action="preview"]',
         help: '[data-action="help"]',
         emoji_panel: '[data-action="emojipanel"]',
         help_panel: '.fruum-js-help',
         show_notifications: '.fruum-js-show-notifications',
         avatar_container: '.fruum-js-avatar-container',
+        preview_panel: '.fruum-js-preview',
         field_parent: '[data-field="parent"]',
         field_type: '[data-field="type"]',
         field_initials: '[data-field="initials"]',
@@ -54,6 +56,7 @@ Handles the bottom input part
         'click @ui.add_category': 'onAddCategory',
         'click @ui.add_post': 'onAddPost',
         'click @ui.cancel': 'onCancel',
+        'click @ui.preview': 'onPreview',
         'click @ui.show_notifications': 'onShowNotifications',
         //capture changes and store them
         'blur @ui.field_body': 'onBodyBlur',
@@ -173,6 +176,20 @@ Handles the bottom input part
         return this.ui_state.get('viewing').type + ':' +
                this.ui_state.get('editing').type + ':' +
                this.ui_state.get('searching');
+      },
+      onPreview: function() {
+        this.ui.preview.toggleClass('fruum-is-active');
+        if (this.ui.preview.hasClass('fruum-is-active')) {
+          var h = this.ui.field_body.height();
+          this.ui.field_body.hide();
+          this.ui.preview_panel.css('display','inline-block').height(h).html(
+            Fruum.utils.print(this.ui.field_body.val())
+          );
+        }
+        else {
+          this.ui.preview_panel.hide();
+          this.ui.field_body.show();
+        }
       },
       onChange: function() {
         var new_mode = this._getMode();

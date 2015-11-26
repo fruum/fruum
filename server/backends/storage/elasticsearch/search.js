@@ -90,7 +90,7 @@ module.exports = function(options, client, self) {
       query = _fuzzy(q);
     }
     client.search({
-      index: self.toIndex(app_id),
+      index: self.toAppIndex(app_id),
       type: 'doc',
       refresh: true,
       body: {
@@ -152,7 +152,7 @@ module.exports = function(options, client, self) {
 
   self.search_attributes = function(app_id, attributes, callback) {
     client.search({
-      index: self.toIndex(app_id),
+      index: self.toAppIndex(app_id),
       type: 'doc',
       refresh: true,
       body: {
@@ -173,7 +173,7 @@ module.exports = function(options, client, self) {
 
   self.count_attributes = function(app_id, attributes, callback) {
     client.count({
-      index: self.toIndex(app_id),
+      index: self.toAppIndex(app_id),
       type: 'doc',
       refresh: true,
       body: {

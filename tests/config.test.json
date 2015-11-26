@@ -8,6 +8,7 @@
   "email_engine": "base",
 
   "elasticsearch": {
+    "index_prefix": "fruum_test_",
     "host": "http://localhost:9200"
   }
 }

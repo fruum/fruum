@@ -493,6 +493,9 @@ function FruumServer(options, cli_cmd, ready) {
           socket.on('fruum:report', function(payload) {
             engine.report(socket, payload || {});
           });
+          socket.on('fruum:react', function(payload) {
+            engine.react(socket, payload || {});
+          });
           socket.on('fruum:search', function(payload) {
             engine.search(socket, payload || {});
           });

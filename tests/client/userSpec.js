@@ -222,4 +222,22 @@ describe("User client", function() {
     });
   });
 
+  it("can add reactions", function(done) {
+    user_connect(function(socket) {
+      load_fixture(function() {
+        socket.emit('fruum:react', {
+          id: 'thread',
+          reaction: 'up'
+        });
+        socket.on('fruum:react', function(payload) {
+          socket.removeListener('fruum:react', this);
+          expect(payload).toBeDefined();
+          expect(payload.react_up).toContain('human');
+          expect(payload.react_up.length).toBe(1);
+          socket.disconnect();
+          done();
+        });
+      });
+    });
+  });
 });

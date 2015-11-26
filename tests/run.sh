@@ -11,7 +11,7 @@ sleep 3
 pid=$(ps -ef | grep "test-fruum-server-daemon" | grep -v "grep" | awk '{print $2}')
 echo "Server running on pid: $pid"
 echo ">>> RUNNING TESTS"
-./node_modules/.bin/jasmine-node tests
+./node_modules/.bin/jasmine-node tests --verbose --captureExceptions
 echo ">>> KILLING SERVER"
 kill -9 $pid
 sleep 1

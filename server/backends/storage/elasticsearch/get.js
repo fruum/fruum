@@ -14,7 +14,7 @@ module.exports = function(options, client, self) {
 
   self.get = function(app_id, id, callback) {
     client.get({
-      index: self.toIndex(app_id),
+      index: self.toAppIndex(app_id),
       type: 'doc',
       id: id,
       refresh: true
@@ -33,7 +33,7 @@ module.exports = function(options, client, self) {
 
   self.mget = function(app_id, id_array, callback) {
     client.mget({
-      index: self.toIndex(app_id),
+      index: self.toAppIndex(app_id),
       type: 'doc',
       refresh: true,
       body: {
@@ -61,7 +61,7 @@ module.exports = function(options, client, self) {
         document.get('parent_type') == 'artile') order = 'asc';
     var id = document.get('id');
     client.search({
-      index: self.toIndex(app_id),
+      index: self.toAppIndex(app_id),
       type: 'doc',
       refresh: true,
       body: {

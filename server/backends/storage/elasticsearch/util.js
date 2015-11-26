@@ -10,15 +10,19 @@ var _ = require('underscore'),
     logger = require('../../../logger');
 
 module.exports = function(options, client, self) {
+  var index_prefix = options.elasticsearch.index_prefix;
   //helpers
-  self.toIndex = function(app_id) {
-    return 'app:' + app_id;
+  self.toAppIndex = function(app_id) {
+    return index_prefix + 'app:' + app_id;
+  }
+  self.toMasterIndex = function() {
+    return index_prefix + 'applications';
   }
   //try to find a unique slug based on header (truncate to max 64 characters)
   self.unique = function(app_id, document, doc_id, counter, callback) {
     var new_id = doc_id + (counter?'-' + counter:'');
     client.exists({
-      index: self.toIndex(app_id),
+      index: self.toAppIndex(app_id),
       type: 'doc',
       id: new_id,
       refresh: true
@@ -51,7 +55,7 @@ module.exports = function(options, client, self) {
   //count search results based on qsl
   self.count = function(app_id, body_qsl, callback) {
     client.count({
-      index: self.toIndex(app_id),
+      index: self.toAppIndex(app_id),
       type: 'doc',
       refresh: true,
       body: body_qsl
@@ -82,7 +86,7 @@ module.exports = function(options, client, self) {
         size: Math.max(count, options.elasticsearch.max_children)
       });
       client.search({
-        index: self.toIndex(app_id),
+        index: self.toAppIndex(app_id),
         type: 'doc',
         refresh: true,
         body: body_qsl
@@ -96,7 +100,7 @@ module.exports = function(options, client, self) {
             _.each(response.hits.hits, function(hit) {
               if (validator(hit._source, q)) {
                 body.push({ update: {
-                  _index: self.toIndex(app_id),
+                  _index: self.toAppIndex(app_id),
                   _type: 'doc',
                   _id: hit._source.id
                 }});
@@ -104,7 +108,7 @@ module.exports = function(options, client, self) {
               }
             });
             client.bulk({
-              index: self.toIndex(app_id),
+              index: self.toAppIndex(app_id),
               type: 'doc',
               refresh: true,
               body: body
@@ -127,7 +131,7 @@ module.exports = function(options, client, self) {
             _.each(response.hits.hits, function(hit) {
               if (validator(hit._source, q)) {
                 body.push({
-                  index: self.toIndex(app_id),
+                  index: self.toAppIndex(app_id),
                   type: 'doc',
                   id: hit._source.id,
                   retryOnConflict: options.elasticsearch.retry_on_conflict,
@@ -168,7 +172,7 @@ module.exports = function(options, client, self) {
         size: Math.max(count, options.elasticsearch.max_children)
       });
       client.search({
-        index: self.toIndex(app_id),
+        index: self.toAppIndex(app_id),
         type: 'doc',
         refresh: true,
         body: body_qsl
@@ -182,14 +186,14 @@ module.exports = function(options, client, self) {
             _.each(response.hits.hits, function(hit) {
               if (validator(hit._source, q)) {
                 body.push({ delete: {
-                  _index: self.toIndex(app_id),
+                  _index: self.toAppIndex(app_id),
                   _type: 'doc',
                   _id: hit._source.id
                 }});
               }
             });
             client.bulk({
-              index: self.toIndex(app_id),
+              index: self.toAppIndex(app_id),
               type: 'doc',
               refresh: true,
               body: body
@@ -212,7 +216,7 @@ module.exports = function(options, client, self) {
             _.each(response.hits.hits, function(hit) {
               if (validator(hit._source, q)) {
                 body.push({
-                  index: self.toIndex(app_id),
+                  index: self.toAppIndex(app_id),
                   type: 'doc',
                   id: hit._source.id
                 });

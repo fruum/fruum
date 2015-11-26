@@ -52,6 +52,9 @@ var Document = Backbone.Model.extend({
     user_username: '',
     user_displayname: '',
     user_avatar: '',
+    //reactions (array of usernames)
+    react_up: [],
+    react_down: [],
     //order
     order: 0,
     //total number of children

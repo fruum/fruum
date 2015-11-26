@@ -16,7 +16,7 @@ module.exports = function(options, client, self) {
   self.list_apps = function(callback) {
     var values = [];
     client.search({
-      index: 'applications',
+      index: self.toMasterIndex(),
       type: 'info',
       from: 0,
       size: options.elasticsearch.max_children,
@@ -37,7 +37,7 @@ module.exports = function(options, client, self) {
     //update creation date
     var app_id = application.get('id');
     client.create({
-      index: 'applications',
+      index: self.toMasterIndex(),
       type: 'info',
       id: app_id,
       body: application.toJSON()
@@ -49,7 +49,7 @@ module.exports = function(options, client, self) {
       else {
         //create index
         client.indices.create({
-          index: self.toIndex(app_id)
+          index: self.toAppIndex(app_id)
         }, function(error, response) {
           if (error) {
             logger.error(app_id, 'add_index', error);
@@ -58,7 +58,7 @@ module.exports = function(options, client, self) {
           else {
             //add mapping for users
             client.indices.putMapping({
-              index: self.toIndex(app_id),
+              index: self.toAppIndex(app_id),
               type: 'user',
               body: {
                 user: {
@@ -84,7 +84,7 @@ module.exports = function(options, client, self) {
             });
             //add mapping for doc
             client.indices.putMapping({
-              index: self.toIndex(app_id),
+              index: self.toAppIndex(app_id),
               type: 'doc',
               body: {
                 doc: {
@@ -125,7 +125,7 @@ module.exports = function(options, client, self) {
               else {
                 var home_document = (new Models.Document()).toHome();
                 client.create({
-                  index: self.toIndex(app_id),
+                  index: self.toAppIndex(app_id),
                   type: 'doc',
                   id: home_document.get('id'),
                   body: home_document.toJSON()
@@ -148,7 +148,7 @@ module.exports = function(options, client, self) {
   self.update_app = function(application, attributes, callback) {
     var app_id = application.get('id');
     client.update({
-      index: 'applications',
+      index: self.toMasterIndex(),
       type: 'info',
       id: app_id,
       retryOnConflict: options.elasticsearch.retry_on_conflict,
@@ -172,7 +172,7 @@ module.exports = function(options, client, self) {
   self.delete_app = function(application, callback) {
     var app_id = application.get('id');
     client.delete({
-      index: 'applications',
+      index: self.toMasterIndex(),
       type: 'info',
       id: app_id
     }, function(error, response) {
@@ -184,7 +184,7 @@ module.exports = function(options, client, self) {
         callback(application);
         //delete documents and users or index
         client.indices.delete({
-          index: self.toIndex(app_id)
+          index: self.toAppIndex(app_id)
         }, function(error, response) {
           if (error) logger.error(app_id, 'delete_index', error);
         });
@@ -196,7 +196,7 @@ module.exports = function(options, client, self) {
 
   self.get_app = function(app_id, callback) {
     client.get({
-      index: 'applications',
+      index: self.toMasterIndex(),
       type: 'info',
       id: app_id
     }, function(error, response) {
@@ -213,7 +213,7 @@ module.exports = function(options, client, self) {
 
   self.get_api_key = function(api_key, callback) {
     client.search({
-      index: 'applications',
+      index: self.toMasterIndex(),
       type: 'info',
       refresh: true,
       body: {
@@ -248,7 +248,7 @@ module.exports = function(options, client, self) {
   self.reset_users = function(application, callback) {
     var app_id = application.get('id');
     client.deleteByQuery({
-      index: self.toIndex(app_id),
+      index: self.toAppIndex(app_id),
       type: 'user',
       body: {
         query: {

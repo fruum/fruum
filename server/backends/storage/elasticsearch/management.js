@@ -13,7 +13,7 @@ module.exports = function(options, client, self) {
 
   self.setup = function() {
     client.indices.create({
-      index: 'applications'
+      index: self.toMasterIndex()
     }, function(error, response) {
       if (error) {
         logger.error('applications', 'setup', error);
@@ -21,7 +21,7 @@ module.exports = function(options, client, self) {
       else {
         //add mapping
         client.indices.putMapping({
-          index: 'applications',
+          index: self.toMasterIndex(),
           type: 'info',
           body: {
             info: {
@@ -55,7 +55,7 @@ module.exports = function(options, client, self) {
 
     /*
     client.indices.putMapping({
-      index: 'applications',
+      index: self.toMasterIndex(),
       type: 'info',
       body: {
         info: {
@@ -72,7 +72,7 @@ module.exports = function(options, client, self) {
         var app_id = app.get('id');
         //add mapping for users
         client.indices.putMapping({
-          index: self.toIndex(app_id),
+          index: self.toAppIndex(app_id),
           type: 'user',
           body: {
             user: {
@@ -86,7 +86,7 @@ module.exports = function(options, client, self) {
         });
         //add mapping for doc
         client.indices.putMapping({
-          index: self.toIndex(app_id),
+          index: self.toAppIndex(app_id),
           type: 'doc',
           body: {
             doc: {
@@ -109,7 +109,7 @@ module.exports = function(options, client, self) {
     self.list_apps(function(apps) {
       _.each(apps, function(app) {
         client.indices.delete({
-          index: self.toIndex(app.get('id'))
+          index: self.toAppIndex(app.get('id'))
         }, function(error, response) {
           if (error) {
             logger.error(0, 'teardown_app', error);
@@ -120,7 +120,7 @@ module.exports = function(options, client, self) {
         });
       });
       client.indices.delete({
-        index: 'applications'
+        index: self.toMasterIndex()
       }, function(error, response) {
         if (error) {
           logger.error(0, 'teardown', error);

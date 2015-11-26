@@ -14,6 +14,7 @@ function ElasticSearch(options) {
   options.elasticsearch.host = options.elasticsearch.host || 'http://localhost:9200';
   options.elasticsearch.max_children = options.elasticsearch.max_children || 1000;
   options.elasticsearch.retry_on_conflict = options.elasticsearch.retry_on_conflict || 0;
+  options.elasticsearch.index_prefix = options.elasticsearch.index_prefix || '';
   var client = new elasticsearch.Client({
     host: options.elasticsearch.host
   });
@@ -28,6 +29,7 @@ function ElasticSearch(options) {
   require('./elasticsearch/search')(options, client, this);
   require('./elasticsearch/set')(options, client, this);
   require('./elasticsearch/watch')(options, client, this);
+  require('./elasticsearch/react')(options, client, this);
   require('./elasticsearch/user')(options, client, this);
   require('./elasticsearch/gc')(options, client, this);
 }

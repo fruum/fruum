@@ -30,7 +30,7 @@ var cli = cliArgs([
   { name: 'create-api-key', type: String, description: 'Create API key <app_id>' },
   { name: 'using', type: String, description: 'Combined with --create-api-key to explicitely define the api key' },
   { name: 'list-api-keys', type: String, description: 'List API keys <app_id>' },
-  { name: 'delete-api-key', type: String, description: 'List API keys <api_key>' },
+  { name: 'delete-api-key', type: String, description: 'Delete API key <api_key>' },
   { name: 'reset-users', type: String, description: 'Delete all users of app <api_key>' },
   { name: 'gc-app', type: String, description: 'Purge archived docs of <app_id>' },
   { name: 'log-level', type: String, description: 'Set log level [info, debug, error]' },

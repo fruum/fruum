@@ -16,6 +16,7 @@ Posts view
     //View
     Fruum.views.PostView = TRANSITION(Marionette.ItemView.extend({
       ui: {
+        react: '[data-action="react"]',
         edit: '[data-action="edit"]',
         report: '[data-action="report"]',
         inappropriate: '[data-action="inappropriate"]',
@@ -27,6 +28,7 @@ Posts view
         'change': 'render'
       },
       events: {
+        'click @ui.react': 'onReact',
         'click @ui.edit': 'onEdit',
         'click @ui.report': 'onReport',
         'click @ui.inappropriate': 'onInappropriate',
@@ -51,6 +53,12 @@ Posts view
       },
       onEdit: function(event) {
         Fruum.io.trigger('fruum:edit', this.model.toJSON());
+      },
+      onReact: function(event) {
+        event.preventDefault();
+        var reaction = $(event.target).closest('[data-reaction]').data('reaction');
+        if (Fruum.user.anonymous || !reaction) return;
+        Fruum.io.trigger('fruum:react', { id: this.model.get('id'), reaction: reaction });
       },
       onInappropriate: function(event) {
         event.preventDefault();

@@ -73,7 +73,8 @@
     "host": "http://localhost:9200",
     "use_bulk": true,
     "max_children": 1000,
-    "retry_on_conflict": 3
+    "retry_on_conflict": 3,
+    "index_prefix": ""
   },
 
   "garbage_collect": {
