@@ -271,29 +271,49 @@
 #fruum .fruum-item-actions {
   position: relative;
   width: 100%;
-  
-  height: $tiny-font-basegrid*2;
-  line-height: $tiny-font-basegrid*2;
-  font-size: $responsive-tiny-font;
+  height: 1em;
+  line-height: 1em;
+  font-size: $responsive-big-font;
+  margin-top: $big-font-basegrid;
+  span:not(:hover),
   a:not(:hover) {
-    opacity: 0.4;
+    opacity: 0.3;
   }
-  a.fruum-link:not(:first-child) {
-    margin-left: $tiny-font-basegrid*2;
+  a:not(:first-child) {
+    margin-left: $big-font-basegrid*2;
   }
-  a.fruum-item-active:not(:hover) {
+  a.fruum-item-active:not(:hover):not(.fruum-action-pill) {
     color: $base-text-color;
     opacity: 0.5;
   }
   a.fruum-maintain-action {
     float: right;
   }
+  .fruum-action-pill {
+    display: inline-block;
+    min-width: 4.2em;
+    color: $base-text-color;
+    margin-right: $big-font-basegrid;
+    font-size: 50%;
+    &:not(:hover) {
+      opacity: 0.4;
+    }
+    &.fruum-icon:before {
+      font-size: 250%;
+    }
+    &.fruum-item-active {
+      color: $forum-base-color;
+    }
+  }
+  a.fruum-icon{
+    color: $base-text-color;
+  }
 }
 
 #fruum .fruum-base-object .fruum-avatar:first-child ~ .fruum-item-actions {
   // has a font-size of responsive-default-font
-  padding-left: relative-ems( $avatar-big, $responsive-tiny-font) + $tiny-font-basegrid*2;
+  padding-left: relative-ems( $avatar-big, $responsive-big-font) + $big-font-basegrid*2;
 }
 
-#fruum .fruum-base-object .fruum-item-actions { opacity: 0.5; }
+#fruum .fruum-base-object .fruum-item-actions { opacity: 0.7; }
 #fruum .fruum-base-object:hover .fruum-item-actions { opacity: 1; }

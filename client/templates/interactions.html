@@ -123,11 +123,12 @@
     </div>
     <div class="fruum-object-divider"></div>
     <div class="fruum-stream-typography">
-        <textarea
-          autocomplete="off"
-          class="fruum-interactions-input fruum-secondary-data"
-          placeholder="it's about..."
-          data-field="body"><%= editing.body || '' %></textarea>
+      <div class="fruum-js-preview fruum-preview-container" style="display:none;"></div>
+      <textarea
+        autocomplete="off"
+        class="fruum-interactions-input fruum-secondary-data"
+        placeholder="it's about..."
+        data-field="body"><%= editing.body || '' %></textarea>
     </div>
     <div class="fruum-interactions-footer">
       <div class="fruum-interactions-buttons fruum-interactions-group">
@@ -144,6 +145,7 @@
           data-action="help"
         >?</span>
         <span class="fruum-helper-action fruum-icon fruum-icon-emoji"   data-action="emojipanel"></span>
+        <span class="fruum-helper-action fruum-helper-text" data-action="preview">preview</span>
       </div>
     </div>
   </form>
@@ -166,6 +168,7 @@
     </div>
     <div class="fruum-object-divider"></div>
     <div class="fruum-stream-typography">
+      <div class="fruum-js-preview fruum-preview-container" style="display:none;"></div>
       <textarea
         autocomplete="off"
         class="fruum-interactions-input fruum-secondary-data"
@@ -191,6 +194,7 @@
           data-action="help"
         >?</span>
         <span class="fruum-helper-action fruum-icon fruum-icon-emoji"   data-action="emojipanel"></span>
+        <span class="fruum-helper-action fruum-helper-text" data-action="preview">preview</span>
       </div>
     </div>
   </form>
@@ -279,6 +283,7 @@
       <textarea
         autocomplete="off" class="fruum-interactions-input"
         placeholder="you say..." data-field="body"><%= editing.body || '' %></textarea>
+      <div class="fruum-js-preview fruum-preview-container" style="display:none;"></div>
     </div>
     <div class="fruum-interactions-footer">
       <div class="fruum-interactions-buttons">
@@ -295,6 +300,7 @@
           data-action="help"
         >?</span>
         <span class="fruum-helper-action fruum-icon fruum-icon-emoji" data-action="emojipanel"></span>
+        <span class="fruum-helper-action fruum-helper-text" data-action="preview">preview</span>
       </div>
     </div>
     <% } %>

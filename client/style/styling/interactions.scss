@@ -107,6 +107,7 @@ $pointer-dimensions: basegrid-mod( 12px );
   height: 100%;
 }
 
+#fruum .fruum-preview-container,
 #fruum input.fruum-interactions-input,
 #fruum textarea.fruum-interactions-input {
   border: none !important;
@@ -119,15 +120,14 @@ $pointer-dimensions: basegrid-mod( 12px );
   min-height: $small-stream-default-lineheight;
 }
 
+#fruum .fruum-preview-container,
 #fruum textarea.fruum-interactions-input {
   resize:none;
   overflow: auto;
-  min-height: $small-stream-default-lineheight*9.5;
 }
 
 #fruum textarea.fruum-interactions-input.fruum-interactions-compact {
   min-height: $small-stream-default-lineheight*1.5;
-
 }
 
 #fruum input.fruum-interactions-input.fruum-interactions-edit-avatar {
@@ -148,22 +148,37 @@ $pointer-dimensions: basegrid-mod( 12px );
   width: 100%;
   .fruum-user-account {
     float: right;
-    width: 20%;
+    display: block;
   }
   .fruum-interactions-buttons {
     float: left;
-    width: 80%;
+    display: block;
     text-align: left;
-    &:not(.fruum-interactions-group) > *:not(:first-child) {
+    &:not(.fruum-interactions-group) > * {
       // has font-size of responsive-default-font
       margin-left: $default-font-basegrid;
+      &:first-child {
+        margin-left: 0;
+      }
     }
-    &.fruum-interactions-group > *:not(:first-child) {
+    &.fruum-interactions-group > * {
       margin-left: $default-font-basegrid;
+      &:first-child {
+        margin-left: 0;
+      }
     }
     .fruum-secondary-data:only-child {
       // font-size of small-font
       line-height: $small-font-basegrid*4;
+    }
+    .fruum-right-action {
+      float: right;
+    }
+    .fruum-separate-action {
+      margin-left: $default-font-basegrid*3;
+      &.fruum-secondary-data {
+        margin-left: $small-font-basegrid*3;
+      }
     }
   }
   // this covers the case that there is an interaction open

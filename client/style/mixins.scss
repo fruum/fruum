@@ -142,6 +142,7 @@ $enormous-font-basegrid: relative-ems( $base-grid, $responsive-enormous-font );
   padding-left: $default-font-basegrid/8;
   padding-right: $default-font-basegrid/8;
   min-width: $default-font-basegrid*8;
+  display: inline-block;
 }
 
 @mixin default-button-block {
@@ -164,9 +165,9 @@ $enormous-font-basegrid: relative-ems( $base-grid, $responsive-enormous-font );
 
 @mixin button-active {
   opacity: 0.9;
-  box-shadow: inset 0 0 3px rgba( 0, 0, 0, 0.4 );
-  -moz-box-shadow: inset 0 0 3px rgba( 0, 0, 0, 0.4 );
-  -webkit-box-shadow: inset 0 0 3px rgba( 0, 0, 0, 0.4 );
+  box-shadow: inset 0 0 3px rgba( $important-text-color, 0.4 );
+  -moz-box-shadow: inset 0 0 3px rgba( $important-text-color, 0.4 );
+  -webkit-box-shadow: inset 0 0 3px rgba( $important-text-color, 0.4 );
 }
 
 

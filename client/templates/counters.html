@@ -2,12 +2,12 @@
 <script type="text/template" id="fruum-template-counters">
   <div class="fruum-item-actions">
 <% if (!hide_actions) { %>
-    <a href="javascript:;" class="fruum-link" data-action="share">share</a>
+    <a href="javascript:;" class="fruum-icon fruum-icon-copy" data-action="share" data-fruumtipsy-left="copy link"></a>
   <% if (!Fruum.user.anonymous && viewing.type !== 'channel') { %>
     <% if (Fruum.userUtils.isWatching(viewing.id)) { %>
-    <a href="javascript:;" class="fruum-link fruum-item-active" data-action="unwatch">unwatch</a>
+    <a href="javascript:;" class="fruum-icon fruum-icon-watch" data-action="unwatch" data-fruumtipsy="stop watching"></a>
     <% } else { %>
-    <a href="javascript:;" class="fruum-link" data-action="watch">watch</a>
+    <a href="javascript:;" class="fruum-icon fruum-icon-visible" data-action="watch" data-fruumtipsy="watch"></a>
     <% } %>
   <% } %>
 <% } %>

@@ -132,20 +132,48 @@
 #fruum *[data-fruumtipsy-right],
 #fruum *[data-fruumtipsy-center] {
   position: relative;
-  &:hover:after {
+  &:after {
+    visibility: hidden;
     content: attr(data-fruumtipsy);
     display: block;
     z-index: 12;
     position: absolute;
     width: 108px;
-    padding: basegrid-mod( 6px )/2 basegrid-mod( 6px );
+    padding: basegrid-mod( 6px )/3 basegrid-mod( 6px ) basegrid-mod( 6px )/3+6px;
     bottom: 100%;
-    margin-bottom: 5px;
     font-size: $small-font;
     text-align: center;
-    line-height: basegrid-mod( $small-font, 15px );
-    background-color: #222;
-    color: #ddd;
+    line-height: basegrid-mod( $small-font, 12px );
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><path fill="#{$important-text-color}" d="M 0 0 L 400 0 L 400 294 L 206 294 L 200 300 L 194 294 L 0 294"/></svg>');
+    background-size: 400px 300px;
+    background-repeat:no-repeat;
+    color: $dividers-colors;
+    opacity: 0;
+    -webkit-transform-origin: 50% 100%;
+    transform-origin: 50% 100%;
+    -webkit-transform: scale3d(0.7,0.3,1);
+    -moz-transform:    scale3d(0.7,0.3,1);
+    transform:         scale3d(0.7,0.3,1);
+  }
+  &:hover:after {
+    visibility: visible;
+    opacity: 1;
+    -webkit-transition:
+      opacity 0.2s ease-in-out,
+      visibility 0.2s ease-in-out,
+      -webkit-transform 0.2s;
+    -moz-transition:
+      opacity 0.2s ease-in-out,
+      visibility 0.2s ease-in-out,
+      -moz-transform 0.2s;
+    transition:
+      opacity 0.2s ease-in-out,
+      visibility 0.2s ease-in-out,
+      transform 0.2s;
+    -webkit-transform: translate3d(0,0,0) rotate3d(0,0,0,0);
+    -moz-transform:    translate3d(0,0,0) rotate3d(0,0,0,0);
+    transform:         translate3d(0,0,0) rotate3d(0,0,0,0);
+
   }
 }
 
@@ -153,12 +181,13 @@
 #fruum *[data-fruumtipsy-center]:hover:after {
   left: 50%;
   margin-left: -49px;
+  background-position: 59% 100%;
 }
 
 #fruum *[data-fruumtipsy-center]:hover:after { content: attr(data-fruumtipsy-center); }
 
-#fruum *[data-fruumtipsy-right]:hover:after { content: attr(data-fruumtipsy-right);right: 50%; }
-#fruum *[data-fruumtipsy-left]:hover:after { content: attr(data-fruumtipsy-left);left: 50%; }
+#fruum *[data-fruumtipsy-right]:hover:after { content: attr(data-fruumtipsy-right);right: 0;background-position: 28% 100%; }
+#fruum *[data-fruumtipsy-left]:hover:after { content: attr(data-fruumtipsy-left);left: -10%;background-position: 71% 100%; }
 
 
 
@@ -210,17 +239,35 @@
   border: 1px solid $muted-text-color;
   font-size: $responsive-bigger-font;
   @include block-object-action( $responsive-bigger-font );
-  @include block-radius;
+  @include block-radius( relative-ems( $base-object-dimension, $responsive-bigger-font ) );
   cursor: pointer;
   cursor: hand;
   &:not(:last-child) {
     margin-left: $base-grid;
   }
-}
-
-#fruum .fruum-helper-action:hover {
-  color: $disabled-text-color;
-  border-color: $disabled-text-color;
+  &.fruum-helper-text {
+    padding-left: $base-grid;
+    padding-right: $base-grid;
+    font-size: $responsive-default-font;
+    @include block-object-action( $responsive-default-font );
+    @include block-radius( relative-ems( $base-object-dimension, $responsive-default-font ) );
+  }
+  &:hover {
+    color: $disabled-text-color;
+    border-color: $disabled-text-color;
+  }
+  &:active {
+    @include button-active;
+  }
+  &.fruum-is-active {
+    color: $background-helper-base-color;
+    background-color: $disabled-text-color;
+    border-color: $disabled-text-color;
+    &:hover {
+      background-color: darken( $disabled-text-color, 5% );
+      border-color: darken( $disabled-text-color, 5% );
+    }
+  }
 }
 
 // 4.1 Helper container

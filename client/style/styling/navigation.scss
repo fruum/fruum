@@ -292,12 +292,12 @@
   }
 
   .fruum-item-actions {
-    // has a font-size of responsive-default-font
-    font-size: 1em;
+    // inherits a font-size of responsive-default-font
+    font-size: relative-ems( $responsive-big-font, $responsive-default-font);
     margin-top: 0;
     width: auto;
     float: left;
-    line-height: $default-font-basegrid*4; 
+    line-height: relative-ems( $default-font-basegrid, relative-ems( $responsive-big-font, $responsive-default-font) )*4;
   }
 }
 

@@ -75,6 +75,7 @@
   &.fruum-cta-button {
     background-color: $main-action-color;
     color: $main-action-text-color;
+    &.fruum-is-active,
     &:hover {
       background-color: $main-action-color-highlight;
     }
@@ -103,6 +104,7 @@
     transition: background-color 0.2s;
     -moz-transition: background-color 0.2s;
     -webkit-transition: background-color 0.2s;
+    &.fruum-is-active,
     &:hover {
       color: $secondary-action-text;
       background-color: $secondary-action-color;
@@ -125,12 +127,14 @@
 #fruum .fruum-secondary-button {
   &.fruum-link-secondary {
     color: $secondary-action-color;
+    &.fruum-is-active,
     &:hover {
       color: $secondary-action-color-highlight;
     }
   }
   &.fruum-link-negative {
     color: $negative-action-color;
+    &.fruum-is-active,
     &:hover {
       color: $negative-action-color-highlight;
     }
