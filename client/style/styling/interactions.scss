@@ -154,6 +154,7 @@ $pointer-dimensions: basegrid-mod( 12px );
     float: left;
     display: block;
     text-align: left;
+    min-width: 55%;
     &:not(.fruum-interactions-group) > * {
       // has font-size of responsive-default-font
       margin-left: $default-font-basegrid;
