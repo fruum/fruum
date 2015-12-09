@@ -17,8 +17,10 @@
   text-decoration: none;
   font-size: inherit;
   line-height: inherit;
-  &:not(.fruum-base-object) {
-    color: $secondary-action-color;
+  color: $secondary-action-color;
+  &.fruum-base-object,
+  &.fruum-base-object:hover {
+    color: inherit;
   }
   &.fruum-link-off:not(:hover) {
     color: $disabled-text-color !important;

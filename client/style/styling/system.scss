@@ -15,6 +15,8 @@
     4.4 Options list
   5. Popup data
   6. Badges
+  7. Generic manipulation and typography
+    7.1 Visibility
 
 */
 
@@ -79,6 +81,7 @@
 #fruum .fruum-mini-loader {
   position: relative;
   display: inline-block;
+  text-align: left;
   height: 1em;
   font-size:1em;
   overflow: hidden;
@@ -90,7 +93,7 @@
     content: '...';
     position: relative;
     width: 2em;
-    display: inline-block;
+    display: block;
     color: inherit;
     font-size: inherit;
   }
@@ -107,21 +110,21 @@
 }
 
 @keyframes fruum-mini-loader {
-    0% {width: 0;opacity:0;}
-  30% { width: 0.4em;opacity:1;}
-  88% {width: 1.4em;opacity: 1;}
-  92% {width: 1.4em;opacity: 1;}
-  99.9% {width: 1.4em;opacity: 0.1;}
-  100% {width:0;opacity: 0;}
+    0% {width: 0;opacity:0;margin-right: 1.4em;}
+  30% { width: 0.4em;margin-right: 1em;opacity:1;}
+  88% {width: 1.4em;margin-right: 0;opacity: 1;}
+  92% {width: 1.4em;margin-right: 0;opacity: 1;}
+  99.9% {width: 1.4em;margin-right: 0;opacity: 0.1;}
+  100% {width:0;margin-right: 1.4em;opacity: 0;}
 }
 
 @-webkit-keyframes fruum-mini-loader {
-  0% {width: 0;opacity:0;}
-  30% { width: 0.4em;opacity:1;}
-  88% {width: 1.4em;opacity: 1;}
-  92% {width: 1.4em;opacity: 1;}
-  99.9% {width: 1.4em;opacity: 0.1;}
-  100% {width:0;opacity: 0;}
+  0% {width: 0;opacity:0;margin-right: 1.4em;}
+30% { width: 0.4em;margin-right: 1em;opacity:1;}
+88% {width: 1.4em;margin-right: 0;opacity: 1;}
+92% {width: 1.4em;margin-right: 0;opacity: 1;}
+99.9% {width: 1.4em;margin-right: 0;opacity: 0.1;}
+100% {width:0;margin-right: 1.4em;opacity: 0;}
 }
 
 
@@ -340,6 +343,8 @@
   width: 100%;
   color: $forum-message-text-color;
   padding-top: 1em;
+  max-height: 32em;
+  overflow: auto;
   &.fruum-options-twocolumns {
     .fruum-option-item {
       width: 48%;
@@ -381,7 +386,7 @@
   line-height: $small-font-basegrid*3;
   cursor: pointer;
   cursor: hand;
-  height:$small-font-basegrid*3;
+  min-height:$small-font-basegrid*3;
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -481,4 +486,14 @@
     color: $forum-message-text-color;
     background-color: $forum-warning-color;
   }
+}
+
+
+
+// 7. Generic manipulation and typography
+
+//  7.1 Visibility
+
+#fruum .fruum-nodisplay {
+  display: none !important;
 }

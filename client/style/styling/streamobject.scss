@@ -286,8 +286,14 @@
     color: $base-text-color;
     opacity: 0.5;
   }
+  .fruum-maintain-block,
   a.fruum-maintain-action {
     float: right;
+  }
+  .fruum-maintain-block {
+    & > a:first-child {
+      margin-left: $big-font-basegrid*2;
+    }
   }
   .fruum-action-pill {
     display: inline-block;

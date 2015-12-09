@@ -10,6 +10,7 @@
     3.1 Custom inputs
     3.2 Checkbox
   4. User account section
+  5. Interaction updates
 
 */
 
@@ -277,4 +278,29 @@ $pointer-dimensions: basegrid-mod( 12px );
     @include medium-avatar-block;
   }
 
+}
+
+
+
+// 5. Interaction updates
+
+#fruum .fruum-interactions-stream-update {
+  position: absolute;
+  bottom: 100%;
+  right: $tiny-font-basegrid;
+  z-index: 1;
+  margin-bottom: 1px;
+  max-width: 100%;
+  font-size: $responsive-tiny-font;
+  font-weight: $important-font-weight;
+  height: $tiny-font-basegrid*3;
+  line-height: $tiny-font-basegrid*3;
+  text-align: right;
+  font-style: italic;
+  padding: 0 $tiny-font-basegrid*2 0 $tiny-font-basegrid;
+  background-color: rgba( $background-helper-base-color, 0.65 );
+  color: $disabled-text-color;
+  .fruum-mini-loader:before {
+    line-height: 1.3em;
+  }
 }
