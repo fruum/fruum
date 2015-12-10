@@ -71,6 +71,18 @@ function ReferencePlugin(options, instance) {
   this.react = function(payload, callback) {
     callback(null, payload);
   }
+  //process a document before it moved under a new category
+  //payload:
+  //{
+  //  app_id: app_id,
+  //  document: Document,
+  //  category: Document,
+  //  children: [Document],
+  //  user: User
+  //}
+  this.move = function(payload, callback) {
+    callback(null, payload);
+  }
   //triggered if plugin name is defined as a cron entry in the config.json
   this.cron = function() {}
 }

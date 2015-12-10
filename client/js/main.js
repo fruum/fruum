@@ -10,19 +10,21 @@ Main client app
   function setup() {
     //load css
     var $ = Fruum.libs.$,
-        css_loaded = false,
-        html_loaded = false;
+        fruum_html, fruum_css;
+
+    function loadHTML() {
+      $('head').append('<style>' + fruum_css + '</style>');
+      $(window.fruumSettings.container || 'body').append(fruum_html);
+      run();
+    }
+
     $.get(remote_host + '/fruum.css?app_id=' + window.fruumSettings.app_id, function(data) {
-      $('head').append('<style>' + data + '</style>');
-      css_loaded = true;
-      if (html_loaded) run();
+      fruum_css = data;
+      if (fruum_css && fruum_html) loadHTML();
     });
-    //load html templates
     $.get(remote_host + '/fruum.html?app_id=' + window.fruumSettings.app_id, function(data) {
-      $(window.fruumSettings.container || 'body').append(data);
-      //start the app
-      html_loaded = true;
-      if (css_loaded) run();
+      fruum_html = data;
+      if (fruum_css && fruum_html) loadHTML();
     });
   }
   //when all dependencies have been loaded, start the app
@@ -77,7 +79,8 @@ Main client app
         notifications: '.fruum-notification-list',
         interactions: '.fruum-interactions-section',
         empty: '.fruum-empty-list',
-        share: '.fruum-js-region-share'
+        share: '.fruum-js-region-share',
+        move: '.fruum-js-move'
       },
       events: {
         'keydown input, textarea': 'onInterceptKeyboard',
@@ -91,6 +94,9 @@ Main client app
         var that = this;
         //saves scroll state for viewed documents
         this.scroll_history = {};
+        //typing template
+        this.template_typing = _.template($('#fruum-template-interactions-typing').html());
+        this.typing_users = new Backbone.Collection();
 
         _.bindAll(this,
           'resize', 'onScroll', 'calculateViewRegions',
@@ -103,6 +109,7 @@ Main client app
         //models
         while(this._consumeData());
         this.ui_state = new Models.UIState();
+        this.move_categories = new Collections.Categories();
         this.categories = new Collections.Categories();
         this.threads = new Collections.Threads();
         this.articles = new Collections.Articles();
@@ -176,6 +183,10 @@ Main client app
             posts: this.posts
           }
         }));
+        this.showChildView('move', new Views.MoveView({
+          model: this.ui_state,
+          collection: this.move_categories
+        }));
         new Views.ShareView({
           ui_state: this.ui_state,
           el: this.regions.share
@@ -200,6 +211,29 @@ Main client app
             $(this.ui.sticky_section).addClass('fruum-section-empty');
           }
         });
+
+        // ------------------- TYPING NOTIFICATIONS -------------------
+
+        function _cleanTyping() {
+          that.typing_timer = null;
+          var to_delete = [], now = Date.now();
+          that.typing_users.each(function(model) {
+            if (now - model.get('timestamp') > 2000) to_delete.push(model);
+          });
+          that.typing_users.remove(to_delete);
+          if (that.typing_users.length) _notifyTyping();
+          else {
+            that.$('.fruum-interactions-stream-update').slideUp('fast');
+          }
+        }
+        function _notifyTyping() {
+          if (that.typing_timer) clearTimeout(that.typing_timer);
+          that.typing_timer = setTimeout(_cleanTyping, 1000);
+          that.$('.fruum-interactions-stream-update').
+            html(that.template_typing({ users: that.typing_users.toJSON() })).
+            slideDown('fast');
+        }
+        this.listenTo(this.typing_users, 'add change:timestamp', _notifyTyping);
 
         // ------------------- IO EVENTS -------------------
 
@@ -479,6 +513,31 @@ Main client app
           }
         );
 
+        // ------------------- MOVE -------------------
+
+        this.bindIO('fruum:categories',
+          function send(payload) {
+            that.socket.emit('fruum:categories', payload);
+          },
+          function recv(payload) {
+            if (payload && payload.categories) {
+              that.move_categories.reset(payload.categories);
+            }
+          }
+        );
+
+        this.bindIO('fruum:move',
+          function send(payload) {
+            that.socket.emit('fruum:move', payload);
+          },
+          function recv(payload) {
+            if (payload) {
+              that.deletePayload(payload.source);
+              that.upsertPayload(payload.target);
+            }
+          }
+        );
+
         // -------------------- NOTIFICATIONS --------------------
 
         //fetch notifications
@@ -526,6 +585,24 @@ Main client app
             if (payload) {
               Fruum.userUtils.removeNotification(payload.id);
               Fruum.io.trigger('fruum:update_notify');
+            }
+          }
+        );
+
+        this.bindIO('fruum:typing',
+          function send(payload) {
+            that.socket.emit('fruum:typing', {});
+          },
+          function recv(payload) {
+            if (payload) {
+              var model = that.typing_users.get(payload);
+              if (model) model.set('timestamp', Date.now());
+              else {
+                that.typing_users.add({
+                  id: payload,
+                  timestamp: Date.now()
+                });
+              }
             }
           }
         );

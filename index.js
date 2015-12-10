@@ -4,7 +4,6 @@
 
 //load the settings
 var config = require('./settings'),
-    FruumServer = require('./server/main.js'),
     logger = require('./server/logger'),
     cliArgs = require('command-line-args');
 
@@ -147,6 +146,12 @@ else {
   if (options['log-level']) {
     logger.level(options['log-level']);
   }
+  //run startup script if present
+  var conf = config(options);
+  if (conf.scripts && conf.scripts.init) {
+    logger.system('Running init script: ' + conf.scripts.init);
+    require(conf.scripts.init);
+  }
   //run the server
-  var server = new FruumServer(config(options), cli_cmd);
+  var server = new require('./server/main')(conf, cli_cmd);
 }

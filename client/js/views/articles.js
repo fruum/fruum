@@ -6,13 +6,13 @@ Articles view
   'use strict';
   window.Fruum.require.push(function () {
     Fruum.views = Fruum.views || {};
-    //libraries
+
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
         Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
-    //View
+
     Fruum.views.ArticleView = TRANSITION(Marionette.ItemView.extend({
       template: '#fruum-template-article',
       ui: {
@@ -20,6 +20,7 @@ Articles view
         manage: '.fruum-js-manage',
         up: '[data-action="up"]',
         down: '[data-action="down"]',
+        move: '[data-action="move"]',
         delete: '[data-action="delete"]',
         edit: '[data-action="edit"]'
       },
@@ -32,6 +33,7 @@ Articles view
         'click @ui.delete': 'onDelete',
         'click @ui.up': 'onUp',
         'click @ui.down': 'onDown',
+        'click @ui.move': 'onMove',
         'click @ui.edit': 'onEdit'
       },
       onNavigate: function(event) {
@@ -61,6 +63,12 @@ Articles view
         event.stopPropagation();
         Fruum.io.trigger('fruum:close_manage');
         Fruum.utils.orderDown(this.model, event.shiftKey);
+      },
+      onMove: function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        Fruum.io.trigger('fruum:close_manage');
+        Fruum.io.trigger('fruum:show_move', this.model.toJSON());
       },
       onEdit: function(event) {
         event.preventDefault();

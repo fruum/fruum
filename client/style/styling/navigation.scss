@@ -34,7 +34,7 @@
   clear: both;
 }
 
-#fruum .fruum-navigation-breadcrumb .fruum-navigation-item {
+#fruum .fruum-navigation-item {
   /* inherits base-grid, font-size 8px */
   position: relative;
   float: left;
@@ -42,7 +42,11 @@
   margin-right: relative-ems( $base-grid, $responsive-small-font);
   color: $disabled-text-color;
   font-weight: $important-font-weight;
+  line-height: relative-ems( $base-object-dimension, $responsive-small-font );
   $nav-item-margin: relative-ems( 1em, $responsive-tiny-font);
+  &.fruum-link {
+    font-size: $responsive-small-font;
+  }
   &.fruum-avatar-icon {
     /* same object!! inherits base-grid, font-size 8px */
     overflow: visible;
@@ -54,6 +58,9 @@
     font-size: $responsive-tiny-font;
     font-weight: $base-font-weight;
     color: $avatar-text-color;
+    &:hover {
+      color: $avatar-text-color;
+    }
   }
   .fruum-avatar-icon {
     $nav-avatar-font: relative-ems( $responsive-tiny-font, $responsive-small-font);

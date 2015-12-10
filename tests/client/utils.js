@@ -122,7 +122,6 @@ function _article(done) {
       id: 'article',
       type: 'article',
       parent: 'category',
-      parent_type: 'category',
       header: 'article header',
       body: 'article body'
     }
@@ -138,9 +137,23 @@ function _thread(done) {
       id: 'thread',
       type: 'thread',
       parent: 'category',
-      parent_type: 'category',
       header: 'thread header',
       body: 'thread body'
+    }
+  }, done);
+}
+
+function _move_thread(done) {
+  request({
+    method: 'POST',
+    url: url + '/api/v1/testkey/docs',
+    json: true,
+    body: {
+      id: 'move_thread',
+      type: 'thread',
+      parent: 'category',
+      header: 'move_thread header',
+      body: 'move_thread body'
     }
   }, done);
 }
@@ -154,7 +167,6 @@ function _locked_thread(done) {
       id: 'locked_thread',
       type: 'thread',
       parent: 'category',
-      parent_type: 'category',
       header: 'locked thread header',
       body: 'locked thread body',
       locked: true
@@ -171,7 +183,6 @@ function _channel(done) {
       id: 'channel',
       type: 'channel',
       parent: 'category',
-      parent_type: 'category',
       header: 'channel header',
       body: 'channel body'
     }
@@ -184,8 +195,10 @@ function load_fixture(done) {
       _article(function() {
         _channel(function() {
           _thread(function() {
-            _locked_thread(function() {
-              done && done();
+            _move_thread(function() {
+              _locked_thread(function() {
+                done && done();
+              });
             });
           });
         });

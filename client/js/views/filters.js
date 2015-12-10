@@ -6,13 +6,12 @@ Search button
   'use strict';
   window.Fruum.require.push(function () {
     Fruum.views = Fruum.views || {};
-    //libraries
+
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
         Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette;
 
-    //View
     Fruum.views.FiltersView = Marionette.ItemView.extend({
       template: '#fruum-template-filters',
       ui: {

@@ -6,7 +6,7 @@
   'use strict';
   window.Fruum.require.push(function () {
     Fruum.views = Fruum.views || {};
-    //libraries
+
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
         Backbone = Fruum.libs.Backbone,
@@ -36,13 +36,13 @@
         if (event.which == 27) this.hide();
       },
       show: function() {
-        if (this.$el.is(':visible')) return;
-        this.$el.show();
+        if (!this.$el.hasClass('fruum-nodisplay')) return;
+        this.$el.removeClass('fruum-nodisplay');
         $(document).on('keydown', this.onKey);
       },
       hide: function() {
-        if (!this.$el.is(':visible')) return;
-        this.$el.hide();
+        if (this.$el.hasClass('fruum-nodisplay')) return;
+        this.$el.addClass('fruum-nodisplay');
         $(document).off('keydown', this.onKey);
       },
       toggle: function() {

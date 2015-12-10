@@ -15,6 +15,8 @@
     4.4 Options list
   5. Popup data
   6. Badges
+  7. Generic manipulation and typography
+    7.1 Visibility
 
 */
 
@@ -79,6 +81,7 @@
 #fruum .fruum-mini-loader {
   position: relative;
   display: inline-block;
+  text-align: left;
   height: 1em;
   font-size:1em;
   overflow: hidden;
@@ -90,7 +93,7 @@
     content: '...';
     position: relative;
     width: 2em;
-    display: inline-block;
+    display: block;
     color: inherit;
     font-size: inherit;
   }
@@ -107,21 +110,21 @@
 }
 
 @keyframes fruum-mini-loader {
-    0% {width: 0;opacity:0;}
-  30% { width: 0.4em;opacity:1;}
-  88% {width: 1.4em;opacity: 1;}
-  92% {width: 1.4em;opacity: 1;}
-  99.9% {width: 1.4em;opacity: 0.1;}
-  100% {width:0;opacity: 0;}
+    0% {width: 0;opacity:0;margin-right: 1.4em;}
+  30% { width: 0.4em;margin-right: 1em;opacity:1;}
+  88% {width: 1.4em;margin-right: 0;opacity: 1;}
+  92% {width: 1.4em;margin-right: 0;opacity: 1;}
+  99.9% {width: 1.4em;margin-right: 0;opacity: 0.1;}
+  100% {width:0;margin-right: 1.4em;opacity: 0;}
 }
 
 @-webkit-keyframes fruum-mini-loader {
-  0% {width: 0;opacity:0;}
-  30% { width: 0.4em;opacity:1;}
-  88% {width: 1.4em;opacity: 1;}
-  92% {width: 1.4em;opacity: 1;}
-  99.9% {width: 1.4em;opacity: 0.1;}
-  100% {width:0;opacity: 0;}
+  0% {width: 0;opacity:0;margin-right: 1.4em;}
+30% { width: 0.4em;margin-right: 1em;opacity:1;}
+88% {width: 1.4em;margin-right: 0;opacity: 1;}
+92% {width: 1.4em;margin-right: 0;opacity: 1;}
+99.9% {width: 1.4em;margin-right: 0;opacity: 0.1;}
+100% {width:0;margin-right: 1.4em;opacity: 0;}
 }
 
 
@@ -144,6 +147,7 @@
     font-size: $small-font;
     text-align: center;
     line-height: basegrid-mod( $small-font, 12px );
+    // default svg used: <svg xmlns='http://www.w3.org/2000/svg'><path fill='#222' d='M 0 0 L 400 0 L 400 294 L 206 294 L 200 300 L 194 294 L 0 294'/></svg>
     background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGZpbGw9IiMyMjIiIGQ9Ik0gMCAwIEwgNDAwIDAgTCA0MDAgMjk0IEwgMjA2IDI5NCBMIDIwMCAzMDAgTCAxOTQgMjk0IEwgMCAyOTQiLz48L3N2Zz4=");
     background-size: 400px 300px;
     background-repeat:no-repeat;
@@ -339,6 +343,8 @@
   width: 100%;
   color: $forum-message-text-color;
   padding-top: 1em;
+  max-height: 32em;
+  overflow: auto;
   &.fruum-options-twocolumns {
     .fruum-option-item {
       width: 48%;
@@ -380,7 +386,7 @@
   line-height: $small-font-basegrid*3;
   cursor: pointer;
   cursor: hand;
-  height:$small-font-basegrid*3;
+  min-height:$small-font-basegrid*3;
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -480,4 +486,14 @@
     color: $forum-message-text-color;
     background-color: $forum-warning-color;
   }
+}
+
+
+
+// 7. Generic manipulation and typography
+
+//  7.1 Visibility
+
+#fruum .fruum-nodisplay {
+  display: none !important;
 }

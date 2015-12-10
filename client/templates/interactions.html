@@ -238,6 +238,7 @@
 <!-- Add channel post -->
 <script type="text/template" id="fruum-template-interactions-view-channel">
   <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-messages')() %>
+  <div class="fruum-interactions-stream-update" style="display:none;"><!-- template --></div>
   <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
   <form action="" class="fruum-interactions-form">
     <% if (viewing.locked) { %>
@@ -271,6 +272,7 @@
 <!-- Add thread post -->
 <script type="text/template" id="fruum-template-interactions-edit-post">
   <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-messages')() %>
+  <div class="fruum-interactions-stream-update" style="display:none;"><!-- template --></div>
   <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
   <form action="" class="fruum-interactions-form">
     <% if (viewing.locked) { %>
@@ -311,6 +313,7 @@
 <!-- Viewing thread -->
 <script type="text/template" id="fruum-template-interactions-view-thread">
   <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-messages')() %>
+  <div class="fruum-interactions-stream-update" style="display:none;"><!-- template --></div>
   <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
   <form action="" class="fruum-interactions-form">
     <% if (viewing.locked) { %>
@@ -373,6 +376,7 @@
 
 <!-- Anonymous user -->
 <script type="text/template" id="fruum-template-interactions-anonymous">
+  <div class="fruum-interactions-stream-update" style="display:none;"><!-- template --></div>
   <div class="fruum-interactions-footer">
     <div class="fruum-interactions-buttons">
       <% if (window.fruumSettings && window.fruumSettings.login) { %>
@@ -387,8 +391,17 @@
     </div>
     <div class="fruum-user-account">
       <span class="fruum-account-settings" data-fruumtipsy-right="You are anonymous">
-        <span class="fruum-avatar-icon" data-initials="M">;)</span>
+        <span class="fruum-avatar-icon" data-initials="M"><span class="fruum-icon fruum-icon-emoji"></span></span>
       </span>
     </div>
   </div>
+</script>
+
+<script type="text/template" id="fruum-template-interactions-typing">
+  <% if (users.length > 1) { %>
+  multiple users are typing
+  <% } else if (users.length == 1) { %>
+  <%- users[0].id %> is typing
+  <% } %>
+  <span class="fruum-mini-loader"></span>
 </script>

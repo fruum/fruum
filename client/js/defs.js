@@ -20,6 +20,7 @@
   window.Fruum.messages = {
     private: 'Only administrators will be able to see this!',
     public: 'Everybody will be able to see this!',
-    report: 'Report this post as inappropriate?'
+    report: 'Report this post as inappropriate?',
+    move: 'Move entire stream under new category?'
   };
 })();

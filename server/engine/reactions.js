@@ -44,8 +44,11 @@ module.exports = function(options, instance, self) {
           socket.emit('fruum:react', document.toJSON());
           return;
         }
+        //success
+        self.invalidateDocument(app_id, document);
         storage.react(app_id, document, user, reaction, function() {
           socket.emit('fruum:react', document.toJSON());
+          self.broadcast(user, document);
         });
       });
     });

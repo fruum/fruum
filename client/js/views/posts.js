@@ -6,14 +6,14 @@ Posts view
   'use strict';
   window.Fruum.require.push(function () {
     Fruum.views = Fruum.views || {};
-    //libraries
+
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
         Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette,
         Messages = Fruum.messages,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
-    //View
+
     Fruum.views.PostView = TRANSITION(Marionette.ItemView.extend({
       ui: {
         react: '[data-action="react"]',
@@ -22,12 +22,15 @@ Posts view
         inappropriate: '[data-action="inappropriate"]',
         delete: '[data-action="delete"]',
         share: '[data-action="share"]',
+        more_source: '.fruum-js-more-source',
+        more_target: '.fruum-js-more-target',
         links: 'a[href]'
       },
       modelEvents: {
         'change': 'render'
       },
       events: {
+        'click @ui.more_source': 'onMore',
         'click @ui.react': 'onReact',
         'click @ui.edit': 'onEdit',
         'click @ui.report': 'onReport',
@@ -50,6 +53,11 @@ Posts view
           return '#fruum-template-post-master';
         }
         return '#fruum-template-post';
+      },
+      onMore: function(event) {
+        event && event.preventDefault();
+        this.ui.more_source.addClass('fruum-nodisplay');
+        this.ui.more_target.removeClass('fruum-nodisplay');
       },
       onEdit: function(event) {
         Fruum.io.trigger('fruum:edit', this.model.toJSON());

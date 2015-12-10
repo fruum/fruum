@@ -16,6 +16,18 @@ describe("Anonymous client", function() {
     });
   });
 
+  it("cannot get all categories", function(done) {
+    anonymous_connect(function(socket) {
+      socket.emit('fruum:categories', {});
+      socket.on('fruum:categories', function(payload) {
+        socket.removeListener('fruum:categories', this);
+        expect(payload).toBeUndefined();
+        socket.disconnect();
+        done();
+      });
+    });
+  });
+
   it("cannot reply to thread", function(done) {
     anonymous_connect(function(socket) {
       load_fixture(function() {
@@ -46,6 +58,20 @@ describe("Anonymous client", function() {
         socket.emit('fruum:react', payload);
         socket.on('fruum:react', function(payload) {
           socket.removeListener('fruum:react', this);
+          expect(payload).toBeUndefined();
+          socket.disconnect();
+          done();
+        });
+      });
+    });
+  });
+
+  it("cannot move thread", function(done) {
+    anonymous_connect(function(socket) {
+      load_fixture(function() {
+        socket.emit('fruum:move', { id: 'move_thread', category: 'home' });
+        socket.on('fruum:move', function(payload) {
+          socket.removeListener('fruum:move', this);
           expect(payload).toBeUndefined();
           socket.disconnect();
           done();

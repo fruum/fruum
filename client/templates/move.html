@@ -1,0 +1,17 @@
+<script type="text/template" id="fruum-template-move-entry">
+  <div class="fruum-option-item fruum-navigation-item">
+    <span class="fruum-avatar-icon" data-initials="<%- Fruum.utils.printInitials(initials) %>"><%- initials %></span>
+    <%= Fruum.utils.printHeader(header) %>
+  </div>
+</script>
+
+<script type="text/template" id="fruum-template-move">
+  <% if (move_document) { %>
+  <div class="fruum-helptext">Move "<%- move_document.header %>" to category:</div>
+  <% } %>
+  <div class="fruum-options-list fruum-options-selectable fruum-js-move-entries">
+    <!-- #fruum-template-move-category -->
+  </div>
+  <div class="fruum-tutorial-messages">Click to select category, <b>esc</b> to exit</div>
+  <a href="#" class="fruum-link fruum-popup-close">close</a>
+</script>
