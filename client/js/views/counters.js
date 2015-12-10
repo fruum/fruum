@@ -6,7 +6,7 @@
   'use strict';
   window.Fruum.require.push(function () {
     Fruum.views = Fruum.views || {};
-    //libraries
+
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
         Backbone = Fruum.libs.Backbone,

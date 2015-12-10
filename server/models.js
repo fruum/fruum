@@ -155,6 +155,18 @@ var Document = Backbone.Model.extend({
     json.body = (json.body || '').replace(/&gt;/g, '>').replace(/&#x60;/g, '`');
     json.body = marked(json.body);
     return json;
+  },
+  setParentDocument: function(parent_doc) {
+    if (!parent_doc) return;
+    //update breadcrumb
+    var breadcrumb = (parent_doc.get('breadcrumb') || []).slice();
+    breadcrumb.push(parent_doc.get('id'));
+    this.set({
+      breadcrumb: breadcrumb,
+      parent: parent_doc.get('id'),
+      parent_type: parent_doc.get('type'),
+      visible: parent_doc.get('visible')
+    });
   }
 });
 

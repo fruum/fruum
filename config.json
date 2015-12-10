@@ -7,6 +7,10 @@
   "logs": "./logs",
   "compress": false,
 
+  "scripts": {
+    "init": ""
+  },
+
   "---------------------- HOSTING ADDRESS -----------------------": "",
 
   "url": "http://127.0.0.1:3000",

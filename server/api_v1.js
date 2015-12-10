@@ -11,6 +11,7 @@ function API_v1(options, instance) {
   var storage = instance.storage,
       engine = instance.engine,
       router = express.Router();
+
   function get_app(req, res, callback) {
     if (!req.params.api_key) {
       res.json({ error: 'missing_api_key' });
@@ -25,6 +26,8 @@ function API_v1(options, instance) {
       });
     }
   }
+
+  // GET ALL documents
   router.get('/:api_key/docs/', function(req, res) {
     get_app(req, res, function(application) {
       if (application) {
@@ -32,33 +35,8 @@ function API_v1(options, instance) {
       }
     });
   });
-  router.post('/:api_key/docs/', function(req, res) {
-    get_app(req, res, function(application) {
-      if (application) {
-        //upsert
-        storage.get(application.get('id'), req.body.id || '0', function(document) {
-          if (document) {
-            document.set(req.body);
-            document.escape();
-            document.extractTags();
-            storage.update(application.get('id'), document, null, function(updated_doc) {
-              engine.invalidateDocument(application.get('id'), updated_doc);
-              res.json(updated_doc.toJSON());
-            });
-          }
-          else {
-            document = new Models.Document(req.body);
-            document.escape();
-            document.extractTags();
-            storage.add(application.get('id'), document, function(document) {
-              engine.invalidateDocument(application.get('id'), document);
-              res.json(document.toJSON());
-            });
-          }
-        });
-      }
-    });
-  });
+
+  // GET single document
   router.get('/:api_key/docs/:id', function(req, res) {
     var id = req.params.id;
     get_app(req, res, function(application) {
@@ -74,6 +52,45 @@ function API_v1(options, instance) {
       }
     });
   });
+
+  // CREATE new document
+  router.post('/:api_key/docs/', function(req, res) {
+    get_app(req, res, function(application) {
+      if (application) {
+        var document = new Models.Document(req.body);
+        document.escape();
+        document.extractTags();
+        //validate parent exists
+        if (!document.get('parent')) {
+          res.json({ error: 'parent_missing' });
+          return;
+        }
+        //insert
+        storage.get(application.get('id'), document.get('id') || '0', function(existing_document) {
+          if (existing_document) {
+            res.json({ error: 'doc_id_already_exists: ' + document.get('id') });
+          }
+          else {
+            //find parent
+            storage.get(application.get('id'), document.get('parent'), function(parent_doc) {
+              if (!parent_doc) {
+                res.json({ error: 'invalid_parent_id: '  + document.get('parent') });
+              }
+              else {
+                document.setParentDocument(parent_doc);
+                storage.add(application.get('id'), document, function(document) {
+                  engine.invalidateDocument(application.get('id'), document);
+                  res.json(document.toJSON());
+                });
+              }
+            });
+          }
+        });
+      }
+    });
+  });
+
+  // UPDATE existing document
   router.put('/:api_key/docs/:id', function(req, res) {
     var id = req.params.id;
     get_app(req, res, function(application) {
@@ -83,9 +100,18 @@ function API_v1(options, instance) {
             document.set(req.body);
             document.escape();
             document.extractTags();
-            storage.update(application.get('id'), document, null, function(updated_doc) {
-              engine.invalidateDocument(application.get('id'), updated_doc);
-              res.json(updated_doc.toJSON());
+            //verify that parent exists
+            storage.get(application.get('id'), document.get('parent'), function(parent_doc) {
+              if (!parent_doc) {
+                res.json({ error: 'invalid_parent_id: '  + document.get('parent') });
+              }
+              else {
+                document.setParentDocument(parent_doc);
+                storage.update(application.get('id'), document, null, function(updated_doc) {
+                  engine.invalidateDocument(application.get('id'), updated_doc);
+                  res.json(updated_doc.toJSON());
+                });
+              }
             });
           }
           else {
@@ -95,6 +121,8 @@ function API_v1(options, instance) {
       }
     });
   });
+
+  // DELETE existing document
   router.delete('/:api_key/docs/:id', function(req, res) {
     var id = req.params.id;
     get_app(req, res, function(application) {
@@ -113,6 +141,7 @@ function API_v1(options, instance) {
       }
     });
   });
+
   instance.server.use('/api/v1', router);
 }
 

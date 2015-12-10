@@ -177,6 +177,7 @@ function FruumServer(options, cli_cmd, ready) {
     'client/js/views/search.js',
     'client/js/views/notifications.js',
     'client/js/views/share.js',
+    'client/js/views/move.js',
     'client/js/views/empty.js'
   ];
 
@@ -300,6 +301,7 @@ function FruumServer(options, cli_cmd, ready) {
           'client/templates/title.html',
           'client/templates/filters.html',
           'client/templates/counters.html',
+          'client/templates/move.html',
           'client/templates/posts.html'], plugin_templates))
         .getContent();
       logger.info(
@@ -501,6 +503,15 @@ function FruumServer(options, cli_cmd, ready) {
           });
           socket.on('fruum:autocomplete', function(payload) {
             engine.autocomplete(socket, payload || {});
+          });
+          socket.on('fruum:move', function(payload) {
+            engine.move(socket, payload || {});
+          });
+          socket.on('fruum:categories', function(payload) {
+            engine.categories(socket, payload || {});
+          });
+          socket.on('fruum:typing', function(payload) {
+            engine.typing(socket, payload || {});
           });
         }
       });

@@ -6,13 +6,13 @@ Handles the top part
   'use strict';
   window.Fruum.require.push(function () {
     Fruum.views = Fruum.views || {};
-    //libraries
+
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
         Messages = Fruum.messages,
         Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette;
-    //View
+
     Fruum.views.TitleView = Marionette.ItemView.extend({
       template: '#fruum-template-title',
       ui: {

@@ -6,12 +6,12 @@ Handles the bottom input part
   'use strict';
   window.Fruum.require.push(function () {
     Fruum.views = Fruum.views || {};
-    //libraries
+
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
         Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette;
-    //View
+
     Fruum.views.InteractionsView = Marionette.ItemView.extend({
       ui: {
         post: '[data-action="post"]',
@@ -66,6 +66,7 @@ Handles the bottom input part
         'change @ui.field_is_blog': 'onKeyIsBlog'
       },
       initialize: function(options) {
+        _.bindAll(this, 'typeNotificationStart', 'typeNotificationEnd');
         this.ui_state = this.model;
         this.collections = options.collections;
         this.listenTo(Fruum.io, 'fruum:resize', this.onResize);
@@ -258,7 +259,18 @@ Handles the bottom input part
       onInitialsKeydown: function(event) {
         this.ui.field_initials.parent().attr('data-initials', Fruum.utils.printInitials(this.ui.field_initials.val()));
       },
+      typeNotificationStart: function() {
+        if (!this.type_notification_timer) {
+          Fruum.io.trigger('fruum:typing');
+          this.type_notification_timer = setTimeout(this.typeNotificationEnd, 1500);
+        }
+      },
+      typeNotificationEnd: function() {
+        this.type_notification_timer = null;
+      },
       onBodyKeydown: function(event) {
+        //send type notification
+        this.typeNotificationStart();
         if (event.metaKey || event.ctrlKey) {
           var selection = null;
           switch(event.which) {

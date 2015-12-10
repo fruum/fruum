@@ -20,6 +20,18 @@ describe("User client", function() {
     });
   });
 
+  it("cannot get all categories", function(done) {
+    user_connect(function(socket) {
+      socket.emit('fruum:categories', {});
+      socket.on('fruum:categories', function(payload) {
+        socket.removeListener('fruum:categories', this);
+        expect(payload).toBeUndefined();
+        socket.disconnect();
+        done();
+      });
+    });
+  });
+
   it("cannot create article", function(done) {
     user_connect(function(socket) {
       var payload = {
@@ -234,6 +246,20 @@ describe("User client", function() {
           expect(payload).toBeDefined();
           expect(payload.react_up).toContain('human');
           expect(payload.react_up.length).toBe(1);
+          socket.disconnect();
+          done();
+        });
+      });
+    });
+  });
+
+  it("cannot move thread", function(done) {
+    user_connect(function(socket) {
+      load_fixture(function() {
+        socket.emit('fruum:move', { id: 'move_thread', category: 'home' });
+        socket.on('fruum:move', function(payload) {
+          socket.removeListener('fruum:move', this);
+          expect(payload).toBeUndefined();
           socket.disconnect();
           done();
         });

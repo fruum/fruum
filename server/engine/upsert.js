@@ -104,15 +104,11 @@ module.exports = function(options, instance, self) {
           });
           break;
       }
-      //update breadcrumb
-      var breadcrumb = (parent_doc.get('breadcrumb') || []).slice();
-      breadcrumb.push(parent_doc.get('id'));
+      //update parent (breadcrumb and parent type)
+      document.setParentDocument(parent_doc);
       //set timestamps
       var now = Date.now();
       document.set({
-        breadcrumb: breadcrumb,
-        parent_type: parent_doc.get('type'),
-        visible: parent_doc.get('visible'),
         created: now,
         updated: now
       });

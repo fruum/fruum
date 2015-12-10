@@ -20,6 +20,21 @@ describe("Admin client", function() {
     });
   });
 
+  it("gets all categories", function(done) {
+    admin_connect(function(socket) {
+      socket.emit('fruum:categories', {});
+      socket.on('fruum:categories', function(payload) {
+        socket.removeListener('fruum:categories', this);
+        expect(payload.categories).toBeDefined();
+        expect(payload.categories[0]).toEqual(jasmine.objectContaining({
+          type: 'category'
+        }));
+        socket.disconnect();
+        done();
+      });
+    });
+  });
+
   it("creates article", function(done) {
     admin_connect(function(socket) {
       var payload = {
@@ -115,6 +130,25 @@ describe("Admin client", function() {
           socket.removeListener('fruum:field', this);
           expect(payload).toEqual(jasmine.objectContaining({
             id: 'thread', sticky: true
+          }));
+          socket.disconnect();
+          done();
+        });
+      });
+    });
+  });
+
+  it("can move thread", function(done) {
+    admin_connect(function(socket) {
+      load_fixture(function() {
+        socket.emit('fruum:move', { id: 'move_thread', category: 'home' });
+        socket.on('fruum:move', function(payload) {
+          socket.removeListener('fruum:move', this);
+          expect(payload.source).toEqual(jasmine.objectContaining({
+            id: 'move_thread', parent: 'category'
+          }));
+          expect(payload.target).toEqual(jasmine.objectContaining({
+            id: 'move_thread', parent: 'home'
           }));
           socket.disconnect();
           done();

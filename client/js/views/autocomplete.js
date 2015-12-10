@@ -6,7 +6,7 @@
   'use strict';
   window.Fruum.require.push(function () {
     Fruum.views = Fruum.views || {};
-    //libraries
+
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
         Backbone = Fruum.libs.Backbone,
@@ -53,7 +53,7 @@
           case 27: //escape
           {
             event._autocomplete_consumed = true;
-            this.$el.hide();
+            this.$el.addClass('fruum-nodisplay');
             this.match = '';
             break;
           }
@@ -107,7 +107,7 @@
         }
       },
       hide: function() {
-        this.$el.hide();
+        this.$el.addClass('fruum-nodisplay');
         this.match = '';
         if (this.timer) {
           clearTimeout(this.timer);
@@ -135,11 +135,11 @@
             this.template_autocomplete_user({
               list: list
             })
-          ).show();
+          ).removeClass('fruum-nodisplay');
           this.positionPanel();
         }
         else {
-          this.$el.hide();
+          this.$el.addClass('fruum-nodisplay');
         }
       },
       onSelect: function(event) {
@@ -174,11 +174,11 @@
           if (list.length) {
             this.$el.html(
               this.template_autocomplete_emoji({ list: list })
-            ).show();
+            ).removeClass('fruum-nodisplay');
             this.positionPanel();
           }
           else {
-            this.$el.hide();
+            this.$el.addClass('fruum-nodisplay');
           }
           return;
         }
@@ -191,7 +191,7 @@
         }
         //nothing found
         this.match = '';
-        this.$el.hide();
+        this.$el.addClass('fruum-nodisplay');
       },
       positionPanel: function() {
         this.$el.css('top', (

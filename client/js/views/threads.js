@@ -6,19 +6,20 @@ Threads view
   'use strict';
   window.Fruum.require.push(function () {
     Fruum.views = Fruum.views || {};
-    //libraries
+
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
         Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
-    //View
+
     Fruum.views.ThreadView = TRANSITION(Marionette.ItemView.extend({
       template: '#fruum-template-thread',
       ui: {
         navigate: '.fruum-js-navigate',
         manage: '.fruum-js-manage',
         sticky: '[data-action="sticky"]',
+        move: '[data-action="move"]',
         delete: '[data-action="delete"]',
         edit: '[data-action="edit"]'
       },
@@ -30,6 +31,7 @@ Threads view
         'click @ui.navigate': 'onNavigate',
         'click @ui.sticky': 'onSticky',
         'click @ui.delete': 'onDelete',
+        'click @ui.move': 'onMove',
         'click @ui.edit': 'onEdit'
       },
       onNavigate: function(event) {
@@ -57,6 +59,12 @@ Threads view
         event.stopPropagation();
         Fruum.io.trigger('fruum:close_manage');
         Fruum.io.trigger('fruum:archive', { id: this.model.get('id') });
+      },
+      onMove: function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        Fruum.io.trigger('fruum:close_manage');
+        Fruum.io.trigger('fruum:show_move', this.model.toJSON());
       },
       onEdit: function(event) {
         event.preventDefault();

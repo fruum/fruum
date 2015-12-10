@@ -10,7 +10,8 @@ var _ = require('underscore'),
     logger = require('../logger');
 
 module.exports = function(options, instance, self) {
-  var storage = self.storage;
+  var storage = self.storage,
+      app_users = self.app_users;
 
   // -----------------------------NOTIFICATIONS --------------------------------
 
@@ -66,6 +67,28 @@ module.exports = function(options, instance, self) {
       });
     }
     socket.emit('fruum:unnotify', { id: payload.id });
+  }
+
+  self.typing = function(socket, payload) {
+    if (!self.validatePayloadID(socket, null, 'typing')) return;
+    var app_id = socket.app_id,
+        app = app_users[app_id],
+        user = socket.fruum_user,
+        doc_id = user.get('viewing');
+
+    if (user.get('anonymous') || !app) {
+      logger.error(app_id, 'typing_anonymous_noperm', user);
+      return;
+    }
+
+    _.each(app, function(app_user) {
+      if (user != app_user &&
+          app_user.get('viewing') == doc_id &&
+          app_user.get('socket'))
+      {
+        app_user.get('socket').emit('fruum:typing', user.get('username'));
+      }
+    });
   }
 
   // ------------------------------- TEMPLATES ---------------------------------
