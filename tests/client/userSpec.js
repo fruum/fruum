@@ -11,9 +11,9 @@ describe("User client", function() {
         body: 'bar'
       }
       socket.emit('fruum:add', payload);
-      socket.on('fruum:add', function(payload) {
+      socket.on('fruum:add', function(response) {
         socket.removeListener('fruum:add', this);
-        expect(payload).toBeUndefined();
+        expect(response).toBeUndefined();
         socket.disconnect();
         done();
       });
@@ -23,9 +23,9 @@ describe("User client", function() {
   it("cannot get all categories", function(done) {
     user_connect(function(socket) {
       socket.emit('fruum:categories', {});
-      socket.on('fruum:categories', function(payload) {
+      socket.on('fruum:categories', function(response) {
         socket.removeListener('fruum:categories', this);
-        expect(payload).toBeUndefined();
+        expect(response).toBeUndefined();
         socket.disconnect();
         done();
       });
@@ -41,9 +41,9 @@ describe("User client", function() {
         body: 'bar'
       }
       socket.emit('fruum:add', payload);
-      socket.on('fruum:add', function(payload) {
+      socket.on('fruum:add', function(response) {
         socket.removeListener('fruum:add', this);
-        expect(payload).toBeUndefined();
+        expect(response).toBeUndefined();
         socket.disconnect();
         done();
       });
@@ -59,9 +59,9 @@ describe("User client", function() {
         body: 'bar'
       }
       socket.emit('fruum:add', payload);
-      socket.on('fruum:add', function(payload) {
+      socket.on('fruum:add', function(response) {
         socket.removeListener('fruum:add', this);
-        expect(payload).toEqual(jasmine.objectContaining(payload));
+        expect(response).toEqual(jasmine.objectContaining(payload));
         socket.disconnect();
         done();
       });
@@ -77,9 +77,9 @@ describe("User client", function() {
         body: 'bar'
       }
       socket.emit('fruum:add', payload);
-      socket.on('fruum:add', function(payload) {
+      socket.on('fruum:add', function(response) {
         socket.removeListener('fruum:add', this);
-        expect(payload).toEqual(jasmine.objectContaining(payload));
+        expect(response).toEqual(jasmine.objectContaining(payload));
         socket.disconnect();
         done();
       });
@@ -92,13 +92,12 @@ describe("User client", function() {
         var payload = {
           parent: 'thread',
           type: 'post',
-          header: 'post header',
           body: 'post body'
         }
         socket.emit('fruum:add', payload);
-        socket.on('fruum:add', function(payload) {
+        socket.on('fruum:add', function(response) {
           socket.removeListener('fruum:add', this);
-          expect(payload).toEqual(jasmine.objectContaining(payload));
+          expect(response).toEqual(jasmine.objectContaining(payload));
           socket.disconnect();
           done();
         });
@@ -116,9 +115,9 @@ describe("User client", function() {
           body: 'post body'
         }
         socket.emit('fruum:add', payload);
-        socket.on('fruum:add', function(payload) {
+        socket.on('fruum:add', function(response) {
           socket.removeListener('fruum:add', this);
-          expect(payload).toBeUndefined();
+          expect(response).toBeUndefined();
           socket.disconnect();
           done();
         });
@@ -136,9 +135,9 @@ describe("User client", function() {
           body: 'bar'
         }
         socket.emit('fruum:add', payload);
-        socket.on('fruum:add', function(payload) {
+        socket.on('fruum:add', function(response) {
           socket.removeListener('fruum:add', this);
-          expect(payload).toBeUndefined();
+          expect(response).toBeUndefined();
           socket.disconnect();
           done();
         });
@@ -156,9 +155,9 @@ describe("User client", function() {
           body: 'bar'
         }
         socket.emit('fruum:add', payload);
-        socket.on('fruum:add', function(payload) {
+        socket.on('fruum:add', function(response) {
           socket.removeListener('fruum:add', this);
-          expect(payload).toBeUndefined();
+          expect(response).toBeUndefined();
           socket.disconnect();
           done();
         });
@@ -176,9 +175,9 @@ describe("User client", function() {
           body: 'bar'
         }
         socket.emit('fruum:add', payload);
-        socket.on('fruum:add', function(payload) {
+        socket.on('fruum:add', function(response) {
           socket.removeListener('fruum:add', this);
-          expect(payload).toEqual(jasmine.objectContaining(payload));
+          expect(response).toEqual(jasmine.objectContaining(payload));
           socket.disconnect();
           done();
         });
@@ -196,9 +195,9 @@ describe("User client", function() {
           body: 'bar'
         }
         socket.emit('fruum:add', payload);
-        socket.on('fruum:add', function(payload) {
+        socket.on('fruum:add', function(response) {
           socket.removeListener('fruum:add', this);
-          expect(payload).toEqual(jasmine.objectContaining(payload));
+          expect(response).toEqual(jasmine.objectContaining(payload));
           socket.disconnect();
           done();
         });
@@ -210,9 +209,9 @@ describe("User client", function() {
     user_connect(function(socket) {
       load_fixture(function() {
         socket.emit('fruum:archive', { id: 'thread' });
-        socket.on('fruum:archive', function(payload) {
+        socket.on('fruum:archive', function(response) {
           socket.removeListener('fruum:archive', this);
-          expect(payload).toBeUndefined();
+          expect(response).toBeUndefined();
           socket.disconnect();
           done();
         });
@@ -224,9 +223,9 @@ describe("User client", function() {
     user_connect(function(socket) {
       load_fixture(function() {
         socket.emit('fruum:field', { id: 'thread', field: 'sticky', value: true });
-        socket.on('fruum:field', function(payload) {
+        socket.on('fruum:field', function(response) {
           socket.removeListener('fruum:field', this);
-          expect(payload).toBeUndefined();
+          expect(response).toBeUndefined();
           socket.disconnect();
           done();
         });

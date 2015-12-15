@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore'),
+    Backbone = require('backbone'),
     Models = require('../models'),
     logger = require('../logger');
 
@@ -146,6 +147,33 @@ module.exports = function(options, instance, self) {
                 updated: now,
                 children_count: total + 1
               }, function() {});
+              //if document is article and blog then set the order to be on top
+              if (new_document.get('type') == 'article' && new_document.get('is_blog')) {
+                //get all children
+                new_document.set('order', 1);
+                storage.children(app_id, parent_doc, function(children) {
+                  var collection = new Backbone.Collection();
+                  collection.comparator = 'order';
+                  collection.add(new_document.toJSON());
+                  _.each(children, function(child) {
+                    if (child.get('type') == 'article' && child.get('id') != new_document.get('id'))
+                      collection.add(child.toJSON());
+                  });
+                  //reorder
+                  var order = 1;
+                  collection.each(function(child) {
+                    if (child.get('id') != new_document.get('id')) {
+                      order++;
+                      child.set('order', order);
+                    }
+                    storage.update(app_id, child, { order: child.get('order') }, function(updated_child) {
+                      if (updated_child) {
+                        self.broadcast(user, updated_child);
+                      }
+                    });
+                  });
+                });
+              }
             }
             else {
               //fail

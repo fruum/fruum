@@ -11,9 +11,9 @@ describe("Admin client", function() {
         body: 'bar'
       }
       socket.emit('fruum:add', payload);
-      socket.on('fruum:add', function(payload) {
+      socket.on('fruum:add', function(response) {
         socket.removeListener('fruum:add', this);
-        expect(payload).toEqual(jasmine.objectContaining(payload));
+        expect(response).toEqual(jasmine.objectContaining(payload));
         socket.disconnect();
         done();
       });
@@ -23,10 +23,10 @@ describe("Admin client", function() {
   it("gets all categories", function(done) {
     admin_connect(function(socket) {
       socket.emit('fruum:categories', {});
-      socket.on('fruum:categories', function(payload) {
+      socket.on('fruum:categories', function(response) {
         socket.removeListener('fruum:categories', this);
-        expect(payload.categories).toBeDefined();
-        expect(payload.categories[0]).toEqual(jasmine.objectContaining({
+        expect(response.categories).toBeDefined();
+        expect(response.categories[0]).toEqual(jasmine.objectContaining({
           type: 'category'
         }));
         socket.disconnect();
@@ -44,9 +44,9 @@ describe("Admin client", function() {
         body: 'bar'
       }
       socket.emit('fruum:add', payload);
-      socket.on('fruum:add', function(payload) {
+      socket.on('fruum:add', function(response) {
         socket.removeListener('fruum:add', this);
-        expect(payload).toEqual(jasmine.objectContaining(payload));
+        expect(response).toEqual(jasmine.objectContaining(payload));
         socket.disconnect();
         done();
       });
@@ -63,9 +63,9 @@ describe("Admin client", function() {
         is_blog: true
       }
       socket.emit('fruum:add', payload);
-      socket.on('fruum:add', function(payload) {
+      socket.on('fruum:add', function(response) {
         socket.removeListener('fruum:add', this);
-        expect(payload).toEqual(jasmine.objectContaining(payload));
+        expect(response).toEqual(jasmine.objectContaining(payload));
         socket.disconnect();
         done();
       });
@@ -81,9 +81,9 @@ describe("Admin client", function() {
         body: 'bar'
       }
       socket.emit('fruum:add', payload);
-      socket.on('fruum:add', function(payload) {
+      socket.on('fruum:add', function(response) {
         socket.removeListener('fruum:add', this);
-        expect(payload).toBeUndefined();
+        expect(response).toBeUndefined();
         socket.disconnect();
         done();
       });
@@ -94,9 +94,9 @@ describe("Admin client", function() {
     admin_connect(function(socket) {
       load_fixture(function() {
         socket.emit('fruum:archive', { id: 'thread' });
-        socket.on('fruum:archive', function(payload) {
+        socket.on('fruum:archive', function(response) {
           socket.removeListener('fruum:archive', this);
-          expect(payload).toEqual(jasmine.objectContaining({
+          expect(response).toEqual(jasmine.objectContaining({
             id: 'thread'
           }))
           socket.disconnect();
@@ -110,9 +110,9 @@ describe("Admin client", function() {
     admin_connect(function(socket) {
       load_fixture(function() {
         socket.emit('fruum:restore', { id: 'thread' });
-        socket.on('fruum:restore', function(payload) {
+        socket.on('fruum:restore', function(response) {
           socket.removeListener('fruum:restore', this);
-          expect(payload).toEqual(jasmine.objectContaining({
+          expect(response).toEqual(jasmine.objectContaining({
             id: 'thread'
           }));
           socket.disconnect();
@@ -126,9 +126,9 @@ describe("Admin client", function() {
     admin_connect(function(socket) {
       load_fixture(function() {
         socket.emit('fruum:field', { id: 'thread', field: 'sticky', value: true });
-        socket.on('fruum:field', function(payload) {
+        socket.on('fruum:field', function(response) {
           socket.removeListener('fruum:field', this);
-          expect(payload).toEqual(jasmine.objectContaining({
+          expect(response).toEqual(jasmine.objectContaining({
             id: 'thread', sticky: true
           }));
           socket.disconnect();
@@ -142,12 +142,12 @@ describe("Admin client", function() {
     admin_connect(function(socket) {
       load_fixture(function() {
         socket.emit('fruum:move', { id: 'move_thread', category: 'home' });
-        socket.on('fruum:move', function(payload) {
+        socket.on('fruum:move', function(response) {
           socket.removeListener('fruum:move', this);
-          expect(payload.source).toEqual(jasmine.objectContaining({
+          expect(response.source).toEqual(jasmine.objectContaining({
             id: 'move_thread', parent: 'category'
           }));
-          expect(payload.target).toEqual(jasmine.objectContaining({
+          expect(response.target).toEqual(jasmine.objectContaining({
             id: 'move_thread', parent: 'home'
           }));
           socket.disconnect();
