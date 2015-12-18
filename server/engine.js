@@ -111,7 +111,7 @@ function Engine(options, instance) {
   //User collection per app
   var app_users = {}, app_applications = {};
 
-  // ---------------------------------- BINDINGS ----------------------------------
+  // -------------------------------- BINDINGS ---------------------------------
 
   this.cache = cache;
   this.storage = storage;
@@ -121,7 +121,32 @@ function Engine(options, instance) {
   this.app_users = app_users;
   this.app_applications = app_applications;
 
-  // ---------------------------------- API ---------------------------------
+  // ---------------------------------- CACHE ----------------------------------
+
+  this.CACHE_DEFS = {
+    'fruum.js': {
+      queue: 'static',
+      key: 'fruum.js:{app_id}'
+    },
+    'fruum_slim.js': {
+      queue: 'static',
+      key: 'fruum_slim.js:{app_id}'
+    },
+    'fruum.html': {
+      queue: 'static',
+      key: 'fruum.html:{app_id}'
+    },
+    'fruum.css': {
+      queue: 'static',
+      key: 'fruum.css:{app_id}'
+    },
+    'loader.js': {
+      queue: 'static',
+      key: 'loader.js:{app_id}'
+    }
+  }
+
+  // ---------------------------------- API ------------------------------------
 
   var api_v1 = require('./api_v1');
   new api_v1(options, instance);

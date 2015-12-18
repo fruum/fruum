@@ -9,10 +9,18 @@ var config = require('./settings'),
 
 var cli = cliArgs([
   { name: 'help', type: Boolean, description: 'Print usage instructions' },
+
+  { name: 'log-level', type: String, description: 'Set log level [info, debug, error]' },
+  { name: 'config', type: String, description: 'Use custom config file' },
+
   { name: 'setup', type: Boolean, description: 'Setup database (should be called once)' },
   { name: 'migrate', type: Boolean, description: 'Migrate database changes' },
   { name: 'teardown', type: Boolean, description: 'Tear down database (WILL DESTROY ALL DATA)' },
+
   { name: 'list-apps', type: Boolean, description: 'List all apps' },
+  { name: 'gc-app', type: String, description: 'Purge archived docs of <app_id>' },
+  { name: 'reset-users', type: String, description: 'Delete all users of app <api_key>' },
+
   { name: 'add-app', type: String, description: 'Register app <app_id>' },
   { name: 'update-app', type: String, description: 'Update app <app_id>' },
   { name: 'name', type: String, description: 'App name <name>' },
@@ -22,18 +30,20 @@ var cli = cliArgs([
   { name: 'fullpage-url', type: String, description: 'Full page url <url>' },
   { name: 'pushstate', type: String, description: 'Pushstate on fullpage [true|false]' },
   { name: 'theme', type: String, description: 'Custom theme <string>' },
-  { name: 'tier', type: String, description: 'Application tier <string>' },
   { name: 'notifications-email', type: String, description: 'Application notifications email <string>' },
   { name: 'contact-email', type: String, description: 'Application contact email <string>' },
   { name: 'delete-app', type: String, description: 'Delete app <app_id>' },
+
   { name: 'create-api-key', type: String, description: 'Create API key <app_id>' },
   { name: 'using', type: String, description: 'Combined with --create-api-key to explicitely define the api key' },
   { name: 'list-api-keys', type: String, description: 'List API keys <app_id>' },
   { name: 'delete-api-key', type: String, description: 'Delete API key <api_key>' },
-  { name: 'reset-users', type: String, description: 'Delete all users of app <api_key>' },
-  { name: 'gc-app', type: String, description: 'Purge archived docs of <app_id>' },
-  { name: 'log-level', type: String, description: 'Set log level [info, debug, error]' },
-  { name: 'config', type: String, description: 'Use custom config file' }
+
+  { name: 'set-app-property', type: String, description: 'Set app property <app_id>' },
+  { name: 'get-app-property', type: String, description: 'Get app property <app_id>' },
+  { name: 'property', type: String, description: 'Property name' },
+  { name: 'value', type: String, description: 'Value name' },
+
 ]);
 //parse command line values
 var options = cli.parse(), cli_cmd;
@@ -53,6 +63,25 @@ else {
   }
   else if (options.teardown) {
     cli_cmd = { action: 'teardown' };
+  }
+  else if (options['set-app-property']) {
+    cli_cmd = {
+      action: 'set_app_property',
+      params: {
+        app_id: options['set-app-property'],
+        property: options['property'],
+        value: options['value']
+      }
+    }
+  }
+  else if (options['get-app-property']) {
+    cli_cmd = {
+      action: 'get_app_property',
+      params: {
+        app_id: options['get-app-property'],
+        property: options['property']
+      }
+    }
   }
   else if (options['create-api-key']) {
     cli_cmd = {
@@ -92,8 +121,7 @@ else {
         pushstate: options['pushstate'],
         notifications_email: options['notifications-email'],
         contact_email: options['contact-email'],
-        theme: options['theme'],
-        tier: options['tier']
+        theme: options['theme']
       }
     }
   }
@@ -110,8 +138,7 @@ else {
         pushstate: options['pushstate'],
         notifications_email: options['notifications-email'],
         contact_email: options['contact-email'],
-        theme: options['theme'],
-        tier: options['tier']
+        theme: options['theme']
       }
     }
   }

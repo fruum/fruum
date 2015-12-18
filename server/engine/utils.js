@@ -175,6 +175,11 @@ module.exports = function(options, instance, self) {
     self.invalidateCache(app_id, document.get('id'));
     self.invalidateCache(app_id, document.get('parent'));
   }
+  self.invalidateApplication = function(app_id) {
+    _.each(self.CACHE_DEFS, function(value, key) {
+      self.cache.del(value.queue, value.key.replace('{app_id}', app_id));
+    });
+  }
   self.getCachedResponse = function(app_id, user, doc_id, hit, miss) {
     if (!user) return;
     var key = _gen_cache_key(app_id, user.get('admin'), doc_id);

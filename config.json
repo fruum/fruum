@@ -105,6 +105,7 @@
   "memory_cache": {
     "static": 50,
     "views": 10,
+    "properties": 100,
     "default": 10
   },
 

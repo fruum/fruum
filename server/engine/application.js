@@ -24,6 +24,7 @@ module.exports = function(options, instance, self) {
         var key = payload.using || uuid.v1();
         api_keys.push(key);
         storage.update_app(application, { api_keys: api_keys }, function(updated_application) {
+          self.invalidateApplication(application.get('id'));
           if (updated_application) {
             console.log('[BEGIN]');
             console.log(key);
@@ -47,6 +48,7 @@ module.exports = function(options, instance, self) {
         if (index >= 0) {
           api_keys.splice(index, 1);
           storage.update_app(application, { api_keys: api_keys }, function(updated_application) {
+            self.invalidateApplication(application.get('id'));
             logger.info(updated_application.get('id'), 'delete_api_key', payload.api_key);
           });
         }
@@ -103,7 +105,6 @@ module.exports = function(options, instance, self) {
       notifications_email: payload.notifications_email || '',
       contact_email: payload.contact_email || '',
       theme: payload.theme || '',
-      tier: payload.tier || '',
       private_key: uuid.v1(),
       created: Date.now()
     });
@@ -129,8 +130,8 @@ module.exports = function(options, instance, self) {
         if (payload.notifications_email != undefined) application.set('notifications_email', payload.notifications_email);
         if (payload.contact_email != undefined) application.set('contact_email', payload.contact_email);
         if (payload.theme != undefined) application.set('theme', payload.theme);
-        if (payload.tier != undefined) application.set('tier', payload.tier);
         storage.update_app(application, null, function() {
+          self.invalidateApplication(application.get('id'));
           logger.info(payload.app_id, 'update_app', application);
         });
       }
@@ -146,6 +147,7 @@ module.exports = function(options, instance, self) {
       }
       else {
         storage.delete_app(application, function() {
+          self.invalidateApplication(payload.app_id);
           logger.info(payload.app_id, 'delete_app', application);
         });
       }
@@ -163,6 +165,32 @@ module.exports = function(options, instance, self) {
         storage.reset_users(application, function() {
           logger.info(payload.app_id, 'reset_users', application);
         });
+      }
+    });
+  }
+
+  // ------------------------------- PROPERTIES -------------------------------
+
+  self.set_app_property = function(payload) {
+    storage.set_app_property(payload.app_id, payload.property, payload.value, function(property, value) {
+      if (property) {
+        logger.info(payload.app_id, 'set_app_property', payload);
+      }
+      else {
+        logger.error(payload.app_id, 'set_app_property failed', payload);
+      }
+    });
+  }
+
+  self.get_app_property = function(payload) {
+    storage.get_app_property(payload.app_id, payload.property, function(property, value) {
+      if (property) {
+        console.log('[BEGIN]');
+        console.log(value);
+        console.log('[END]');
+      }
+      else {
+        logger.error(payload.app_id, 'get_app_property failed', payload);
       }
     });
   }

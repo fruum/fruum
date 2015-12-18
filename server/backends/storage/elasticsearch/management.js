@@ -35,7 +35,6 @@ module.exports = function(options, client, self) {
                 pushstate: { type: 'boolean' },
                 theme: { type: 'string', index: 'not_analyzed' },
                 created: { type: 'long' },
-                tier: { type: 'string', index: 'not_analyzed' },
                 private_key: { type: 'string', index: 'not_analyzed' },
                 notifications_email: { type: 'string', index: 'not_analyzed' },
                 contact_email: { type: 'string', index: 'not_analyzed' },

@@ -11,7 +11,8 @@ var _ = require('underscore'),
     request = require('request'),
     path = require('path'),
     fs = require('fs'),
-    root_path = path.resolve(__dirname + '/..');
+    root_path = path.resolve(__dirname + '/..'),
+    PROPERTY_PREFIX = 'prop_';
 
 // --------------------------------- DOCUMENT ---------------------------------
 
@@ -262,8 +263,6 @@ var Application = Backbone.Model.extend({
     contact_email: '',
     //custom theme style
     theme: '',
-    //tier level
-    tier: '',
     //creation date in unix timestamp
     created: 0,
     //private key
@@ -275,6 +274,9 @@ var Application = Backbone.Model.extend({
     //metadata
     meta: {}
   },
+  getProperty: function(property) {
+    return this.get(PROPERTY_PREFIX + property);
+  },
   toLog: function() {
     var log = '[app] id:' + this.get('id');
     log += ' name:' + this.get('name');
@@ -284,7 +286,6 @@ var Application = Backbone.Model.extend({
     log += ' pushstate:' + this.get('pushstate');
     log += ' notifications_email:' + this.get('notifications_email');
     log += ' contact_email:' + this.get('contact_email');
-    log += ' tier:' + this.get('tier');
     log += ' theme:' + this.get('theme');
     log += ' private_key:' + this.get('private_key');
     log += ' api_keys:' + this.get('api_keys').length;
@@ -335,5 +336,6 @@ module.exports = {
   //models
   Application: Application,
   Document: Document,
-  User: User
+  User: User,
+  PROPERTY_PREFIX: PROPERTY_PREFIX
 };

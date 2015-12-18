@@ -93,6 +93,12 @@ function FruumServer(options, cli_cmd, ready) {
       case 'teardown':
         engine.teardown();
         break;
+      case 'set_app_property':
+        engine.set_app_property(cli_cmd.params);
+        break;
+      case 'get_app_property':
+        engine.get_app_property(cli_cmd.params);
+        break;
       case 'create_api_key':
         engine.create_api_key(cli_cmd.params);
         break;
@@ -191,23 +197,28 @@ function FruumServer(options, cli_cmd, ready) {
       res.status(400).send('GET param app_id is not defined');
       return;
     }
-    var cache_key = cache_namespace + ':' + app_id;
-    var cache_data = engine.cache.get('static', cache_key);
+    var cache_entry = engine.CACHE_DEFS[cache_namespace];
+    if (!cache_entry) {
+      res.status(500).send('Cache namespace error');
+      return;
+    }
+    var cache_key = cache_entry.key.replace('{app_id}', app_id);
+    var cache_data = engine.cache.get(cache_entry.queue, cache_key);
     if (cache_data) {
       res.send(cache_data);
       return;
     }
-    callback(app_id, cache_key);
+    callback(app_id, cache_key, cache_entry.queue);
   }
   //same as above but return application object as well
   function req_api_key_and_application(req, res, cache_namespace, callback) {
-    req_api_key(req, res, cache_namespace, function(app_id, cache_key) {
+    req_api_key(req, res, cache_namespace, function(app_id, cache_key, cache_queue) {
       engine.get_app(app_id, function(application) {
         if (!application) {
           res.status(404).send('Invalid app_id');
           return;
         }
-        callback(application, cache_key);
+        callback(application, cache_key, cache_queue);
       });
     });
   }
@@ -215,7 +226,7 @@ function FruumServer(options, cli_cmd, ready) {
   // -------------------------------- FRUUM.JS ---------------------------------
 
   app.get('/fruum.js', function(req, res) {
-    req_api_key(req, res, 'fruum.js', function(app_id, cache_key) {
+    req_api_key(req, res, 'fruum.js', function(app_id, cache_key, cache_queue) {
       var benchmark = Date.now();
       var builder = buildify()
         .setDir(fruum_root)
@@ -243,7 +254,7 @@ function FruumServer(options, cli_cmd, ready) {
         app_id, 'fruum.js',
         'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024)|0) + 'kb'
       );
-      engine.cache.put('static', cache_key, cache_data);
+      engine.cache.put(cache_queue, cache_key, cache_data);
       res.type('text/javascript');
       res.send(cache_data);
     });
@@ -252,7 +263,7 @@ function FruumServer(options, cli_cmd, ready) {
   // --------------------------- FRUUM_SLIM.JS ---------------------------------
 
   app.get('/fruum_slim.js', function(req, res) {
-    req_api_key(req, res, 'fruum_slim.js', function(app_id, cache_key) {
+    req_api_key(req, res, 'fruum_slim.js', function(app_id, cache_key, cache_queue) {
       var benchmark = Date.now();
       var builder = buildify()
         .setDir(fruum_root)
@@ -272,7 +283,7 @@ function FruumServer(options, cli_cmd, ready) {
         app_id, 'fruum_slim.js',
         'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024)|0) + 'kb'
       );
-      engine.cache.put('static', cache_key, cache_data);
+      engine.cache.put(cache_queue, cache_key, cache_data);
       res.type('text/javascript');
       res.send(cache_data);
     });
@@ -281,7 +292,7 @@ function FruumServer(options, cli_cmd, ready) {
   // ------------------------------- FRUUM.HTML --------------------------------
 
   app.get('/fruum.html', function(req, res) {
-    req_api_key(req, res, 'fruum.html', function(app_id, cache_key) {
+    req_api_key(req, res, 'fruum.html', function(app_id, cache_key, cache_queue) {
       var benchmark = Date.now();
       var cache_data = buildify()
         .setDir(fruum_root)
@@ -308,7 +319,7 @@ function FruumServer(options, cli_cmd, ready) {
         app_id, 'fruum.html',
         'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024)|0) + 'kb'
       );
-      engine.cache.put('static', cache_key, cache_data);
+      engine.cache.put(cache_queue, cache_key, cache_data);
       res.type('text/html');
       res.send(cache_data);
     });
@@ -317,7 +328,7 @@ function FruumServer(options, cli_cmd, ready) {
   // ------------------------------- FRUUM.CSS ---------------------------------
 
   app.get('/fruum.css', function(req, res) {
-    req_api_key_and_application(req, res, 'fruum.css', function(application, cache_key) {
+    req_api_key_and_application(req, res, 'fruum.css', function(application, cache_key, cache_queue) {
       var benchmark = Date.now();
       application.getThemeSass(function(overrides) {
         var main_sass = fs.readFileSync(client_root + '/style/fruum.scss', {encoding: 'utf8'});
@@ -342,7 +353,7 @@ function FruumServer(options, cli_cmd, ready) {
               application.get('id'), 'fruum.css',
               'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024)|0) + 'kb'
             );
-            engine.cache.put('static', cache_key, cache_data);
+            engine.cache.put(cache_queue, cache_key, cache_data);
             res.type('text/css');
             res.send(cache_data);
           }
@@ -354,7 +365,7 @@ function FruumServer(options, cli_cmd, ready) {
   // -------------------------------- LOADER.JS --------------------------------
 
   app.get('/loader.js', function(req, res) {
-    req_api_key_and_application(req, res, 'loader.js', function(application, cache_key) {
+    req_api_key_and_application(req, res, 'loader.js', function(application, cache_key, cache_queue) {
       var benchmark = Date.now();
       application.getThemeSass(function(overrides) {
         var main_sass = fs.readFileSync(loader_root + '/style.scss', {encoding: 'utf8'});
@@ -401,7 +412,7 @@ function FruumServer(options, cli_cmd, ready) {
               application.get('id'), 'loader.js',
               'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024)|0) + 'kb'
             );
-            engine.cache.put('static', cache_key, cache_data);
+            engine.cache.put(cache_queue, cache_key, cache_data);
             res.type('text/javascript');
             res.send(cache_data);
           }

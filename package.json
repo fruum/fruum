@@ -1,6 +1,6 @@
 {
   "name": "Fruum",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "homepage": "https://fruum.github.io",
   "description": "An embeddable communications hub for your forum, documentation, and real‐time chat streams",
   "license": "Apache-2.0",
@@ -19,7 +19,7 @@
   "dependencies": {
     "async": "^1.4.2",
     "backbone": "^1.2.3",
-    "body-parser": "^1.14.1",
+    "body-parser": "^1.14.2",
     "buildify": "^0.4.0",
     "command-line-args": "^1.0.2",
     "compression": "^1.6.0",

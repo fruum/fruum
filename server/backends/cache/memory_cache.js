@@ -18,6 +18,11 @@ var queues = {
     array: [],
     max_size: 10
   },
+  properties: {
+    hash: {},
+    array: [],
+    max_size: 100
+  },
   default: {
     hash: {},
     array: [],
@@ -34,6 +39,7 @@ module.exports = function(options, storage) {
   if (options.memory_cache) {
     queues.static.max_size = queues.static.max_size || options.memory_cache.static;
     queues.views.max_size = queues.views.max_size || options.memory_cache.views;
+    queues.properties.max_size = queues.properties.max_size || options.memory_cache.properties;
     queues.default.max_size = queues.default.max_size || options.memory_cache.default;
   }
   //store a value in cache

@@ -91,7 +91,8 @@ module.exports = function(options) {
 
   /*
   Summary:
-  Get an application model by id
+  Get an application model by id. The model should also contain all the
+  properties assigned using "set_app_property" call.
 
   Parameters:
   - app_id: Application id
@@ -110,6 +111,30 @@ module.exports = function(options) {
     api_key is invalid
   */
   this.get_api_key = function(api_key, callback) { callback(); }
+
+  /*
+  Summary:
+  Set an application property
+
+  Parameters:
+  - app_id: Application id
+  - property: string defining property name
+  - value: a value of the property
+  - callback: function callback, passing property and value
+    on success
+  */
+  this.set_app_property = function(app_id, property, value, callback) { callback(); }
+
+  /*
+  Summary:
+  Get an application property
+
+  Parameters:
+  - app_id: Application id
+  - property: string defining property name
+  - callback: function callback, passing property and value on success
+  */
+  this.get_app_property = function(app_id, property, callback) { callback(); }
 
   /*
   Summary:
