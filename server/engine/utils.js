@@ -114,7 +114,7 @@ module.exports = function(options, instance, self) {
   };
   //emits a signal to all users viewing the same parent, in order to request
   //a refresh
-  self.broadcast = function(by_user, document, action) {
+  self.broadcast = function(by_user, document, action, no_admin_check) {
     var app = app_users[by_user.get('app_id')];
     if (!app) return;
     var parent = document.get('parent'),
@@ -124,7 +124,7 @@ module.exports = function(options, instance, self) {
       var viewing = user.get('viewing'),
           socket = user.get('socket');
       if ((viewing == parent || viewing == id) && user != by_user && socket) {
-        if (user.get('admin') || document.get('visible'))
+        if (user.get('admin') || document.get('visible') || no_admin_check)
           socket.emit(action || 'fruum:dirty', json);
       }
     });

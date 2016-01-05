@@ -68,6 +68,7 @@
     "report",
     "monitor",
     "notify",
+    "slack",
     "garbage_collect"
   ],
 
@@ -97,6 +98,15 @@
       "hours": 0,
       "days": 1,
       "weeks": 0,
+      "months": 0,
+      "years": 0
+    },
+    "keep_inactive_users_for": {
+      "seconds": 0,
+      "minutes": 0,
+      "hours": 0,
+      "days": 0,
+      "weeks": 1,
       "months": 0,
       "years": 0
     }

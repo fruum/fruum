@@ -38,7 +38,7 @@ Models
         locked: false,
         visible: true,
         allow_threads: true,
-        allow_channels: true,
+        allow_channels: false,
         inappropriate: false,
         //denormalized author details
         user_id: '',
@@ -58,6 +58,8 @@ Models
         archived_ts: 0,
         //tags
         tags: [],
+        //attachments, array of [{ name: '', type: 'image', data: 'base64' }, ..]
+        attachments: [],
         //metadata
         meta: {}
       }

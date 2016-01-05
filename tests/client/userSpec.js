@@ -1,5 +1,7 @@
-var user_connect = require('./utils').user_connect,
-    load_fixture = require('./utils').load_fixture;
+var Utils = require('./utils'),
+    user_connect = Utils.user_connect,
+    load_fixture = Utils.load_fixture,
+    set_field = Utils.set_field;
 
 describe("User client", function() {
   it("cannot create category", function(done) {
@@ -69,19 +71,21 @@ describe("User client", function() {
   });
 
   it("can create channel", function(done) {
-    user_connect(function(socket) {
-      var payload = {
-        parent: 'home',
-        type: 'channel',
-        header: 'foo',
-        body: 'bar'
-      }
-      socket.emit('fruum:add', payload);
-      socket.on('fruum:add', function(response) {
-        socket.removeListener('fruum:add', this);
-        expect(response).toEqual(jasmine.objectContaining(payload));
-        socket.disconnect();
-        done();
+    set_field('home', 'allow_channels', true, function() {
+      user_connect(function(socket) {
+        var payload = {
+          parent: 'home',
+          type: 'channel',
+          header: 'foo',
+          body: 'bar'
+        }
+        socket.emit('fruum:add', payload);
+        socket.on('fruum:add', function(response) {
+          socket.removeListener('fruum:add', this);
+          expect(response).toEqual(jasmine.objectContaining(payload));
+          socket.disconnect();
+          done();
+        });
       });
     });
   });
@@ -166,40 +170,88 @@ describe("User client", function() {
   });
 
   it("can create thread to subcategory", function(done) {
-    user_connect(function(socket) {
-      load_fixture(function() {
-        var payload = {
-          parent: 'category',
-          type: 'thread',
-          header: 'foo',
-          body: 'bar'
-        }
-        socket.emit('fruum:add', payload);
-        socket.on('fruum:add', function(response) {
-          socket.removeListener('fruum:add', this);
-          expect(response).toEqual(jasmine.objectContaining(payload));
-          socket.disconnect();
-          done();
+    set_field('category', 'allow_threads', true, function() {
+      user_connect(function(socket) {
+        load_fixture(function() {
+          var payload = {
+            parent: 'category',
+            type: 'thread',
+            header: 'foo',
+            body: 'bar'
+          }
+          socket.emit('fruum:add', payload);
+          socket.on('fruum:add', function(response) {
+            socket.removeListener('fruum:add', this);
+            expect(response).toEqual(jasmine.objectContaining(payload));
+            socket.disconnect();
+            done();
+          });
+        });
+      });
+    });
+  });
+
+  it("cannot create thread to subcategory with disabled threads", function(done) {
+    set_field('category', 'allow_threads', false, function() {
+      user_connect(function(socket) {
+        load_fixture(function() {
+          var payload = {
+            parent: 'category',
+            type: 'thread',
+            header: 'foo',
+            body: 'bar'
+          }
+          socket.emit('fruum:add', payload);
+          socket.on('fruum:add', function(response) {
+            socket.removeListener('fruum:add', this);
+            expect(response).toBeUndefined();
+            socket.disconnect();
+            done();
+          });
         });
       });
     });
   });
 
   it("can create channel to subcategory", function(done) {
-    user_connect(function(socket) {
-      load_fixture(function() {
-        var payload = {
-          parent: 'category',
-          type: 'channel',
-          header: 'foo',
-          body: 'bar'
-        }
-        socket.emit('fruum:add', payload);
-        socket.on('fruum:add', function(response) {
-          socket.removeListener('fruum:add', this);
-          expect(response).toEqual(jasmine.objectContaining(payload));
-          socket.disconnect();
-          done();
+    set_field('category', 'allow_channels', true, function() {
+      user_connect(function(socket) {
+        load_fixture(function() {
+          var payload = {
+            parent: 'category',
+            type: 'channel',
+            header: 'foo',
+            body: 'bar'
+          }
+          socket.emit('fruum:add', payload);
+          socket.on('fruum:add', function(response) {
+            socket.removeListener('fruum:add', this);
+            expect(response).toEqual(jasmine.objectContaining(payload));
+            socket.disconnect();
+            done();
+          });
+        });
+      });
+    });
+  });
+
+  it("cannot create channel to subcategory with disabled channels", function(done) {
+    set_field('category', 'allow_channels', false, function() {
+      user_connect(function(socket) {
+        load_fixture(function() {
+          var payload = {
+            parent: 'category',
+            type: 'channel',
+            header: 'foo',
+            body: 'bar'
+          }
+          socket.emit('fruum:add', payload);
+          socket.on('fruum:add', function(response) {
+            socket.removeListener('fruum:add', this);
+            expect(response).toBeUndefined();
+            socket.disconnect();
+            done();
+          });
         });
       });
     });

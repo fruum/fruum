@@ -1,5 +1,7 @@
-var anonymous_connect = require('./utils').anonymous_connect,
-    load_fixture = require('./utils').load_fixture;
+var Utils = require('./utils'),
+    anonymous_connect = Utils.anonymous_connect,
+    load_fixture = Utils.load_fixture,
+    set_field = Utils.set_field;
 
 describe("Anonymous client", function() {
   it("can view category", function(done) {

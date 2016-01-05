@@ -1,5 +1,7 @@
-var admin_connect = require('./utils').admin_connect,
-    load_fixture = require('./utils').load_fixture;
+var Utils = require('./utils'),
+    admin_connect = Utils.admin_connect,
+    load_fixture = Utils.load_fixture,
+    set_field = Utils.set_field;
 
 describe("Admin client", function() {
   it("creates category", function(done) {

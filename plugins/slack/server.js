@@ -81,7 +81,7 @@ function Slack(options, instance) {
       }
       else {
         link = application.getShareURL(document.get('id'));
-        pretext += ' created new ' + document.get('parent_type');
+        pretext += ' created new ' + document.get('type');
       }
       request({
         url: webhook,

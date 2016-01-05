@@ -56,8 +56,7 @@
   }
   //initialize loader on document ready
   ready(function() {
-    if (!window.fruumSettings) return;
-
+    window.fruumSettings = window.fruumSettings || {};
     //replaced by server
     window.fruumSettings.app_id = '__app_id__';
     window.fruumSettings.fullpage_url = normalizeUrl('__fullpage_url__');

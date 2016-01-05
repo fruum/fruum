@@ -4,7 +4,8 @@
 
 'use strict';
 
-var express = require('express'),
+var _ = require('underscore'),
+    express = require('express'),
     Models = require('./models');
 
 function API_v1(options, instance) {
@@ -59,7 +60,6 @@ function API_v1(options, instance) {
       if (application) {
         var document = new Models.Document(req.body);
         document.escape();
-        document.extractTags();
         //validate parent exists
         if (!document.get('parent')) {
           res.json({ error: 'parent_missing' });
@@ -97,22 +97,39 @@ function API_v1(options, instance) {
       if (application) {
         storage.get(application.get('id'), id, function(document) {
           if (document) {
-            document.set(req.body);
-            document.escape();
-            document.extractTags();
-            //verify that parent exists
-            storage.get(application.get('id'), document.get('parent'), function(parent_doc) {
-              if (!parent_doc) {
-                res.json({ error: 'invalid_parent_id: '  + document.get('parent') });
-              }
-              else {
-                document.setParentDocument(parent_doc);
-                storage.update(application.get('id'), document, null, function(updated_doc) {
-                  engine.invalidateDocument(application.get('id'), updated_doc);
-                  res.json(updated_doc.toJSON());
-                });
-              }
-            });
+            //home
+            if (document.get('id') == 'home' && !document.get('parent')) {
+              //update only flags
+              _.each([
+                'header', 'body', 'initials',
+                'visible', 'allow_threads', 'allow_channels'
+              ], function(field) {
+                if (req.body[field] != undefined) {
+                  document.set(field, req.body[field]);
+                }
+              });
+              storage.update(application.get('id'), document, null, function(updated_doc) {
+                engine.invalidateDocument(application.get('id'), updated_doc);
+                res.json(updated_doc.toJSON());
+              });
+            }
+            else {
+              document.set(req.body);
+              document.escape();
+              //verify that parent exists
+              storage.get(application.get('id'), document.get('parent'), function(parent_doc) {
+                if (!parent_doc) {
+                  res.json({ error: 'invalid_parent_id: '  + document.get('parent') });
+                }
+                else {
+                  document.setParentDocument(parent_doc);
+                  storage.update(application.get('id'), document, null, function(updated_doc) {
+                    engine.invalidateDocument(application.get('id'), updated_doc);
+                    res.json(updated_doc.toJSON());
+                  });
+                }
+              });
+            }
           }
           else {
             res.json({ error: 'invalid_doc_id: '  + id });

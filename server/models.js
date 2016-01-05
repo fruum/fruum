@@ -46,7 +46,7 @@ var Document = Backbone.Model.extend({
     locked: false,
     visible: true,
     allow_threads: true,
-    allow_channels: true,
+    allow_channels: false,
     inappropriate: false,
     //denormalized author details
     user_id: '',
@@ -66,6 +66,8 @@ var Document = Backbone.Model.extend({
     archived_ts: 0,
     //tags
     tags: [],
+    //attachments, array of [{ name: '', type: 'image', data: 'base64' }, ..]
+    attachments: [],
     //metadata
     meta: {}
   },
@@ -132,16 +134,6 @@ var Document = Backbone.Model.extend({
       initials: 'HOM'
     });
     return this;
-  },
-  extractTags: function() {
-    var extracted = (this.get('header') || '').match(/\[(.*?)\]/g);
-    //validate tags
-    var tags = [];
-    _.each(extracted, function(tag) {
-      if (tag && tag[0] == '[' && tag[tag.length - 1] == ']')
-        tags.push(tag.substr(1, tag.length - 2));
-    });
-    this.set('tags', tags);
   },
   isSearchable: function() {
     return this.get('visible') &&

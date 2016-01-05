@@ -24,6 +24,7 @@ Handles the bottom input part
         preview: '[data-action="preview"]',
         help: '[data-action="help"]',
         emoji_panel: '[data-action="emojipanel"]',
+        attachments: '[data-action="attachments"]',
         help_panel: '.fruum-js-help',
         show_notifications: '.fruum-js-show-notifications',
         avatar_container: '.fruum-js-avatar-container',
@@ -33,6 +34,7 @@ Handles the bottom input part
         field_initials: '[data-field="initials"]',
         field_header: '[data-field="header"]',
         field_body: '[data-field="body"]',
+        field_tags: '[data-field="tags"]',
         field_notifications: '[data-field="notifications"]',
         field_is_blog: '[data-field="is_blog"]',
         channel_input: '.fruum-js-channel-input'
@@ -49,6 +51,7 @@ Handles the bottom input part
         'blur @ui.field_header': 'onHeaderBlur',
         'click @ui.help': 'onHelp',
         'click @ui.emoji_panel': 'onEmojiPanel',
+        'click @ui.attachments': 'onAttachments',
         'click @ui.post': 'onPost',
         'click @ui.add_thread': 'onAddThread',
         'click @ui.add_article': 'onAddArticle',
@@ -63,6 +66,7 @@ Handles the bottom input part
         'keyup @ui.field_body': 'onKeyBody',
         'keyup @ui.field_header': 'onKeyHeader',
         'keyup @ui.field_initials': 'onKeyInitials',
+        'keyup @ui.field_tags': 'onKeyTags',
         'change @ui.field_is_blog': 'onKeyIsBlog'
       },
       initialize: function(options) {
@@ -74,9 +78,15 @@ Handles the bottom input part
         this.onAttach = this.onDomRefresh = this.onInteracting;
         this.mode = this._getMode();
         this.autocomplete_view = new Fruum.views.AutocompleteView({
+          ui_state: this.ui_state,
           interactions: this
         });
         this.emojipanel_view = new Fruum.views.EmojiPanelView({
+          ui_state: this.ui_state,
+          interactions: this
+        });
+        this.attachments_view = new Fruum.views.AttachmentsView({
+          ui_state: this.ui_state,
           interactions: this
         });
       },
@@ -117,12 +127,19 @@ Handles the bottom input part
       },
       onRender: function() {
         this.emojipanel_view.hide();
+        this.attachments_view.hide();
       },
       onEmojiPanel: function() {
+        this.attachments_view.hide();
         this.emojipanel_view.toggle();
+      },
+      onAttachments: function() {
+        this.emojipanel_view.hide();
+        this.attachments_view.toggle();
       },
       onHelp: function() {
         this.emojipanel_view.hide();
+        this.attachments_view.hide();
         if (this.ui.help_panel.is(':visible'))
           this.ui.help_panel.slideUp('show', 'easeInOutBack');
         else
@@ -179,12 +196,17 @@ Handles the bottom input part
                this.ui_state.get('searching');
       },
       onPreview: function() {
+        this.emojipanel_view.hide();
+        this.attachments_view.hide();
         this.ui.preview.toggleClass('fruum-is-active');
+        this.renderPreview();
+      },
+      renderPreview: function() {
         if (this.ui.preview.hasClass('fruum-is-active')) {
           var h = this.ui.field_body.height();
           this.ui.field_body.hide();
           this.ui.preview_panel.css('display','inline-block').height(h).html(
-            Fruum.utils.print(this.ui.field_body.val())
+            Fruum.utils.print(this.ui.field_body.val(), this.ui_state.get('editing').attachments)
           );
         }
         else {
@@ -282,18 +304,18 @@ Handles the bottom input part
             case 66: //b
             case 73: //i
               selection = (this.ui.field_body.getSelection() || {}).text;
+              event.preventDefault();
               break;
           }
-          if (selection) {
-            switch(event.which) {
-              case 66: //b
-                this.ui.field_body.replaceSelection('**' + selection + '**');
-                break;
-              case 73: //i
-                this.ui.field_body.replaceSelection('*' + selection + '*');
-                break;
-            }
-            event.preventDefault();
+          switch(event.which) {
+            case 66: //b
+              if (selection) this.ui.field_body.replaceSelection('**' + selection + '**');
+              else this.ui.field_body.val(this.ui.field_body.val() + ' **bold**');
+              break;
+            case 73: //i
+              if (selection) this.ui.field_body.replaceSelection('*' + selection + '*');
+              else this.ui.field_body.val(this.ui.field_body.val() + ' *italics*');
+              break;
           }
         }
         this.autocomplete_view.onKey(event);
@@ -361,16 +383,36 @@ Handles the bottom input part
           id = this.ui_state.get('editing').id;
           order = this.ui_state.get('editing').order || order;
         }
+        //prepare tags
+        var tags = _.uniq(_.compact(
+          (this.ui.field_tags.val() || '').replace(/ /g, ',').toLowerCase().split(',')
+        ));
+        var body = this.ui.field_body.val() || '';
         Fruum.io.trigger(id?'fruum:update':'fruum:add', {
           id: id,
           parent: this.ui.field_parent.val() || '',
           initials: this.ui.field_initials.val() || '',
           header: this.ui.field_header.val() || '',
-          body: this.ui.field_body.val() || '',
+          body: body,
           type: this.ui.field_type.val() || '',
+          attachments: this.cleanAttachments(
+            body,
+            this.ui_state.get('editing').attachments || []
+          ),
+          tags: tags,
           is_blog: this.ui.field_is_blog.is(':checked'),
           order: order
         });
+      },
+      //remove unused attachments
+      cleanAttachments: function(body, attachments) {
+        for (var i = attachments.length - 1; i >= 0; --i) {
+          var attachment = attachments[i];
+          if (!Fruum.utils.usesAttachment(body, attachment)) {
+            attachments.splice(i, 1);
+          }
+        }
+        return attachments;
       },
       onShowNotifications: function(event) {
         event && event.preventDefault();
@@ -390,6 +432,16 @@ Handles the bottom input part
       onKeyInitials: function() {
         var editing = this.ui_state.get('editing');
         editing.initials = this.ui.field_initials.val() || '';
+      },
+      onKeyTags: function(event) {
+        //check for trailing space
+        if (event.which == 32) {
+          var tags = this.ui.field_tags.val() || '';
+          if (tags.charAt(tags.length - 1) == ' ' && tags.charAt(tags.length - 2) != ',') {
+            tags = (tags.trim() + ', ').replace(/,{2,}/g, ',').replace(/, ,/g, ', ');
+            this.ui.field_tags.val(tags);
+          }
+        }
       },
       onKeyIsBlog: function() {
         var editing = this.ui_state.get('editing');

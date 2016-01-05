@@ -4,6 +4,7 @@ var fs = require('fs'), window = {};
 eval(fs.readFileSync(__dirname + '/../client/js/defs.js', 'utf8'));
 window.Fruum.libs = window.Fruum.libs || {};
 window.Fruum.libs.marked = require('marked');
+window.Fruum.libs._ = require('underscore');
 Fruum = window.Fruum;
 eval(fs.readFileSync(__dirname + '/../client/js/utils.js', 'utf8'));
 Fruum.require[0]();
@@ -68,5 +69,22 @@ describe("Reactions", function() {
     expect(Fruum.utils.printReaction(999)).toBe('999');
     expect(Fruum.utils.printReaction(1000)).toBe('1.0K');
     expect(Fruum.utils.printReaction(1100)).toBe('1.1K');
+  });
+});
+
+describe("Attachments", function() {
+  it("are displayed", function() {
+    expect(Fruum.utils.print('foo [[image:yo]] bar')).toBe('<p>foo [[image:yo]] bar</p>\n');
+    expect(Fruum.utils.print('[[image:yo]] foo bar', [])).toBe('<p>[[image:yo]] foo bar</p>\n');
+    expect(Fruum.utils.print('foo bar [[image:yo]] space [[image:yo]]', [{
+      name: 'yo',
+      type: 'image',
+      data: 'bar'
+    }])).toBe('<p>foo bar <img src="bar" alt="yo"> space <img src="bar" alt="yo"></p>\n');
+  });
+  it("are detected", function() {
+    expect(Fruum.utils.usesAttachment('foo [[image:yo]] bar', { type: 'image', name: 'yo' })).toBe(true);
+    expect(Fruum.utils.usesAttachment('foo [[image:yo]] bar', { type: 'image', name: 'yo2' })).toBe(false);
+    expect(Fruum.utils.usesAttachment('foo [[image:yo]] bar', { type: 'file', name: 'yo' })).toBe(false);
   });
 });

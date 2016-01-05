@@ -25,6 +25,9 @@ module.exports = {
   gc_chat: function (source, q) {
     return source.type == 'post' && source.parent_type == 'channel' && source.updated <= q;
   },
+  gc_users: function (source, q) {
+    return source.admin == false && !(source.watch || []).length && source.last_login <= q;
+  },
   match_users: function(source, q) {
     return _.isMatch(source, q);
   },

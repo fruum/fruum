@@ -207,9 +207,21 @@ function load_fixture(done) {
   });
 }
 
+function set_field(id, field, value, done) {
+  var body = { id: id };
+  body[field] = value;
+  request({
+    method: 'PUT',
+    url: url + '/api/v1/testkey/docs/' + id,
+    json: true,
+    body: body
+  }, done);
+}
+
 module.exports = {
   admin_connect: admin_connect,
   user_connect: user_connect,
   anonymous_connect: anonymous_connect,
-  load_fixture: load_fixture
+  load_fixture: load_fixture,
+  set_field: set_field
 }
