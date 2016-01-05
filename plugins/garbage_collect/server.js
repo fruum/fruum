@@ -8,15 +8,34 @@ var _ = require('underscore'),
     logger = require('../../server/logger');
 
 function GarbageCollect(options, instance) {
-  var keep_archived_for = moment.duration(options.garbage_collect.keep_archived_for).asMilliseconds(),
-      keep_chat_for = moment.duration(options.garbage_collect.keep_chat_for).asMilliseconds();
+  var keep_archived_for = null,
+      keep_chat_for = null,
+      keep_inactive_users_for = null;
+
+  if (options.garbage_collect.keep_archived_for)
+    keep_archived_for = moment.duration(options.garbage_collect.keep_archived_for).asMilliseconds();
+
+  if (options.garbage_collect.keep_chat_for)
+    keep_chat_for = moment.duration(options.garbage_collect.keep_chat_for).asMilliseconds();
+
+  if (options.garbage_collect.keep_inactive_users_for)
+    keep_inactive_users_for = moment.duration(options.garbage_collect.keep_inactive_users_for).asMilliseconds();
 
   function process_app(application) {
-    logger.system("Garbage collecting [" + application.get('id') + "] for archived older than " + moment(Date.now() - keep_archived_for).fromNow());
-    instance.storage.gc_archived(application.get('id'), Date.now() - keep_archived_for, function() {});
+    if (keep_archived_for) {
+      logger.system("Garbage collecting [" + application.get('id') + "] for archived older than " + moment(Date.now() - keep_archived_for).fromNow());
+      instance.storage.gc_archived(application.get('id'), Date.now() - keep_archived_for, function() {});
+    }
 
-    logger.system("Garbage collecting [" + application.get('id') + "] for chat older than " + moment(Date.now() - keep_chat_for).fromNow());
-    instance.storage.gc_chat(application.get('id'), Date.now() - keep_chat_for, function() {});
+    if (keep_chat_for) {
+      logger.system("Garbage collecting [" + application.get('id') + "] for chat older than " + moment(Date.now() - keep_chat_for).fromNow());
+      instance.storage.gc_chat(application.get('id'), Date.now() - keep_chat_for, function() {});
+    }
+
+    if (keep_inactive_users_for) {
+      logger.system("Garbage collecting [" + application.get('id') + "] for inactive users older than " + moment(Date.now() - keep_inactive_users_for).fromNow());
+      instance.storage.gc_users(application.get('id'), Date.now() - keep_inactive_users_for, function() {});
+    }
   }
 
   this.cron = function() {

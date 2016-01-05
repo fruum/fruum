@@ -39,46 +39,6 @@ $char-list: append($char-list, "~" );
   display: inline-block;
   @include block-object-shapes;
   overflow: hidden;
-  &.fruum-manage-settings {
-    position: relative;
-    cursor: pointer;
-    cursor: hand;
-    &:not(:hover):not(.fruum-manage-clicked) {
-      &:after {
-        content: '';
-        position: absolute;
-        display: block;
-        width: 0.6em;
-        padding-top: 0.6em;
-        height: 0;
-        background-color: $avatar-text-color;
-        opacity: 0.5;
-        top: 2px;
-        left: 50%;
-        margin-left: -0.3em;
-        @include block-radius;
-      }
-    }
-    &:hover,
-    &.fruum-manage-clicked {
-      color: transparent;
-      &:after {
-        position: absolute;
-        display: block;
-        font-family: 'fruum-icons';
-        content: '\E016';
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        background-color: rgba( 0, 0, 0, 0.25 );
-        line-height: 1.13;
-        font-size: 250%;
-        text-align: center;
-        color: $avatar-text-color;
-      }
-    }
-  }
 }
 
 #fruum img.fruum-avatar-icon {

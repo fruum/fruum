@@ -17,26 +17,14 @@ Breadcrumb view
       template: '#fruum-template-breadcrumb',
       ui: {
         navigate: '.fruum-js-navigate',
-        close_search: '.fruum-js-search-close',
-        manageopen: '.fruum-manage-settings',
-        manage: '.fruum-manage',
-        edit: '[data-action="edit"]',
-        visible: '[data-action="visible"]',
-        allow_threads: '[data-action="allow_threads"]',
-        allow_channels: '[data-action="allow_channels"]'
+        close_search: '.fruum-js-search-close'
       },
       modelEvents: {
         'change:viewing change:searching': 'render'
       },
       events: {
         'click @ui.close_search': 'onCloseSearch',
-        'click @ui.navigate': 'onNavigate',
-        'click @ui.manageopen': 'onManage',
-        'click @ui.manage': 'onManage',
-        'click @ui.edit': 'onEdit',
-        'click @ui.allow_threads': 'onAllowThreads',
-        'click @ui.allow_channels': 'onAllowChannels',
-        'click @ui.visible': 'onVisible'
+        'click @ui.navigate': 'onNavigate'
       },
       initialize: function(options) {
         this.notifications = options.notifications;
@@ -55,46 +43,6 @@ Breadcrumb view
         event.preventDefault();
         if (this.notifications.length) this.notifications.reset();
         else Fruum.io.trigger('fruum:clear_search');
-      },
-      onManage: function(event) {
-        Fruum.io.trigger('fruum:toggle_manage', this.ui.manage);
-      },
-      onAllowThreads: function(event) {
-        event.preventDefault();
-        var viewing = this.model.get('viewing');
-        if (viewing.id) {
-          Fruum.io.trigger('fruum:field', {
-            id: viewing.id,
-            field: 'allow_threads',
-            value: !viewing.allow_threads
-          });
-        }
-      },
-      onAllowChannels: function(event) {
-        event.preventDefault();
-        var viewing = this.model.get('viewing');
-        if (viewing.id) {
-          Fruum.io.trigger('fruum:field', {
-            id: viewing.id,
-            field: 'allow_channels',
-            value: !viewing.allow_channels
-          });
-        }
-      },
-      onVisible: function(event) {
-        event.preventDefault();
-        var viewing = this.model.get('viewing');
-        if (viewing.id && confirm(viewing.visible?Messages.private:Messages.public)) {
-          Fruum.io.trigger('fruum:field', {
-            id: viewing.id,
-            field: 'visible',
-            value: !viewing.visible
-          });
-        }
-      },
-      onEdit: function(event) {
-        event.preventDefault();
-        Fruum.io.trigger('fruum:edit', _.clone(this.model.get('viewing')));
       }
     });
   });

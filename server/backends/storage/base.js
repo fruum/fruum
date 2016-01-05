@@ -91,7 +91,8 @@ module.exports = function(options) {
 
   /*
   Summary:
-  Get an application model by id
+  Get an application model by id. The model should also contain all the
+  properties assigned using "set_app_property" call.
 
   Parameters:
   - app_id: Application id
@@ -110,6 +111,30 @@ module.exports = function(options) {
     api_key is invalid
   */
   this.get_api_key = function(api_key, callback) { callback(); }
+
+  /*
+  Summary:
+  Set an application property
+
+  Parameters:
+  - app_id: Application id
+  - property: string defining property name
+  - value: a value of the property
+  - callback: function callback, passing property and value
+    on success
+  */
+  this.set_app_property = function(app_id, property, value, callback) { callback(); }
+
+  /*
+  Summary:
+  Get an application property
+
+  Parameters:
+  - app_id: Application id
+  - property: string defining property name
+  - callback: function callback, passing property and value on success
+  */
+  this.get_app_property = function(app_id, property, callback) { callback(); }
 
   /*
   Summary:
@@ -429,4 +454,19 @@ module.exports = function(options) {
   - callback: done function callback
   */
   this.gc_chat = function(app_id, timestamp, callback) { callback(); }
+
+  /*
+  Summary:
+  Garbage collect inactive users
+
+  Description:
+  Delete all inactive users who have logged in less than the a specific
+  unix timestamp
+
+  Parameters:
+  - app_id: the application id
+  - timestamp: a unix timestamp
+  - callback: done function callback
+  */
+  this.gc_users = function(app_id, timestamp, callback) { callback(); }
 }

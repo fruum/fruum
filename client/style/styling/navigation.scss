@@ -263,6 +263,27 @@
   position: relative;
   width: 100%;
   padding: 0 2em 1em 0;
+  margin-top: 1em;
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+  .fruum-avatar-icon {
+    // inherits font size of $stream-default-font
+    float: left;
+    margin-right: 0.5em;
+    width: 3em;
+    height: 3em;
+    line-height: 3em;
+    font-size: 0.4*$stream-default-lineheight;
+    font-weight: $complementary-font-weight;
+  }
+  .fruum-secondary-data {
+    display: block;
+    font-size: 70%;
+    font-weight: $base-font-weight;
+  }
 }
 
 #fruum .fruum-header-message {

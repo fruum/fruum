@@ -1,14 +1,16 @@
-var anonymous_connect = require('./utils').anonymous_connect,
-    load_fixture = require('./utils').load_fixture;
+var Utils = require('./utils'),
+    anonymous_connect = Utils.anonymous_connect,
+    load_fixture = Utils.load_fixture,
+    set_field = Utils.set_field;
 
 describe("Anonymous client", function() {
   it("can view category", function(done) {
     anonymous_connect(function(socket) {
       load_fixture(function() {
         socket.emit('fruum:view', { id: 'category' });
-        socket.on('fruum:view', function(payload) {
+        socket.on('fruum:view', function(response) {
           socket.removeListener('fruum:view', this);
-          expect(payload.id).toEqual('category');
+          expect(response.id).toEqual('category');
           socket.disconnect();
           done();
         });
@@ -19,9 +21,63 @@ describe("Anonymous client", function() {
   it("cannot get all categories", function(done) {
     anonymous_connect(function(socket) {
       socket.emit('fruum:categories', {});
-      socket.on('fruum:categories', function(payload) {
+      socket.on('fruum:categories', function(response) {
         socket.removeListener('fruum:categories', this);
-        expect(payload).toBeUndefined();
+        expect(response).toBeUndefined();
+        socket.disconnect();
+        done();
+      });
+    });
+  });
+
+  it("cannot create thread", function(done) {
+    anonymous_connect(function(socket) {
+      var payload = {
+        parent: 'home',
+        type: 'thread',
+        header: 'foo',
+        body: 'bar'
+      }
+      socket.emit('fruum:add', payload);
+      socket.on('fruum:add', function(response) {
+        socket.removeListener('fruum:add', this);
+        expect(response).toBeUndefined();
+        socket.disconnect();
+        done();
+      });
+    });
+  });
+
+  it("cannot create article", function(done) {
+    anonymous_connect(function(socket) {
+      var payload = {
+        parent: 'home',
+        type: 'article',
+        header: 'foo',
+        body: 'bar'
+      }
+      socket.emit('fruum:add', payload);
+      socket.on('fruum:add', function(response) {
+        socket.removeListener('fruum:add', this);
+        expect(response).toBeUndefined();
+        socket.disconnect();
+        done();
+      });
+    });
+  });
+
+  it("cannot create channel", function(done) {
+    anonymous_connect(function(socket) {
+      var payload = {
+        parent: 'home',
+        type: 'channel',
+        header: 'foo',
+        body: 'bar'
+      }
+      socket.emit('fruum:add', payload);
+      socket.on('fruum:add', function(response) {
+        socket.removeListener('fruum:add', this);
+        expect(response).toBeUndefined();
         socket.disconnect();
         done();
       });
@@ -38,9 +94,9 @@ describe("Anonymous client", function() {
           body: 'post body'
         }
         socket.emit('fruum:add', payload);
-        socket.on('fruum:add', function(payload) {
+        socket.on('fruum:add', function(response) {
           socket.removeListener('fruum:add', this);
-          expect(payload).toBeUndefined();
+          expect(response).toBeUndefined();
           socket.disconnect();
           done();
         });
@@ -56,9 +112,9 @@ describe("Anonymous client", function() {
           reaction: 'up'
         }
         socket.emit('fruum:react', payload);
-        socket.on('fruum:react', function(payload) {
+        socket.on('fruum:react', function(response) {
           socket.removeListener('fruum:react', this);
-          expect(payload).toBeUndefined();
+          expect(response).toBeUndefined();
           socket.disconnect();
           done();
         });
@@ -70,9 +126,9 @@ describe("Anonymous client", function() {
     anonymous_connect(function(socket) {
       load_fixture(function() {
         socket.emit('fruum:move', { id: 'move_thread', category: 'home' });
-        socket.on('fruum:move', function(payload) {
+        socket.on('fruum:move', function(response) {
           socket.removeListener('fruum:move', this);
-          expect(payload).toBeUndefined();
+          expect(response).toBeUndefined();
           socket.disconnect();
           done();
         });

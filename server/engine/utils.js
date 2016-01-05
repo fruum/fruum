@@ -114,7 +114,7 @@ module.exports = function(options, instance, self) {
   };
   //emits a signal to all users viewing the same parent, in order to request
   //a refresh
-  self.broadcast = function(by_user, document, action) {
+  self.broadcast = function(by_user, document, action, no_admin_check) {
     var app = app_users[by_user.get('app_id')];
     if (!app) return;
     var parent = document.get('parent'),
@@ -124,7 +124,7 @@ module.exports = function(options, instance, self) {
       var viewing = user.get('viewing'),
           socket = user.get('socket');
       if ((viewing == parent || viewing == id) && user != by_user && socket) {
-        if (user.get('admin') || document.get('visible'))
+        if (user.get('admin') || document.get('visible') || no_admin_check)
           socket.emit(action || 'fruum:dirty', json);
       }
     });
@@ -174,6 +174,11 @@ module.exports = function(options, instance, self) {
   self.invalidateDocument = function(app_id, document) {
     self.invalidateCache(app_id, document.get('id'));
     self.invalidateCache(app_id, document.get('parent'));
+  }
+  self.invalidateApplication = function(app_id) {
+    _.each(self.CACHE_DEFS, function(value, key) {
+      self.cache.del(value.queue, value.key.replace('{app_id}', app_id));
+    });
   }
   self.getCachedResponse = function(app_id, user, doc_id, hit, miss) {
     if (!user) return;

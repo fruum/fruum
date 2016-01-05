@@ -203,7 +203,7 @@ module.exports = function(options, client, self) {
       if (error) {
         callback();
       }
-      else if (response._source){
+      else if (response._source) {
         callback(new Models.Application(response._source));
       }
     });
@@ -243,7 +243,7 @@ module.exports = function(options, client, self) {
     });
   }
 
-  // ---------------------------- RESET USERS ------------------------------
+  // ------------------------------ RESET USERS --------------------------------
 
   self.reset_users = function(application, callback) {
     var app_id = application.get('id');
@@ -265,6 +265,48 @@ module.exports = function(options, client, self) {
         logger.info(app_id, 'reset_users', response);
       }
       callback();
+    });
+  }
+
+  // ------------------------------- PROPERTIES --------------------------------
+
+  self.set_app_property = function(app_id, property, value, callback) {
+    var doc = {};
+    doc[Models.PROPERTY_PREFIX + property] = value;
+    client.update({
+      index: self.toMasterIndex(),
+      type: 'info',
+      id: app_id,
+      retryOnConflict: options.elasticsearch.retry_on_conflict,
+      body: {
+        doc: doc
+      }
+    }, function(error, response) {
+      if (error) {
+        logger.error(app_id, 'set_app_property', error);
+        callback();
+      }
+      else {
+        callback(property, value);
+      }
+    });
+  }
+
+  self.get_app_property = function(app_id, property, callback) {
+    client.get({
+      index: self.toMasterIndex(),
+      type: 'info',
+      id: app_id
+    }, function(error, response) {
+      if (error) {
+        callback();
+      }
+      else if (response._source && response._source[Models.PROPERTY_PREFIX + property] != undefined) {
+        callback(property, response._source[Models.PROPERTY_PREFIX + property]);
+      }
+      else {
+        callback();
+      }
     });
   }
 

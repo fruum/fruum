@@ -1,6 +1,6 @@
 {
   "name": "Fruum",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "homepage": "https://fruum.github.io",
   "description": "An embeddable communications hub for your forum, documentation, and real‐time chat streams",
   "license": "Apache-2.0",
@@ -17,9 +17,9 @@
     "node": ">=4.1"
   },
   "dependencies": {
-    "async": "^1.4.2",
+    "async": "^1.5.1",
     "backbone": "^1.2.3",
-    "body-parser": "^1.14.1",
+    "body-parser": "^1.14.2",
     "buildify": "^0.4.0",
     "command-line-args": "^1.0.2",
     "compression": "^1.6.0",
@@ -27,11 +27,11 @@
     "express": "^4.13.3",
     "giphy-api": "^1.0.8",
     "jasmine-node": "^1.14.5",
-    "juice": "^1.8.1",
+    "juice": "^1.9.0",
     "mandrill-api": "^1.0.45",
     "marked": "^0.3.5",
     "md5": "^2.0.0",
-    "moment": "^2.10.6",
+    "moment": "^2.11.0",
     "node-sass": "^3.3.3",
     "node-schedule": "^0.2.9",
     "request": "^2.65.0",
@@ -41,6 +41,6 @@
     "underscore": "^1.8.3",
     "uuid": "^2.0.1",
     "winston": "^1.1.1",
-    "xss": "^0.2.9"
+    "xss": "^0.2.10"
   }
 }

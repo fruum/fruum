@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore'),
+    Backbone = require('backbone'),
     Models = require('../models'),
     logger = require('../logger');
 
@@ -114,7 +115,6 @@ module.exports = function(options, instance, self) {
       });
       //escape document
       document.escape();
-      document.extractTags();
       //process plugins
       var plugin_payload = {
         app_id: app_id,
@@ -146,6 +146,33 @@ module.exports = function(options, instance, self) {
                 updated: now,
                 children_count: total + 1
               }, function() {});
+              //if document is article and blog then set the order to be on top
+              if (new_document.get('type') == 'article' && new_document.get('is_blog')) {
+                //get all children
+                new_document.set('order', 1);
+                storage.children(app_id, parent_doc, function(children) {
+                  var collection = new Backbone.Collection();
+                  collection.comparator = 'order';
+                  collection.add(new_document.toJSON());
+                  _.each(children, function(child) {
+                    if (child.get('type') == 'article' && child.get('id') != new_document.get('id'))
+                      collection.add(child.toJSON());
+                  });
+                  //reorder
+                  var order = 1;
+                  collection.each(function(child) {
+                    if (child.get('id') != new_document.get('id')) {
+                      order++;
+                      child.set('order', order);
+                    }
+                    storage.update(app_id, child, { order: child.get('order') }, function(updated_child) {
+                      if (updated_child) {
+                        self.broadcast(user, updated_child);
+                      }
+                    });
+                  });
+                });
+              }
             }
             else {
               //fail
@@ -196,10 +223,14 @@ module.exports = function(options, instance, self) {
         socket.emit('fruum:update');
         return;
       }
-      var now = Date.now();
-      doc_to_update.set('updated', now);
       //escape document based on difference with previous
+      var update_timestamp = false, now = Date.now();
       document.escape(doc_to_update);
+      //alter timestamp only when we have changes in the body
+      if (document.get('body') != doc_to_update.get('body')) {
+        update_timestamp = true;
+        doc_to_update.set('updated', now);
+      }
       switch(doc_to_update.get('type')) {
         case 'category':
           doc_to_update.set({
@@ -212,13 +243,17 @@ module.exports = function(options, instance, self) {
           doc_to_update.set({
             header: document.get('header'),
             body: document.get('body'),
-            is_blog: document.get('is_blog')
+            is_blog: document.get('is_blog'),
+            tags: document.get('tags'),
+            attachments: document.get('attachments')
           });
           break;
         case 'thread':
           doc_to_update.set({
             header: document.get('header'),
-            body: document.get('body')
+            body: document.get('body'),
+            tags: document.get('tags'),
+            attachments: document.get('attachments')
           });
           break;
         case 'channel':
@@ -228,11 +263,11 @@ module.exports = function(options, instance, self) {
           break;
         case 'post':
           doc_to_update.set({
-            body: document.get('body')
+            body: document.get('body'),
+            attachments: document.get('attachments')
           });
           break;
       }
-      doc_to_update.extractTags();
       //process plugins
       var plugin_payload = {
         app_id: app_id,
@@ -252,12 +287,14 @@ module.exports = function(options, instance, self) {
             socket.emit('fruum:update', updated_document.toJSON());
             if (!plugin_payload.broadcast_noop) self.broadcast(user, updated_document);
             //update parent timestamp
-            storage.update(
-              app_id,
-              new Models.Document({ id: updated_document.get('parent') }),
-              { updated: now },
-              function() {}
-            );
+            if (update_timestamp) {
+              storage.update(
+                app_id,
+                new Models.Document({ id: updated_document.get('parent') }),
+                { updated: now },
+                function() {}
+              );
+            }
           }
           else {
             socket.emit('fruum:update');
@@ -297,7 +334,7 @@ module.exports = function(options, instance, self) {
           if (updated_document) {
             self.invalidateDocument(app_id, updated_document);
             socket.emit('fruum:field', updated_document.toJSON());
-            self.broadcast(user, updated_document);
+            self.broadcast(user, updated_document, 'fruum:dirty', true);
           }
           else {
             socket.emit('fruum:field');

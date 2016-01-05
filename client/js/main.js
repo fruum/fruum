@@ -669,7 +669,12 @@ Main client app
         // ----------------- LIVE UPDATES -----------------
 
         this.socket.on('fruum:dirty', function(payload) {
-          that.upsertPayload(payload);
+          if (payload) {
+            if (!Fruum.user.admin && !payload.visible)
+              that.deletePayload(payload);
+            else
+              that.upsertPayload(payload);
+          }
         });
         this.socket.on('fruum:info', function(payload) {
           //enable notification badge

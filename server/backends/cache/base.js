@@ -10,7 +10,9 @@ module.exports = function(options, storage) {
   Store a value in the cache
 
   Parameters:
-  - queue: "static" for caching js, css files, "views" for caching page views
+  - queue: "static" for caching js, css files,
+           "views" for caching page views,
+           "properties" for caching application properties
   - key: Key name
   - value: Value to store
 

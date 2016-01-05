@@ -10,14 +10,14 @@ var _ = require('underscore'),
 
 module.exports = function(options, client, self) {
 
-  self._purgeArray = function(app_id, timestamp, hits, validator, callback) {
+  self._purgeArray = function(app_id, type_index, timestamp, hits, validator, callback) {
     if (options.elasticsearch.use_bulk) {
       var body = [];
       _.each(hits, function(hit) {
         if (validator(hit._source, timestamp)) {
           body.push({ delete: {
             _index: hit._index,
-            _type: 'doc',
+            _type: type_index,
             _id: hit._source.id
           }});
         }
@@ -41,7 +41,7 @@ module.exports = function(options, client, self) {
         if (validator(hit._source, timestamp)) {
           body.push({
             index: self.toAppIndex(app_id),
-            type: 'doc',
+            type: type_index,
             id: hit._source.id
           });
         }
@@ -84,7 +84,7 @@ module.exports = function(options, client, self) {
         logger.error(app_id, 'gc_archived', error);
       }
       else if (response.hits && response.hits.hits && response.hits.hits.length) {
-        self._purgeArray(app_id, timestamp, response.hits.hits, validators.gc_archived, callback);
+        self._purgeArray(app_id, 'doc', timestamp, response.hits.hits, validators.gc_archived, callback);
         return;
       }
       callback();
@@ -118,7 +118,41 @@ module.exports = function(options, client, self) {
         logger.error(app_id, 'gc', error);
       }
       else if (response.hits && response.hits.hits && response.hits.hits.length) {
-        self._purgeArray(app_id, timestamp, response.hits.hits, validators.gc_chat, callback);
+        self._purgeArray(app_id, 'doc', timestamp, response.hits.hits, validators.gc_chat, callback);
+        return;
+      }
+      callback();
+    });
+  }
+
+  self.gc_users = function(app_id, timestamp, callback) {
+    client.search({
+      index: self.toAppIndex(app_id),
+      type: 'user',
+      refresh: true,
+      body: {
+        from: 0,
+        size: options.elasticsearch.max_children,
+        query: {
+          filtered: {
+            filter: {
+              bool: {
+                must: [
+                  { range: { last_login: { lte: timestamp } } },
+                  { term: { admin: false } },
+                  { missing: { field: 'watch' } }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }, function(error, response) {
+      if (error) {
+        logger.error(app_id, 'gc', error);
+      }
+      else if (response.hits && response.hits.hits && response.hits.hits.length) {
+        self._purgeArray(app_id, 'user', timestamp, response.hits.hits, validators.gc_users, callback);
         return;
       }
       callback();

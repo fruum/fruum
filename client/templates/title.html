@@ -1,10 +1,15 @@
   <!-- title template -->
 <script type="text/template" id="fruum-template-title">
 <% if (!searching && !has_notifications) { %>
-  <% if (viewing.type === 'channel' || viewing.type === 'thread' || viewing.type === 'article') { %>
+  <% if (viewing.id) { %>
   <div>
     <div class="fruum-stream-typography">
       <h4>
+        <% if (viewing.type == 'category') { %>
+          <span class="fruum-avatar-icon" data-initials="<%- Fruum.utils.printInitials(viewing.initials) %>">
+            <%- viewing.initials %>
+          </span>
+        <% } %>
         <% if (!viewing.visible) { %>
           <span class="fruum-icon fruum-icon-invisible" data-fruumtipsy-center="Private"></span>
         <% } %>
@@ -12,9 +17,20 @@
           <span class="fruum-icon fruum-icon-locked" data-fruumtipsy-center="Locked"></span>
         <% } %>
         <% if (viewing.type == 'channel') print('#'); %><%= Fruum.utils.printHeader(viewing.header) %>
+        <% if (viewing.type == 'category') { %>
+          <span class="fruum-secondary-data">
+            <%- ((viewing.body || '').split('\n')[0]) || 'View thoughts and ideas in category, and share your own' %>
+          </span>
+        <% } %>
+        <% if (viewing.type == 'article' || viewing.type == 'thread' ) { %>
+          <div class="fruum-tags-container">
+            <% _.each(viewing.tags, function(tag) { %><span class="fruum-tag" data-initials="<%- tag.toUpperCase().charAt(0) %>"><%- tag %></span><% }); %>
+          </div>
+        <% } %>
       </h4>
     </div>
-    <% if (Fruum.user.admin && (viewing.type === 'thread' || viewing.type === 'article')) { %>
+    <% if (Fruum.user.admin) { %>
+      <% if (viewing.type === 'thread' || viewing.type === 'article') { %>
     <div class="fruum-manage">
       <a href="javascript:;" class="fruum-link fruum-manage-close fruum-icon fruum-icon-close"></a>
 
@@ -33,7 +49,7 @@
       <% } %>
       <a href="javascript:;" class="fruum-link fruum-link-negative fruum-icon fruum-icon-delete" data-action="delete" data-fruumtipsy-right="Delete <%- viewing.type %>"></a>
     </div>
-    <% } else if (Fruum.user.admin && viewing.type === 'channel') { %>
+      <% } else if (viewing.type === 'channel') { %>
     <div class="fruum-manage">
       <a href="javascript:;" class="fruum-link fruum-manage-close fruum-icon fruum-icon-close"></a>
 
@@ -47,6 +63,31 @@
 
       <a href="javascript:;" class="fruum-link fruum-link-negative fruum-icon fruum-icon-delete" data-action="delete" data-fruumtipsy-right="Delete channel"></a>
     </div>
+      <% } else { %>
+    <div class="fruum-manage">
+      <a href="javascript:;" class="fruum-link fruum-manage-close fruum-icon fruum-icon-close"></a>
+
+      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-left="Edit category"></a>
+
+      <% if (viewing.visible) { %>
+      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-invisible" data-action="visible" data-fruumtipsy-left="Turn private"></a>
+      <% } else { %>
+      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-visible" data-action="visible" data-fruumtipsy-left="Turn public"></a>
+      <% } %>
+
+      <% if (viewing.allow_threads) { %>
+      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-thread" data-action="allow_threads" data-fruumtipsy-left="Deny new threads"></a>
+      <% } else { %>
+      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-thread fruum-link-off" data-action="allow_threads" data-fruumtipsy-left="Allow new threads"></a>
+      <% } %>
+
+      <% if (viewing.allow_channels) { %>
+      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-chat" data-action="allow_channels" data-fruumtipsy-left="Deny new channels"></a>
+      <% } else { %>
+      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-chat fruum-link-off" data-action="allow_channels" data-fruumtipsy-left="Allow new channels"></a>
+      <% } %>
+    </div>
+      <% } %>
     <% } %>
   </div>
   <% } %>

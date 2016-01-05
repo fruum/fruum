@@ -13,6 +13,7 @@
     4.2 Helptext
     4.3 Tutorial messages
     4.4 Options list
+    4.5 Droppable highlight
   5. Popup data
   6. Badges
   7. Generic manipulation and typography
@@ -375,6 +376,16 @@
       @include block-radius(1px);
       background-color: $muted-text-color;
     }
+    .fruum-option-item.fruum-option-item-button:hover {
+      background-color: darken( $muted-text-color, 7% );
+    }
+    img.fruum-option-item{
+      background-color: darken( $background-helper-base-color, 4% );
+      opacity: 0.8;
+      &:hover {
+        opacity: 1;
+      }
+    }
   }
 }
 
@@ -386,6 +397,7 @@
   line-height: $small-font-basegrid*3;
   cursor: pointer;
   cursor: hand;
+  max-height: $small-font-basegrid*5;
   min-height:$small-font-basegrid*3;
   width: 100%;
   overflow: hidden;
@@ -397,6 +409,42 @@
   &.fruum-option-empty {
     color: $muted-text-color;
     font-weight: $important-font-weight;
+  }
+  &.fruum-option-item-button {
+    border: none;
+    background-image: none;
+    background-color: $muted-text-color;
+    color: $background-helper-base-color;
+    font-size: 2em;
+    padding: 0 0.7em;
+    height: 2.5em;
+    line-height: 2.5em;
+  }
+}
+
+// 4.5 Droppable highlight
+// this class is added dynamically with js, should override everything that is in there
+
+#fruum .fruum-droppable {
+  position: relative;
+  background-color: $background-helper-base-color !important;
+  border: 1px dashed $muted-text-color !important;
+  overflow: hidden;
+  &:after {
+    content: 'DROP IN HERE';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 2em;
+    width: 100%;
+    height: 100%;
+    font-size: 1em;
+    line-height: 4em;
+    text-align: center;
+    z-index: 2;
+    color: $disabled-text-color;
+    font-weight: $important-font-weight;
+    text-shadow: 0 0 4px $background-helper-base-color;
   }
 }
 
@@ -419,6 +467,7 @@
   &.fruum-popup-half {
     width: 47.5%;
   }
+  &.fruum-popup-docked-bottomright-second,
   &.fruum-popup-docked-bottomright {
     left: auto;
     right: $fruum-whitespace;
@@ -438,6 +487,12 @@
     &:before {
       border-top-color: rgba( $base-text-color, 0.2 );
       bottom: -1*$base-grid - 1px;
+    }
+  }
+  &.fruum-popup-docked-bottomright-second {
+    &:after,
+    &:before {
+      right: $base-grid*6.5+3px;
     }
   }
   input[type="text"],
