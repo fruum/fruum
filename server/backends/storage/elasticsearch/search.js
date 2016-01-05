@@ -41,8 +41,8 @@ module.exports = function(options, client, self) {
           }
         },
         highlight: {
-          pre_tags: ['<span class="highlight">'],
-          post_tags: ['</span>'],
+          pre_tags: ['{{{'],
+          post_tags: ['}}}'],
           fields: {
             header: {},
             body: {}

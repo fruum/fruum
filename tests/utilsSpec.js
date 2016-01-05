@@ -46,6 +46,14 @@ describe("Mentions", function() {
   });
 });
 
+describe("Search", function() {
+  it("is highlighted", function() {
+    expect(Fruum.utils.printSearch('Hello {{{foo}}} {{{γιολο}}}')).toBe(
+      'Hello <span class="highlight">foo</span> <span class="highlight">γιολο</span>\n'
+    );
+  });
+});
+
 describe("Autocomplete", function() {
   it("works for @user", function() {
     expect(Fruum.utils.autocompleteUser('Hello @foo @γιολο')).toBe(

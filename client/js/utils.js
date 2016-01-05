@@ -227,6 +227,11 @@ Utilities
         text = text.substr(0, 170) + '...';
       return text;
     }
+    Fruum.utils.printSearch = function(text) {
+      text = Fruum.utils.printSummary(text);
+      //do some highlighting
+      return text.replace(/\{\{\{(.+?)\}\}\}/g, '<span class="highlight">$1</span>');
+    }
     //If computer is Mac or IOS
     Fruum.utils.isMacLike = function() {
       return (navigator.platform || '').match(/(Mac|iPhone|iPod|iPad)/i)?true:false;

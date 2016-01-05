@@ -49,8 +49,11 @@ Search button
       },
       onSearchOpen: function(event) {
         this.model.set('searching', true);
-        this.ui.search.addClass('fruum-search-active');
-        this.ui.search_input.focus();
+        if (!this.ui.search.hasClass('fruum-search-active')) {
+          this.ui.search.addClass('fruum-search-active');
+          this.ui.search_input.focus().select();
+          this.onSearchKeyup();
+        }
       },
       onSearchClose: function(event) {
         event && event.stopPropagation();

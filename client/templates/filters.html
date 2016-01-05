@@ -1,9 +1,9 @@
 <!-- filters template -->
 <script type="text/template" id="fruum-template-filters">
   <% if (!has_notifications) { %>
-  <div class="fruum-search fruum-icon fruum-icon-search fruum-js-search <% if (searching) print ('fruum-search-active'); %>">
+  <div class="fruum-search fruum-icon fruum-icon-search fruum-js-search ">
     <input type="text" class="fruum-input fruum-js-search-input" placeholder="search anything" value="<%- search %>"/>
-    <span class="fruum-link fruum-icon fruum-icon-close fruum-js-search-close"></span>
+    <span class="fruum-link fruum-icon fruum-icon-right fruum-js-search-close"></span>
   </div>
   <% } %>
 </script>
