@@ -1,0 +1,21 @@
+<!-- Attachments panel -->
+<script type="text/template" id="fruum-template-attachments">
+  <div class="fruum-options-list fruum-options-multicolumns fruum-options-selectable">
+  <% _.each(attachments, function(attachment) { %>
+    <img class="fruum-option-item" src="<%- attachment.data %>" alt="<%- attachment.name %>" data-attachment="[[<%- attachment.type + ':' + attachment.name %>]]"/>
+  <% }); %>
+    <label for="fruum-file-upload" class="fruum-option-item-button fruum-option-item"><span class="fruum-icon fruum-icon-add"></span></label>
+    <input id="fruum-file-upload" type="file" style="display:none;" multiple />
+  </div>
+  <div class="fruum-tutorial-messages">
+    <b>add image</b> by dragging inside box,
+    <% if (Fruum.utils.isChrome()) { %>
+    paste an image from clipboard
+    <% } %>
+    or click the '+' icon
+    <% if (Fruum.utils.isMac() && Fruum.utils.isChrome()) { %>
+    <br>TIP: Capture part of your screen with <b>Cmd+Ctrl+Shift+4</b> and paste here with <b>Cmd+V</b>
+    <% } %>
+  </div>
+  <a href="#" class="fruum-link fruum-popup-close fruum-js-close">close</a>
+</script>

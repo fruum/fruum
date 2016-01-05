@@ -2,59 +2,20 @@
 <script type="text/template" id="fruum-template-breadcrumb">
   <% if (!viewing.id) { %>
   <% } else if (searching || has_notifications) { %>
-    <div class="fruum-navigation-item fruum-js-search-close" >
+    <div class="fruum-navigation-item fruum-link fruum-js-search-close" >
       <span class="fruum-avatar-icon fruum-link">
         <span class="fruum-icon fruum-icon-left"></span>
       </span>back
     </div>
   <% } else { %>
-    <% for (var i = 0; i < breadcrumb.length; ++i) { %>
-      <div class="fruum-navigation-item fruum-avatar-icon fruum-link fruum-js-navigate" data-id="<%- breadcrumb[i].id %>" data-initials="<%- Fruum.utils.printInitials(breadcrumb[i].initials) %>">
-        <%- breadcrumb[i].initials %>
-      </div>
-    <% } %>
-    <% if (viewing.type !== 'channel' && viewing.type !== 'thread' && viewing.type !== 'article') { %>
-    <div class="fruum-navigation-item"<% if (!viewing.visible) { %> data-fruumtipsy-left="Private category"<% } %>>
-      <span class="fruum-avatar-icon<% if (Fruum.user.admin) { %> fruum-manage-settings<% } %>" data-initials="<%- Fruum.utils.printInitials(viewing.initials) %>">
-        <% if (!viewing.visible) { %>
-          <span class="fruum-icon fruum-icon-invisible"><%- viewing.initials %></span>
-        <% } else { %>
-        <%- viewing.initials %>
-        <% } %>
-      </span><%= Fruum.utils.printHeader(viewing.header) %>
-    </div>
-    <% } else if (breadcrumb.length) { %>
-    <div class="fruum-navigation-item fruum-link fruum-js-navigate" data-id="<%- breadcrumb[breadcrumb.length - 1].id %>" >
-        back to <%= Fruum.utils.printHeader(breadcrumb[breadcrumb.length - 1].header) %>
-    </div>
-    <% } %>
-    <% if (Fruum.user.admin && viewing.type === 'category') { %>
-      <div class="fruum-manage">
-        <div class="fruum-navigation-item">
-          <span class="fruum-avatar-icon fruum-manage-settings fruum-manage-clicked" data-initials="<%- Fruum.utils.printInitials(viewing.initials) %>">
-          </span><%- viewing.initials %>
+    <% if (breadcrumb.length) { %>
+      <% for (var i = 0; i < breadcrumb.length; ++i) { %>
+        <div class="fruum-navigation-item fruum-avatar-icon fruum-link fruum-js-navigate" data-id="<%- breadcrumb[i].id %>" data-initials="<%- Fruum.utils.printInitials(breadcrumb[i].initials) %>">
+          <%- breadcrumb[i].initials %>
         </div>
-        <a href="javascript:;" class="fruum-link fruum-manage-close fruum-icon fruum-icon-close"></a>
-
-        <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-left="Edit category"></a>
-
-        <% if (viewing.visible) { %>
-        <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-invisible" data-action="visible" data-fruumtipsy-left="Turn private"></a>
-        <% } else { %>
-        <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-visible" data-action="visible" data-fruumtipsy-left="Turn public"></a>
-        <% } %>
-
-        <% if (viewing.allow_threads) { %>
-        <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-thread" data-action="allow_threads" data-fruumtipsy-left="Deny new threads"></a>
-        <% } else { %>
-        <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-thread fruum-link-off" data-action="allow_threads" data-fruumtipsy-left="Allow new threads"></a>
-        <% } %>
-
-        <% if (viewing.allow_channels) { %>
-        <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-chat" data-action="allow_channels" data-fruumtipsy-left="Deny new channels"></a>
-        <% } else { %>
-        <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-chat fruum-link-off" data-action="allow_channels" data-fruumtipsy-left="Allow new channels"></a>
-        <% } %>
+      <% } %>
+      <div class="fruum-navigation-item fruum-link fruum-js-navigate" data-id="<%- breadcrumb[breadcrumb.length - 1].id %>" >
+        back to <%= Fruum.utils.printHeader(breadcrumb[breadcrumb.length - 1].header) %>
       </div>
     <% } %>
   <% } %>

@@ -4,6 +4,7 @@
 <script type="text/template" id="fruum-template-interactions-help">
   <div class="fruum-helper-container fruum-js-help" style="display: none;">
     <div class="fruum-helper-close fruum-icon fruum-icon-close fruum-link fruum-link-secondary" data-action="help"></div>
+    <% if (Fruum.utils.isDesktop()) { %>
     <div class="fruum-helper-element">
       <b class="fruum-helper-shortcut"><%- Fruum.utils.shortcutModifier('b') %></b>
       <b>Bold text</b>
@@ -12,6 +13,7 @@
       <b class="fruum-helper-shortcut"><%- Fruum.utils.shortcutModifier('i') %></b>
       <i>Italic text</i>
     </div>
+    <% } %>
     <div class="fruum-helper-element">&nbsp;</div>
     <div class="fruum-helper-element">
       For text formatting we use the <a href="http://www.wikiwand.com/en/Markdown" class="fruum-link" target="_blank">Markdown format</a>. Please check it out to see all supported styling.
@@ -130,6 +132,15 @@
         placeholder="it's about..."
         data-field="body"><%= editing.body || '' %></textarea>
     </div>
+    <div class="fruum-interactions-tags">
+      <b class="fruum-secondary-data">TAGS:</b>
+      <input type="text"
+             class="fruum-interactions-input fruum-stream-tags"
+             placeholder="Comma separated words. eg. idea, wishlist"
+             data-field="tags"
+             value="<%- (editing.tags || []).join(', ') %>"
+             />
+    </div>
     <div class="fruum-interactions-footer">
       <div class="fruum-interactions-buttons fruum-interactions-group">
         <% if (editing.id) { %>
@@ -144,7 +155,8 @@
           class="fruum-helper-action"
           data-action="help"
         >?</span>
-        <span class="fruum-helper-action fruum-icon fruum-icon-emoji"   data-action="emojipanel"></span>
+        <span class="fruum-helper-action fruum-icon fruum-icon-emoji" data-action="emojipanel"></span>
+        <span class="fruum-helper-action fruum-icon fruum-icon-camera" data-action="attachments"></span>
         <span class="fruum-helper-action fruum-helper-text" data-action="preview">preview</span>
       </div>
     </div>
@@ -175,6 +187,15 @@
         placeholder="it's about..."
         data-field="body"><%= editing.body || '' %></textarea>
     </div>
+    <div class="fruum-interactions-tags">
+      <b class="fruum-secondary-data">TAGS:</b>
+      <input type="text"
+             class="fruum-interactions-input fruum-stream-tags"
+             placeholder="Comma separated words. eg. idea, wishlist"
+             data-field="tags"
+             value="<%- (editing.tags || []).join(', ') %>"
+             />
+    </div>
     <div class="fruum-interactions-footer">
       <div class="fruum-interactions-buttons fruum-interactions-group">
         <% if (editing.id) { %>
@@ -193,7 +214,8 @@
           class="fruum-helper-action"
           data-action="help"
         >?</span>
-        <span class="fruum-helper-action fruum-icon fruum-icon-emoji"   data-action="emojipanel"></span>
+        <span class="fruum-helper-action fruum-icon fruum-icon-emoji" data-action="emojipanel"></span>
+        <span class="fruum-helper-action fruum-icon fruum-icon-camera" data-action="attachments"></span>
         <span class="fruum-helper-action fruum-helper-text" data-action="preview">preview</span>
       </div>
     </div>
@@ -302,6 +324,7 @@
           data-action="help"
         >?</span>
         <span class="fruum-helper-action fruum-icon fruum-icon-emoji" data-action="emojipanel"></span>
+        <span class="fruum-helper-action fruum-icon fruum-icon-camera" data-action="attachments"></span>
         <span class="fruum-helper-action fruum-helper-text" data-action="preview">preview</span>
       </div>
     </div>
@@ -384,8 +407,7 @@
         <span class="fruum-secondary-data">and write your thought.</span>
       <% } else { %>
       <span class="fruum-secondary-data">
-          You can view all public categories and threads.<br/>
-          To post or reply, please login first.
+        To post or reply, please login first.
       </span>
       <% } %>
     </div>

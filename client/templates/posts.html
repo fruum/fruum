@@ -36,7 +36,7 @@
 
     <div class="fruum-object-main-data">
       <div class="fruum-stream-typography">
-        <%= Fruum.utils.print(body) %>
+        <%= Fruum.utils.print(body, attachments) %>
       </div>
     </div>
 
@@ -80,7 +80,7 @@
         <% if (inappropriate) { %>
           <span class="fruum-admin-message">Post removed by moderator</span>
         <% } else { %>
-        <%= Fruum.utils.print(body) %>
+        <%= Fruum.utils.print(body, attachments) %>
         <% } %>
       </div>
     </div>
@@ -171,7 +171,7 @@
         <% if (inappropriate) { %>
           <span class="fruum-admin-message">Post removed by moderator</span>
         <% } else { %>
-        <%= Fruum.utils.print(body) %>
+        <%= Fruum.utils.print(body, attachments) %>
         <% } %>
       </div>
     </div>
