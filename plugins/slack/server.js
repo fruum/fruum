@@ -8,7 +8,8 @@ var _ = require('underscore'),
     logger = require('../../server/logger');
 
 var fruum_username = 'Fruum',
-    fruum_icon_emoji = ':racing_car:';
+    fruum_icon_emoji = ':racing_car:',
+    fruum_icon_url = 'http://fruum.github.io/static/slack.jpg';
 
 function Slack(options, instance) {
 
@@ -19,21 +20,28 @@ function Slack(options, instance) {
     var app_id = req.params.app_id,
         text = req.body.text,
         token = req.body.token;
-    if (!text) {
-      res.send('*Fruum:* Could not understand your command');
-    }
-    else {
-      //get app
-      instance.storage.get_app(app_id, function(application) {
-        if (!application) {
-          res.send('*Fruum:* Invalid app_id, check your slack integration');
-          return;
+
+    //get app
+    instance.storage.get_app(app_id, function(application) {
+      if (!application) {
+        res.send('*Fruum:* Invalid app_id, check your slack integration');
+        return;
+      }
+      var app_token = application.getProperty('slack:command_token');
+      if (app_token && app_token != token) {
+        res.send('*Fruum:* Permission denied, check your slack integration');
+        return;
+      }
+      if (!text) {
+        var fullpage_url = application.get('fullpage_url');
+        if (!fullpage_url) {
+          res.send('Setup a <https://fruum.github.io/#v/setting-up-full-page-forums|full page fruum> to enable all features');
         }
-        var app_token = application.getProperty('slack:command_token');
-        if (app_token && app_token != token) {
-          res.send('*Fruum:* Permission denied, check your slack integration');
-          return;
+        else {
+          res.send('Click <' + fullpage_url + '|here> to open Fruum and share your thoughts');
         }
+      }
+      else {
         //perform search
         instance.storage.search(app_id, text, function(results) {
           if (!results.length) {
@@ -53,8 +61,8 @@ function Slack(options, instance) {
           });
           res.send(response);
         });
-      });
-    }
+      }
+    });
   });
 
   // ---------------------------------- WEBHOOKS -------------------------------
@@ -88,7 +96,8 @@ function Slack(options, instance) {
         method: 'POST',
         json: {
           username: fruum_username,
-          icon_emoji: fruum_icon_emoji,
+          //icon_emoji: fruum_icon_emoji,
+          icon_url: fruum_icon_url,
           attachments: [{
             pretext: pretext,
             title: document.get('header'),
