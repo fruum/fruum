@@ -1,6 +1,6 @@
 <!-- thread template -->
 <script type="text/template" id="fruum-template-thread">
-  <div class="fruum-base-object fruum-link fruum-js-entry-default fruum-js-navigate">
+  <div class="fruum-base-object fruum-link fruum-interactive-element fruum-js-entry-default fruum-js-navigate">
     <div class="fruum-avatar">
       <% if (Fruum.utils.isLink(user_avatar)) { %>
       <img src="<%= user_avatar %>" class="fruum-avatar-icon" width="56"/>
@@ -56,7 +56,7 @@
       </span>
     </div>
     <% if (Fruum.user.admin) { %>
-    <div class="fruum-manage fruum-js-manage">
+    <div class="fruum-manage fruum-interaction-item fruum-js-manage">
       <a href="javascript:;" class="fruum-link fruum-manage-close fruum-icon fruum-icon-close"></a>
       <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit thread"></a>
       <% if (sticky) { %>

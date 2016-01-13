@@ -1,0 +1,85 @@
+<script type="text/template" id="fruum-template-bookmark-category">
+  <div class="fruum-option-item fruum-navigation-item" data-id="<%- id %>">
+    <span class="fruum-avatar-icon" data-initials="<%- Fruum.utils.printInitials(initials) %>"><%- initials %></span>
+    <%= Fruum.utils.printHeader(header) %>
+  </div>
+</script>
+
+<script type="text/template" id="fruum-template-bookmark-edit">
+  <!-- Store search panel template -->
+  <input data-field="header" type="text" placeholder="Type stored search name" class="fruum-interactions-input" value="<%- bookmark.header || '' %>"/>
+  <% if (bookmark.id) { %>
+    <!--
+  <input data-field="body" type="text" placeholder="Your search query" class="fruum-interactions-input" value="<%- bookmark.body || '' %>"/>
+    -->
+  <% } %>
+  <br>
+
+  <div class="fruum-tutorial-messages">Click to select parent category</div>
+  <div class="fruum-options-list fruum-options-selectable fruum-js-bookmark-categories">
+    <!-- #fruum-template-bookmark-category -->
+  </div>
+  <br>
+  <% if (bookmark.id) { %>
+  <div class="fruum-tutorial-messages">To update your search query, <b>delete</b> current stored search and create a new one</div>
+  <br>
+  <% } %>
+  <button class="fruum-main-button fruum-cta-button fruum-js-store">
+    <% if (bookmark.id) { %>
+    update
+    <% } else { %>
+    Store search
+    <% } %>
+  </button>
+  <a href="#" class="fruum-secondary-button fruum-link-negative fruum-js-close">cancel</a>
+  <% if (bookmark.id) { %>
+  <button class="fruum-secondary-button fruum-negative fruum-float-right fruum-js-delete">Delete</button>
+  <% } %>
+</script>
+
+<!-- bookmark search results template -->
+<script type="text/template" id="fruum-template-bookmarksearch">
+  <div class="fruum-base-object fruum-link fruum-interactive-element fruum-js-navigate fruum-js-entry-default">
+    <div class="fruum-avatar">
+      <% if (Fruum.utils.isLink(user_avatar)) { %>
+      <img src="<%= user_avatar %>" class="fruum-avatar-icon" width="56"/>
+      <% } else { %>
+      <span
+        class="fruum-avatar-icon"
+        data-initials="<%- Fruum.utils.getInitials(user_displayname) %>">
+        <%- Fruum.utils.getInitials(user_displayname) %>
+      </span>
+      <% } %>
+    </div>
+
+    <div class="fruum-object-main-data">
+      <div class="fruum-stream-typography">
+        <h4>
+          <a href="<%- Fruum.utils.permaLink(id) %>" class="fruum-link">
+            <%= Fruum.utils.printHeader(header) %>
+          </a>
+        </h4>
+      </div>
+    </div>
+    <% if (body) { %>
+    <div class="fruum-object-additional-data">
+      <span class="fruum-secondary-data">
+        <%= Fruum.utils.printSearch(body) %>
+      </span>
+    </div>
+    <% } %>
+    <div class="fruum-object-additional-data">
+      <% if (user_displayname) { %>
+      <div class="fruum-primary-data">by <%- user_displayname %></div>
+      <% } %>
+      <span class="fruum-secondary-data">
+        <% if (children_count) { %>
+          <%- children_count %> posts, last one <%- Fruum.libs.moment(parseInt(updated)).fromNow() %>
+        <% } %>
+      </span>
+    </div>
+    <div class="fruum-object-meta">
+      <span class="fruum-avatar-icon" data-initials="<%- Fruum.utils.printInitials(initials) %>"><%- initials %></span>
+    </div>
+  </div>
+</script>

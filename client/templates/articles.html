@@ -1,6 +1,6 @@
 <!-- article template -->
 <script type="text/template" id="fruum-template-article">
-  <div class="fruum-base-object fruum-link fruum-js-entry-default fruum-js-navigate">
+  <div class="fruum-base-object fruum-link fruum-interactive-element fruum-js-entry-default fruum-js-navigate">
 
     <div class="fruum-object-main-data<% if (Fruum.user.admin || (Fruum.user.id == user_id && !Fruum.user.anonymous)) { %> fruum-object-manage-data<% } %>">
       <div class="fruum-stream-typography">
@@ -26,7 +26,7 @@
         </h4>
       </div>
     </div>
-    <% if (is_blog) { %>
+    <% if (type == 'blog') { %>
     <div class="fruum-object-additional-data">
       <span class="fruum-primary-data">
         <%- user_displayname || user_username %> <%- Fruum.libs.moment(parseInt(created)).fromNow() %>
@@ -47,7 +47,7 @@
       </span>
     </div>
     <% if (Fruum.user.admin) { %>
-    <div class="fruum-manage fruum-js-manage">
+    <div class="fruum-manage fruum-interaction-item fruum-js-manage">
       <a href="javascript:;" class="fruum-link fruum-manage-close fruum-icon fruum-icon-close"></a>
       <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit article"></a>
       <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-up" data-action="up" data-fruumtipsy-right="Move up"></a>

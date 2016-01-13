@@ -1,13 +1,8 @@
-// recalculate badge font-size
+// Handle custom interactive elements hover visibility. Here we set a default visibility
 
-body > #fruum .fruum-badge {
-  font-size: $base-grid-big*1.25;
+#fruum .fruum-interactive-element {
+
+  &:not(:hover) .fruum-interaction-item {
+    display: none;
+  }
 }
-
-*:not(body) > #fruum .fruum-badge {
-  font-size: $base-grid-medium*1.25;
-}
-
-// Responsive on medium
-
-#fruum .fruum-hidelarge { display: none; }

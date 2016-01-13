@@ -23,11 +23,13 @@
   position: relative;
   width: 100%;
   font-size: 1em; // reset to base-grid
-  padding: 2em $fruum-whitespace;
+  padding: 2em 0;
+  padding-right: 0 !important; //nanoscroller fix
   margin-top: 0;
   margin-bottom: 0;
   > .fruum-subobject-list {
     font-size: 1em;
+    width: 100%;
   }
 }
 
@@ -38,8 +40,8 @@
   position: relative;
   width: 100%;
   height: 1px;
-  margin-top: 0.875em;
-  margin-bottom: 4em;
+  margin-top: 1.875em;
+  margin-bottom: 2em;
   background-color: $dividers-colors;
 }
 

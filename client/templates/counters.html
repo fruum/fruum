@@ -3,7 +3,7 @@
   <div class="fruum-item-actions">
 <% if (!hide_actions) { %>
     <a href="javascript:;" class="fruum-icon fruum-icon-copy" data-action="share" data-fruumtipsy-left="copy link"></a>
-  <% if (!Fruum.user.anonymous && viewing.type !== 'channel') { %>
+  <% if (!Fruum.user.anonymous && viewing.type !== 'channel' && viewing.type !== 'bookmark') { %>
     <% if (Fruum.userUtils.isWatching(viewing.id)) { %>
     <a href="javascript:;" class="fruum-icon fruum-icon-watch" data-action="unwatch" data-fruumtipsy="stop watching"></a>
     <% } else { %>

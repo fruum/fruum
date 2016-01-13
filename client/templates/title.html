@@ -5,6 +5,9 @@
   <div>
     <div class="fruum-stream-typography">
       <h4>
+        <% if (viewing.type == 'bookmark') { %>
+          <span class="fruum-avatar-icon fruum-icon fruum-icon-search" data-initials="<%- viewing.header %>"></span>
+        <% } %>
         <% if (viewing.type == 'category') { %>
           <span class="fruum-avatar-icon" data-initials="<%- Fruum.utils.printInitials(viewing.initials) %>">
             <%- viewing.initials %>
@@ -16,13 +19,19 @@
         <% if (viewing.locked) { %>
           <span class="fruum-icon fruum-icon-locked" data-fruumtipsy-center="Locked"></span>
         <% } %>
+        <% if (viewing.type == 'bookmark') print('<i>'); %>
         <% if (viewing.type == 'channel') print('#'); %><%= Fruum.utils.printHeader(viewing.header) %>
+        <% if (viewing.type == 'bookmark') print('</i>'); %>
         <% if (viewing.type == 'category') { %>
           <span class="fruum-secondary-data">
             <%- ((viewing.body || '').split('\n')[0]) || 'View thoughts and ideas in category, and share your own' %>
           </span>
+        <% } else if (viewing.type == 'bookmark') { %>
+          <span class="fruum-secondary-data">
+            <i>Stored search on: <b><%- viewing.body %></b>.</i>
+          </span>
         <% } %>
-        <% if (viewing.type == 'article' || viewing.type == 'thread' ) { %>
+        <% if (_.contains(['article', 'blog', 'thread'], viewing.type)) { %>
           <div class="fruum-tags-container">
             <% _.each(viewing.tags, function(tag) { %><span class="fruum-tag" data-initials="<%- tag.toUpperCase().charAt(0) %>"><%- tag %></span><% }); %>
           </div>
@@ -30,27 +39,27 @@
       </h4>
     </div>
     <% if (Fruum.user.admin) { %>
-      <% if (viewing.type === 'thread' || viewing.type === 'article') { %>
-    <div class="fruum-manage">
+      <% if (_.contains(['article', 'blog', 'thread'], viewing.type)) { %>
+    <div class="fruum-manage fruum-js-manage">
       <a href="javascript:;" class="fruum-link fruum-manage-close fruum-icon fruum-icon-close"></a>
 
       <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit <%- viewing.type %>"></a>
 
-      <% if (viewing.visible) { %>
+        <% if (viewing.visible) { %>
       <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-invisible" data-action="visible" data-fruumtipsy-right="Turn private"></a>
-      <% } else { %>
+        <% } else { %>
       <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-visible" data-action="visible" data-fruumtipsy-right="Turn public"></a>
-      <% } %>
+        <% } %>
 
-      <% if (viewing.locked)  { %>
+        <% if (viewing.locked)  { %>
       <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-unlocked" data-action="locked" data-fruumtipsy-right="Unlock posting"></a>
-      <% } else { %>
+        <% } else { %>
       <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-locked" data-action="locked" data-fruumtipsy-right="Lock posting"></a>
-      <% } %>
+        <% } %>
       <a href="javascript:;" class="fruum-link fruum-link-negative fruum-icon fruum-icon-delete" data-action="delete" data-fruumtipsy-right="Delete <%- viewing.type %>"></a>
     </div>
       <% } else if (viewing.type === 'channel') { %>
-    <div class="fruum-manage">
+    <div class="fruum-manage fruum-js-manage">
       <a href="javascript:;" class="fruum-link fruum-manage-close fruum-icon fruum-icon-close"></a>
 
       <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit channel"></a>
@@ -63,30 +72,21 @@
 
       <a href="javascript:;" class="fruum-link fruum-link-negative fruum-icon fruum-icon-delete" data-action="delete" data-fruumtipsy-right="Delete channel"></a>
     </div>
-      <% } else { %>
-    <div class="fruum-manage">
+      <% } else if (viewing.type === 'bookmark') { %>
+    <div class="fruum-manage fruum-js-manage">
       <a href="javascript:;" class="fruum-link fruum-manage-close fruum-icon fruum-icon-close"></a>
 
-      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-left="Edit category"></a>
+      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-left="Edit stored search"></a>
 
-      <% if (viewing.visible) { %>
+        <% if (viewing.visible) { %>
       <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-invisible" data-action="visible" data-fruumtipsy-left="Turn private"></a>
-      <% } else { %>
+        <% } else { %>
       <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-visible" data-action="visible" data-fruumtipsy-left="Turn public"></a>
-      <% } %>
+        <% } %>
 
-      <% if (viewing.allow_threads) { %>
-      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-thread" data-action="allow_threads" data-fruumtipsy-left="Deny new threads"></a>
-      <% } else { %>
-      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-thread fruum-link-off" data-action="allow_threads" data-fruumtipsy-left="Allow new threads"></a>
-      <% } %>
-
-      <% if (viewing.allow_channels) { %>
-      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-chat" data-action="allow_channels" data-fruumtipsy-left="Deny new channels"></a>
-      <% } else { %>
-      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-chat fruum-link-off" data-action="allow_channels" data-fruumtipsy-left="Allow new channels"></a>
-      <% } %>
     </div>
+      <% } else { %>
+    <a href="javascript:;" class="fruum-manage fruum-link fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit category"></a>>
       <% } %>
     <% } %>
   </div>

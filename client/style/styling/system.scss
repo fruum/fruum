@@ -404,6 +404,7 @@
   text-overflow: ellipsis;
   &.fruum-option-selected,
   &:hover {
+    color: $important-text-color;
     font-weight: $important-font-weight;
   }
   &.fruum-option-empty {
@@ -510,14 +511,25 @@
   textarea {
     resize: none;
   }
+  .fruum-main-button,
+  .fruum-secondary-button {
+    font-size: $responsive-default-font;
+  }
+  .fruum-secondary-button:not(:hover) {
+    text-decoration: none;
+  }
   .fruum-link.fruum-popup-close {
     $popup-close-basegrid: relative-ems( $base-grid, $responsive-small-font );
     position: absolute;
-    color: $main-action-color;
+    color: $negative-action-color;
     font-size: $responsive-small-font;
     line-height: $popup-close-basegrid*2;
     bottom: $popup-close-basegrid/2;
     right: $popup-close-basegrid;
+  }
+  input[type="text"].fruum-interactions-input {
+    font-size: $responsive-big-font;
+    padding-left: 0;
   }
 }
 
@@ -551,4 +563,29 @@
 
 #fruum .fruum-nodisplay {
   display: none !important;
+}
+
+#fruum .fruum-float-right {
+  float: right;
+}
+
+// 7.2 Interactive elements hover effect
+
+#fruum .fruum-interactive-element {
+  transition: background 0.12s;
+  -webkit-transition: background 0.12s;
+  &:hover {
+
+    background-color: lighten( $background-helper-base-color, 5% );
+  }
+  &.fruum-link {
+    &:hover {
+      text-decoration: none;
+    }
+    .fruum-link:hover,
+    a.fruum-link:hover {
+      color: $secondary-action-color;
+      text-decoration: none;
+    }
+  }
 }
