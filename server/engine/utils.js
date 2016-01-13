@@ -80,6 +80,19 @@ module.exports = function(options, instance, self) {
   var app_users = self.app_users,
       app_applications = self.app_applications;
 
+  self.success = function(payload) {
+    if (payload) {
+      if (payload._success) payload._success(payload);
+      if (payload._always) payload._always(payload);
+    }
+  }
+  self.fail = function(payload) {
+    if (payload) {
+      if (payload._fail) payload._fail(payload);
+      if (payload._always) payload._always(payload);
+    }
+  }
+
   self.validatePayloadID = function(socket, payload, command) {
     if (payload && !self.isID(payload.id)) {
       logger.system(command + ': id is not a string or number');
@@ -107,8 +120,11 @@ module.exports = function(options, instance, self) {
           watch = user.get('watch') || [],
           socket = user.get('socket');
       if (user != by_user && socket && viewing != doc_id && watch.indexOf(doc_id) != -1) {
-        if (user.get('admin') || document.get('visible'))
+        if ((user.get('admin') || document.get('visible')) &&
+            document.get('permission') <= user.get('permission'))
+        {
           socket.emit('fruum:notify', { id: doc_id });
+        }
       }
     });
   };
@@ -124,8 +140,11 @@ module.exports = function(options, instance, self) {
       var viewing = user.get('viewing'),
           socket = user.get('socket');
       if ((viewing == parent || viewing == id) && user != by_user && socket) {
-        if (user.get('admin') || document.get('visible') || no_admin_check)
+        if (((user.get('admin') || document.get('visible')) &&
+           document.get('permission') <= user.get('permission')) || no_admin_check)
+        {
           socket.emit(action || 'fruum:dirty', json);
+        }
       }
     });
   };

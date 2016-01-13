@@ -16,13 +16,11 @@ Handles the top part
     Fruum.views.TitleView = Marionette.ItemView.extend({
       template: '#fruum-template-title',
       ui: {
-        manage: '.fruum-manage',
+        manage: '.fruum-js-manage',
         edit: '[data-action="edit"]',
         visible: '[data-action="visible"]',
         delete: '[data-action="delete"]',
-        locked: '[data-action="locked"]',
-        allow_threads: '[data-action="allow_threads"]',
-        allow_channels: '[data-action="allow_channels"]'
+        locked: '[data-action="locked"]'
       },
       modelEvents: {
         'change:viewing change:searching': 'render'
@@ -31,8 +29,6 @@ Handles the top part
         'click @ui.manage': 'onManage',
         'click @ui.edit': 'onEdit',
         'click @ui.delete': 'onDelete',
-        'click @ui.allow_threads': 'onAllowThreads',
-        'click @ui.allow_channels': 'onAllowChannels',
         'click @ui.visible': 'onVisible',
         'click @ui.locked': 'onLocked'
       },
@@ -47,28 +43,6 @@ Handles the top part
       },
       onManage: function(event) {
         Fruum.io.trigger('fruum:toggle_manage', this.ui.manage);
-      },
-      onAllowThreads: function(event) {
-        event.preventDefault();
-        var viewing = this.model.get('viewing');
-        if (viewing.id) {
-          Fruum.io.trigger('fruum:field', {
-            id: viewing.id,
-            field: 'allow_threads',
-            value: !viewing.allow_threads
-          });
-        }
-      },
-      onAllowChannels: function(event) {
-        event.preventDefault();
-        var viewing = this.model.get('viewing');
-        if (viewing.id) {
-          Fruum.io.trigger('fruum:field', {
-            id: viewing.id,
-            field: 'allow_channels',
-            value: !viewing.allow_channels
-          });
-        }
       },
       onLocked: function(event) {
         event.preventDefault();
@@ -94,7 +68,13 @@ Handles the top part
       },
       onEdit: function(event) {
         event.preventDefault();
-        Fruum.io.trigger('fruum:edit', _.clone(this.model.get('viewing')));
+        var viewing = _.clone(this.model.get('viewing'));
+        if (viewing.type == 'bookmark') {
+          Fruum.io.trigger('fruum:show_bookmark', viewing);
+        }
+        else {
+          Fruum.io.trigger('fruum:edit', viewing);
+        }
       },
       onDelete: function(event) {
         event.preventDefault();

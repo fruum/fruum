@@ -39,6 +39,7 @@
 // Medium screens
 
 @media (min-device-width: 1024px ) {
+  @import 'styling/system-mediumscreen';
   @import 'styling/base-mediumscreen';
   @import 'styling/streamobject-mediumscreen';
   @import 'styling/interactions-mediumscreen';

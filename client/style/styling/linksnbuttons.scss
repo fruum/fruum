@@ -124,6 +124,13 @@
     padding-left: 0.6em;
     padding-right: 0.6em;
   }
+  &.fruum-negative {
+    color: $negative-action-color;
+    &.fruum-is-active,
+    &:hover {
+      background-color: $negative-action-color;
+    }
+  }
 }
 
 #fruum .fruum-secondary-button {

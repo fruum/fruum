@@ -8,6 +8,7 @@
     1.1 Base object
     1.2 Primary data
     1.3 Secondary data
+    1.4 Object card
   2. Avatar basic styling
   3. Base elements customizations
   4. Managing actions
@@ -26,11 +27,10 @@
   position: relative;
   display: block;
   width: 100%;
+  padding-left: $fruum-whitespace;
+  padding-right: $fruum-whitespace;
   padding-bottom: 1em;
-  margin-bottom: 1em;
-  &.fruum-base-object-compact {
-    padding-bottom: 0;
-  }
+  padding-top: 1em;
   &.fruum-base-object-compactup {
     margin-top: -2em;
   }
@@ -90,8 +90,8 @@
     height: 3em;
     line-height: 3em;
     left: auto;
-    right: 0px;
-    top: 0;
+    right: 2em;
+    top: 1em;
   }
   .fruum-object-manage-data {
     // inherits font-size of base-grid
@@ -118,6 +118,20 @@
     background-color: $muted-text-color !important;
     padding: 0 $small-font-basegrid/2;
   }
+}
+
+// 1.4 Object card
+#fruum .fruum-object-card {
+  position: absolute;
+  display: block;
+  right: 0;
+  bottom: $tiny-font-basegrid*0.5;
+  padding: 0 $tiny-font-basegrid*2 0 $tiny-font-basegrid*0.5;
+  font-size: $responsive-tiny-font;
+  line-height: $tiny-font-basegrid*2;
+  text-transform: uppercase;
+  color: $background-helper-base-color;
+  background-color: $muted-text-color;
 }
 
 
@@ -264,6 +278,12 @@
 
 #fruum a.fruum-manage:hover {
   opacity: 1;
+}
+
+#fruum .fruum-objects-list .fruum-manage {
+  // inherits font-size of $responsive-bigger-font
+  top: relative-ems( 0.715em, $responsive-bigger-font );
+  right: relative-ems( 2em, $responsive-bigger-font ); // override positioning when inside main
 }
 
 // 4.2 Item interactions

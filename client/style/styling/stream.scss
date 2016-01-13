@@ -145,6 +145,7 @@
   code {
     background-color: darken( $background-helper-base-color, 5% );
     padding: 4px 0.3em 2px;
+    white-space: pre;
     @include block-radius(2px);
     &:not(:first-child) {
       margin-top: -0.5*$small-stream-lineheight;

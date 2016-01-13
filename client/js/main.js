@@ -76,11 +76,13 @@ Main client app
         channels: '.fruum-channel-list',
         posts: '.fruum-post-list',
         search: '.fruum-search-list',
+        bookmarksearch: '.fruum-bookmarksearch-list',
         notifications: '.fruum-notification-list',
         interactions: '.fruum-interactions-section',
         empty: '.fruum-empty-list',
         share: '.fruum-js-region-share',
-        move: '.fruum-js-move'
+        move: '.fruum-js-move',
+        bookmark: '.fruum-js-bookmark'
       },
       events: {
         'keydown input, textarea': 'onInterceptKeyboard',
@@ -109,13 +111,14 @@ Main client app
         //models
         while(this._consumeData());
         this.ui_state = new Models.UIState();
-        this.move_categories = new Collections.Categories();
+        this.all_categories = new Collections.Categories();
         this.categories = new Collections.Categories();
         this.threads = new Collections.Threads();
         this.articles = new Collections.Articles();
         this.channels = new Collections.Channels();
         this.posts = new Collections.Posts();
         this.search = new Collections.Search();
+        this.bookmarksearch = new Collections.Search();
         this.notifications = new Collections.Notifications();
         this.socket = io(remote_host);
 
@@ -166,6 +169,10 @@ Main client app
           collection: this.search,
           ui_state: this.ui_state
         }));
+        this.showChildView('bookmarksearch', new Views.BookmarkSearchView({
+          collection: this.bookmarksearch,
+          ui_state: this.ui_state
+        }));
         this.showChildView('notifications', new Views.NotificationsView({
           collection: this.notifications,
           ui_state: this.ui_state
@@ -185,7 +192,12 @@ Main client app
         }));
         this.showChildView('move', new Views.MoveView({
           model: this.ui_state,
-          collection: this.move_categories
+          all_categories: this.all_categories
+        }));
+        this.showChildView('bookmark', new Views.BookmarkEditView({
+          model: this.ui_state,
+          all_categories: this.all_categories,
+          categories: this.categories
         }));
         new Views.ShareView({
           ui_state: this.ui_state,
@@ -204,7 +216,7 @@ Main client app
         });
         this.listenTo(this.ui_state, 'change:viewing', function() {
           var type = this.ui_state.get('viewing').type;
-          if (type === 'channel' || type === 'thread' || type === 'article') {
+          if (_.contains(['channel', 'thread', 'article', 'blog'], type)) {
             $(this.ui.sticky_section).removeClass('fruum-section-empty');
           }
           else {
@@ -306,40 +318,56 @@ Main client app
               });
             }
 
-            var categories = [], articles = [], threads = [], channels = [], posts = [];
-            if (last_doc.body) {
-              switch(last_doc.type) {
-                case 'article':
-                case 'thread':
-                  posts.push(last_doc);
-                  break;
+            var categories = [],
+                articles = [],
+                threads = [],
+                channels = [],
+                posts = [],
+                bookmarksearch = [];
+
+            if (last_doc.type == 'bookmark') {
+              bookmarksearch = payload.documents;
+            }
+            else {
+              if (last_doc.body) {
+                switch(last_doc.type) {
+                  case 'article':
+                  case 'blog':
+                  case 'thread':
+                    posts.push(last_doc);
+                    break;
+                }
               }
+
+              _.each(payload.documents, function(entry) {
+                switch(entry.type) {
+                  case 'category':
+                  case 'bookmark':
+                    categories.push(entry);
+                    break;
+                  case 'article':
+                  case 'blog':
+                    articles.push(entry);
+                    break;
+                  case 'thread':
+                    threads.push(entry);
+                    break;
+                  case 'channel':
+                    channels.push(entry);
+                    break;
+                  case 'post':
+                    posts.push(entry);
+                    break;
+                }
+              });
             }
 
-            _.each(payload.documents, function(entry) {
-              switch(entry.type) {
-                case 'category':
-                  categories.push(entry);
-                  break;
-                case 'article':
-                  articles.push(entry);
-                  break;
-                case 'thread':
-                  threads.push(entry);
-                  break;
-                case 'channel':
-                  channels.push(entry);
-                  break;
-                case 'post':
-                  posts.push(entry);
-                  break;
-              }
-            });
             that.categories.reset(categories);
             that.articles.reset(articles);
             that.threads.reset(threads);
             that.channels.reset(channels);
             that.posts.reset(posts);
+            that.bookmarksearch.reset(bookmarksearch);
 
             that.onRefresh();
 
@@ -395,6 +423,7 @@ Main client app
             switch (payload.type) {
               case 'thread':
               case 'article':
+              case 'blog':
                 watch_id = payload.id;
                 Fruum.io.trigger('fruum:view', { id: payload.id });
                 break;
@@ -402,8 +431,9 @@ Main client app
                 Fruum.io.trigger('fruum:view', { id: payload.id });
                 break;
               case 'post':
-                if (payload.parent_type == 'thread' || payload.parent_type == 'article')
+                if (_.contains(['thread', 'article', 'blog'], payload.parent_type)) {
                   watch_id = payload.parent;
+                }
                 that.ui_state.trigger('change:editing');
                 Fruum.io.trigger('fruum:scroll_bottom');
                 break;
@@ -448,6 +478,24 @@ Main client app
         );
 
         // ------------------- DELETION -------------------
+
+        this.bindIO('fruum:delete',
+          function send(payload) {
+            that.ui_state.set({
+              loading: 'delete',
+              interacting: true
+            });
+            that.socket.emit('fruum:delete', payload);
+          },
+          function recv(payload) {
+            that.ui_state.set({
+              loading: '',
+              interacting: false
+            });
+            if (!payload) return;
+            that.deletePayload(payload);
+          }
+        );
 
         this.bindIO('fruum:archive',
           function send(payload) {
@@ -521,7 +569,7 @@ Main client app
           },
           function recv(payload) {
             if (payload && payload.categories) {
-              that.move_categories.reset(payload.categories);
+              that.all_categories.reset(payload.categories);
             }
           }
         );
@@ -670,10 +718,24 @@ Main client app
 
         this.socket.on('fruum:dirty', function(payload) {
           if (payload) {
-            if (!Fruum.user.admin && !payload.visible)
-              that.deletePayload(payload);
-            else
+            //admin
+            if (Fruum.user.admin) {
               that.upsertPayload(payload);
+            }
+            //logged in user
+            else if (!Fruum.user.anonymous) {
+              if (!payload.visible || payload.permission >= 2)
+                that.deletePayload(payload);
+              else
+                that.upsertPayload(payload);
+            }
+            //anonymous
+            else {
+              if (!payload.visible || payload.permission >= 1)
+                that.deletePayload(payload);
+              else
+                that.upsertPayload(payload);
+            }
           }
         });
         this.socket.on('fruum:info', function(payload) {
@@ -786,6 +848,7 @@ Main client app
           this.getRegion('empty').$el.stop(true, true).hide();
           this.getRegion('search').$el.hide();
           this.getRegion('categories').$el.hide();
+          this.getRegion('bookmarksearch').$el.hide();
           this.getRegion('articles').$el.hide();
           this.getRegion('threads').$el.hide();
           this.getRegion('channels').$el.hide();
@@ -803,6 +866,7 @@ Main client app
           this.getRegion('empty').$el.stop(true, true).hide();
           this.getRegion('notifications').$el.hide();
           this.getRegion('categories').$el.hide();
+          this.getRegion('bookmarksearch').$el.hide();
           this.getRegion('articles').$el.hide();
           this.getRegion('threads').$el.hide();
           this.getRegion('channels').$el.hide();
@@ -815,12 +879,30 @@ Main client app
             total_entries: this.search.length
           });
         }
-        else if (viewing_type === 'channel' || viewing_type === 'thread' || viewing_type === 'article') {
+        else if (viewing_type === 'bookmark') {
+          this.getRegion('empty').$el.stop(true, true).hide();
+          this.getRegion('notifications').$el.hide();
+          this.getRegion('categories').$el.hide();
+          this.getRegion('bookmarksearch').$el.show();
+          this.getRegion('articles').$el.hide();
+          this.getRegion('threads').$el.hide();
+          this.getRegion('channels').$el.hide();
+          this.getRegion('divider_category_article').$el.hide();
+          this.getRegion('divider_article_thread').$el.hide();
+          this.getRegion('divider_thread_channel').$el.hide();
+          this.getRegion('posts').$el.hide();
+          this.getRegion('search').$el.hide();
+          this.ui_state.set({
+            total_entries: this.bookmarksearch.length
+          });
+        }
+        else if (_.contains(['channel', 'thread', 'article', 'blog'], viewing_type)) {
           //Viewing posts
           this.getRegion('empty').$el.stop(true, true).hide();
           this.getRegion('notifications').$el.hide();
           this.getRegion('search').$el.hide();
           this.getRegion('categories').$el.hide();
+          this.getRegion('bookmarksearch').$el.hide();
           this.getRegion('articles').$el.hide();
           this.getRegion('threads').$el.hide();
           this.getRegion('channels').$el.hide();
@@ -837,6 +919,7 @@ Main client app
           this.getRegion('notifications').$el.hide();
           this.getRegion('search').$el.hide();
           this.getRegion('categories').$el.show();
+          this.getRegion('bookmarksearch').$el.hide();
           this.getRegion('articles').$el.show();
           this.getRegion('threads').$el.show();
           this.getRegion('channels').$el.show();
@@ -866,6 +949,7 @@ Main client app
         else {
           this.getRegion('empty').$el.fadeIn('fast');
           this.getRegion('categories').$el.hide();
+          this.getRegion('bookmarksearch').$el.hide();
           this.getRegion('notifications').$el.hide();
           this.getRegion('search').$el.hide();
           this.getRegion('articles').$el.hide();
@@ -887,9 +971,11 @@ Main client app
         if (payload.parent === this.ui_state.get('viewing').id) {
           switch(payload.type) {
             case 'category':
+            case 'bookmark':
               this.categories.remove(payload);
               break;
             case 'article':
+            case 'blog':
               this.articles.remove(payload);
               break;
             case 'thread':
@@ -918,9 +1004,11 @@ Main client app
           var on_bottom = this.isContentOnBottom();
           switch(payload.type) {
             case 'category':
+            case 'bookmark':
               this.categories.add(payload, {merge: true});
               break;
             case 'article':
+            case 'blog':
               this.articles.add(payload, {merge: true});
               break;
             case 'thread':
@@ -939,8 +1027,7 @@ Main client app
         //check breadcrumb update
         else if (payload.id === viewing.id) {
           if (payload.body != viewing.body ||
-              payload.header != viewing.header ||
-              payload.is_blog != viewing.is_blog)
+              payload.header != viewing.header)
           {
             this.ui_state.set('viewing', {});
             Fruum.io.trigger('fruum:view', {id: payload.id});

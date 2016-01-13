@@ -34,10 +34,12 @@ function FruumServer(options, cli_cmd, ready) {
   options.logs = path.resolve(options.logs || './logs');
 
   options.docs = options.docs || {};
+  options.docs.max_bookmark_title_size = Math.max(0, options.docs.max_bookmark_title_size || 0);
   options.docs.max_category_title_size = Math.max(0, options.docs.max_category_title_size || 0);
   options.docs.max_category_description_size = Math.max(0, options.docs.max_category_description_size || 0);
   options.docs.max_thread_title_size = Math.max(0, options.docs.max_thread_title_size || 0);
   options.docs.max_article_title_size = Math.max(0, options.docs.max_article_title_size || 0);
+  options.docs.max_blog_title_size = Math.max(0, options.docs.max_blog_title_size || 0);
   options.docs.max_channel_name_size = Math.max(0, options.docs.max_channel_name_size || 0);
   options.docs.max_post_size = Math.max(0, options.docs.max_post_size || 0);
 
@@ -182,6 +184,7 @@ function FruumServer(options, cli_cmd, ready) {
     'client/js/views/attachments.js',
     'client/js/views/interactions.js',
     'client/js/views/search.js',
+    'client/js/views/bookmark.js',
     'client/js/views/notifications.js',
     'client/js/views/share.js',
     'client/js/views/move.js',
@@ -305,6 +308,7 @@ function FruumServer(options, cli_cmd, ready) {
           'client/templates/emojipanel.html',
           'client/templates/attachments.html',
           'client/templates/search.html',
+          'client/templates/bookmark.html',
           'client/templates/notifications.html',
           'client/templates/categories.html',
           'client/templates/loading.html',

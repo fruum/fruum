@@ -55,6 +55,12 @@
 <!-- Search mode -->
 <script type="text/template" id="fruum-template-interactions-searching">
   <div class="fruum-interactions-footer">
+    <% if (Fruum.user.admin && has_search_string) { %>
+    <div class="fruum-interactions-buttons">
+      <span class="fruum-secondary-data">Are these search results valuable?</span>
+      <button class="fruum-secondary-button" data-action="add_search">Store search</button>
+    </div>
+    <% } %>
     <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')() %>
   </div>
 </script>
@@ -65,7 +71,7 @@
   <input type="hidden" data-field="type" value="category" class="fruum-js-interacting" />
   <input type="hidden" data-field="parent" value="<%- editing.id?editing.parent:viewing.id %>" />
   <form action="" class="fruum-interactions-form">
-    <div class="fruum-base-object fruum-base-object-compact">
+    <div class="fruum-base-object">
       <div class="fruum-avatar">
         <span class="fruum-avatar-icon" data-initials="<%- Fruum.utils.printInitials(editing.initials) %>">
           <input
@@ -87,6 +93,30 @@
             placeholder="it's about..."
             data-field="body"><%= editing.body || '' %></textarea>
         </span>
+      </div>
+    </div>
+    <div class="fruum-interactions-customizations">
+      <div class="fruum-customization-item">
+        <div class="fruum-popup-data fruum-nodisplay fruum-js-choose-usage">
+          <div class="fruum-options-list">
+            <% _.each(Fruum.usage, function(value, key) { %>
+              <a href="javascript:;" class="fruum-option-item fruum-link" data-usage="<%- key %>"><%- value %></a>
+            <% }); %>
+          </div>
+        </div>
+        <span class="fruum-secondary-data">use for:</span>
+        <a href="javascript:;" class="fruum-link" data-field="usage" data-value="<%- editing.usage|0 %>"><%- Fruum.usage[editing.usage|0] %></a>
+      </div>
+      <div class="fruum-customization-item">
+        <div class="fruum-popup-data fruum-nodisplay fruum-js-choose-permission">
+          <div class="fruum-options-list">
+            <% _.each(Fruum.permission, function(value, key) { %>
+              <a href="javascript:;" class="fruum-option-item fruum-link" data-permission="<%- key %>"><%- value %></a>
+            <% }); %>
+          </div>
+        </div>
+        <span class="fruum-secondary-data">visible to:</span>
+        <a href="javascript" class="fruum-link" data-field="permission" data-value="<%- editing.permission|0 %>"><%- Fruum.permission[editing.permission|0] %></a>
       </div>
     </div>
     <div class="fruum-interactions-footer">
@@ -132,7 +162,7 @@
         placeholder="it's about..."
         data-field="body"><%= editing.body || '' %></textarea>
     </div>
-    <div class="fruum-interactions-tags">
+    <div class="fruum-interactions-customizations">
       <b class="fruum-secondary-data">TAGS:</b>
       <input type="text"
              class="fruum-interactions-input fruum-stream-tags"
@@ -187,7 +217,7 @@
         placeholder="it's about..."
         data-field="body"><%= editing.body || '' %></textarea>
     </div>
-    <div class="fruum-interactions-tags">
+    <div class="fruum-interactions-customizations">
       <b class="fruum-secondary-data">TAGS:</b>
       <input type="text"
              class="fruum-interactions-input fruum-stream-tags"
@@ -203,10 +233,61 @@
         <% } else { %>
         <button class="fruum-secondary-button" data-action="post">Add</button>
         <% } %>
-        <input id="fruum-is-blog" type="checkbox" class="fruum-interactions-checkbox" data-field="is_blog"
-        <% if (editing.is_blog) { %>checked="checked"<% } %>
+        <a class="fruum-secondary-button fruum-link-negative" data-action="cancel">cancel</a>
+      </div>
+      <div class="fruum-user-account">
+        <span
+          class="fruum-helper-action"
+          data-action="help"
+        >?</span>
+        <span class="fruum-helper-action fruum-icon fruum-icon-emoji" data-action="emojipanel"></span>
+        <span class="fruum-helper-action fruum-icon fruum-icon-camera" data-action="attachments"></span>
+        <span class="fruum-helper-action fruum-helper-text" data-action="preview">preview</span>
+      </div>
+    </div>
+  </form>
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-help')() %>
+</script>
+
+<!-- Edit/Add blog -->
+<script type="text/template" id="fruum-template-interactions-edit-blog">
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-messages')() %>
+  <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
+  <input type="hidden" data-field="type" value="blog" class="fruum-js-interacting" />
+  <form action="" class="fruum-interactions-form">
+    <div class="fruum-stream-typography">
+      <input
+        class="fruum-interactions-input fruum-category-title"
+        data-field="header"
+        placeholder="blog title..."
+        value="<%- editing.header || '' %>"
         />
-        <label for="fruum-is-blog" class="fruum-interactions-label">as blog article</label>
+    </div>
+    <div class="fruum-object-divider"></div>
+    <div class="fruum-stream-typography">
+      <div class="fruum-js-preview fruum-preview-container" style="display:none;"></div>
+      <textarea
+        autocomplete="off"
+        class="fruum-interactions-input fruum-secondary-data"
+        placeholder="it's about..."
+        data-field="body"><%= editing.body || '' %></textarea>
+    </div>
+    <div class="fruum-interactions-customizations">
+      <b class="fruum-secondary-data">TAGS:</b>
+      <input type="text"
+             class="fruum-interactions-input fruum-stream-tags"
+             placeholder="Comma separated words. eg. idea, wishlist"
+             data-field="tags"
+             value="<%- (editing.tags || []).join(', ') %>"
+             />
+    </div>
+    <div class="fruum-interactions-footer">
+      <div class="fruum-interactions-buttons fruum-interactions-group">
+        <% if (editing.id) { %>
+        <button class="fruum-secondary-button" data-action="post">Edit</button>
+        <% } else { %>
+        <button class="fruum-secondary-button" data-action="post">Add</button>
+        <% } %>
         <a class="fruum-secondary-button fruum-link-negative" data-action="cancel">cancel</a>
       </div>
       <div class="fruum-user-account">
@@ -297,11 +378,6 @@
   <div class="fruum-interactions-stream-update" style="display:none;"><!-- template --></div>
   <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
   <form action="" class="fruum-interactions-form">
-    <% if (viewing.locked) { %>
-      <span class="fruum-helptext">
-        Thread is locked, you cannot post.
-      </span>
-    <% } else { %>
     <input type="hidden" data-field="type" value="post" class="fruum-js-interacting" />
     <div class="fruum-stream-typography">
       <textarea
@@ -328,7 +404,6 @@
         <span class="fruum-helper-action fruum-helper-text" data-action="preview">preview</span>
       </div>
     </div>
-    <% } %>
   </form>
   <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-help')() %>
 </script>
@@ -339,21 +414,31 @@
   <div class="fruum-interactions-stream-update" style="display:none;"><!-- template --></div>
   <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
   <form action="" class="fruum-interactions-form">
-    <% if (viewing.locked) { %>
-      <span class="fruum-helptext">
-        Thread is locked, you cannot post.
-      </span>
-    <% } else { %>
     <div class="fruum-interactions-footer">
+    <% if (viewing.locked) { %>
+      <% if (viewing.type == 'thread') { %>
+      <span class="fruum-helptext">Thread is locked, you cannot post.</span>
+      <% } %>
+    <% } else { %>
       <div class="fruum-interactions-buttons">
         <button class="fruum-main-button" data-action="add_post">reply</button>
       </div>
+    <% } %>
       <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')() %>
     </div>
-    <% } %>
   </form>
 </script>
 
+<!-- Viewing bookmark -->
+<script type="text/template" id="fruum-template-interactions-view-bookmark">
+  <div class="fruum-interactions-stream-update" style="display:none;"><!-- template --></div>
+  <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
+  <form action="" class="fruum-interactions-form">
+    <div class="fruum-interactions-footer">
+      <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')() %>
+    </div>
+  </form>
+</script>
 
 <!-- Admin actions -->
 <script type="text/template" id="fruum-template-interactions-admin">
@@ -364,12 +449,13 @@
 
         <button class="fruum-main-button" data-action="add_category">Category</button>
 
-        <button class="fruum-main-button" data-action="add_article">Article</button>
-
-        <% if (viewing.allow_threads) { %>
+        <% if (viewing.usage == 0) { %>
         <button class="fruum-main-button" data-action="add_thread">Thread</button>
-        <% } %>
-        <% if (viewing.allow_channels) { %>
+        <% } else if (viewing.usage == 1) { %>
+        <button class="fruum-main-button" data-action="add_article">Article</button>
+        <% } else if (viewing.usage == 2) { %>
+        <button class="fruum-main-button" data-action="add_blog">Blog</button>
+        <% } else if (viewing.usage == 3) { %>
         <button class="fruum-main-button" data-action="add_channel">Channel</button>
         <% } %>
 
@@ -385,12 +471,13 @@
   <form action="" class="fruum-interactions-form">
     <div class="fruum-interactions-footer">
       <div class="fruum-interactions-buttons">
-        <% if (viewing.allow_threads) { %>
+
+        <% if (viewing.usage == 0) { %>
         <button class="fruum-main-button" data-action="add_thread">Thread</button>
-        <% } %>
-        <% if (viewing.allow_channels) { %>
+        <% } else if (viewing.usage == 3) { %>
         <button class="fruum-main-button" data-action="add_channel">Channel</button>
         <% } %>
+
       </div>
       <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')() %>
     </div>

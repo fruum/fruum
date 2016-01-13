@@ -107,8 +107,64 @@ function _locked_category(done) {
       parent_type: 'category',
       header: 'locked category header',
       body: 'locked category body',
-      allow_threads: false,
-      allow_channels: false
+      usage: 4
+    }
+  }, done);
+}
+
+function _user_category(done) {
+  //create category
+  request({
+    method: 'POST',
+    url: url + '/api/v1/testkey/docs',
+    json: true,
+    body: {
+      id: 'user_category',
+      type: 'category',
+      parent: 'home',
+      parent_type: 'category',
+      header: 'user category header',
+      body: 'user category body',
+      usage: 0,
+      permission: 1
+    }
+  }, done);
+}
+
+function _user_category(done) {
+  //create category
+  request({
+    method: 'POST',
+    url: url + '/api/v1/testkey/docs',
+    json: true,
+    body: {
+      id: 'user_category',
+      type: 'category',
+      parent: 'home',
+      parent_type: 'category',
+      header: 'user category header',
+      body: 'user category body',
+      usage: 0,
+      permission: 1
+    }
+  }, done);
+}
+
+function _admin_category(done) {
+  //create category
+  request({
+    method: 'POST',
+    url: url + '/api/v1/testkey/docs',
+    json: true,
+    body: {
+      id: 'admin_category',
+      type: 'category',
+      parent: 'home',
+      parent_type: 'category',
+      header: 'admin category header',
+      body: 'admin category body',
+      usage: 0,
+      permission: 2
     }
   }, done);
 }
@@ -189,6 +245,21 @@ function _channel(done) {
   }, done);
 }
 
+function _bookmark(done) {
+  request({
+    method: 'POST',
+    url: url + '/api/v1/testkey/docs',
+    json: true,
+    body: {
+      id: 'bookmark',
+      type: 'bookmark',
+      parent: 'category',
+      header: 'bookmark header',
+      body: 'bookmark body'
+    }
+  }, done);
+}
+
 function load_fixture(done) {
   _category(function() {
     _locked_category(function() {
@@ -197,7 +268,13 @@ function load_fixture(done) {
           _thread(function() {
             _move_thread(function() {
               _locked_thread(function() {
-                done && done();
+                _bookmark(function() {
+                  _user_category(function() {
+                    _admin_category(function() {
+                      done && done();
+                    });
+                  });
+                });
               });
             });
           });
@@ -207,14 +284,13 @@ function load_fixture(done) {
   });
 }
 
-function set_field(id, field, value, done) {
-  var body = { id: id };
-  body[field] = value;
+function set_field(id, fields, done) {
+  fields.id = id;
   request({
     method: 'PUT',
     url: url + '/api/v1/testkey/docs/' + id,
     json: true,
-    body: body
+    body: fields
   }, done);
 }
 

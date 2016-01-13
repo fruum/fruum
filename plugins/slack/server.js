@@ -43,7 +43,7 @@ function Slack(options, instance) {
       }
       else {
         //perform search
-        instance.storage.search(app_id, text, function(results) {
+        instance.storage.search(app_id, { text: text, permission: 1 }, function(results) {
           if (!results.length) {
             res.send('*Fruum:* No search results');
             return;

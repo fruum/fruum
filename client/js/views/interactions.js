@@ -17,9 +17,11 @@ Handles the bottom input part
         post: '[data-action="post"]',
         add_category: '[data-action="add_category"]',
         add_article: '[data-action="add_article"]',
+        add_blog: '[data-action="add_blog"]',
         add_thread: '[data-action="add_thread"]',
         add_channel: '[data-action="add_channel"]',
         add_post: '[data-action="add_post"]',
+        add_search: '[data-action="add_search"]',
         cancel: '[data-action="cancel"]',
         preview: '[data-action="preview"]',
         help: '[data-action="help"]',
@@ -36,14 +38,23 @@ Handles the bottom input part
         field_body: '[data-field="body"]',
         field_tags: '[data-field="tags"]',
         field_notifications: '[data-field="notifications"]',
-        field_is_blog: '[data-field="is_blog"]',
-        channel_input: '.fruum-js-channel-input'
+        field_usage: '[data-field="usage"]',
+        field_permission: '[data-field="permission"]',
+        option_usage: '[data-usage]',
+        option_permission: '[data-permission]',
+        channel_input: '.fruum-js-channel-input',
+        popup_usage: '.fruum-js-choose-usage',
+        popup_permission: '.fruum-js-choose-permission'
       },
       modelEvents: {
-        'change:editing change:viewing change:searching': 'onChange',
+        'change:editing change:viewing change:searching change:has_search_string': 'onChange',
         'change:interacting change:connected': 'onInteracting'
       },
       events: {
+        'click @ui.field_usage': 'onClickUsage',
+        'click @ui.field_permission': 'onClickPermission',
+        'click @ui.option_usage': 'onSelectUsage',
+        'click @ui.option_permission': 'onSelectPermission',
         'focus @ui.field_initials': 'onInitialFocus',
         'keydown @ui.field_initials': 'onInitialsKeydown',
         'keydown @ui.field_body': 'onBodyKeydown',
@@ -55,9 +66,11 @@ Handles the bottom input part
         'click @ui.post': 'onPost',
         'click @ui.add_thread': 'onAddThread',
         'click @ui.add_article': 'onAddArticle',
+        'click @ui.add_blog': 'onAddBlog',
         'click @ui.add_channel': 'onAddChannel',
         'click @ui.add_category': 'onAddCategory',
         'click @ui.add_post': 'onAddPost',
+        'click @ui.add_search': 'onAddSearch',
         'click @ui.cancel': 'onCancel',
         'click @ui.preview': 'onPreview',
         'click @ui.show_notifications': 'onShowNotifications',
@@ -66,8 +79,7 @@ Handles the bottom input part
         'keyup @ui.field_body': 'onKeyBody',
         'keyup @ui.field_header': 'onKeyHeader',
         'keyup @ui.field_initials': 'onKeyInitials',
-        'keyup @ui.field_tags': 'onKeyTags',
-        'change @ui.field_is_blog': 'onKeyIsBlog'
+        'keyup @ui.field_tags': 'onKeyTags'
       },
       initialize: function(options) {
         _.bindAll(this, 'typeNotificationStart', 'typeNotificationEnd');
@@ -92,12 +104,18 @@ Handles the bottom input part
       },
       getTemplate: function() {
         if (Fruum.user.anonymous) return '#fruum-template-interactions-anonymous';
-        if (this.ui_state.get('searching')) return '#fruum-template-interactions-searching';
-        switch(this.ui_state.get('editing').type) {
+        var editing = this.ui_state.get('editing'),
+            viewing = this.ui_state.get('viewing');
+        if (this.ui_state.get('searching')) {
+          return '#fruum-template-interactions-searching';
+        }
+        switch(editing.type) {
           case 'category':
             return '#fruum-template-interactions-edit-category';
           case 'article':
             return '#fruum-template-interactions-edit-article';
+          case 'blog':
+            return '#fruum-template-interactions-edit-blog';
           case 'thread':
             return '#fruum-template-interactions-edit-thread';
           case 'channel':
@@ -105,12 +123,15 @@ Handles the bottom input part
           case 'post':
             return '#fruum-template-interactions-edit-post';
         }
-        switch(this.ui_state.get('viewing').type) {
+        switch(viewing.type) {
           case 'thread':
           case 'article':
+          case 'blog':
             return '#fruum-template-interactions-view-thread';
           case 'channel':
             return '#fruum-template-interactions-view-channel';
+          case 'bookmark':
+            return '#fruum-template-interactions-view-bookmark';
         }
         if (Fruum.user.admin) return '#fruum-template-interactions-admin';
         return '#fruum-template-interactions-user';
@@ -126,6 +147,7 @@ Handles the bottom input part
         }
       },
       onRender: function() {
+        Fruum.io.trigger('fruum:hide_bookmark');
         this.emojipanel_view.hide();
         this.attachments_view.hide();
       },
@@ -161,6 +183,7 @@ Handles the bottom input part
         switch(this.ui_state.get('editing').type) {
           case 'thread':
           case 'article':
+          case 'blog':
             this.ui.field_body.height(
               this.ui_state.get('panel_height') -
               (this.$el.parent().outerHeight() - this.ui.field_body.height()) -
@@ -185,6 +208,7 @@ Handles the bottom input part
         switch(this.ui_state.get('editing').type) {
           case 'thread':
           case 'article':
+          case 'blog':
             return 'easeOutSine';
         }
         return 'easeInOutBack'
@@ -253,6 +277,7 @@ Handles the bottom input part
               else switch(that.ui_state.get('editing').type) {
                 case 'thread':
                 case 'article':
+                case 'blog':
                 case 'channel':
                 case 'category':
                   that.ui.field_header.focus().select();
@@ -339,6 +364,14 @@ Handles the bottom input part
         });
         this.ui.field_header.focus();
       },
+      onAddBlog: function(event) {
+        event.preventDefault();
+        this.ui_state.set('editing', {
+          type: 'blog',
+          parent: this.ui_state.get('viewing').id
+        });
+        this.ui.field_header.focus();
+      },
       onAddThread: function(event) {
         event.preventDefault();
         this.ui_state.set('editing', {
@@ -363,10 +396,17 @@ Handles the bottom input part
         });
         this.ui.field_body.focus();
       },
+      onAddSearch: function(event) {
+        event.preventDefault();
+        Fruum.io.trigger('fruum:show_bookmark', {
+          body: this.ui_state.get('search')
+        });
+      },
       onPost: function(event) {
         event.preventDefault();
-        var id = this.ui_state.get('editing').id || '';
-        var order = 0;
+        var editing = this.ui_state.get('editing'),
+            id = editing.id || '',
+            order = 0;
         switch(this.ui.field_type.val()) {
           case 'category':
             order = this.collections.categories.length + 1;
@@ -376,12 +416,13 @@ Handles the bottom input part
             }
             break;
           case 'article':
+          case 'blog':
             order = this.collections.articles.length + 1;
             break;
         }
-        if (this.ui_state.get('editing').id) {
-          id = this.ui_state.get('editing').id;
-          order = this.ui_state.get('editing').order || order;
+        if (editing.id) {
+          id = editing.id;
+          order = editing.order || order;
         }
         //prepare tags
         var tags = _.uniq(_.compact(
@@ -395,12 +436,10 @@ Handles the bottom input part
           header: this.ui.field_header.val() || '',
           body: body,
           type: this.ui.field_type.val() || '',
-          attachments: this.cleanAttachments(
-            body,
-            this.ui_state.get('editing').attachments || []
-          ),
+          attachments: this.cleanAttachments(body, editing.attachments || []),
           tags: tags,
-          is_blog: this.ui.field_is_blog.is(':checked'),
+          usage: this.ui.field_usage.data('value')|0,
+          permission: this.ui.field_permission.data('value')|0,
           order: order
         });
       },
@@ -443,9 +482,26 @@ Handles the bottom input part
           }
         }
       },
-      onKeyIsBlog: function() {
-        var editing = this.ui_state.get('editing');
-        editing.is_blog = this.ui.field_is_blog.is(':checked');
+
+      onClickUsage: function(event) {
+        event && event.preventDefault();
+        this.ui.popup_usage.toggleClass('fruum-nodisplay');
+      },
+      onClickPermission: function(event) {
+        event && event.preventDefault();
+        this.ui.popup_permission.toggleClass('fruum-nodisplay');
+      },
+      onSelectUsage: function(event) {
+        event && event.preventDefault();
+        var usage = $(event.target).closest('[data-usage]').data('usage')|0;
+        this.ui.field_usage.data('value', usage).html(Fruum.usage[usage]);
+        this.ui.popup_usage.addClass('fruum-nodisplay');
+      },
+      onSelectPermission: function(event) {
+        event && event.preventDefault();
+        var permission = $(event.target).closest('[data-permission]').data('permission')|0;
+        this.ui.field_permission.data('value', permission).html(Fruum.permission[permission]);
+        this.ui.popup_permission.addClass('fruum-nodisplay');
       }
     });
   });

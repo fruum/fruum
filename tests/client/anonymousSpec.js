@@ -31,9 +31,47 @@ describe("Anonymous client", function() {
   });
 
   it("cannot create thread", function(done) {
+    set_field('home', {usage: 0}, function() {
+      anonymous_connect(function(socket) {
+        var payload = {
+          parent: 'home',
+          type: 'thread',
+          header: 'foo',
+          body: 'bar'
+        }
+        socket.emit('fruum:add', payload);
+        socket.on('fruum:add', function(response) {
+          socket.removeListener('fruum:add', this);
+          expect(response).toBeUndefined();
+          socket.disconnect();
+          done();
+        });
+      });
+    });
+  });
+
+  it("cannot create thread on user category", function(done) {
     anonymous_connect(function(socket) {
       var payload = {
-        parent: 'home',
+        parent: 'user_category',
+        type: 'thread',
+        header: 'foo',
+        body: 'bar'
+      }
+      socket.emit('fruum:add', payload);
+      socket.on('fruum:add', function(response) {
+        socket.removeListener('fruum:add', this);
+        expect(response).toBeUndefined();
+        socket.disconnect();
+        done();
+      });
+    });
+  });
+
+  it("cannot create thread on admin category", function(done) {
+    anonymous_connect(function(socket) {
+      var payload = {
+        parent: 'admin_category',
         type: 'thread',
         header: 'foo',
         body: 'bar'
@@ -49,12 +87,52 @@ describe("Anonymous client", function() {
   });
 
   it("cannot create article", function(done) {
+    set_field('home', {usage: 1}, function() {
+      anonymous_connect(function(socket) {
+        var payload = {
+          parent: 'home',
+          type: 'article',
+          header: 'foo',
+          body: 'bar'
+        }
+        socket.emit('fruum:add', payload);
+        socket.on('fruum:add', function(response) {
+          socket.removeListener('fruum:add', this);
+          expect(response).toBeUndefined();
+          socket.disconnect();
+          done();
+        });
+      });
+    });
+  });
+
+  it("cannot create blog", function(done) {
+    set_field('home', {usage: 2}, function() {
+      anonymous_connect(function(socket) {
+        var payload = {
+          parent: 'home',
+          type: 'blog',
+          header: 'foo',
+          body: 'bar'
+        }
+        socket.emit('fruum:add', payload);
+        socket.on('fruum:add', function(response) {
+          socket.removeListener('fruum:add', this);
+          expect(response).toBeUndefined();
+          socket.disconnect();
+          done();
+        });
+      });
+    });
+  });
+
+  it("cannot create bookmark", function(done) {
     anonymous_connect(function(socket) {
       var payload = {
         parent: 'home',
-        type: 'article',
-        header: 'foo',
-        body: 'bar'
+        type: 'bookmark',
+        header: 'bookmark',
+        body: '#foo'
       }
       socket.emit('fruum:add', payload);
       socket.on('fruum:add', function(response) {
@@ -67,19 +145,21 @@ describe("Anonymous client", function() {
   });
 
   it("cannot create channel", function(done) {
-    anonymous_connect(function(socket) {
-      var payload = {
-        parent: 'home',
-        type: 'channel',
-        header: 'foo',
-        body: 'bar'
-      }
-      socket.emit('fruum:add', payload);
-      socket.on('fruum:add', function(response) {
-        socket.removeListener('fruum:add', this);
-        expect(response).toBeUndefined();
-        socket.disconnect();
-        done();
+    set_field('home', {usage: 3}, function() {
+      anonymous_connect(function(socket) {
+        var payload = {
+          parent: 'home',
+          type: 'channel',
+          header: 'foo',
+          body: 'bar'
+        }
+        socket.emit('fruum:add', payload);
+        socket.on('fruum:add', function(response) {
+          socket.removeListener('fruum:add', this);
+          expect(response).toBeUndefined();
+          socket.disconnect();
+          done();
+        });
       });
     });
   });

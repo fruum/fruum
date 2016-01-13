@@ -97,12 +97,23 @@ function API_v1(options, instance) {
       if (application) {
         storage.get(application.get('id'), id, function(document) {
           if (document) {
+            function apply_permission(root_doc, previous_permission) {
+              if (root_doc.get('permission') != previous_permission) {
+                storage.update_subtree(application.get('id'), root_doc, {
+                  permission: root_doc.get('permission')
+                }, function() {
+                  res.json(root_doc.toJSON());
+                });
+              }
+              else res.json(root_doc.toJSON());
+            }
+            var permission = document.get('permission');
             //home
             if (document.get('id') == 'home' && !document.get('parent')) {
               //update only flags
               _.each([
                 'header', 'body', 'initials',
-                'visible', 'allow_threads', 'allow_channels'
+                'visible', 'usage', 'permission'
               ], function(field) {
                 if (req.body[field] != undefined) {
                   document.set(field, req.body[field]);
@@ -110,11 +121,14 @@ function API_v1(options, instance) {
               });
               storage.update(application.get('id'), document, null, function(updated_doc) {
                 engine.invalidateDocument(application.get('id'), updated_doc);
-                res.json(updated_doc.toJSON());
+                apply_permission(updated_doc, permission);
               });
             }
             else {
               document.set(req.body);
+              //allow permission changes only on categories
+              if (document.get('type') != 'category')
+                document.set('permission', permission);
               document.escape();
               //verify that parent exists
               storage.get(application.get('id'), document.get('parent'), function(parent_doc) {
@@ -125,7 +139,7 @@ function API_v1(options, instance) {
                   document.setParentDocument(parent_doc);
                   storage.update(application.get('id'), document, null, function(updated_doc) {
                     engine.invalidateDocument(application.get('id'), updated_doc);
-                    res.json(updated_doc.toJSON());
+                    apply_permission(updated_doc, permission);
                   });
                 }
               });

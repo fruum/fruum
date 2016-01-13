@@ -13,12 +13,16 @@ module.exports = function(options, instance, self) {
 
   //return a list of all forum categories
   self.categories = function(socket, payload) {
-    if (!self.validatePayloadID(socket, null, 'categories')) return;
+    if (!self.validatePayloadID(socket, null, 'categories')) {
+      self.fail(payload);
+      return;
+    }
     var app_id = socket.app_id,
         user = socket.fruum_user;
     if (!user.get('admin')) {
       logger.error(app_id, 'categories_noperm', user);
       socket.emit('fruum:categories');
+      self.fail(payload);
       return;
     }
     storage.search_attributes(app_id, { type: 'category', archived: false }, function(results) {
@@ -29,12 +33,16 @@ module.exports = function(options, instance, self) {
       socket.emit('fruum:categories', {
         categories: response
       });
+      self.success(payload);
     });
   }
 
   //move article/thread/channel under another category
   self.move = function(socket, payload) {
-    if (!self.validatePayloadID(socket, payload, 'move')) return;
+    if (!self.validatePayloadID(socket, payload, 'move')) {
+      self.fail(payload);
+      return;
+    }
     var app_id = socket.app_id,
         id = payload.id,
         category_id = payload.category,
@@ -42,11 +50,13 @@ module.exports = function(options, instance, self) {
     if (!user.get('admin')) {
       logger.error(app_id, 'move_noperm', user);
       socket.emit('fruum:move');
+      self.fail(payload);
       return;
     }
     if (!id || !category_id) {
       logger.error(app_id, 'move_invalid_payload', user);
       socket.emit('fruum:move');
+      self.fail(payload);
       return;
     }
     //get document
@@ -54,6 +64,7 @@ module.exports = function(options, instance, self) {
       if (!document) {
         logger.error(app_id, 'move_invalid_doc', '' + id);
         socket.emit('fruum:move');
+        self.fail(payload);
         return;
       }
       var original_document = document.clone();
@@ -62,27 +73,32 @@ module.exports = function(options, instance, self) {
         if (!category_doc) {
           logger.error(app_id, 'move_invalid_category_doc', '' + category_id);
           socket.emit('fruum:move');
+          self.fail(payload);
           return;
         }
         //validate document type
         switch(document.get('type')) {
           case 'thread':
           case 'article':
+          case 'blog':
           case 'channel':
             break;
           default:
             logger.error(app_id, 'move_invalid_document_type', '' + id);
             socket.emit('fruum:move');
+            self.fail(payload);
             return;
         }
         //validate category type
         if (category_doc.get('type') != 'category') {
           logger.error(app_id, 'move_invalid_document_type', '' + id);
           socket.emit('fruum:move');
+          self.fail(payload);
           return;
         }
         //already under the proper category
         if (document.get('parent') == category_doc.get('id')) {
+          self.success(payload);
           return;
         }
         //get children
@@ -110,6 +126,7 @@ module.exports = function(options, instance, self) {
               self.invalidateDocument(app_id, original_document);
               self.invalidateDocument(app_id, category_doc);
               socket.emit('fruum:move', emit_payload);
+              self.success(payload);
               return;
             }
             //save
@@ -130,6 +147,7 @@ module.exports = function(options, instance, self) {
                     'fruum:move', emit_payload
                   );
                 }
+                self.success(payload);
               }
               else {
                 self.invalidateDocument(app_id, doc);

@@ -46,6 +46,7 @@ Search button
           this.ui.search.removeClass('fruum-search-active');
           this.model.set('searching', false);
         }
+        this._updateStatus();
       },
       onSearchOpen: function(event) {
         this.model.set('searching', true);
@@ -60,8 +61,12 @@ Search button
         this.ui.search_input.val('').blur();
         this.onSearchBlur();
       },
+      _updateStatus: function() {
+        this.model.set('has_search_string', $.trim(this.ui.search_input.val() || '').length > 0);
+      },
       _search: function() {
         this.search_timer = null;
+        this._updateStatus();
         Fruum.io.trigger('fruum:search', this.ui.search_input.val());
       }
     });

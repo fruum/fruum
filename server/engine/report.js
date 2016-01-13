@@ -14,7 +14,10 @@ module.exports = function(options, instance, self) {
   // -------------------------------- REPORT -----------------------------------
 
   self.report = function(socket, payload) {
-    if (!self.validatePayloadID(socket, payload, 'report')) return;
+    if (!self.validatePayloadID(socket, payload, 'report')) {
+      self.fail(payload);
+      return;
+    }
     var app_id = socket.app_id,
         id = payload.id,
         user = socket.fruum_user;
@@ -22,12 +25,14 @@ module.exports = function(options, instance, self) {
     if (user.get('anonymous')) {
       logger.error(app_id, 'report_anonymous_noperm', user);
       socket.emit('fruum:report');
+      self.fail(payload);
       return;
     }
     storage.get(app_id, id, function(document) {
       if (!document) {
         logger.error(app_id, 'report_invalid_doc', '' + id);
         socket.emit('fruum:report');
+        self.fail(payload);
         return;
       }
       //process plugins
@@ -39,6 +44,7 @@ module.exports = function(options, instance, self) {
       plugins.report(plugin_payload, function(err, plugin_payload) {
         document = plugin_payload.document || document;
         socket.emit('fruum:report', document.toJSON());
+        self.success(payload);
       });
     });
   }

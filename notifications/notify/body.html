@@ -25,10 +25,14 @@
               Hello, <b><%- document.user_displayname || document.user_username %></b>
               <% if (document.type === 'article') { %>
                 added a new article on a category you watch.
+              <% } else if (document.type === 'blog') { %>
+                added a new blog post on a category you watch.
               <% } else if (document.type === 'channel') { %>
                 added a new channel on a category you watch.
               <% } else if (document.type === 'category') { %>
                 added a new sub-category on a category you watch.
+              <% } else if (document.type === 'bookmark') { %>
+                added a new stored search on a category you watch.
               <% } else { %>
                 replied to a topic you watch.
               <% } %>

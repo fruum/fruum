@@ -11,8 +11,7 @@ Handles move document
         _ = Fruum.libs._,
         Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette,
-        Messages = Fruum.messages,
-        Utils = Fruum.utils;
+        Messages = Fruum.messages;
 
     Fruum.views.MoveItemView = Marionette.ItemView.extend({
       template: '#fruum-template-move-entry',
@@ -37,7 +36,7 @@ Handles move document
         list: '.fruum-js-move-entries'
       },
       ui: {
-        close: '.fruum-popup-close'
+        close: '.fruum-js-close'
       },
       events: {
         'click @ui.close': 'onClose'
@@ -45,7 +44,7 @@ Handles move document
       initialize: function(options) {
         _.bindAll(this, 'onKey');
         this.ui_state = options.model;
-        this.collection = this.collection;
+        this.all_categories = options.all_categories;
         this.listenTo(Fruum.io, 'fruum:show_move', this.show);
       },
       onChildviewSelectCategory: function(event) {
@@ -58,7 +57,8 @@ Handles move document
           this.onClose();
         }
       },
-      onClose: function() {
+      onClose: function(event) {
+        event && event.preventDefault();
         if (this.el_container.hasClass('fruum-nodisplay')) return;
         this.el_container.addClass('fruum-nodisplay');
         $(document).off('keydown', this.onKey);
@@ -70,7 +70,7 @@ Handles move document
         this.el_container = this.$el.parent();
         this.showChildView('list', new Fruum.views.MoveCollectionView({
           ui_state: this.ui_state,
-          collection: this.collection
+          collection: this.all_categories
         }));
       },
       show: function(document) {

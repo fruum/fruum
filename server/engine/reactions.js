@@ -14,7 +14,10 @@ module.exports = function(options, instance, self) {
   // -------------------------------- REPORT -----------------------------------
 
   self.react = function(socket, payload) {
-    if (!self.validatePayloadID(socket, payload, 'react')) return;
+    if (!self.validatePayloadID(socket, payload, 'react')) {
+      self.fail(payload);
+      return;
+    }
     var app_id = socket.app_id,
         id = payload.id,
         reaction = payload.reaction || '',
@@ -23,12 +26,14 @@ module.exports = function(options, instance, self) {
     if (user.get('anonymous')) {
       logger.error(app_id, 'react_anonymous_noperm', user);
       socket.emit('fruum:react');
+      self.fail(payload);
       return;
     }
     storage.get(app_id, id, function(document) {
       if (!document) {
         logger.error(app_id, 'react_invalid_doc', '' + id);
         socket.emit('fruum:react');
+        self.fail(payload);
         return;
       }
       //process plugins
@@ -42,6 +47,7 @@ module.exports = function(options, instance, self) {
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:react', document.toJSON());
+          self.success(payload);
           return;
         }
         //success
@@ -49,6 +55,7 @@ module.exports = function(options, instance, self) {
         storage.react(app_id, document, user, reaction, function() {
           socket.emit('fruum:react', document.toJSON());
           self.broadcast(user, document);
+          self.success(payload);
         });
       });
     });

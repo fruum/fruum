@@ -55,8 +55,7 @@
         var editing = this.model.get('editing');
         return {
           hide_actions: this.model.get('searching') ||
-                        editing.type === 'thread' ||
-                        editing.type === 'article'
+                        _.contains(['thread', 'article', 'blog'], editing.type)
         };
       }
     });

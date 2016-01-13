@@ -275,11 +275,19 @@ module.exports = function(options) {
 
   Parameters:
   - app_id: the application id
-  - q: String to search
+  - payload: Object defining search. Contains at least a text field,
+    {
+      text: 'foo', //string to search for
+      include_archived: true, // (optional) add archived documents as well
+      include_hidden: true, // (optional) add hidden documents as well
+      include_inappropriate: true, //(optional) add inappropriate posts as well
+      permission: 0|1|2, //(optional) document permission level must be less-equal to this
+                         //default should be 0
+    }
   - callback: function callback, passing an array of document model that match
     the search query string
   */
-  this.search = function(app_id, q, callback) { callback([]); }
+  this.search = function(app_id, payload, callback) { callback([]); }
 
   /*
   Summary:

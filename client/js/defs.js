@@ -23,4 +23,16 @@
     report: 'Report this post as inappropriate?',
     move: 'Move entire stream under new category?'
   };
+  window.Fruum.permission = {
+    0: 'everyone',
+    1: 'logged-in users',
+    2: 'administrators'
+  };
+  window.Fruum.usage = {
+    0: 'discussion',
+    1: 'helpdesk',
+    2: 'blog',
+    3: 'chat',
+    4: 'categories only'
+  }
 })();
