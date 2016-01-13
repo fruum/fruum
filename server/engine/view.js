@@ -94,7 +94,8 @@ module.exports = function(options, instance, self) {
         },
         //cache miss
         function() {
-          var is_admin = user.get('admin');
+          var is_admin = user.get('admin'),
+              user_perm = user.get('permission');
           var response = {
             id: id,
             breadcrumb: [],
@@ -102,13 +103,18 @@ module.exports = function(options, instance, self) {
             online: {}
           };
           storage.get(app_id, id, function(viewing_doc) {
-            if (viewing_doc && !viewing_doc.get('archived')) {
+            if (viewing_doc &&
+                !viewing_doc.get('archived') &&
+                (viewing_doc.get('visible') || is_admin) &&
+                viewing_doc.get('permission') <= user_perm)
+            {
               //get breadcrumb
               storage.mget(app_id, viewing_doc.get('breadcrumb'), function(breadcrumb) {
-                //get children
-                storage.children(app_id, viewing_doc, function(children_docs) {
+                function process_children(children_docs) {
                   _.each(children_docs, function(document) {
-                    if (is_admin || document.get('visible')) {
+                    if ((is_admin || document.get('visible')) &&
+                        document.get('permission') <= user_perm)
+                    {
                       if (document.get('inappropriate')) document.set('body', '');
                       response.documents.push(document.toJSON());
                       if (document.get('type') == 'channel') {
@@ -120,8 +126,10 @@ module.exports = function(options, instance, self) {
                   //populate breadcrumb
                   var has_private = false;
                   _.each(viewing_doc.get('breadcrumb'), function(key) {
-                    if (breadcrumb[key]) {
-                      if (!breadcrumb[key].get('visible')) has_private = true;
+                    var entry = breadcrumb[key];
+                    if (entry) {
+                      if (!entry.get('visible') || entry.get('permission') > user_perm)
+                        has_private = true;
                       response.breadcrumb.push(breadcrumb[key].toJSON());
                     }
                   });
@@ -137,9 +145,22 @@ module.exports = function(options, instance, self) {
                       online: {}
                     };
                   }
-                  self.cacheResponse(app_id, user, id, response);
+                  //do not cache response on bookmarks
+                  if (viewing_doc.get('type') != 'bookmark')
+                    self.cacheResponse(app_id, user, id, response);
                   process_view(app_id, user, id, response);
-                });
+                }
+                //get children
+                if (viewing_doc.get('type') == 'bookmark') {
+                  storage.search(app_id, {
+                    text: 'highlight:0 ' + viewing_doc.get('body'),
+                    include_hidden: is_admin,
+                    permission: user.get('permission')
+                  }, process_children);
+                }
+                else {
+                  storage.children(app_id, viewing_doc, process_children);
+                }
               });
             }
             else socket.emit('fruum:view');

@@ -14,7 +14,10 @@ module.exports = function(options, instance, self) {
   // -------------------------------- WATCH ------------------------------------
 
   self.watch = function(socket, payload) {
-    if (!self.validatePayloadID(socket, payload, 'watch')) return;
+    if (!self.validatePayloadID(socket, payload, 'watch')) {
+      self.fail(payload);
+      return;
+    }
     var app_id = socket.app_id,
         id = payload.id,
         user = socket.fruum_user;
@@ -22,12 +25,14 @@ module.exports = function(options, instance, self) {
     if (user.get('anonymous')) {
       logger.error(app_id, 'watch_anonymous_noperm', user);
       socket.emit('fruum:watch');
+      self.fail(payload);
       return;
     }
     storage.get(app_id, id, function(document) {
       if (!document) {
         logger.error(app_id, 'watch_invalid_doc', '' + id);
         socket.emit('fruum:watch');
+        self.fail(payload);
         return;
       }
       //process plugins
@@ -40,17 +45,22 @@ module.exports = function(options, instance, self) {
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:watch', document.toJSON());
+          self.success(payload);
           return;
         }
         storage.watch(app_id, document, user, function() {
           socket.emit('fruum:watch', document.toJSON());
+          self.success(payload);
         });
       });
     });
   }
 
   self.unwatch = function(socket, payload) {
-    if (!self.validatePayloadID(socket, payload, 'unwatch')) return;
+    if (!self.validatePayloadID(socket, payload, 'unwatch')) {
+      self.fail(payload);
+      return;
+    }
     var app_id = socket.app_id,
         id = payload.id,
         user = socket.fruum_user;
@@ -58,12 +68,14 @@ module.exports = function(options, instance, self) {
     if (user.get('anonymous')) {
       logger.error(app_id, 'unwatch_anonymous_noperm', user);
       socket.emit('fruum:unwatch');
+      self.fail(payload);
       return;
     }
     storage.get(app_id, id, function(document) {
       if (!document) {
         logger.error(app_id, 'unwatch_invalid_doc', '' + id);
         socket.emit('fruum:unwatch');
+        self.fail(payload);
         return;
       }
       //process plugins
@@ -76,10 +88,12 @@ module.exports = function(options, instance, self) {
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:unwatch', document.toJSON());
+          self.success(payload);
           return;
         }
         storage.unwatch(app_id, document, user, function() {
           socket.emit('fruum:unwatch', document.toJSON());
+          self.success(payload);
         });
       });
     });

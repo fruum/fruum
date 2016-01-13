@@ -75,18 +75,30 @@ module.exports = function(options, client, self) {
     });
   }
 
-  self.search = function(app_id, q, callback) {
+  self.search = function(app_id, payload, callback) {
     //failsafe
-    q = q || '';
+    var q = payload.text || '',
+        permission = payload.permission|0;
 
     //filter containers
     var must_not = [
-          { term: { archived: true } },
-          { term: { visible: false } },
-          { term: { inappropriate: true } },
-          { term: { type: 'category' } }
+          { term: { type: 'category' } },
+          { term: { type: 'bookmark' } }
         ],
-        must = [], should = [], sort = [];
+        must = [
+          { range: { permission: { lte: permission } } }
+        ],
+        should = [],
+        sort = [];
+
+    if (!payload.include_inappropriate)
+      must_not.push({ term: { inappropriate: true } });
+
+    if (!payload.include_hidden)
+      must_not.push({ term: { visible: false } });
+
+    if (!payload.include_archived)
+      must_not.push({ term: { archived: true } });
 
     var query = {
       must: must,
@@ -110,6 +122,9 @@ module.exports = function(options, client, self) {
     });
     //disable highlighting on tagged search
     query.highlight = tags.length == 0;
+    if (tags.length) {
+      query.max_results = options.elasticsearch.max_children;
+    }
 
     //extract keys
     var tokens = q.split(' ');
@@ -118,6 +133,12 @@ module.exports = function(options, client, self) {
       if (pair.length == 2) {
         q = q.replace(token, '').trim();
         switch (pair[0]) {
+          case 'parent':
+            must.push({ term: { parent: pair[1] } });
+            break;
+          case 'type':
+            must.push({ term: { type: pair[1] } });
+            break;
           case 'maxresults':
             query.max_results = pair[1]|0;
             break;
@@ -167,6 +188,12 @@ module.exports = function(options, client, self) {
           { match: { header: q } } ] } },
         { bool: { must: [
           { match: { type: 'article' } },
+          { match: { body: q } } ] } },
+        { bool: { must: [
+          { match: { type: 'blog' } },
+          { match: { header: q } } ] } },
+        { bool: { must: [
+          { match: { type: 'blog' } },
           { match: { body: q } } ] } },
         { bool: { must: [
           { match: { type: 'post' } },

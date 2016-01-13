@@ -24,6 +24,7 @@ module.exports = function(options, instance, self) {
     if (user.get('anonymous')) {
       logger.error(app_id, 'notifications_anonymous_noperm', user);
       socket.emit('fruum:notifications');
+      self.fail(payload);
       return;
     }
     if (payload.ids && payload.ids.length) {
@@ -36,16 +37,21 @@ module.exports = function(options, instance, self) {
         socket.emit('fruum:notifications', {
           notifications: response
         });
+        self.success(payload);
       });
     }
   }
 
   self.notify = function(socket, payload) {
     //noop
+    self.success(payload);
   }
 
   self.unnotify = function(socket, payload) {
-    if (!self.validatePayloadID(socket, payload, 'unnotify')) return;
+    if (!self.validatePayloadID(socket, payload, 'unnotify')) {
+      self.fail(payload);
+      return;
+    }
     var app_id = socket.app_id,
         id = payload.id,
         user = socket.fruum_user;
@@ -53,6 +59,7 @@ module.exports = function(options, instance, self) {
     if (user.get('anonymous')) {
       logger.error(app_id, 'unnotify_anonymous_noperm', user);
       socket.emit('fruum:unnotify');
+      self.fail(payload);
       return;
     }
     if ((user.get('notifications') || []).indexOf(payload.id) != -1) {
@@ -67,10 +74,14 @@ module.exports = function(options, instance, self) {
       });
     }
     socket.emit('fruum:unnotify', { id: payload.id });
+    self.success(payload);
   }
 
   self.typing = function(socket, payload) {
-    if (!self.validatePayloadID(socket, null, 'typing')) return;
+    if (!self.validatePayloadID(socket, null, 'typing')) {
+      self.fail(payload);
+      return;
+    }
     var app_id = socket.app_id,
         app = app_users[app_id],
         user = socket.fruum_user,
@@ -78,6 +89,7 @@ module.exports = function(options, instance, self) {
 
     if (user.get('anonymous') || !app) {
       logger.error(app_id, 'typing_anonymous_noperm', user);
+      self.fail(payload);
       return;
     }
 
@@ -89,6 +101,7 @@ module.exports = function(options, instance, self) {
         app_user.get('socket').emit('fruum:typing', user.get('username'));
       }
     });
+    self.success(payload);
   }
 
   // ------------------------------- TEMPLATES ---------------------------------

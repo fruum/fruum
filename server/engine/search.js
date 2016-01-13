@@ -16,12 +16,18 @@ module.exports = function(options, instance, self) {
     if (!payload.q) {
       logger.error(socket.app_id, 'Missing search query', payload);
       socket.emit('fruum:search');
+      self.fail(payload);
       return;
     }
     var app_id = socket.app_id,
         user = socket.fruum_user,
         is_admin = user.get('admin');
-    storage.search(socket.app_id, payload.q, function(results) {
+
+    storage.search(socket.app_id, {
+      text: payload.q,
+      include_hidden: is_admin,
+      permission: user.get('permission')
+    }, function(results) {
       var response = [];
       _.each(results, function(document) {
         if (is_admin || document.get('visible'))
@@ -31,6 +37,7 @@ module.exports = function(options, instance, self) {
         q: payload.q,
         results: response
       });
+      self.success(payload);
     });
   }
 
@@ -40,6 +47,7 @@ module.exports = function(options, instance, self) {
     if (!payload.q) {
       logger.error(socket.app_id, 'Missing autocomplete query', payload);
       socket.emit('fruum:autocomplete');
+      self.fail(payload);
       return;
     }
     var app_id = socket.app_id;
@@ -56,6 +64,7 @@ module.exports = function(options, instance, self) {
         q: payload.q,
         results: response
       });
+      self.success(payload);
     });
   }
 }

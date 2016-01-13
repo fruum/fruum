@@ -50,7 +50,9 @@ module.exports = function(options, client, self) {
   // --------------------------------- MIGRATE ---------------------------------
 
   self.migrate = function() {
-    //SAMPLE MIGRATION, e.g. adding a new mapping after setup
+    //Here follows a list of migration examples
+
+    // ------------- MASTER SCHEMA MIGRATION -------------
 
     /*
     client.indices.putMapping({
@@ -66,6 +68,36 @@ module.exports = function(options, client, self) {
     }, function(error, response) {
       console.log(error?error:response);
     });
+    */
+
+    // ------------- DOCUMENTS SCHEMA MIGRATION -------------
+
+    /*
+    self.list_apps(function(apps) {
+      _.each(apps, function(app) {
+        var app_id = app.get('id');
+        //add mapping for doc
+        client.indices.putMapping({
+          index: self.toAppIndex(app_id),
+          type: 'doc',
+          body: {
+            doc: {
+              properties: {
+                permission: { type: 'integer' },
+                usage: { type: 'integer' },
+              }
+            }
+          }
+        }, function(error, response) {
+          console.log(error?error:response);
+        });
+      });
+    });
+    */
+
+    // ------------- USER SCHEMA MIGRATION -------------
+
+    /*
     self.list_apps(function(apps) {
       _.each(apps, function(app) {
         var app_id = app.get('id');
@@ -83,19 +115,61 @@ module.exports = function(options, client, self) {
         }, function(error, response) {
           console.log(error?error:response);
         });
-        //add mapping for doc
-        client.indices.putMapping({
+      });
+    });
+    */
+
+    // ------------- DOCUMENTS DATA MIGRATION -------------
+
+    /*
+    self.list_apps(function(apps) {
+      _.each(apps, function(app) {
+        var app_id = app.get('id');
+        client.search({
           index: self.toAppIndex(app_id),
           type: 'doc',
           body: {
-            doc: {
-              properties: {
-                meta: { type: 'object', enabled: false }
-              }
-            }
+            from: 0,
+            size: 1000000,
+            query: { match_all: {} }
           }
         }, function(error, response) {
-          console.log(error?error:response);
+          console.log('migrating ' + app_id);
+          console.log(response.hits.hits.length);
+          var queue = response.hits.hits;
+          function proc() {
+            var hit = queue.pop();
+            if (hit) {
+              hit = hit._source;
+              var body = {
+                permission: 0,
+                usage: 0,
+                visible: true
+              }
+              if (hit.type == 'post')
+                body.tags = [];
+              if (hit.is_blog && hit.type == 'article')
+                body.type = 'blog';
+
+              client.update({
+                index: self.toAppIndex(app_id),
+                type: 'doc',
+                id: hit.id,
+                body: {
+                  doc: body
+                }
+              }, function(error, response) {
+                if (error) {
+                  console.log(error);
+                }
+                else {
+                  console.log('updated ' + hit.id);
+                }
+                proc();
+              });
+            }
+          }
+          proc();
         });
       });
     });

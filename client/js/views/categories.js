@@ -14,7 +14,6 @@ Categories view
         TRANSITION = Fruum.utils.marionette_itemview_transition;
 
     Fruum.views.CategoryView = TRANSITION(Marionette.ItemView.extend({
-      template: '#fruum-template-category',
       ui: {
         navigate: '.fruum-js-navigate',
         manage: '.fruum-js-manage',
@@ -34,6 +33,12 @@ Categories view
         'click @ui.down': 'onDown',
         'click @ui.delete': 'onDelete'
       },
+      getTemplate: function() {
+        if (this.model.get('type') == 'bookmark')
+          return '#fruum-template-bookmark';
+        else
+          return '#fruum-template-category';
+      },
       onNavigate: function(event) {
         event.preventDefault();
         event.stopPropagation();
@@ -48,7 +53,12 @@ Categories view
         event.preventDefault();
         event.stopPropagation();
         Fruum.io.trigger('fruum:close_manage');
-        Fruum.io.trigger('fruum:edit', this.model.toJSON());
+        if (this.model.get('type') == 'bookmark') {
+          Fruum.io.trigger('fruum:show_bookmark', this.model.toJSON());
+        }
+        else {
+          Fruum.io.trigger('fruum:edit', this.model.toJSON());
+        }
       },
       onUp: function(event) {
         event.preventDefault();
@@ -66,7 +76,10 @@ Categories view
         event.preventDefault();
         event.stopPropagation();
         Fruum.io.trigger('fruum:close_manage');
-        Fruum.io.trigger('fruum:archive', { id: this.model.get('id') });
+        if (this.model.get('type') == 'bookmark')
+          Fruum.io.trigger('fruum:delete', { id: this.model.get('id') });
+        else
+          Fruum.io.trigger('fruum:archive', { id: this.model.get('id') });
       }
     }));
     Fruum.views.CategoriesView = Marionette.CollectionView.extend({

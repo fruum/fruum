@@ -1,6 +1,6 @@
 <!-- notification template -->
 <script type="text/template" id="fruum-template-notification">
-  <div class="fruum-base-object fruum-js-entry-notification">
+  <div class="fruum-base-object fruum-link fruum-interactive-element fruum-js-navigate fruum-js-entry-notification">
     <div class="fruum-avatar">
       <% if (type === 'category') { %>
       <span
@@ -22,7 +22,7 @@
     <div class="fruum-object-main-data">
       <div class="fruum-stream-typography">
         <h4>
-          <a class="fruum-link fruum-js-navigate">
+          <a class="fruum-link">
             <%= Fruum.utils.printHeader(header) %>
           </a>
         </h4>

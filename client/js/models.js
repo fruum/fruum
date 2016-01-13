@@ -18,7 +18,7 @@ Models
         parent: '',
         //document parent type
         parent_type: '',
-        //category, thread, article, post, channel
+        //category, thread, article, blog, post, bookmark, channel
         type: '',
         //creation date in unix timestamp
         created: 0,
@@ -28,18 +28,18 @@ Models
         initials: '',
         //header e.g. category or thread/channel title
         header: '',
-        //body e.g. description or post message
+        //body e.g. description or post message or bookmark search query
         body: '',
         //if category/thread is sticky
         sticky: false,
-        //if article is a blogpost
-        is_blog: false,
         //permissions
         locked: false,
         visible: true,
-        allow_threads: true,
-        allow_channels: false,
         inappropriate: false,
+        //0: everyone, 1: logged-in, 2: admins
+        permission: 0,
+        //0: discussion, 1: helpdesk, 2: blog, 3: chat, 4: categories
+        usage: 0,
         //denormalized author details
         user_id: '',
         user_username: '',
@@ -82,6 +82,7 @@ Models
 
         interacting: false,
         searching: false,
+        has_search_string: false,
         visible: false,
         connected: false,
 

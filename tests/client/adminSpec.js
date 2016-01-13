@@ -4,6 +4,67 @@ var Utils = require('./utils'),
     set_field = Utils.set_field;
 
 describe("Admin client", function() {
+
+  it("cannot create bookmark under thread", function(done) {
+    admin_connect(function(socket) {
+      load_fixture(function() {
+        var payload = {
+          parent: 'thread',
+          type: 'bookmark',
+          header: 'foo',
+          body: 'bar'
+        }
+        socket.emit('fruum:add', payload);
+        socket.on('fruum:add', function(response) {
+          socket.removeListener('fruum:add', this);
+          expect(response).toBeUndefined();
+          socket.disconnect();
+          done();
+        });
+      });
+    });
+  });
+
+  it("cannot create bookmark under bookmark", function(done) {
+    admin_connect(function(socket) {
+      load_fixture(function() {
+        var payload = {
+          parent: 'bookmark',
+          type: 'bookmark',
+          header: 'foo2',
+          body: 'bar2'
+        }
+        socket.emit('fruum:add', payload);
+        socket.on('fruum:add', function(response) {
+          socket.removeListener('fruum:add', this);
+          expect(response).toBeUndefined();
+          socket.disconnect();
+          done();
+        });
+      });
+    });
+  });
+
+  it("cannot create thread under bookmark", function(done) {
+    admin_connect(function(socket) {
+      load_fixture(function() {
+        var payload = {
+          parent: 'bookmark',
+          type: 'thread',
+          header: 'foo',
+          body: 'bar'
+        }
+        socket.emit('fruum:add', payload);
+        socket.on('fruum:add', function(response) {
+          socket.removeListener('fruum:add', this);
+          expect(response).toBeUndefined();
+          socket.disconnect();
+          done();
+        });
+      });
+    });
+  });
+
   it("creates category", function(done) {
     admin_connect(function(socket) {
       var payload = {
@@ -37,11 +98,11 @@ describe("Admin client", function() {
     });
   });
 
-  it("creates article", function(done) {
+  it("creates thread on user category", function(done) {
     admin_connect(function(socket) {
       var payload = {
-        parent: 'home',
-        type: 'article',
+        parent: 'user_category',
+        type: 'thread',
         header: 'foo',
         body: 'bar'
       }
@@ -55,14 +116,71 @@ describe("Admin client", function() {
     });
   });
 
-  it("creates blog article", function(done) {
+  it("creates thread on admin category", function(done) {
+    admin_connect(function(socket) {
+      var payload = {
+        parent: 'admin_category',
+        type: 'thread',
+        header: 'foo',
+        body: 'bar'
+      }
+      socket.emit('fruum:add', payload);
+      socket.on('fruum:add', function(response) {
+        socket.removeListener('fruum:add', this);
+        expect(response).toEqual(jasmine.objectContaining(payload));
+        socket.disconnect();
+        done();
+      });
+    });
+  });
+
+  it("creates article", function(done) {
+    set_field('home', {usage: 1}, function() {
+      admin_connect(function(socket) {
+        var payload = {
+          parent: 'home',
+          type: 'article',
+          header: 'foo',
+          body: 'bar'
+        }
+        socket.emit('fruum:add', payload);
+        socket.on('fruum:add', function(response) {
+          socket.removeListener('fruum:add', this);
+          expect(response).toEqual(jasmine.objectContaining(payload));
+          socket.disconnect();
+          done();
+        });
+      });
+    });
+  });
+
+  it("creates blog post", function(done) {
+    set_field('home', {usage: 2}, function() {
+      admin_connect(function(socket) {
+        var payload = {
+          parent: 'home',
+          type: 'blog',
+          header: 'foo',
+          body: 'bar'
+        }
+        socket.emit('fruum:add', payload);
+        socket.on('fruum:add', function(response) {
+          socket.removeListener('fruum:add', this);
+          expect(response).toEqual(jasmine.objectContaining(payload));
+          socket.disconnect();
+          done();
+        });
+      });
+    });
+  });
+
+  it("creates bookmark", function(done) {
     admin_connect(function(socket) {
       var payload = {
         parent: 'home',
-        type: 'article',
-        header: 'foo',
-        body: 'bar',
-        is_blog: true
+        type: 'bookmark',
+        header: 'bookmark',
+        body: '#foo'
       }
       socket.emit('fruum:add', payload);
       socket.on('fruum:add', function(response) {

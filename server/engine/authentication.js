@@ -80,8 +80,14 @@ module.exports = function(options, instance, self) {
       user.set({
         viewing: 0,
         socket: socket,
-        app_id: socket.app_id
+        app_id: socket.app_id,
+        permission: 0
       });
+      //add permission level
+      if (user.get('admin'))
+        user.set('permission', 2);
+      else if (!user.get('anonymous'))
+        user.set('permission', 1);
       //ready to roll
       onready();
     }

@@ -26,7 +26,7 @@ var Document = Backbone.Model.extend({
     parent: '',
     //document parent type
     parent_type: '',
-    //category, thread, article, post, channel
+    //category, thread, article, blog, post, bookmark, channel
     type: '',
     //creation date in unix timestamp
     created: 0,
@@ -36,18 +36,18 @@ var Document = Backbone.Model.extend({
     initials: '',
     //header e.g. category or thread or article title
     header: '',
-    //body e.g. description or post message
+    //body e.g. description or post message or bookmark search query
     body: '',
     //if thread is sticky
     sticky: false,
-    //if article is a blogpost
-    is_blog: false,
     //permissions
     locked: false,
     visible: true,
-    allow_threads: true,
-    allow_channels: false,
     inappropriate: false,
+    //0: everyone, 1: logged-in, 2: admins
+    permission: 0,
+    //0: discussion, 1: helpdesk, 2: blog, 3: chat, 4: categories
+    usage: 0,
     //denormalized author details
     user_id: '',
     user_username: '',
@@ -102,6 +102,8 @@ var Document = Backbone.Model.extend({
       case 'category':
       case 'thread':
       case 'article':
+      case 'blog':
+      case 'bookmark':
       case 'channel':
         if (!attrs.header) return 'header cannot be empty';
         break;
@@ -158,7 +160,8 @@ var Document = Backbone.Model.extend({
       breadcrumb: breadcrumb,
       parent: parent_doc.get('id'),
       parent_type: parent_doc.get('type'),
-      visible: parent_doc.get('visible')
+      visible: parent_doc.get('visible'),
+      permission: Math.max(this.get('permission'), parent_doc.get('permission'))
     });
   }
 });

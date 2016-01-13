@@ -15,9 +15,11 @@ function ElasticSearch(options) {
   options.elasticsearch.max_children = options.elasticsearch.max_children || 1000;
   options.elasticsearch.retry_on_conflict = options.elasticsearch.retry_on_conflict || 0;
   options.elasticsearch.index_prefix = options.elasticsearch.index_prefix || '';
-  var client = new elasticsearch.Client({
-    host: options.elasticsearch.host
-  });
+
+  var client_params = { host: options.elasticsearch.host };
+  if (options.elasticsearch.apiVersion)
+    client_params.apiVersion = options.elasticsearch.apiVersion;
+  var client = new elasticsearch.Client(client_params);
 
   // ------------------------------- PARTIALS= ---------------------------------
 
