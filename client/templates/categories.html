@@ -1,6 +1,6 @@
 <!-- Category template -->
 <script type="text/template" id="fruum-template-category">
-  <div class="fruum-base-object fruum-link fruum-interactive-element fruum-js-entry-default fruum-js-navigate">
+  <div data-docid="<%- id %>" class="fruum-base-object fruum-link fruum-interactive-element fruum-js-entry-default fruum-js-navigate">
     <div class="fruum-avatar">
       <span class="fruum-avatar-icon" data-initials="<%- Fruum.utils.printInitials(initials) %>"><%- initials %></span>
     </div>
@@ -30,10 +30,12 @@
       <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-down" data-action="down" data-fruumtipsy-right="Move down"></a>
       <a href="javascript:;" class="fruum-link fruum-link-negative fruum-icon fruum-icon-delete" data-action="delete" data-fruumtipsy-right="Delete category"></a>
     </div>
-      <% if (permission == 1) { %>
+      <% if (viewing.permission != permission) { %>
+        <% if (permission == 1) { %>
     <div class="fruum-object-card">USERS</div>
-      <% } else if (permission == 2) { %>
+        <% } else if (permission == 2) { %>
     <div class="fruum-object-card">ADMINS</div>
+        <% } %>
       <% } %>
     <% } %>
   </div>
@@ -41,9 +43,9 @@
 
 <!-- Bookmark template -->
 <script type="text/template" id="fruum-template-bookmark">
-  <div class="fruum-base-object fruum-link fruum-interactive-element fruum-js-entry-default fruum-js-navigate">
+  <div data-docid="<%- id %>" class="fruum-base-object fruum-link fruum-interactive-element fruum-js-entry-default fruum-js-navigate">
     <div class="fruum-avatar">
-      <span class="fruum-avatar-icon fruum-icon fruum-icon-search" data-initials="<%- header %>"></span>
+      <span class="fruum-avatar-icon fruum-avatar-inverted fruum-icon fruum-icon-search" data-initials="<%- header %>"></span>
     </div>
     <div class="fruum-object-main-data<% if (Fruum.user.admin) { %> fruum-object-manage-data<% } %>">
       <div class="fruum-stream-typography">

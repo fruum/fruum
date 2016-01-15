@@ -1,6 +1,6 @@
 <!-- channel template -->
 <script type="text/template" id="fruum-template-channel">
-  <div class="fruum-base-object fruum-link fruum-interactive-element fruum-js-entry-default fruum-js-navigate">
+  <div data-docid="<%- id %>" class="fruum-base-object fruum-link fruum-interactive-element fruum-js-entry-default fruum-js-navigate">
     <div class="fruum-object-main-data<% if (Fruum.user.admin || (Fruum.user.id == user_id && !Fruum.user.anonymous)) { %> fruum-object-manage-data<% } %>">
       <div class="fruum-stream-typography">
         <h4>

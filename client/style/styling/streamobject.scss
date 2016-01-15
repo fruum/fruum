@@ -142,6 +142,9 @@
   img.fruum-avatar-icon,
   .fruum-avatar-icon {
     @include big-avatar-block;
+    &.fruum-avatar-inverted {
+      @include icon-only-avatar-block;
+    }
   }
 }
 

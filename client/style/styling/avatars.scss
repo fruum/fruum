@@ -51,6 +51,10 @@ $char-list: append($char-list, "~" );
   text-transform: uppercase;
   color: $avatar-text-color;
   background-color: $avatar-default-background;
+  &.fruum-avatar-inverted {
+    background-color: transparent;
+    color: $avatar-default-background;
+  }
 }
 
 @if length($avatar-colors) == 0 {
@@ -61,4 +65,5 @@ $char-list-length: length($char-list);
 $avatar-color-length: length($avatar-colors);
 @for $i from 1 through $char-list-length {
   #{"#fruum .fruum-avatar-icon:not(img)[data-initials^=\"" + nth($char-list, $i) + "\"]"} { background-color: nth($avatar-colors, 1 + (($i - 1) % $avatar-color-length)) }
+  #{"#fruum .fruum-avatar-icon.fruum-avatar-inverted:not(img)[data-initials^=\"" + nth($char-list, $i) + "\"]"} { background-color: transparent;color: nth($avatar-colors, 1 + (($i - 1) % $avatar-color-length)) }
 }

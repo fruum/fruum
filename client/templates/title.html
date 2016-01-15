@@ -5,14 +5,6 @@
   <div>
     <div class="fruum-stream-typography">
       <h4>
-        <% if (viewing.type == 'bookmark') { %>
-          <span class="fruum-avatar-icon fruum-icon fruum-icon-search" data-initials="<%- viewing.header %>"></span>
-        <% } %>
-        <% if (viewing.type == 'category') { %>
-          <span class="fruum-avatar-icon" data-initials="<%- Fruum.utils.printInitials(viewing.initials) %>">
-            <%- viewing.initials %>
-          </span>
-        <% } %>
         <% if (!viewing.visible) { %>
           <span class="fruum-icon fruum-icon-invisible" data-fruumtipsy-center="Private"></span>
         <% } %>
@@ -86,7 +78,7 @@
 
     </div>
       <% } else { %>
-    <a href="javascript:;" class="fruum-manage fruum-link fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit category"></a>>
+    <a href="javascript:;" class="fruum-manage fruum-link fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit category"></a>
       <% } %>
     <% } %>
   </div>

@@ -194,3 +194,10 @@ $enormous-font-basegrid: relative-ems( $base-grid, $responsive-enormous-font );
   font-size: $avatar-small-font;
   line-height: relative-ems( $avatar-small, $avatar-small-font );
 }
+
+@mixin icon-only-avatar-block {
+  width: relative-ems( $avatar-big, $avatar-big-font*2.5 );
+  height: relative-ems( $avatar-big, $avatar-big-font*2.5 );
+  font-size: $avatar-big-font*2.5;
+  line-height: relative-ems( $avatar-big, $avatar-big-font*2.5 );
+}
