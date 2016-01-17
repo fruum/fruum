@@ -95,11 +95,11 @@ Utilities
     Fruum.utils.marionette_itemview_transition = function(view) {
       return view.extend({
         onBeforeAttach: function(){
-          this.$el.hide();
+          this.$el.css('opacity', 0);
         },
         onAttach: function() {
-          if (this.__delay_transition) this.$el.delay(this.__delay_transition);
-          this.$el.fadeIn('fast');
+          this.$el.delay(this.__delay_transition || 10).
+                  animate({ opacity: 1 }, 400);
         }
       });
     }

@@ -33,6 +33,14 @@ Categories view
         'click @ui.down': 'onDown',
         'click @ui.delete': 'onDelete'
       },
+      initialize: function(options) {
+        this.ui_state = options.ui_state;
+      },
+      templateHelpers: function() {
+        return {
+          viewing: this.ui_state.get('viewing')
+        }
+      },
       getTemplate: function() {
         if (this.model.get('type') == 'bookmark')
           return '#fruum-template-bookmark';
@@ -83,7 +91,13 @@ Categories view
       }
     }));
     Fruum.views.CategoriesView = Marionette.CollectionView.extend({
-      childView: Fruum.views.CategoryView
+      childView: Fruum.views.CategoryView,
+      initialize: function(options) {
+        this.ui_state = options.ui_state;
+      },
+      childViewOptions: function(model, index) {
+        return { ui_state: this.ui_state };
+      }
     });
   });
 })();

@@ -209,8 +209,9 @@ Main client app
         });
         this.listenTo(this.ui_state, 'change:loading change:searching', this.onRefresh);
         this.listenTo(this.ui_state, 'change:searching', function() {
-          if (!this.ui_state.get('searching'))
-            this.search.reset();
+          if (!this.ui_state.get('searching')) {
+            if (this.search.length) this.search.reset();
+          }
           else
             this.notifications.reset();
         });
@@ -277,7 +278,7 @@ Main client app
             //save previous scroll pos
             that.saveScrollState();
             //grab some meta data from the trigger
-            var loading = payload.origin || 'view';
+            var loading = payload.origin || ('view:' + payload.id);
             //remove metadata
             delete payload.origin;
             that.ui_state.set({
@@ -765,16 +766,21 @@ Main client app
               search: text
             });
             if (!that.ui_state.get('searching') || !text) {
-              that.search.reset();
+              if (that.search.length) that.search.reset();
               that.onRefresh();
             }
             else {
+              that.ui_state.set({
+                loading: 'search'
+              });
               that.socket.emit('fruum:search', {
                 q: text
               });
             }
           },
           function recv(payload) {
+            if (that.ui_state.get('loading') == 'search')
+              that.ui_state.set('loading', '');
             if (!payload) return;
             //check if search is valid
             if (payload.q === that.ui_state.get('search') && that.ui_state.get('searching')) {

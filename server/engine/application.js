@@ -90,7 +90,7 @@ module.exports = function(options, instance, self) {
   self.list_apps = function(payload) {
     storage.list_apps(function(list) {
       _.each(list, function(application) {
-        console.log(application.toLog());
+        console.log(application.toLog(true));
       });
       self.success(payload);
     });

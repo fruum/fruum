@@ -80,6 +80,8 @@
       <% } else { %>
     <a href="javascript:;" class="fruum-manage fruum-link fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit category"></a>
       <% } %>
+    <% } else if (!Fruum.user.anonymous && Fruum.user.id == viewing.user_id && _.contains(['channel', 'thread'], viewing.type)) { %>
+    <a href="javascript:;" class="fruum-manage fruum-link fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit <%- viewing.type %>"></a>
     <% } %>
   </div>
   <% } %>

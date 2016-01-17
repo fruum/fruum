@@ -174,6 +174,14 @@ module.exports = function(options, client, self) {
       }
     });
 
+    //add some default sorting
+    if (!sort.length) {
+      //in case of tags, sort by dated descending
+      if (tags.length) {
+        sort.push({ created : {order : 'desc'} });
+      }
+    }
+
     //put normal string search in the should filter
     if (q) {
       should.push(
