@@ -426,7 +426,11 @@ Handles the bottom input part
         }
         //prepare tags
         var tags = _.uniq(_.compact(
-          (this.ui.field_tags.val() || '').replace(/ /g, ',').toLowerCase().split(',')
+          (this.ui.field_tags.val() || '').
+            replace(/ /g, ',').
+            replace(/#/g, '').
+            toLowerCase().
+            split(',')
         ));
         var body = this.ui.field_body.val() || '';
         Fruum.io.trigger(id?'fruum:update':'fruum:add', {

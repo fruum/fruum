@@ -6,7 +6,6 @@ Sends notification emails to users based on watched documents
 var _ = require('underscore'),
     moment = require('moment'),
     juice = require('juice'),
-    marked = require('marked'),
     logger = require('../../server/logger');
 
 var at_user = ['@[.+-_0-9A-Za-z\xaa\xb5\xba\xc0-\xd6\xd8-\xf6',
@@ -100,13 +99,7 @@ function Notify(options, instance) {
       application: application.toJSON(),
       getShareURL: application.getShareURL.bind(application),
       user: user.toJSON(),
-      document: document.toJSON()
-    }
-    //add markdown on body
-    if (context.document.body) {
-      context.document.body = marked(
-        (context.document.body || '').replace(/&gt;/g, '>').replace(/&#x60;/g, '`')
-      );
+      document: instance.email.prettyJSON(document)
     }
     instance.email.send(application, user, {
       subject: email_template.subject(context),

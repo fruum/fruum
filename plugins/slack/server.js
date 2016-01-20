@@ -107,7 +107,7 @@ function Slack(options, instance) {
           }]
         }
       }, function(error, response, body) {
-        if (error) logger.error(app_id, 'slack_incoming_webhook_failed', value);
+        if (error) logger.error(app_id, 'slack_incoming_webhook_failed', error);
       });
     });
   }

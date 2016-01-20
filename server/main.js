@@ -530,6 +530,9 @@ function FruumServer(options, cli_cmd, ready) {
           socket.on('fruum:typing', function(payload) {
             engine.typing(socket, payload || {});
           });
+          socket.on('fruum:optimize', function(payload) {
+            engine.optimize(socket, payload || {});
+          });
         }
       });
     });

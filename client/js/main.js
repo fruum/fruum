@@ -801,6 +801,19 @@ Main client app
 
         // ----------------- START -----------------
 
+        this.bindIO('fruum:optimize',
+          function send(payload) {
+            that.ui_state.set('optimizing', that.ui_state.get('optimizing') + 1);
+            that.socket.emit('fruum:optimize', payload);
+          },
+          function recv(payload) {
+            that.ui_state.set('optimizing', Math.max(0, that.ui_state.get('optimizing') - 1));
+            that.ui_state.trigger('fruum:optimize', payload);
+          }
+        );
+
+        // ----------------- START -----------------
+
         this.socket.on('connect', function() {
           that.socket.emit('fruum:auth', window.fruumSettings);
         });

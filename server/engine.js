@@ -164,6 +164,7 @@ function Engine(options, instance) {
   new require('./engine/reactions')(options, instance, this);
   new require('./engine/move')(options, instance, this);
   new require('./engine/report')(options, instance, this);
+  new require('./engine/optimize')(options, instance, this);
 
 }
 module.exports = Engine;

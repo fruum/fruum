@@ -356,44 +356,47 @@ Utilities
         });
       }
     }
-    Fruum.utils.resizeImage = function(base64, max_width, max_height) {
-      try {
-        var img = document.createElement('img');
-        img.src = base64;
-
-        var width = img.width,
-            height = img.height;
-
-        if (width <= max_width && height <=max_height) return base64;
-
-        var canvas = document.createElement('canvas'),
-            ctx = canvas.getContext('2d');
-
-        ctx.drawImage(img, 0, 0);
-
-        if (width > height) {
-          if (width > max_width) {
-            height *= max_width / width;
-            width = max_width;
+    Fruum.utils.resizeImage = function(base64, max_width, max_height, done) {
+      var img = document.createElement('img');
+      img.onload = function() {
+        try {
+          var width = img.width,
+              height = img.height;
+          if (width <= max_width && height <=max_height) {
+            done(base64);
+            return;
           }
-        }
-        else {
-          if (height > max_height) {
-            width *= max_height / height;
-            height = max_height;
-          }
-        }
-        canvas.width = width;
-        canvas.height = height;
-        ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
 
-        var mime = base64.indexOf('data:image/jpeg') == 0?'image/jpeg':'image/png';
-        return canvas.toDataURL(mime);
+          var canvas = document.createElement('canvas'),
+              ctx = canvas.getContext('2d');
+
+          ctx.drawImage(img, 0, 0);
+
+          if (width > height) {
+            if (width > max_width) {
+              height *= max_width / width;
+              width = max_width;
+            }
+          }
+          else {
+            if (height > max_height) {
+              width *= max_height / height;
+              height = max_height;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          var mime = base64.indexOf('data:image/jpeg') == 0?'image/jpeg':'image/png';
+          done(canvas.toDataURL(mime));
+        }
+        catch(err) {
+          done(base64);
+        }
       }
-      catch(err) {
-        return base64;
-      }
+      img.src = base64;
     }
   });
 })();

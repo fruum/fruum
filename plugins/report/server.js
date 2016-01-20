@@ -24,7 +24,7 @@ function Report(options, instance) {
               date: moment(new Date()).format('D MMM YYYY'),
               application: application.toJSON(),
               getShareURL: application.getShareURL.bind(application),
-              document: payload.document.toJSON(),
+              document: instance.email.prettyJSON(payload.document),
               reporter: payload.user.toJSON(),
               administrator: {}
             };

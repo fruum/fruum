@@ -22,10 +22,33 @@ module.exports = function(options, storage) {
   this.send = function(application, user, message, callback) {
     if (user.get('email')) {
       logger.info(application.get('id'), 'sending_email_to', user.get('email'));
+      //get inline images
+      var images = [];
+      var body = (message.html || '').replace(/src=\"([^\"]*)\"/g, function(match, url) {
+        if (url.indexOf('data:image/png;base64,') == 0) {
+          var name = 'image' + images.length;
+          images.push({
+            type: 'image/png',
+            name: name,
+            content: url.replace('data:image/png;base64,', '')
+          });
+          return match.replace(url, 'cid:' + name);
+        }
+        else if (url.indexOf('data:image/jpeg;base64,') == 0) {
+          var name = 'image' + images.length;
+          images.push({
+            type: 'image/jpeg',
+            name: name,
+            content: url.replace('data:image/jpeg;base64,', '')
+          });
+          return match.replace(url, 'cid:' + name);
+        }
+        return match;
+      });
       try {
         mandrill_client.messages.send({
           message: {
-            html: message.html,
+            html: body,
             subject: message.subject,
             from_email: application.get('notifications_email') || options.notifications.defaults.from.email,
             from_name: application.get('name') || options.notifications.defaults.from.name,
@@ -33,7 +56,8 @@ module.exports = function(options, storage) {
               email: user.get('email'),
               name: user.get('displayname') || user.get('username'),
               type: 'to'
-            }]
+            }],
+            images: images
           }
         });
       }
