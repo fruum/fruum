@@ -420,6 +420,9 @@
     padding: 0 0.7em;
     height: 2.5em;
     line-height: 2.5em;
+    .fruum-mini-loader:before {
+      line-height: 1.15;
+    }
   }
 }
 
