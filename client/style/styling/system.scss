@@ -224,6 +224,14 @@
     background-color: $forum-error-color;
   }
 
+  &.fruum-message-info {
+    @if ( lightness($background-helper-base-color) > 10 ) {
+      background-color: darken( $background-helper-base-color, 4% );
+    } @else {
+      background-color: lighten( $background-helper-base-color, 4% );
+    }
+  }
+
   &.fruum-messages-helper {
     color: $muted-text-color;
     border-top: none;

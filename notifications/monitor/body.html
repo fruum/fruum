@@ -8,7 +8,7 @@
   </head>
 <body>
   <span style="color: transparent; display: none !important; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">
-    there are <%= digest %>. Click to see details
+    <%= (total > 1)?'there are':'there is' %> <%= digest %>. Click to see details
   </span>
   <table cellpadding="0" cellspacing="0" border="0" class="maincontainer">
     <tr>
@@ -16,8 +16,10 @@
       </td>
     </tr>
     <tr>
-      <td class="contentheader">
-        <span class="contenttitle">Your <%- application.name || application.id %> forum digest</span>
+      <td align="center">
+        <table cellpadding="0" cellspacing="0" border="0" class="centercontent">
+          <tr><td class="contentheader">Your <%- application.name || application.id %> forum digest</td></tr>
+        </table>
       </td>
     </tr>
     <tr>
@@ -27,8 +29,10 @@
           <tr>
             <td class="content-sumactivity content-head">
               Hello administrator,<br><br>
-              there are <b><%= digest %></b>.<br>
+              <%= (total > 1)?'there are':'there is' %> <b><%= digest %></b>.<br>
+              <% if (total > documents.length) { %>
               See some highlights below
+              <% } %>
             </td>
           </tr>
           <% _.each(documents, function(document) { %>
@@ -57,7 +61,7 @@
           </tr>
           <tr>
             <td class="contentreply">
-              <div style="text-align:right;"><a href="<%- getShareURL(document.type === 'post'?document.parent:document.id) %>" class="actionitem">Reply</a></div>
+              <div style="text-align:right;"><a href="<%- getShareURL(document.type === 'post'?document.parent:document.id) %>" class="actionitem">View</a></div>
             </td>
           </tr>
           <% }); %>
@@ -75,8 +79,10 @@
       </td>
     </tr>
     <tr>
-      <td class="footer-disclaimer">
-        You are receiving this email because you are an administrator on this forum.
+      <td align="center">
+        <table cellpadding="0" cellspacing="0" border="0" class="centercontent">
+          <tr><td class="footer-disclaimer">You are receiving this email because you are an administrator on this forum.</td></tr>
+        </table>
       </td>
     </tr>
     <tr>

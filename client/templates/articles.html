@@ -21,7 +21,7 @@
             <%= Fruum.utils.printHeader(header) %>
           </a>
           <div class="fruum-tags-container">
-            <% _.each(tags, function(tag) { %><span class="fruum-tag" data-initials="<%- tag.toUpperCase().charAt(0) %>"><%- tag %></span><% }); %>
+            <% _.each(tags, function(tag) { %><a href="javascript:;" class="fruum-tag" data-initials="<%- tag.toUpperCase().charAt(0) %>" data-search-shortcut="#<%- tag %>"><%- tag %></a><% }); %>
           </div>
         </h4>
       </div>

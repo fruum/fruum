@@ -46,8 +46,13 @@
 <!-- Messages -->
 <script type="text/template" id="fruum-template-interactions-messages">
   <div class="fruum-interaction-messages">
-    <div class="fruum-messages fruum-message-error" style="display: none;">
+    <div class="fruum-messages fruum-message-error" data-message="error" style="display: none;">
       Could not submit your request, please try again
+    </div>
+  </div>
+  <div class="fruum-interaction-messages">
+    <div class="fruum-messages fruum-message-info" data-message="search" style="display: none;">
+      Looking for something specific? <b><a href="javascript:;" class="fruum-link fruum-icon fruum-icon-search fruum-js-search-category">Search category</a></b>.
     </div>
   </div>
 </script>
@@ -442,6 +447,7 @@
 
 <!-- Admin actions -->
 <script type="text/template" id="fruum-template-interactions-admin">
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-messages')() %>
   <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
   <form action="" class="fruum-interactions-form">
     <div class="fruum-interactions-footer">
@@ -467,6 +473,7 @@
 
 <!-- User actions -->
 <script type="text/template" id="fruum-template-interactions-user">
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-messages')() %>
   <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
   <form action="" class="fruum-interactions-form">
     <div class="fruum-interactions-footer">
@@ -486,6 +493,7 @@
 
 <!-- Anonymous user -->
 <script type="text/template" id="fruum-template-interactions-anonymous">
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-messages')() %>
   <div class="fruum-interactions-stream-update" style="display:none;"><!-- template --></div>
   <div class="fruum-interactions-footer">
     <div class="fruum-interactions-buttons">

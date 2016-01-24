@@ -4,11 +4,18 @@
 
 //__APPLICATION_CUSTOM_SASS__
 
+// font sizes
+$tiny-font: 10px;
+$small-font: 12px;
+$default-font: 14px;
+$big-font: 18px;
+$bigger-font: 20px;
+
 body {
   background-color: $background-helper-base-color;
   margin: 0;
   padding: 0;
-  font-size: 8px;
+  font-size: $base-grid-big;
   text-align: center;
 }
 
@@ -17,6 +24,17 @@ body {
   height: 100%;
   padding: 0;
   margin: 0;
+  & > tbody > tr > td ~ td:not([class]),
+  & > tbody > tr ~ tr > td ~ td:not([class]),
+  & > tr > td ~ td:not([class]),
+  & > tr ~ tr > td ~ td:not([class]),
+  & > tbody > tr > td:not([class]),
+  & > tbody > tr ~ tr > td:not([class]),
+  & > tr > td:not([class]),
+  & > tr ~ tr > td:not([class]) {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
 }
 
 .maincontent {
@@ -45,16 +63,24 @@ body {
   }
 }
 
+.centercontent {
+  width: 550px;
+  margin: 0;
+  padding: 0;
+  & > tr > td {
+    text-align: center;
+  }
+}
+
 .contentheader {
   font-family: $forum-fonts;
   color: $important-text-color;
-  font-size: $responsive-bigger-font;
+  font-size: $bigger-font;
   font-weight: bold;
-  padding: 15px 20px 20px;
-  .contenttitle {
-    display: inline-block;
-    width: 550px;
-  }
+  padding-top: 15px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 20px;
 }
 
 .content-head {
@@ -66,7 +92,7 @@ body {
   border-top: 1px solid $dividers-colors;
   background-color: $background-helper-base-color;
   &.content-sumactivity {
-    font-size: $responsive-bigger-font;
+    font-size: $bigger-font;
     padding-bottom: 10px;
     text-align: center;
     a {
@@ -77,7 +103,7 @@ body {
 
 .content-sumactivity {
   color: $disabled-text-color;
-  font-size: $responsive-default-font;
+  font-size: $default-font;
 
   padding: 20px;
 }
@@ -106,11 +132,11 @@ table.mediaitem {
 }
 
 .avatarcontainer {
-  width: relative-ems( $avatar-big, $avatar-big-font );
-  height: relative-ems( $avatar-big, $avatar-big-font );
-  max-height: relative-ems( $avatar-big, $avatar-big-font );
-  font-size: $avatar-big-font;
-  line-height: relative-ems( $avatar-big, $avatar-big-font );
+  width: $base-grid-big*7;
+  height: $base-grid-big*7;
+  max-height: $base-grid-big*7;
+  font-size: $big-font;
+  line-height: $base-grid-big*7;
   position: relative;
   display: block;
   overflow: hidden;
@@ -120,9 +146,9 @@ table.mediaitem {
   display: block;
   overflow: hidden;
   @include block-object-shapes;
-  width: relative-ems( $avatar-big, $avatar-big-font );
-  height: relative-ems( $avatar-big, $avatar-big-font );
-  max-height: relative-ems( $avatar-big, $avatar-big-font );
+  width: $base-grid-big*7;
+  height: $base-grid-big*7;
+  max-height: $base-grid-big*7;
   text-align: center;
   text-transform: uppercase;
   color: $avatar-text-color;
@@ -135,9 +161,9 @@ table.mediaitem {
     line-height: 0;
   }
   img {
-    width: 1.05*relative-ems( $avatar-big, $avatar-big-font );
-    height: 1.05*relative-ems( $avatar-big, $avatar-big-font );
-    max-height: 1.05*relative-ems( $avatar-big, $avatar-big-font );
+    width: $base-grid-big*7.05;
+    height: $base-grid-big*7.05;
+    max-height: $base-grid-big*7.05;
     line-height: 0;
   }
 }
@@ -192,7 +218,7 @@ $avatar-color-length: length($avatar-colors);
   h5 {
     margin:0;
     padding: 0;
-    font-size: $responsive-big-font;
+    font-size: $big-font;
     .external-link {
       color: $secondary-action-color;
     }
@@ -208,56 +234,56 @@ $avatar-color-length: length($avatar-colors);
 
 .content-description {
   font-size: $stream-default-font;
-  line-height: $stream-default-lineheight;
+  line-height: 1.618;
 
   > *:last-child {
     margin-bottom: 0;
   }
 
   h1 {
-    font-size: $stream-h1;
+    font-size: 41.886px;
     font-weight: $stream-h1-weight;
     line-height: $stream-h1-lineheight;
     color: $important-text-color;
-    margin: 0.5em 0;
+    margin: 20.9px 0;
   }
 
   h2 {
-    font-size: $stream-h2;
+    font-size: 25.888px;
     font-weight: $stream-h2-weight;
     line-height: $stream-h2-lineheight;
     color: $important-text-color;
-    margin: 0.5em 0;
+    margin: 12.9px 0;
   }
 
   h3 {
-    font-size: $stream-h3;
+    font-size: 25.888px;
     font-weight: $stream-h3-weight;
     line-height: $stream-h3-lineheight;
     color: $important-text-color;
-    margin: 0.5em 0;
+    margin: 12.9px 0;
   }
 
   h4 {
-    font-size: $stream-h4;
+    font-size: 16.18px;
     font-weight: $stream-h4-weight;
     line-height: $stream-h4-lineheight;
     color: $base-text-color;
-    margin: 0.5em 0;
+    margin: 8.09px 0;
   }
 
   h5 {
-    font-size: 1em;
+    font-size: 16px;
     line-height: $stream-lineheight;
     color: $base-text-color;
-    margin: 0.2em 0;
+    margin: 3px 0;
   }
 
   h6 {
-    font-size: 1em;
+    font-size: 16px;
     line-height: $stream-lineheight;
     color: $disabled-text-color;
-    margin: 0.2em 0;
+    margin: 2px 0;
   }
 
   h1:first-child,
@@ -272,8 +298,8 @@ $avatar-color-length: length($avatar-colors);
 
 
   p {
-    font-size: 1em;
-    margin-bottom: 0.2em;
+    font-size: 16px;
+    margin-bottom: 3px;
   }
 
   a:not([class]) {
@@ -300,7 +326,7 @@ $avatar-color-length: length($avatar-colors);
   pre,
   code {
     font-family: $system-fonts !important;
-    line-height: $stream-lineheight;
+    line-height: 1.618;
     color: $important-text-color;
   }
 
@@ -310,9 +336,9 @@ $avatar-color-length: length($avatar-colors);
     background-color: darken( $background-helper-base-color, 6% );
     border: 1px solid $muted-text-color;
     @include block-radius(1px);
-    padding: 0.5em;
-    margin-top: $stream-lineheight;
-    margin-bottom: 0.2em;
+    padding: 8px;
+    margin-top: 25.888px;
+    margin-bottom: 3px;
     overflow: auto;
     white-space: pre;
     code {
@@ -323,19 +349,19 @@ $avatar-color-length: length($avatar-colors);
 
   code {
     background-color: darken( $background-helper-base-color, 5% );
-    padding: 4px 0.3em 2px;
+    padding: 4px 5px 2px;
     white-space: pre;
     @include block-radius(2px);
     &:not(:first-child) {
-      margin-top: -0.5*$stream-lineheight;
+      margin-top: -12.9px;
     }
   }
 
   ol,
   ul {
     position: relative;
-    margin: 0 0 $stream-lineheight 0.5em;
-    padding: 0 0 0 0.5em;
+    margin: 0 0 25.888px 8px;
+    padding: 0 0 0 8px;
     list-style-position: outside;
     color: inherit;
     & > li {
@@ -344,12 +370,12 @@ $avatar-color-length: length($avatar-colors);
       margin: 0;
       padding: 0;
       &:not(:last-child) {
-        margin-bottom: 0.2em;
+        margin-bottom: 3px;
       }
     }
   }
 
-  ol { list-style-type: decimal-leading-zero; padding-left: 2em; }
+  ol { list-style-type: decimal-leading-zero; padding-left: 24px; }
   ul { list-style-type: disc; }
 
 
@@ -357,20 +383,20 @@ $avatar-color-length: length($avatar-colors);
   img {
     position: relative;
     display: block;
-    margin: 0.5em 0;
+    margin: 8px 0;
     max-width: 100%;
   }
 
 
 
   $table-borders: darken( $muted-text-color, 4% );
-  $table-padding: 0.5em;
+  $table-padding: 8px;
   table {
     position: relative;
     border-collapse: collapse;
     border-spacing: 0;
     padding: 0;
-    margin: 0.5em 0 0.8em;
+    margin: 8px 0 13px;
     border: 1px solid $table-borders;
     thead {
       th {
@@ -405,7 +431,7 @@ $avatar-color-length: length($avatar-colors);
     }
 
     th,td {
-      font-size: 1em;
+      font-size: 16px;
       padding: $table-padding $table-padding;
       &:not(:last-child) {
         border-right: 1px solid $table-borders;
@@ -418,11 +444,11 @@ $avatar-color-length: length($avatar-colors);
   blockquote {
     position: relative;
     display: block;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
+    margin-top: 8px;
+    margin-bottom: 8px;
     margin-left: 0;
     margin-right: 0;
-    padding: 1em;
+    padding: 16px;
     border: 1px solid $muted-text-color;
     border-left: 4px solid $disabled-text-color;
     color: $disabled-text-color;
@@ -437,12 +463,12 @@ $avatar-color-length: length($avatar-colors);
       color: inherit;
     }
     > blockquote:only-child {
-      padding-left: 1em;
-      top: -1em;
-      margin-bottom: -2em;
-      left: -1em;
-      width: calc(100% + 2em);
-      max-width: calc(100% + 2em) !important;
+      padding-left: 16px;
+      top: -16px;
+      margin-bottom: -24px;
+      left: -16px;
+      width: calc(100% + 24px);
+      max-width: calc(100% + 24px) !important;
       border:none;
       border-left: 50px solid $disabled-text-color;
       @include block-radius( 0 );
@@ -452,7 +478,7 @@ $avatar-color-length: length($avatar-colors);
         display: block;
         position: absolute;
         left: -42px;
-        top: 0.5em;
+        top: 8px;
         color: rgba( $background-helper-base-color, 0.5 );
         width: 30px;
         height: 30px;
@@ -467,8 +493,8 @@ $avatar-color-length: length($avatar-colors);
 
   hr {
     width: 80%;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
+    margin-top: 8px;
+    margin-bottom: 8px;
     margin-left: 10%;
     margin-right: 10%;
     border-width: 0;
@@ -481,7 +507,7 @@ $avatar-color-length: length($avatar-colors);
   iframe {
     width: 100%;
     min-height: basegrid-mod( 190px );
-    margin: 0.5em 0;
+    margin: 8px 0;
   }
 
 
@@ -494,8 +520,9 @@ $avatar-color-length: length($avatar-colors);
 
 .actionitem {
   padding: 5px 10px;
-  @include block-object-default( $responsive-default-font );
-  font-size: $responsive-default-font;
+  @include block-radius( 1px );
+  min-height: $base-grid-big*4; // base-object-dimensions
+  font-size: $default-font;
   color: $main-action-text-color;
   background-color: $main-action-color;
   text-decoration: none;
@@ -513,7 +540,7 @@ $avatar-color-length: length($avatar-colors);
 }
 
 p {
-  font-size: $responsive-default-font;
+  font-size: $default-font;
   margin-bottom: 10px;
   margin-top: 4px;
 }
@@ -521,12 +548,12 @@ p {
 .contentdivider {
   border-top: 1px solid $dividers-colors;
   height: 20px;
-  font-size: $responsive-small-font;
+  font-size: $small-font;
 }
 
 .content-helpitem {
   padding: 10px 20px 20px;
-  font-size: $responsive-small-font;
+  font-size: $small-font;
 }
 
 .contentinfo {
@@ -536,7 +563,7 @@ p {
   padding-left: 20px;
   padding-right: 20px;
   color: $disabled-text-color;
-  font-size: $responsive-tiny-font;
+  font-size: $tiny-font;
   &.contentitem {
     padding-bottom: 5px;
   }
@@ -547,8 +574,8 @@ p {
 }
 
 .footer-disclaimer {
-  color: #888;
-  font-size: 1.5em;
+  color: $disabled-text-color;
+  font-size: $small-font;
   padding: 5px 21px;
   .external-link {
     color: $main-action-color;
