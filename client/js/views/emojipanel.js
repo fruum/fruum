@@ -24,6 +24,10 @@
         this.interactions = options.interactions;
       },
       onSelect: function(event) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         var item = $(event.target).closest('[data-item]').data('item'),
             field = this.interactions.ui.field_body;
         if (item) {

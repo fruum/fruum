@@ -5,7 +5,6 @@ email preview mode
 'use strict';
 
 var moment = require('moment'),
-    juice = require('juice'),
     Models = require('../../server/models');
 
 function EmailPreview(options, instance) {
@@ -34,7 +33,7 @@ function EmailPreview(options, instance) {
     instance.storage.get_app(app_id, function(application) {
       if (application) {
         instance.engine.notificationTemplate(application, template, function(data) {
-          res.send(juice(data.html({
+          res.send(instance.email.inlineCSS(data.html({
             date: moment(new Date()).format('D MMM YYYY'),
             application: {
               name: 'MyAwesomeApp'
@@ -52,7 +51,8 @@ function EmailPreview(options, instance) {
               username: 'administrator_username',
               displayname: 'administrator_displayname'
             },
-            digest: '4 new threads',
+            total: 3,
+            digest: '2 new threads',
             document: instance.email.prettyJSON(new Models.Document({
               header: 'Document header1',
               body: markdown,

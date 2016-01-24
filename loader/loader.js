@@ -212,13 +212,13 @@
         //append fruum
         if (window.fruumSettings.bundle) {
           load_script(window.fruumSettings.fruum_host +
-                      '/fruum.js?app_id=' +
+                      '/_/get/js/bundle/' +
                       window.fruumSettings.app_id);
         }
         else {
           load_dependencies(function() {
             load_script(window.fruumSettings.fruum_host +
-                        '/fruum_slim.js?app_id=' +
+                        '/_/get/js/compact/' +
                         window.fruumSettings.app_id);
           });
         }

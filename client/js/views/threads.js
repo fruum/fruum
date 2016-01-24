@@ -16,6 +16,7 @@ Threads view
     Fruum.views.ThreadView = TRANSITION(Marionette.ItemView.extend({
       template: '#fruum-template-thread',
       ui: {
+        search: '[data-search-shortcut]',
         navigate: '.fruum-js-navigate',
         manage: '.fruum-js-manage',
         sticky: '[data-action="sticky"]',
@@ -27,6 +28,7 @@ Threads view
         'change': 'render'
       },
       events: {
+        'click @ui.search': 'onSearch',
         'click @ui.manage': 'onManage',
         'click @ui.navigate': 'onNavigate',
         'click @ui.sticky': 'onSticky',
@@ -34,19 +36,36 @@ Threads view
         'click @ui.move': 'onMove',
         'click @ui.edit': 'onEdit'
       },
+      onSearch: function(event) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        var search = $(event.target).
+          closest('[data-search-shortcut]').
+          data('search-shortcut');
+        if (!search) return;
+        Fruum.io.trigger('fruum:set_search', search);
+      },
       onNavigate: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:view', { id: this.model.get('id') });
       },
       onManage: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:toggle_manage', this.ui.manage);
       },
       onSticky: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:close_manage');
         Fruum.io.trigger('fruum:field', {
           id: this.model.get('id'),
@@ -55,20 +74,26 @@ Threads view
         });
       },
       onDelete: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:close_manage');
         Fruum.io.trigger('fruum:archive', { id: this.model.get('id') });
       },
       onMove: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:close_manage');
         Fruum.io.trigger('fruum:show_move', this.model.toJSON());
       },
       onEdit: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:close_manage');
         Fruum.io.trigger('fruum:edit', this.model.toJSON());
       }

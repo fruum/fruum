@@ -39,14 +39,29 @@ Handles search results
     Fruum.views.SearchResultView = TRANSITION(Marionette.ItemView.extend({
       template: '#fruum-template-search',
       ui: {
+        search: '[data-search-shortcut]',
         navigate: '.fruum-js-navigate'
       },
       events: {
+        'click @ui.search': 'onSearch',
         'click @ui.navigate': 'onNavigate'
       },
+      onSearch: function(event) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        var search = $(event.target).
+          closest('[data-search-shortcut]').
+          data('search-shortcut');
+        if (!search) return;
+        Fruum.io.trigger('fruum:set_search', search);
+      },
       onNavigate: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         var id = this.model.get('id');
         if (this.model.get('type') === 'post') id = this.model.get('parent');
         Fruum.io.trigger('fruum:view', { id: id });

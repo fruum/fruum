@@ -38,17 +38,26 @@
         Fruum.io.trigger('fruum:scroll_top');
       },
       onWatch: function(event) {
-        event.preventDefault();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         var viewing = this.model.get('viewing');
         if (viewing.id) Fruum.io.trigger('fruum:watch', { id: viewing.id });
       },
       onUnwatch: function(event) {
-        event.preventDefault();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         var viewing = this.model.get('viewing');
         if (viewing.id) Fruum.io.trigger('fruum:unwatch', { id: viewing.id });
       },
       onShare: function(event) {
-        event.preventDefault();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:share', $(event.target));
       },
       templateHelpers: function() {

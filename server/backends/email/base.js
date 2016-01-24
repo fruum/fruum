@@ -6,6 +6,8 @@
 
 var marked = require('marked'),
     _ = require('underscore'),
+    juice = require('juice'),
+    declassify = require('declassify'),
     logger = require('../../logger');
 
 function escape_regex(re) {
@@ -76,4 +78,10 @@ module.exports = function(options, storage) {
     return json;
   }
 
+  /*
+  Helper function that inlines css in an HTML email
+  */
+  this.inlineCSS = function(html) {
+    return declassify.process(juice(html));
+  }
 }

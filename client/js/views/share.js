@@ -35,7 +35,10 @@ Handles sharing functionality
         this.onClose();
       },
       onClose: function(event) {
-        event && event.preventDefault();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         this.$el.addClass('fruum-nodisplay');
       },
       onSelect: function(event) {

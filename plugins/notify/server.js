@@ -5,7 +5,6 @@ Sends notification emails to users based on watched documents
 
 var _ = require('underscore'),
     moment = require('moment'),
-    juice = require('juice'),
     logger = require('../../server/logger');
 
 var at_user = ['@[.+-_0-9A-Za-z\xaa\xb5\xba\xc0-\xd6\xd8-\xf6',
@@ -103,7 +102,7 @@ function Notify(options, instance) {
     }
     instance.email.send(application, user, {
       subject: email_template.subject(context),
-      html: juice(email_template.html(context))
+      html: instance.email.inlineCSS(email_template.html(context))
     }, function() {});
   }
 

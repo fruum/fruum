@@ -124,25 +124,25 @@ function Engine(options, instance) {
   // ---------------------------------- CACHE ----------------------------------
 
   this.CACHE_DEFS = {
-    'fruum.js': {
+    'get/js/bundle': {
       queue: 'static',
-      key: 'fruum.js:{app_id}'
+      key: 'get_js_bundle:{app_id}'
     },
-    'fruum_slim.js': {
+    'get/js/compact': {
       queue: 'static',
-      key: 'fruum_slim.js:{app_id}'
+      key: 'get_js_compact:{app_id}'
     },
-    'fruum.html': {
+    'get/html': {
       queue: 'static',
-      key: 'fruum.html:{app_id}'
+      key: 'get_html:{app_id}'
     },
-    'fruum.css': {
+    'get/style': {
       queue: 'static',
-      key: 'fruum.css:{app_id}'
+      key: 'get_style:{app_id}'
     },
-    'loader.js': {
+    'get/loader': {
       queue: 'static',
-      key: 'loader.js:{app_id}'
+      key: 'get_loader:{app_id}'
     }
   }
 

@@ -58,7 +58,10 @@ Handles move document
         }
       },
       onClose: function(event) {
-        event && event.preventDefault();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         if (this.el_container.hasClass('fruum-nodisplay')) return;
         this.el_container.addClass('fruum-nodisplay');
         $(document).off('keydown', this.onKey);

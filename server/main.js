@@ -196,7 +196,7 @@ function FruumServer(options, cli_cmd, ready) {
   //Validate api_id in request GET params and returned cached response or
   //hit callback if not cache exists
   function req_api_key(req, res, cache_namespace, callback) {
-    var app_id = req.query.app_id;
+    var app_id = req.params.app_id || req.query.app_id;
     if (!app_id) {
       res.status(400).send('GET param app_id is not defined');
       return;
@@ -227,10 +227,10 @@ function FruumServer(options, cli_cmd, ready) {
     });
   }
 
-  // -------------------------------- FRUUM.JS ---------------------------------
+  // -------------------------- JAVASCRIPT BUNDLE -------------------------------
 
-  app.get('/fruum.js', function(req, res) {
-    req_api_key(req, res, 'fruum.js', function(app_id, cache_key, cache_queue) {
+  function _get_js_bundle(req, res) {
+    req_api_key(req, res, 'get/js/bundle', function(app_id, cache_key, cache_queue) {
       var benchmark = Date.now();
       var builder = buildify()
         .setDir(fruum_root)
@@ -255,19 +255,20 @@ function FruumServer(options, cli_cmd, ready) {
       //get output
       var cache_data = builder.getContent().replace('__url__', options.url);
       logger.info(
-        app_id, 'fruum.js',
+        app_id, 'get/js/bundle',
         'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024)|0) + 'kb'
       );
       engine.cache.put(cache_queue, cache_key, cache_data);
       res.type('text/javascript');
       res.send(cache_data);
     });
-  });
+  }
+  app.get('/_/get/js/bundle/:app_id', _get_js_bundle);
 
-  // --------------------------- FRUUM_SLIM.JS ---------------------------------
+  // ------------------------ JAVASCRIPT COMPACT -------------------------------
 
-  app.get('/fruum_slim.js', function(req, res) {
-    req_api_key(req, res, 'fruum_slim.js', function(app_id, cache_key, cache_queue) {
+  function _get_js_compact(req, res) {
+    req_api_key(req, res, 'get/js/compact', function(app_id, cache_key, cache_queue) {
       var benchmark = Date.now();
       var builder = buildify()
         .setDir(fruum_root)
@@ -284,19 +285,20 @@ function FruumServer(options, cli_cmd, ready) {
       //get output
       var cache_data = builder.getContent().replace('__url__', options.url);
       logger.info(
-        app_id, 'fruum_slim.js',
+        app_id, 'get/js/compact',
         'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024)|0) + 'kb'
       );
       engine.cache.put(cache_queue, cache_key, cache_data);
       res.type('text/javascript');
       res.send(cache_data);
     });
-  });
+  }
+  app.get('/_/get/js/compact/:app_id', _get_js_compact);
 
-  // ------------------------------- FRUUM.HTML --------------------------------
+  // ----------------------------------- HTML ----------------------------------
 
-  app.get('/fruum.html', function(req, res) {
-    req_api_key(req, res, 'fruum.html', function(app_id, cache_key, cache_queue) {
+  function _get_html(req, res) {
+    req_api_key(req, res, 'get/html', function(app_id, cache_key, cache_queue) {
       var benchmark = Date.now();
       var cache_data = buildify()
         .setDir(fruum_root)
@@ -322,19 +324,20 @@ function FruumServer(options, cli_cmd, ready) {
           'client/templates/posts.html'], plugin_templates))
         .getContent();
       logger.info(
-        app_id, 'fruum.html',
+        app_id, 'get/html',
         'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024)|0) + 'kb'
       );
       engine.cache.put(cache_queue, cache_key, cache_data);
       res.type('text/html');
       res.send(cache_data);
     });
-  });
+  }
+  app.get('/_/get/html/:app_id', _get_html);
 
-  // ------------------------------- FRUUM.CSS ---------------------------------
+  // ---------------------------------- STYLE ----------------------------------
 
-  app.get('/fruum.css', function(req, res) {
-    req_api_key_and_application(req, res, 'fruum.css', function(application, cache_key, cache_queue) {
+  function _get_style(req, res) {
+    req_api_key_and_application(req, res, 'get/style', function(application, cache_key, cache_queue) {
       var benchmark = Date.now();
       application.getThemeSass(function(overrides) {
         var main_sass = fs.readFileSync(client_root + '/style/fruum.scss', {encoding: 'utf8'});
@@ -356,7 +359,7 @@ function FruumServer(options, cli_cmd, ready) {
           else {
             var cache_data = result.css;
             logger.info(
-              application.get('id'), 'fruum.css',
+              application.get('id'), 'get/style',
               'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024)|0) + 'kb'
             );
             engine.cache.put(cache_queue, cache_key, cache_data);
@@ -366,12 +369,13 @@ function FruumServer(options, cli_cmd, ready) {
         });
       });
     });
-  });
+  }
+  app.get('/_/get/style/:app_id', _get_style);
 
-  // -------------------------------- LOADER.JS --------------------------------
+  // --------------------------------- LOADER  ---------------------------------
 
-  app.get('/loader.js', function(req, res) {
-    req_api_key_and_application(req, res, 'loader.js', function(application, cache_key, cache_queue) {
+  function _get_loader(req, res) {
+    req_api_key_and_application(req, res, 'get/loader', function(application, cache_key, cache_queue) {
       var benchmark = Date.now();
       application.getThemeSass(function(overrides) {
         var main_sass = fs.readFileSync(loader_root + '/style.scss', {encoding: 'utf8'});
@@ -415,7 +419,7 @@ function FruumServer(options, cli_cmd, ready) {
                               replace('__html__', html).
                               replace('__url__', options.url);
             logger.info(
-              application.get('id'), 'loader.js',
+              application.get('id'), 'get/loader',
               'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024)|0) + 'kb'
             );
             engine.cache.put(cache_queue, cache_key, cache_data);
@@ -425,14 +429,15 @@ function FruumServer(options, cli_cmd, ready) {
         });
       });
     });
-  });
+  }
+  app.get('/loader.js', _get_loader); //DEPRECATED
+  app.get('/go/:app_id', _get_loader);
 
   // ----------------------------------- SEO -----------------------------------
 
-  function get_robot(req, res) {
+  function _get_robot(req, res) {
     var app_id = req.params.app_id,
         doc_id = req.params.doc_id || 'home';
-
     engine.get_app(app_id, function(application) {
       if (!application) {
         res.status(404).send('Invalid app_id');
@@ -452,10 +457,9 @@ function FruumServer(options, cli_cmd, ready) {
         });
       });
     });
-
   }
-  app.get('/robot/:app_id/v/:doc_id', get_robot);
-  app.get('/robot/:app_id', get_robot);
+  app.get('/_/robot/:app_id/v/:doc_id', _get_robot);
+  app.get('/_/robot/:app_id', _get_robot);
 
   // ---------------------------------- STATIC ---------------------------------
 

@@ -23,6 +23,7 @@
     "buildify": "^0.4.0",
     "command-line-args": "^2.1.4",
     "compression": "^1.6.0",
+    "declassify": "^1.0.1",
     "elasticsearch": "^10.1.2",
     "express": "^4.13.3",
     "giphy-api": "^1.1.11",

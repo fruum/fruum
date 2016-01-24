@@ -5,7 +5,6 @@ Monitors activity and send a digest to administrators
 
 var _ = require('underscore'),
     moment = require('moment'),
-    juice = require('juice'),
     Models = require('../../server/models'),
     logger = require('../../server/logger');
 
@@ -55,21 +54,43 @@ function Monitor(options, instance) {
                 break;
             }
           }, this);
-          context.documents = _.map(
-            stats.threads.concat(
-              stats.blogs,
-              stats.articles,
-              stats.channels,
-              stats.categories,
-              stats.replies
-            ).slice(0, 6),
-            function(doc) {
-              return instance.email.prettyJSON(doc);
-            }
+          var all_documents = stats.threads.concat(
+            stats.blogs,
+            stats.articles,
+            stats.channels,
+            stats.categories,
+            stats.replies
           );
+          context.total = all_documents.length;
+          context.documents = _.map(all_documents.slice(0, 6), function(doc) {
+            return instance.email.prettyJSON(doc);
+          });
           context.digest = '';
           _.each(stats, function(value, key) {
             if (value.length) {
+              //un-pluralize
+              if (value.length == 1) {
+                switch(key) {
+                  case 'channels':
+                    key = 'channel';
+                    break;
+                  case 'threads':
+                    key = 'thread';
+                    break;
+                  case 'articles':
+                    key = 'article';
+                    break;
+                  case 'categories':
+                    key = 'category';
+                    break;
+                  case 'blogs':
+                    key = 'blog';
+                    break;
+                  case 'replies':
+                    key = 'reply';
+                    break;
+                }
+              }
               context.digest += ' ' + value.length + ' new ' + key + ',';
             }
           }, this);
@@ -77,7 +98,7 @@ function Monitor(options, instance) {
           context.digest = context.digest.slice(0, -1).trim();
           var email = {
             subject: email_template.subject(context),
-            html: juice(email_template.html(context))
+            html: instance.email.inlineCSS(email_template.html(context))
           };
           _.each(administrators, function(admin) {
             logger.info(application.get('id'), 'monitor_notify', admin);

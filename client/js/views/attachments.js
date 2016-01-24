@@ -47,13 +47,17 @@
         }
       },
       onDragOver: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         this.$el.find('.fruum-options-list').addClass('fruum-droppable');
       },
       onDragLeave: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         this.$el.find('.fruum-options-list').removeClass('fruum-droppable');
       },
       onDrop: function(event) {

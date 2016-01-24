@@ -86,6 +86,7 @@ Models
         visible: false,
         connected: false,
         optimizing: 0,
+        search_helper: false,
 
         navigation_height: 0,
         interactions_height: 0,

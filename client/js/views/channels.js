@@ -39,30 +39,40 @@ Channels view
         return this.template_helpers;
       },
       onNavigate: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:view', { id: this.model.get('id') });
       },
       onManage: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:toggle_manage', this.ui.manage);
       },
       onDelete: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:close_manage');
         Fruum.io.trigger('fruum:archive', { id: this.model.get('id') });
       },
       onMove: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:close_manage');
         Fruum.io.trigger('fruum:show_move', this.model.toJSON());
       },
       onEdit: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:close_manage');
         Fruum.io.trigger('fruum:edit', this.model.toJSON());
       }

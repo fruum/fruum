@@ -65,19 +65,28 @@ Handles bookmark search
         });
       },
       onClose: function(event) {
-        event && event.preventDefault();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         if (this.el_container.hasClass('fruum-nodisplay')) return;
         this.el_container.addClass('fruum-nodisplay');
         $(document).off('keydown', this.onKey);
       },
       onDelete: function(event) {
-        event && event.preventDefault();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         if (!this.bookmark || !this.bookmark.id) return;
         Fruum.io.trigger('fruum:delete', { id: this.bookmark.id });
         this.onClose();
       },
       onStore: function(event) {
-        event && event.preventDefault();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         if (!this.bookmark || !this.bookmark.parent) return;
         var header = $.trim(this.ui.header.val() || ''),
             body = $.trim(this.ui.body.val() || '') || this.bookmark.body;
@@ -122,14 +131,29 @@ Handles bookmark search
     Fruum.views.BookmarkSearchResultView = TRANSITION(Marionette.ItemView.extend({
       template: '#fruum-template-bookmarksearch',
       ui: {
+        search: '[data-search-shortcut]',
         navigate: '.fruum-js-navigate'
       },
       events: {
+        'click @ui.search': 'onSearch',
         'click @ui.navigate': 'onNavigate'
       },
+      onSearch: function(event) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        var search = $(event.target).
+          closest('[data-search-shortcut]').
+          data('search-shortcut');
+        if (!search) return;
+        Fruum.io.trigger('fruum:set_search', search);
+      },
       onNavigate: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         var id = this.model.get('id');
         if (this.model.get('type') === 'post') id = this.model.get('parent');
         Fruum.io.trigger('fruum:view', { id: id });

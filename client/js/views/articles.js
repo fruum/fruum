@@ -16,6 +16,7 @@ Articles view
     Fruum.views.ArticleView = TRANSITION(Marionette.ItemView.extend({
       template: '#fruum-template-article',
       ui: {
+        search: '[data-search-shortcut]',
         navigate: '.fruum-js-navigate',
         manage: '.fruum-js-manage',
         up: '[data-action="up"]',
@@ -28,6 +29,7 @@ Articles view
         'change': 'render'
       },
       events: {
+        'click @ui.search': 'onSearch',
         'click @ui.manage': 'onManage',
         'click @ui.navigate': 'onNavigate',
         'click @ui.delete': 'onDelete',
@@ -36,43 +38,68 @@ Articles view
         'click @ui.move': 'onMove',
         'click @ui.edit': 'onEdit'
       },
+      onSearch: function(event) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        var search = $(event.target).
+          closest('[data-search-shortcut]').
+          data('search-shortcut');
+        if (!search) return;
+        Fruum.io.trigger('fruum:set_search', search);
+      },
       onNavigate: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:view', { id: this.model.get('id') });
       },
       onManage: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:toggle_manage', this.ui.manage);
       },
       onDelete: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:close_manage');
         Fruum.io.trigger('fruum:archive', { id: this.model.get('id') });
       },
       onUp: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:close_manage');
         Fruum.utils.orderUp(this.model, event.shiftKey);
       },
       onDown: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:close_manage');
         Fruum.utils.orderDown(this.model, event.shiftKey);
       },
       onMove: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:close_manage');
         Fruum.io.trigger('fruum:show_move', this.model.toJSON());
       },
       onEdit: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:close_manage');
         Fruum.io.trigger('fruum:edit', this.model.toJSON());
       }
