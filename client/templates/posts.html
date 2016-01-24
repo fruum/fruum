@@ -1,6 +1,6 @@
 <!-- channel post template -->
 <script type="text/template" id="fruum-template-post-channel">
-  <div class="fruum-base-object<% if (user_id == previous_user_id) { %> fruum-base-object-compactup<% } %> fruum-js-entry-default">
+  <div data-docid="" class="fruum-base-object<% if (user_id == previous_user_id) { %> fruum-base-object-compactup<% } %> fruum-js-entry-default">
 
     <% if (user_id == previous_user_id) { %>
     <div class="fruum-avatar"></div>
@@ -49,7 +49,7 @@
   <div class="fruum-object-divider"></div>
   <% } %>
 
-  <div class="fruum-base-object fruum-interactive-element fruum-js-entry-default">
+  <div data-docid="" class="fruum-base-object fruum-interactive-element fruum-js-entry-default">
 
     <div class="fruum-avatar">
       <% if (Fruum.utils.isLink(user_avatar)) { %>
@@ -134,7 +134,7 @@
 
 <!-- post first entry template -->
 <script type="text/template" id="fruum-template-post-master">
-  <div class="fruum-base-object fruum-js-entry-default">
+  <div data-docid="" class="fruum-base-object fruum-js-entry-default">
 
     <% if (viewing.id == id && viewing.type == 'article') { %>
     <% } else if (user_id) { %>

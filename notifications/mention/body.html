@@ -7,6 +7,9 @@
   <!--STYLE.SCSS-->
   </head>
 <body>
+  <span style="color: transparent; display: none !important; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">
+    Mentioned by <b><%- document.user_displayname || document.user_username %></b>. Click to see post and reply
+  </span>
   <table cellpadding="0" cellspacing="0" border="0" class="maincontainer">
     <tr>
       <td height="50">
@@ -14,31 +17,57 @@
     </tr>
     <tr>
       <td align="center">
+        <table cellpadding="0" cellspacing="0" border="0" class="centercontent">
+          <tr><td class="contentheader">Your <%- application.name || application.id %> forum notifications</td></tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
         <table cellpadding="0" cellspacing="0" border="0" class="maincontent">
-          <tr>
-            <td class="contentheader">
-              Your <%- application.name || application.id %> forum notifications
-            </td>
-          </tr>
+
           <tr>
             <td class="content-sumactivity content-head">
-              Hello, you have been mentioned by <b><%- document.user_displayname || document.user_username %></b>.
+              Hello <%- user.displayname || user.username %>,<br><br>
+              you have been mentioned by <b><%- document.user_displayname || document.user_username %></b>.
             </td>
           </tr>
           <tr>
             <td class="contentitem">
-              <h5><a href="<%- getShareURL(document.parent) %>" class="external-link"><%- document.header %><span class="tagname"></span></a></h5>
-              <p class="content-description"><%= document.body %></p>
+              <table cellpadding="0" cellspacing="0" border="0" class="mediaitem">
+                <tr>
+                  <td class="avatardata">
+                    <div class="avatarcontainer">
+                      <% if (document.image_url) { %>
+                        <div class="avataricon avatarimg">
+                          <img src="<%- document.image_url %>"/>
+                        </div>
+                      <% } else { %>
+                        <div class="avataricon" data-initials="<%- document.image_initials %>"><%- document.image_initials %></div>
+                      <% } %>
+                    </div>
+                  </td>
+                  <td>
+                    <h5><a href="<%- getShareURL(document.parent) %>" class="external-link"><%- document.header %><span class="tagname"></span></a></h5>
+                    <div class="content-description"><%= document.body %></div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td class="contentreply">
+              <div style="text-align:right;"><a href="<%- getShareURL(document.parent) %>" class="actionitem">Reply</a></div>
             </td>
           </tr>
           <tr>
             <td class="content-footer content-sumactivity">
-              There could be something else of importance at <b><%- application.name || application.id %> forum</b>, so <a href="<%- application.fullpage_url %>" class="external-link">drop a visit</a>!
+              <a href="<%- application.fullpage_url %>" class="internal-link">View all updates</a> directly in your forum.
             </td>
           </tr>
           <tr>
             <td class="content-footer contentinfo" align="right">
-              <a href="https://fruum.github.io">powered by fruum</a>
+              <img src="https://fruum.github.io/static/email.png" width="12" height="8"/> <a href="https://fruum.github.io">powered by fruum</a>
             </td>
           </tr>
         </table>

@@ -19,6 +19,9 @@
           <a href="<%- Fruum.utils.permaLink(id) %>" class="fruum-link">
             <%= Fruum.utils.printHeader(header) %>
           </a>
+          <div class="fruum-tags-container">
+            <% _.each(tags, function(tag) { %><a href="javascript:;" class="fruum-tag" data-initials="<%- tag.toUpperCase().charAt(0) %>" data-search-shortcut="#<%- tag %>"><%- tag %></a><% }); %>
+          </div>
         </h4>
       </div>
     </div>
@@ -41,6 +44,43 @@
     </div>
     <div class="fruum-object-meta">
       <span class="fruum-avatar-icon" data-initials="<%- Fruum.utils.printInitials(initials) %>"><%- initials %></span>
+    </div>
+  </div>
+</script>
+
+<!-- empty templates -->
+<script type="text/template" id="fruum-template-search-noresults">
+  <div class="fruum-base-object fruum-helper-object">
+    <div class="fruum-avatar">
+      <span class="fruum-avatar-icon">:/</span>
+    </div>
+    <div class="fruum-object-additional-data">
+      <div class="fruum-primary-data">
+        Search bot
+      </div>
+    </div>
+    <div class="fruum-object-main-data">
+      <div class="fruum-stream-typography">
+        <p>We found no results searching for <i><b>"<%- search %>"</b></i>. Please try with a different term.</p>
+      </div>
+    </div>
+  </div>
+</script>
+
+<script type="text/template" id="fruum-template-search-empty">
+  <div class="fruum-base-object fruum-helper-object">
+    <div class="fruum-avatar">
+      <span class="fruum-avatar-icon">&nbsp;<span class="fruum-icon fruum-icon-emoji"></span>&nbsp;</span>
+    </div>
+    <div class="fruum-object-additional-data">
+      <div class="fruum-primary-data">
+        Search bot
+      </div>
+    </div>
+    <div class="fruum-object-main-data">
+      <div class="fruum-stream-typography">
+        <p>Start typing to get some results. Did you know? You can search by <b>#tags</b> as well.</p>
+      </div>
     </div>
   </div>
 </script>

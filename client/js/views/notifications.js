@@ -22,8 +22,10 @@ Handles notifications list
         'click @ui.navigate': 'onNavigate'
       },
       onNavigate: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         var id = this.model.get('id');
         if (this.model.get('type') === 'post') id = this.model.get('parent');
         this.model.collection.reset();

@@ -109,17 +109,27 @@ module.exports = function(options, client, self) {
       max_results: 20
     }
 
-    //extract tags
+    //include tags
     var tags = [];
     q = q.replace(/(^|\s)(#[a-z\d-]+)/ig, function(tag) {
       tag = tag.replace('#', '').trim();
-      if (tag) tags.push(tag.toLowerCase());
+      if (tag) {
+        tag = tag.toLowerCase();
+        tags.push(tag);
+        must.push({ term: { tags: tag } });
+      }
       return '';
     }).trim();
-    //put tags in the must filter
-    _.each(tags, function(tag) {
-      must.push({ term: { tags: tag } });
-    });
+    //exclude tags
+    q = q.replace(/(^|\s)(-#[a-z\d-]+)/ig, function(tag) {
+      tag = tag.replace('-#', '').trim();
+      if (tag) {
+        tag = tag.toLowerCase();
+        tags.push(tag);
+        must_not.push({ term: { tags: tag } });
+      }
+      return '';
+    }).trim();
     //disable highlighting on tagged search
     query.highlight = tags.length == 0;
     if (tags.length) {
@@ -173,6 +183,14 @@ module.exports = function(options, client, self) {
         }
       }
     });
+
+    //add some default sorting
+    if (!sort.length) {
+      //in case of tags, sort by dated descending
+      if (tags.length) {
+        sort.push({ created : {order : 'desc'} });
+      }
+    }
 
     //put normal string search in the should filter
     if (q) {

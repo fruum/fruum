@@ -1,6 +1,6 @@
 <!-- article template -->
 <script type="text/template" id="fruum-template-article">
-  <div class="fruum-base-object fruum-link fruum-interactive-element fruum-js-entry-default fruum-js-navigate">
+  <div data-docid="<%- id %>" class="fruum-base-object fruum-link fruum-interactive-element fruum-js-entry-default fruum-js-navigate">
 
     <div class="fruum-object-main-data<% if (Fruum.user.admin || (Fruum.user.id == user_id && !Fruum.user.anonymous)) { %> fruum-object-manage-data<% } %>">
       <div class="fruum-stream-typography">
@@ -21,7 +21,7 @@
             <%= Fruum.utils.printHeader(header) %>
           </a>
           <div class="fruum-tags-container">
-            <% _.each(tags, function(tag) { %><span class="fruum-tag" data-initials="<%- tag.toUpperCase().charAt(0) %>"><%- tag %></span><% }); %>
+            <% _.each(tags, function(tag) { %><a href="javascript:;" class="fruum-tag" data-initials="<%- tag.toUpperCase().charAt(0) %>" data-search-shortcut="#<%- tag %>"><%- tag %></a><% }); %>
           </div>
         </h4>
       </div>

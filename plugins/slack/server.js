@@ -30,6 +30,10 @@ function Slack(options, instance) {
       var app_token = application.getProperty('slack:command_token');
       if (app_token && app_token != token) {
         res.send('*Fruum:* Permission denied, check your slack integration');
+        logger.error(app_id, 'slack_command_token_failed', {
+          server_token: token,
+          app_token: app_token
+        });
         return;
       }
       if (!text) {
@@ -107,7 +111,7 @@ function Slack(options, instance) {
           }]
         }
       }, function(error, response, body) {
-        if (error) logger.error(app_id, 'slack_incoming_webhook_failed', value);
+        if (error) logger.error(app_id, 'slack_incoming_webhook_failed', error);
       });
     });
   }

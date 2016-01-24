@@ -28,6 +28,7 @@ Search button
       initialize: function(options) {
         _.bindAll(this, '_search');
         this.listenTo(Fruum.io, 'fruum:clear_search', this.onSearchClose);
+        this.listenTo(Fruum.io, 'fruum:set_search', this.onSearchSet);
 
         this.notifications = options.notifications;
         this.listenTo(this.notifications, 'reset', this.render);
@@ -37,6 +38,14 @@ Search button
           has_notifications: this.notifications.length
         }
       },
+      onSearchSet: function(query) {
+        this.model.set('searching', true);
+        if (!this.ui.search.hasClass('fruum-search-active')) {
+          this.ui.search.addClass('fruum-search-active');
+        }
+        this.ui.search_input.focus().val(query + ' ');
+        this.searchNow();
+      },
       onSearchKeyup: function(event) {
         if (this.search_timer) clearTimeout(this.search_timer);
         this.search_timer = setTimeout(this._search, 500);
@@ -44,22 +53,36 @@ Search button
       onSearchBlur: function(event) {
         if (!this.ui.search_input.val()) {
           this.ui.search.removeClass('fruum-search-active');
-          this.model.set('searching', false);
+          if (this.model.get('searching')) {
+            this.model.set('searching', false);
+            Fruum.io.trigger('fruum:restore_view_route');
+          }
         }
         this._updateStatus();
       },
       onSearchOpen: function(event) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         this.model.set('searching', true);
         if (!this.ui.search.hasClass('fruum-search-active')) {
           this.ui.search.addClass('fruum-search-active');
           this.ui.search_input.focus().select();
-          this.onSearchKeyup();
+          this.searchNow();
         }
       },
       onSearchClose: function(event) {
-        event && event.stopPropagation();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         this.ui.search_input.val('').blur();
         this.onSearchBlur();
+      },
+      searchNow: function() {
+        if (this.search_timer) clearTimeout(this.search_timer);
+        this._search();
       },
       _updateStatus: function() {
         this.model.set('has_search_string', $.trim(this.ui.search_input.val() || '').length > 0);

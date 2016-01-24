@@ -272,18 +272,19 @@ var Application = Backbone.Model.extend({
   getProperty: function(property) {
     return this.get(PROPERTY_PREFIX + property);
   },
-  toLog: function() {
+  toLog: function(humanize) {
+    var divider = humanize?'\n      ':' ';
     var log = '[app] id:' + this.get('id');
-    log += ' name:' + this.get('name');
-    log += ' url:' + this.get('url');
-    log += ' auth_url:' + this.get('auth_url');
-    log += ' fullpage_url:' + this.get('fullpage_url');
-    log += ' pushstate:' + this.get('pushstate');
-    log += ' notifications_email:' + this.get('notifications_email');
-    log += ' contact_email:' + this.get('contact_email');
-    log += ' theme:' + this.get('theme');
-    log += ' private_key:' + this.get('private_key');
-    log += ' api_keys:' + this.get('api_keys').length;
+    log += divider + 'name:' + this.get('name');
+    log += divider + 'url:' + this.get('url');
+    log += divider + 'auth_url:' + this.get('auth_url');
+    log += divider + 'fullpage_url:' + this.get('fullpage_url');
+    log += divider + 'pushstate:' + this.get('pushstate');
+    log += divider + 'notifications_email:' + this.get('notifications_email');
+    log += divider + 'contact_email:' + this.get('contact_email');
+    log += divider + 'theme:' + this.get('theme');
+    log += divider + 'private_key:' + this.get('private_key');
+    log += divider + 'api_keys:' + this.get('api_keys').length;
     return log;
   },
   //get sass override text from theme path

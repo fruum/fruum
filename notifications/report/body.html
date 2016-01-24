@@ -7,6 +7,9 @@
   <!--STYLE.SCSS-->
   </head>
 <body>
+  <span style="color: transparent; display: none !important; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">
+    <b><%- reporter.displayname || reporter.username %></b> marked a post as inappropriate. See post inside.
+  </span>
   <table cellpadding="0" cellspacing="0" border="0" class="maincontainer">
     <tr>
       <td height="50">
@@ -14,24 +17,61 @@
     </tr>
     <tr>
       <td align="center">
+        <table cellpadding="0" cellspacing="0" border="0" class="centercontent">
+          <tr><td class="contentheader">Inappropriate content on <%- application.name || application.id %></td></tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
         <table cellpadding="0" cellspacing="0" border="0" class="maincontent">
-          <tr>
-            <td class="contentheader">
-              Content marked as inappropriate on <%- application.name || application.id %>
-            </td>
-          </tr>
+
           <tr>
             <td class="content-sumactivity content-head">
-              Hello <%- administrator.displayname || administrator.username %>,<br>
+              Hello <%- administrator.displayname || administrator.username %>,<br><br>
               <b><%- reporter.displayname || reporter.username %></b> marked a post as inappropriate.
             </td>
           </tr>
           <tr>
             <td class="contentitem">
-              <h5><a href="<%- getShareURL(document.type === 'post'?document.parent:document.id) %>" class="external-link"><%- document.header %><span class="tagname"></span></a></h5>
-              <p class="content-description"><%- document.body %></p>
+              <table cellpadding="0" cellspacing="0" border="0" class="mediaitem">
+                <tr>
+                  <td class="avatardata">
+                    <div class="avatarcontainer">
+                      <% if (document.image_url) { %>
+                        <div class="avataricon avatarimg">
+                          <img src="<%- document.image_url %>"/>
+                        </div>
+                      <% } else { %>
+                        <div class="avataricon" data-initials="<%- document.image_initials %>"><%- document.image_initials %></div>
+                      <% } %>
+                    </div>
+                  </td>
+                  <td>
+                    <h5><a href="<%- getShareURL(document.type === 'post'?document.parent:document.id) %>" class="external-link"><%- document.header %><span class="tagname"></span></a></h5>
+                    <div class="content-description"><%= document.body %></div>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
+          <tr>
+            <td class="contentreply">
+              <div style="text-align:right;"><a href="<%- getShareURL(document.type === 'post'?document.parent:document.id) %>" class="actionitem">Review</a></div>
+            </td>
+          </tr>
+          <tr>
+            <td class="contentitem contentinfo" align="right">
+              <img src="https://fruum.github.io/static/email.png" width="12" height="8"/> <a href="https://fruum.github.io">powered by fruum</a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        <table cellpadding="0" cellspacing="0" border="0" class="centercontent">
+          <tr><td class="footer-disclaimer">You are receiving this email because you are an administrator on this forum.</td></tr>
         </table>
       </td>
     </tr>

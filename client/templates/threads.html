@@ -1,6 +1,6 @@
 <!-- thread template -->
 <script type="text/template" id="fruum-template-thread">
-  <div class="fruum-base-object fruum-link fruum-interactive-element fruum-js-entry-default fruum-js-navigate">
+  <div data-docid="<%- id %>" class="fruum-base-object fruum-link fruum-interactive-element fruum-js-entry-default fruum-js-navigate">
     <div class="fruum-avatar">
       <% if (Fruum.utils.isLink(user_avatar)) { %>
       <img src="<%= user_avatar %>" class="fruum-avatar-icon" width="56"/>
@@ -33,7 +33,7 @@
 
           </a>
           <div class="fruum-tags-container">
-            <% _.each(tags, function(tag) { %><span class="fruum-tag" data-initials="<%- tag.toUpperCase().charAt(0) %>"><%- tag %></span><% }); %>
+            <% _.each(tags, function(tag) { %><a href="javascript:;" class="fruum-tag" data-initials="<%- tag.toUpperCase().charAt(0) %>" data-search-shortcut="#<%- tag %>"><%- tag %></a><% }); %>
           </div>
         </h4>
       </div>

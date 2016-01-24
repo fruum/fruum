@@ -5,7 +5,6 @@ Monitors activity and send a digest to administrators
 
 var _ = require('underscore'),
     moment = require('moment'),
-    juice = require('juice'),
     Models = require('../../server/models'),
     logger = require('../../server/logger');
 
@@ -21,16 +20,89 @@ function Monitor(options, instance) {
             date: moment(new Date()).format('D MMM YYYY'),
             application: application.toJSON(),
             getShareURL: application.getShareURL.bind(application),
-            documents: _.map(documents, function(doc) { return doc.toJSON(); }),
-            administrator: {}
+            documents: []
+          };
+          var stats = {
+            channels: [],
+            threads: [],
+            articles: [],
+            categories: [],
+            blogs: [],
+            replies: []
+          };
+          _.each(documents, function(doc) {
+            switch(doc.get('type')) {
+              case 'channel':
+                stats.channels.push(doc);
+                break;
+              case 'thread':
+                stats.threads.push(doc);
+                break;
+              case 'article':
+                stats.articles.push(doc);
+                break;
+              case 'category':
+                stats.categories.push(doc);
+                break;
+              case 'blog':
+                stats.blogs.push(doc);
+                break;
+              case 'post':
+                if (doc.get('parent_type') != 'channel') {
+                  stats.replies.push(doc);
+                }
+                break;
+            }
+          }, this);
+          var all_documents = stats.threads.concat(
+            stats.blogs,
+            stats.articles,
+            stats.channels,
+            stats.categories,
+            stats.replies
+          );
+          context.total = all_documents.length;
+          context.documents = _.map(all_documents.slice(0, 6), function(doc) {
+            return instance.email.prettyJSON(doc);
+          });
+          context.digest = '';
+          _.each(stats, function(value, key) {
+            if (value.length) {
+              //un-pluralize
+              if (value.length == 1) {
+                switch(key) {
+                  case 'channels':
+                    key = 'channel';
+                    break;
+                  case 'threads':
+                    key = 'thread';
+                    break;
+                  case 'articles':
+                    key = 'article';
+                    break;
+                  case 'categories':
+                    key = 'category';
+                    break;
+                  case 'blogs':
+                    key = 'blog';
+                    break;
+                  case 'replies':
+                    key = 'reply';
+                    break;
+                }
+              }
+              context.digest += ' ' + value.length + ' new ' + key + ',';
+            }
+          }, this);
+          //remove trailing comma
+          context.digest = context.digest.slice(0, -1).trim();
+          var email = {
+            subject: email_template.subject(context),
+            html: instance.email.inlineCSS(email_template.html(context))
           };
           _.each(administrators, function(admin) {
             logger.info(application.get('id'), 'monitor_notify', admin);
-            context.administrator = admin.toJSON();
-            instance.email.send(application, admin, {
-              subject: email_template.subject(context),
-              html: juice(email_template.html(context))
-            }, function() {});
+            instance.email.send(application, admin, email, function() {});
           });
         });
       }

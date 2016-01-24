@@ -36,11 +36,17 @@ Breadcrumb view
         }
       },
       onNavigate: function(event) {
-        event.preventDefault();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:view', { id: $(event.target).closest('[data-id]').data('id') });
       },
       onCloseSearch: function(event) {
-        event.preventDefault();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         if (this.notifications.length) this.notifications.reset();
         else Fruum.io.trigger('fruum:clear_search');
       }

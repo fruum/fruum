@@ -154,6 +154,9 @@
   margin-left: $big-font-basegrid;
   padding: 0 $big-font-basegrid;
   color: $forum-base-color !important;
+  &:not(:hover) {
+    opacity: 0.3;
+  }
 }
 
 // 2.1 Override for embedded fruum
@@ -268,16 +271,6 @@
     content: '';
     display: table;
     clear: both;
-  }
-  .fruum-avatar-icon {
-    // inherits font size of $stream-default-font
-    float: left;
-    margin-right: 0.5em;
-    width: 3em;
-    height: 3em;
-    line-height: 3em;
-    font-size: 0.4*$stream-default-lineheight;
-    font-weight: $complementary-font-weight;
   }
   .fruum-secondary-data {
     display: block;

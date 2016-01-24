@@ -5,7 +5,6 @@ Report inappropriate content to admins
 
 var _ = require('underscore'),
     moment = require('moment'),
-    juice = require('juice'),
     Models = require('../../server/models'),
     logger = require('../../server/logger');
 
@@ -24,7 +23,7 @@ function Report(options, instance) {
               date: moment(new Date()).format('D MMM YYYY'),
               application: application.toJSON(),
               getShareURL: application.getShareURL.bind(application),
-              document: payload.document.toJSON(),
+              document: instance.email.prettyJSON(payload.document),
               reporter: payload.user.toJSON(),
               administrator: {}
             };
@@ -34,7 +33,7 @@ function Report(options, instance) {
               context.administrator = admin.toJSON();
               instance.email.send(application, admin, {
                 subject: email_template.subject(context),
-                html: juice(email_template.html(context))
+                html: instance.email.inlineCSS(email_template.html(context))
               }, function() {});
             });
           });

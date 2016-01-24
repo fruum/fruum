@@ -1,7 +1,101 @@
 (function() {
   //namespace
   window.Fruum = window.Fruum || {};
-  //on document read
+  //dependencies
+  var dependencies = {
+    jquery: {
+      url: '//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js',
+      test: 'jQuery'
+    },
+    underscore: {
+      url: '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js',
+      test: '_.reduce'
+    },
+    backbone: {
+      url: '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.3/backbone-min.js',
+      test: 'Backbone.Model'
+    },
+    marionette: {
+      url: '//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.4.4/backbone.marionette.min.js',
+      test: 'Marionette.ItemView'
+    },
+    moment: {
+      url: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js',
+      test: 'moment.isMoment'
+    },
+    marked: {
+      url: '//cdnjs.cloudflare.com/ajax/libs/marked/0.3.5/marked.min.js',
+      test: 'marked'
+    },
+    socketio: {
+      url: '//cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.4/socket.io.min.js',
+      test: 'io.Socket'
+    }
+  };
+  //loads a dependency from the list above
+  function load_dependency(dependency, done) {
+    //test it first
+    var parts = dependency.test.split('.'), exists = false, root = window;
+    while(parts.length) {
+      root = root[parts.shift()];
+      exists = (root != undefined);
+      if (!exists) break;
+    }
+    if (exists) {
+      done && done();
+    }
+    else {
+      load_script(dependency.url, function() {
+        done && done();
+      });
+    }
+  }
+  function load_dependencies(done) {
+    load_dependency(dependencies.jquery, function() {
+      load_dependency(dependencies.underscore, function() {
+        load_dependency(dependencies.backbone, function() {
+          load_dependency(dependencies.marionette, function() {
+            //load rest in parallel
+            var libs = ['moment', 'marked', 'socketio'],
+                libs_loaded = 0;
+            function cb() {
+              libs_loaded++;
+              if (libs_loaded == libs.length) {
+                done && done();
+              }
+            }
+            for (var i = 0; i < libs.length; ++i)
+              load_dependency(dependencies[libs[i]], cb);
+          });
+        });
+      });
+    });
+  }
+  //load script
+  function load_script(url, callback) {
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    //IE
+    if (script.readyState) {
+      script.onreadystatechange = function () {
+        if (script.readyState === 'loaded' || script.readyState === 'complete') {
+          script.onreadystatechange = null;
+          if (callback) callback();
+        }
+      };
+    }
+    else {
+      script.onload = function () {
+        if (callback) callback();
+      };
+      script.onerror = function() {
+        if (callback) callback();
+      }
+    }
+    script.src = url;
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(script);
+  }
+  //on document ready
   function ready(fn) {
     if (document.readyState != 'loading'){
       fn();
@@ -116,12 +210,18 @@
         //this is replaced by server
         window.fruumSettings.fruum_host = '__url__';
         //append fruum
-        var script = document.createElement("script")
-        script.type = "text/javascript";
-        script.src = window.fruumSettings.fruum_host +
-                    (window.fruumSettings.slim?'/fruum_slim.js':'/fruum.js') +
-                    '?app_id=' + window.fruumSettings.app_id;
-        (document.head || document.getElementsByTagName("head")[0]).appendChild(script);
+        if (window.fruumSettings.bundle) {
+          load_script(window.fruumSettings.fruum_host +
+                      '/_/get/js/bundle/' +
+                      window.fruumSettings.app_id);
+        }
+        else {
+          load_dependencies(function() {
+            load_script(window.fruumSettings.fruum_host +
+                        '/_/get/js/compact/' +
+                        window.fruumSettings.app_id);
+          });
+        }
       }
     }
     //expose launcher

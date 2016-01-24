@@ -224,6 +224,14 @@
     background-color: $forum-error-color;
   }
 
+  &.fruum-message-info {
+    @if ( lightness($background-helper-base-color) > 10 ) {
+      background-color: darken( $background-helper-base-color, 4% );
+    } @else {
+      background-color: lighten( $background-helper-base-color, 4% );
+    }
+  }
+
   &.fruum-messages-helper {
     color: $muted-text-color;
     border-top: none;
@@ -420,6 +428,9 @@
     padding: 0 0.7em;
     height: 2.5em;
     line-height: 2.5em;
+    .fruum-mini-loader:before {
+      line-height: 1.15;
+    }
   }
 }
 
@@ -574,8 +585,8 @@
 #fruum .fruum-interactive-element {
   transition: background 0.12s;
   -webkit-transition: background 0.12s;
+  &.fruum-interactive-clicked,
   &:hover {
-
     background-color: lighten( $background-helper-base-color, 5% );
   }
   &.fruum-link {

@@ -55,21 +55,34 @@ Posts view
         return '#fruum-template-post';
       },
       onMore: function(event) {
-        event && event.preventDefault();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         this.ui.more_source.addClass('fruum-nodisplay');
         this.ui.more_target.removeClass('fruum-nodisplay');
       },
       onEdit: function(event) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:edit', this.model.toJSON());
       },
       onReact: function(event) {
-        event.preventDefault();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         var reaction = $(event.target).closest('[data-reaction]').data('reaction');
         if (Fruum.user.anonymous || !reaction) return;
         Fruum.io.trigger('fruum:react', { id: this.model.get('id'), reaction: reaction });
       },
       onInappropriate: function(event) {
-        event.preventDefault();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:field', {
           id: this.model.get('id'),
           field: 'inappropriate',
@@ -77,32 +90,43 @@ Posts view
         });
       },
       onShare: function(event) {
-        event.preventDefault();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         var post_index = this.model.collection.models.indexOf(this.model) + 1;
         Fruum.io.trigger('fruum:share', $(event.target), post_index);
       },
       onDelete: function(event) {
-        event.preventDefault();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         Fruum.io.trigger('fruum:archive', { id: this.model.get('id') });
       },
       onReport: function(event) {
-        event.preventDefault();
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         if (confirm(Messages.report))
           Fruum.io.trigger('fruum:report', { id: this.model.get('id') });
       },
       onLink: function(event) {
         var href = $(event.target).attr('href') || '';
         if (href.indexOf('#fruum:') == 0) {
-          event && event.preventDefault();
+          event.preventDefault();
+          event.stopPropagation();
           href = href.replace('#fruum:', '');
           Fruum.api.open(href);
         }
         else if (href.toLowerCase().indexOf('http://') == 0 ||
                  href.toLowerCase().indexOf('https://') == 0)
-       {
-         event && event.preventDefault();
-         window.open(href, '_blank');
-       }
+        {
+          event.preventDefault();
+          event.stopPropagation();
+          window.open(href, '_blank');
+        }
       }
     }));
     Fruum.views.PostEmptyView = TRANSITION(Marionette.ItemView.extend({

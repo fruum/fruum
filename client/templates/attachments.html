@@ -4,6 +4,9 @@
   <% _.each(attachments, function(attachment) { %>
     <img class="fruum-option-item" src="<%- attachment.data %>" alt="<%- attachment.name %>" data-attachment="[[<%- attachment.type + ':' + attachment.name %>]]"/>
   <% }); %>
+  <% for (var i = 0; i < optimizing; ++i) { %>
+    <div class="fruum-option-item fruum-option-item-button"><span class="fruum-mini-loader"></span></div>
+  <% } %>
     <label for="fruum-file-upload" class="fruum-option-item-button fruum-option-item"><span class="fruum-icon fruum-icon-add"></span></label>
     <input id="fruum-file-upload" type="file" style="display:none;" multiple />
   </div>
