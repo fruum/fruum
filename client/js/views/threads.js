@@ -36,6 +36,13 @@ Threads view
         'click @ui.move': 'onMove',
         'click @ui.edit': 'onEdit'
       },
+      templateHelpers: function() {
+        return {
+          is_new: Fruum.utils.isNewVisit(
+            this.model.get('id'), this.model.get('updated')
+          )
+        }
+      },
       onSearch: function(event) {
         if (event) {
           event.preventDefault();

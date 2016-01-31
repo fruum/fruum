@@ -178,6 +178,7 @@ function FruumServer(options, cli_cmd, ready) {
     'client/js/views/posts.js',
     'client/js/views/threads.js',
     'client/js/views/articles.js',
+    'client/js/views/blogs.js',
     'client/js/views/channels.js',
     'client/js/views/autocomplete.js',
     'client/js/views/emojipanel.js',
@@ -304,6 +305,7 @@ function FruumServer(options, cli_cmd, ready) {
         .setDir(fruum_root)
         .load('client/templates/main.html')
         .concat(_.union([
+          'client/templates/persona.html',
           'client/templates/breadcrumb.html',
           'client/templates/interactions.html',
           'client/templates/autocomplete.html',
@@ -316,6 +318,7 @@ function FruumServer(options, cli_cmd, ready) {
           'client/templates/loading.html',
           'client/templates/threads.html',
           'client/templates/articles.html',
+          'client/templates/blog.html',
           'client/templates/channels.html',
           'client/templates/title.html',
           'client/templates/filters.html',

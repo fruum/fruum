@@ -148,6 +148,27 @@ module.exports = function(options, instance, self) {
       }
     });
   };
+  //emits an update signal
+  self.broadcastInfo = function(by_user, document) {
+    var app = app_users[by_user.get('app_id')];
+    if (!app) return;
+    _.each(app, function(user) {
+      var socket = user.get('socket'),
+          json = {
+            id: document.get('id'),
+            type: document.get('type'),
+            children_count: document.get('children_count'),
+            updated: document.get('updated')
+          };
+      if (user != by_user && socket) {
+        if (((user.get('admin') || document.get('visible')) &&
+           document.get('permission') <= user.get('permission')))
+        {
+          socket.emit('fruum:info', json);
+        }
+      }
+    });
+  };
   //count normal users viewing a document
   self.countNormalUsers = function(app_id, doc_id) {
     var app = app_users[app_id];

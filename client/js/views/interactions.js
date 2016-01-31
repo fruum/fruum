@@ -29,6 +29,7 @@ Handles the bottom input part
         emoji_panel: '[data-action="emojipanel"]',
         attachments: '[data-action="attachments"]',
         help_panel: '.fruum-js-help',
+        help_tab: '[data-help-tab]',
         show_notifications: '.fruum-js-show-notifications',
         avatar_container: '.fruum-js-avatar-container',
         preview_panel: '.fruum-js-preview',
@@ -50,7 +51,8 @@ Handles the bottom input part
       modelEvents: {
         'change:editing change:viewing change:searching change:has_search_string': 'onChange',
         'change:interacting change:connected': 'onInteracting',
-        'change:search_helper': 'onSearchHelper'
+        'change:search_helper': 'onSearchHelper',
+        'change:updates_count': 'onUpdatesCount'
       },
       events: {
         'click @ui.search': 'onSearch',
@@ -64,6 +66,7 @@ Handles the bottom input part
         'keydown @ui.channel_input': 'onChannelKey',
         'blur @ui.field_header': 'onHeaderBlur',
         'click @ui.help': 'onHelp',
+        'click @ui.help_tab': 'onHelpTab',
         'click @ui.emoji_panel': 'onEmojiPanel',
         'click @ui.attachments': 'onAttachments',
         'click @ui.post': 'onPost',
@@ -85,12 +88,24 @@ Handles the bottom input part
         'keyup @ui.field_tags': 'onKeyTags'
       },
       initialize: function(options) {
-        _.bindAll(this, 'typeNotificationStart', 'typeNotificationEnd', '_clearSearch');
+        _.bindAll(this,
+          'typeNotificationStart', 'typeNotificationEnd',
+          '_clearSearch', '_updatesCount'
+        );
         this.ui_state = this.model;
         this.collections = options.collections;
         this.listenTo(Fruum.io, 'fruum:resize', this.onResize);
         this.listenTo(Fruum.io, 'fruum:update_notify', this.onUpdateNotify);
         this.listenTo(Fruum.io, 'fruum:message', this.onMessage);
+        this.listenTo(Fruum.io, 'fruum:default_action', function() {
+          var el = this.$('.fruum-js-default-action');
+          if (el.length) {
+            el.addClass('fruum-button-active');
+            setTimeout(function() {
+              el.trigger('click');
+            }, 100);
+          }
+        });
         this.onAttach = this.onDomRefresh = this.onInteracting;
         this.mode = this._getMode();
         this.autocomplete_view = new Fruum.views.AutocompleteView({
@@ -105,6 +120,7 @@ Handles the bottom input part
           ui_state: this.ui_state,
           interactions: this
         });
+        this.help_tab = Fruum.utils.isDesktop()?'shortcuts':'text';
       },
       getTemplate: function() {
         if (Fruum.user.anonymous) return '#fruum-template-interactions-anonymous';
@@ -139,6 +155,31 @@ Handles the bottom input part
         }
         if (Fruum.user.admin) return '#fruum-template-interactions-admin';
         return '#fruum-template-interactions-user';
+      },
+      onUpdatesCount: function() {
+        var count = this.ui_state.get('updates_count');
+        if (!count) {
+          if (this.__update_drawer_timer) {
+            clearTimeout(this.__update_drawer_timer);
+          }
+          this._updatesCount();
+        }
+        else {
+          if (!this.__update_drawer_timer) {
+            this.__update_drawer_timer = setTimeout(this._updatesCount, 1500);
+          }
+        }
+      },
+      _updatesCount: function() {
+        this.__update_drawer_timer = null;
+        var count = this.ui_state.get('updates_count');
+        if (!count) {
+          this.$('.fruum-js-updates-drawer').stop(true, true).slideUp('fast');
+        }
+        else {
+          this.$('.fruum-js-updates-number').html(count);
+          this.$('.fruum-js-updates-drawer').stop(true, true).slideDown('fast');
+        }
       },
       onSearchHelper: function() {
         if (this.ui_state.get('search_helper') && !this.ui_state.get('editing').type)
@@ -188,8 +229,24 @@ Handles the bottom input part
         this.attachments_view.hide();
         if (this.ui.help_panel.is(':visible'))
           this.ui.help_panel.slideUp('show', 'easeInOutBack');
-        else
+        else {
+          this._selectHelpTab(this.help_tab);
           this.ui.help_panel.slideDown('show', 'easeInOutBack');
+        }
+      },
+      onHelpTab: function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var tab = $(event.target).closest('[data-help-tab]').data('help-tab');
+        if (!tab) return;
+        this.help_tab = tab;
+        this._selectHelpTab(this.help_tab);
+      },
+      _selectHelpTab: function(tab) {
+        this.$('[data-help-tab]').removeClass('fruum-active');
+        this.$('[data-help-tab="' + tab + '"]').addClass('fruum-active');
+        this.$('[data-help-content]').addClass('fruum-nodisplay');
+        this.$('[data-help-content="' + tab + '"]').removeClass('fruum-nodisplay');
       },
       onSearch: function(event) {
         if (event) {
@@ -357,7 +414,12 @@ Handles the bottom input part
           switch(event.which) {
             case 13: //enter
               if (this.ui_state.get('editing').type == 'post') {
-                this.onPost(event);
+                var that = this;
+                this.ui.post.addClass('fruum-button-active');
+                setTimeout(function() {
+                  that.onPost(event);
+                  that.ui.post.removeClass('fruum-button-active');
+                }, 100);
               }
               break;
             case 66: //b
@@ -474,7 +536,6 @@ Handles the bottom input part
             }
             break;
           case 'article':
-          case 'blog':
             order = this.collections.articles.length + 1;
             break;
         }
@@ -529,15 +590,17 @@ Handles the bottom input part
         }
       },
 
-      onKeyBody: function() {
+      onKeyBody: function(event) {
         var editing = this.ui_state.get('editing');
         editing.body = this.ui.field_body.val() || '';
+        this.onKeyAny(event);
       },
-      onKeyHeader: function() {
+      onKeyHeader: function(event) {
         var editing = this.ui_state.get('editing');
         editing.header = this.ui.field_header.val() || '';
+        this.onKeyAny(event);
       },
-      onKeyInitials: function() {
+      onKeyInitials: function(event) {
         var editing = this.ui_state.get('editing');
         editing.initials = this.ui.field_initials.val() || '';
       },
@@ -548,6 +611,14 @@ Handles the bottom input part
           if (tags.charAt(tags.length - 1) == ' ' && tags.charAt(tags.length - 2) != ',') {
             tags = (tags.trim() + ', ').replace(/,{2,}/g, ',').replace(/, ,/g, ', ');
             this.ui.field_tags.val(tags);
+          }
+        }
+      },
+      onKeyAny: function(event) {
+        if (event && event.which == 27) {
+          //check if all fields are empty
+          if (!this.ui.field_header.val() && !this.ui.field_body.val()) {
+            this.onCancel();
           }
         }
       },

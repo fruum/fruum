@@ -38,7 +38,7 @@ module.exports = function(options, instance, self) {
           notifications: response
         });
         self.success(payload);
-      });
+      }, { skipfields: ['attachments'] });
     }
   }
 

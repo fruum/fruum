@@ -41,7 +41,7 @@ module.exports = function(options, instance, self) {
         document: document,
         user: user
       };
-      plugins.delete(plugin_payload, function(err, plugin_payload) {
+      plugins.beforeDelete(plugin_payload, function(err, plugin_payload) {
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:delete', document.toJSON());
@@ -50,10 +50,14 @@ module.exports = function(options, instance, self) {
           return;
         }
         storage.delete(app_id, document, function() {
+          self.refreshChildrenCount(app_id, document.get('parent'));
           self.invalidateDocument(app_id, document);
           socket.emit('fruum:delete', document.toJSON());
           if (!plugin_payload.broadcast_noop) self.broadcast(user, document, 'fruum:delete');
-          self.success(payload);
+          plugin_payload.document = document;
+          plugins.afterDelete(plugin_payload, function() {
+            self.success(payload);
+          });
         });
       });
     });
@@ -88,7 +92,7 @@ module.exports = function(options, instance, self) {
         document: document,
         user: user
       };
-      plugins.archive(plugin_payload, function(err, plugin_payload) {
+      plugins.beforeArchive(plugin_payload, function(err, plugin_payload) {
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:archive', document.toJSON());
@@ -97,10 +101,14 @@ module.exports = function(options, instance, self) {
           return;
         }
         storage.archive(app_id, document, function() {
+          self.refreshChildrenCount(app_id, document.get('parent'));
           self.invalidateDocument(app_id, document);
           socket.emit('fruum:archive', document.toJSON());
           if (!plugin_payload.broadcast_noop) self.broadcast(user, document, 'fruum:archive');
-          self.success(payload);
+          plugin_payload.document = document;
+          plugins.afterArchive(plugin_payload, function() {
+            self.success(payload);
+          });
         });
       });
     });
@@ -135,7 +143,7 @@ module.exports = function(options, instance, self) {
         document: document,
         user: user
       };
-      plugins.restore(plugin_payload, function(err, plugin_payload) {
+      plugins.beforeRestore(plugin_payload, function(err, plugin_payload) {
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:restore', document.toJSON());
@@ -144,10 +152,14 @@ module.exports = function(options, instance, self) {
           return;
         }
         storage.restore(app_id, document, function() {
+          self.refreshChildrenCount(app_id, document.get('parent'));
           self.invalidateDocument(app_id, document);
           socket.emit('fruum:restore', document.toJSON());
           if (!plugin_payload.broadcast_noop) self.broadcast(user, document, 'fruum:restore');
-          self.success(payload);
+          plugin_payload.document = document;
+          plugins.afterRestore(plugin_payload, function() {
+            self.success(payload);
+          });
         });
       });
     });

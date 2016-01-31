@@ -156,12 +156,25 @@ module.exports = function(options, instance, self) {
                     text: 'highlight:0 ' + viewing_doc.get('body'),
                     include_hidden: is_admin,
                     permission: user.get('permission')
-                  }, process_children);
+                  }, process_children, { skipfields: ['attachments'] });
                 }
                 else {
-                  storage.children(app_id, viewing_doc, process_children);
+                  //decide which fields to skip based on parent type
+                  var params;
+                  switch(viewing_doc.get('type')) {
+                    case 'category':
+                      params = { skipfields: ['attachments'] };
+                      break;
+                    case 'thread':
+                    case 'article':
+                    case 'blog':
+                    case 'channel':
+                      params = { skipfields: ['header', 'tags'] };
+                      break;
+                  }
+                  storage.children(app_id, viewing_doc, process_children, params);
                 }
-              });
+              }, { skipfields: ['attachments', 'body', 'tags' ] });
             }
             else socket.emit('fruum:view');
           });

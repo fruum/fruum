@@ -61,9 +61,10 @@
         Fruum.io.trigger('fruum:share', $(event.target));
       },
       templateHelpers: function() {
-        var editing = this.model.get('editing');
+        var editing = this.model.get('editing'),
+            viewing = this.model.get('viewing');
         return {
-          hide_actions: this.model.get('searching') ||
+          hide_actions: this.model.get('searching') || !viewing.id ||
                         _.contains(['thread', 'article', 'blog'], editing.type)
         };
       }

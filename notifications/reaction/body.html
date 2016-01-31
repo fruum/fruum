@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%- date %> <%- application.name || application.id %> forum notification</title>
+  <!--STYLE.SCSS-->
+  </head>
+<body>
+  <span style="color: transparent; display: none !important; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">
+    <b><%- reaction_user.displayname || reaction_user.username %></b> gave you a <%- reaction %> on your <%- document.header %> post. Click to see post and reply
+  </span>
+  <table cellpadding="0" cellspacing="0" border="0" class="maincontainer">
+    <tr>
+      <td height="50">
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        <table cellpadding="0" cellspacing="0" border="0" class="centercontent">
+          <tr><td class="contentheader">Your <%- application.name || application.id %> forum notifications</td></tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        <table cellpadding="0" cellspacing="0" border="0" class="maincontent">
+
+          <tr>
+            <td class="content-sumactivity content-head">
+              Hello <%- user.displayname || user.username %>,<br><br>
+              <b><%- reaction_user.displayname || reaction_user.username %></b> is the first to give <%- reaction %> to your post!
+            </td>
+          </tr>
+          <tr>
+            <td class="contentitem">
+              <table cellpadding="0" cellspacing="0" border="0" class="mediaitem">
+                <tr>
+                  <td class="avatardata">
+                    <div class="avatarcontainer">
+                      <% if (document.image_url) { %>
+                        <div class="avataricon avatarimg">
+                          <img src="<%- document.image_url %>"/>
+                        </div>
+                      <% } else { %>
+                        <div class="avataricon" data-initials="<%- document.image_initials %>"><%- document.image_initials %></div>
+                      <% } %>
+                    </div>
+                  </td>
+                  <td>
+                    <h5><a href="<%- getShareURL(document.parent) %>" class="external-link"><%- document.header %><span class="tagname"></span></a></h5>
+                    <div class="content-description"><%= document.body %></div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td class="contentreply">
+              <div style="text-align:right;"><a href="<%- getShareURL(document.parent) %>" class="actionitem">View</a></div>
+            </td>
+          </tr>
+          <tr>
+            <td class="contentinfo" align="right">
+              <img src="https://fruum.github.io/static/email.png" width="12" height="8"/> <a href="https://fruum.github.io">powered by fruum</a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td class="footer-disclaimer">
+        I don't want to receive this email and <a href="<%- application.fullpage_url %>" class="external-link">will stop watching all <%- application.name || application.id %> threads</a>.
+      </td>
+    </tr>
+    <tr>
+      <td height="50">
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

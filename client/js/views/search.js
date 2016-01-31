@@ -14,6 +14,7 @@ Handles search results
         TRANSITION = Fruum.utils.marionette_itemview_transition;
 
     Fruum.views.SearchResultEmptyView = TRANSITION(Marionette.ItemView.extend({
+      template: '#fruum-template-persona-fullpage',
       initialize: function(options) {
         this.ui_state = options.ui_state;
         this.listenTo(this.ui_state, 'change:search', function() {
@@ -23,17 +24,13 @@ Handles search results
         });
       },
       templateHelpers: function() {
-        return {
-          search: this.ui_state.get('search')
-        }
-      },
-      getTemplate: function() {
-        if (this.ui_state.get('search')) {
-          return '#fruum-template-search-noresults';
-        }
-        else {
-          return '#fruum-template-search-empty';
-        }
+        //get persona message
+        var search = this.ui_state.get('search');
+        return Fruum.utils.personaSays({
+          permission: Fruum.user.admin?'write':'read',
+          action: search?'no_search_results':'type_to_search',
+          search: search
+        });
       }
     }));
     Fruum.views.SearchResultView = TRANSITION(Marionette.ItemView.extend({

@@ -1,5 +1,5 @@
 /******************************************************************************
-Channels view
+Blog view
 *******************************************************************************/
 
 (function() {
@@ -13,9 +13,10 @@ Channels view
         Marionette = Fruum.libs.Marionette,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
 
-    Fruum.views.ChannelView = TRANSITION(Marionette.ItemView.extend({
-      template: '#fruum-template-channel',
+    Fruum.views.BlogView = TRANSITION(Marionette.ItemView.extend({
+      template: '#fruum-template-blog',
       ui: {
+        search: '[data-search-shortcut]',
         navigate: '.fruum-js-navigate',
         manage: '.fruum-js-manage',
         move: '[data-action="move"]',
@@ -26,19 +27,30 @@ Channels view
         'change': 'render'
       },
       events: {
+        'click @ui.search': 'onSearch',
         'click @ui.manage': 'onManage',
         'click @ui.navigate': 'onNavigate',
         'click @ui.delete': 'onDelete',
         'click @ui.move': 'onMove',
         'click @ui.edit': 'onEdit'
       },
-      initialize: function(options) {
-        this.options = options;
-      },
       templateHelpers: function() {
         return {
-          online: this.options.online
+          is_new: Fruum.utils.isNewVisit(
+            this.model.get('id'), this.model.get('updated')
+          )
         }
+      },
+      onSearch: function(event) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        var search = $(event.target).
+          closest('[data-search-shortcut]').
+          data('search-shortcut');
+        if (!search) return;
+        Fruum.io.trigger('fruum:set_search', search);
       },
       onNavigate: function(event) {
         if (event) {
@@ -79,16 +91,8 @@ Channels view
         Fruum.io.trigger('fruum:edit', this.model.toJSON());
       }
     }));
-    Fruum.views.ChannelsView = Marionette.CollectionView.extend({
-      childView: Fruum.views.ChannelView,
-      initialize: function(options) {
-        this.ui_state = options.ui_state;
-      },
-      childViewOptions: function(model, index) {
-        return {
-          online: this.ui_state.get('online')
-        }
-      }
+    Fruum.views.BlogsView = Marionette.CollectionView.extend({
+      childView: Fruum.views.BlogView
     });
   });
 })();

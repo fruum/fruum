@@ -39,8 +39,10 @@
       onSelect: function(event) {
         var attachment = $(event.target).closest('[data-attachment]').data('attachment');
         if (attachment) {
+          var body = this.interactions.ui.field_body.val() || '';
+          if (body.length) body += '\n';
           this.interactions.ui.field_body.val(
-            this.interactions.ui.field_body.val() + ' ' + attachment
+            body + attachment + '\n'
           );
           this.hide();
           this.interactions.renderPreview();
@@ -88,8 +90,10 @@
         }
         editing.attachments.push(attachment);
         this.render();
-        this.interactions.ui.field_body.val(this.interactions.ui.field_body.val() + ' ' +
-          '[[' + attachment.type + ':' + attachment.name + ']]'
+        var body = this.interactions.ui.field_body.val() || '';
+        if (body.length) body += '\n';
+        this.interactions.ui.field_body.val(body +
+          '[[' + attachment.type + ':' + attachment.name + ']]\n'
         );
         this.interactions.renderPreview();
         if (!this.ui_state.get('optimizing')) this.hide();

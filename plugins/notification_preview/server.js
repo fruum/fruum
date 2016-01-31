@@ -47,12 +47,17 @@ function EmailPreview(options, instance) {
               username: 'reporter_username',
               displayname: 'reporter_displayname'
             },
+            reaction_user: {
+              username: 'reaction_user_username',
+              displayname: 'reaction_user_displayname'
+            },
             administrator: {
               username: 'administrator_username',
               displayname: 'administrator_displayname'
             },
             total: 3,
             digest: '2 new threads',
+            reaction: '+1',
             document: instance.email.prettyJSON(new Models.Document({
               header: 'Document header1',
               body: markdown,

@@ -156,8 +156,12 @@ module.exports = function(options) {
   - app_id: the application id
   - document: parent Document model
   - callback: function callback, passing an array of chidren document models
+  - params: (optional)
+    {
+      skipfields: ['attachments', 'body', ...] //skip document fields
+    }
   */
-  this.children = function(app_id, document, callback) { callback([]); }
+  this.children = function(app_id, document, callback, params) { callback([]); }
 
   /*
   Summary:
@@ -168,8 +172,12 @@ module.exports = function(options) {
   - id: document id
   - callback: function callback, passing a document model or undefined if the
     id or app_id are invalid
+  - params: (optional)
+    {
+      skipfields: ['attachments', 'body', ...] //skip document fields
+    }
   */
-  this.get = function(app_id, id, callback) { callback(); }
+  this.get = function(app_id, id, callback, params) { callback(); }
 
   /*
   Summary:
@@ -180,8 +188,12 @@ module.exports = function(options) {
   - id_array: an array of document ids
   - callback: function callback, passing an object of {id: document model} based
     on matches found
+  - params: (optional)
+    {
+      skipfields: ['attachments', 'body', ...] //skip document fields
+    }
   */
-  this.mget = function(app_id, id_array, callback) { callback({}); }
+  this.mget = function(app_id, id_array, callback, params) { callback({}); }
 
   /*
   Summary:
@@ -286,8 +298,12 @@ module.exports = function(options) {
     }
   - callback: function callback, passing an array of document model that match
     the search query string
+  - params: (optional)
+    {
+      skipfields: ['attachments', 'body', ...] //skip document fields
+    }
   */
-  this.search = function(app_id, payload, callback) { callback([]); }
+  this.search = function(app_id, payload, callback, params) { callback([]); }
 
   /*
   Summary:
@@ -298,8 +314,12 @@ module.exports = function(options) {
   - attributes: an object of fields to search, e.g. { header: 'foo', body: 'bar' }
   - callback: function callback, passing an array of document model that match
     the search
+  - params: (optional)
+    {
+      skipfields: ['attachments', 'body', ...] //skip document fields
+    }
   */
-  this.search_attributes = function(app_id, attributes, callback) { callback([]); }
+  this.search_attributes = function(app_id, attributes, callback, params) { callback([]); }
 
   /*
   Summary:

@@ -130,18 +130,18 @@ Posts view
       }
     }));
     Fruum.views.PostEmptyView = TRANSITION(Marionette.ItemView.extend({
+      template: '#fruum-template-persona',
       initialize: function(options) {
         this.viewing = options.viewing;
         if (this.viewing.type == 'channel')
           this.__delay_transition = 1000;
       },
-      getTemplate: function() {
-        return '#fruum-template-post-empty-' + (this.viewing.type || 'default');
-      },
       templateHelpers: function() {
-        return {
-          viewing: this.viewing
-        }
+        return Fruum.utils.personaSays({
+          permission: Fruum.user.anonymous?'read':'write',
+          action: 'empty_' + this.viewing.type,
+          categoryname: this.viewing.header
+        });
       }
     }));
     Fruum.views.PostsView = Marionette.CollectionView.extend({

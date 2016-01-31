@@ -41,7 +41,7 @@ module.exports = function(options, instance, self) {
         document: document,
         user: user
       };
-      plugins.watch(plugin_payload, function(err, plugin_payload) {
+      plugins.beforeWatch(plugin_payload, function(err, plugin_payload) {
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:watch', document.toJSON());
@@ -50,7 +50,10 @@ module.exports = function(options, instance, self) {
         }
         storage.watch(app_id, document, user, function() {
           socket.emit('fruum:watch', document.toJSON());
-          self.success(payload);
+          plugin_payload.document = document;
+          plugins.afterWatch(plugin_payload, function() {
+            self.success(payload);
+          });
         });
       });
     });
@@ -84,7 +87,7 @@ module.exports = function(options, instance, self) {
         document: document,
         user: user
       };
-      plugins.unwatch(plugin_payload, function(err, plugin_payload) {
+      plugins.beforeUnwatch(plugin_payload, function(err, plugin_payload) {
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:unwatch', document.toJSON());
@@ -93,7 +96,10 @@ module.exports = function(options, instance, self) {
         }
         storage.unwatch(app_id, document, user, function() {
           socket.emit('fruum:unwatch', document.toJSON());
-          self.success(payload);
+          plugin_payload.document = document;
+          plugins.afterUnwatch(plugin_payload, function() {
+            self.success(payload);
+          });
         });
       });
     });

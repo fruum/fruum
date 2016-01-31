@@ -28,7 +28,7 @@
       test: 'marked'
     },
     socketio: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.4/socket.io.min.js',
+      url: '//cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js',
       test: 'io.Socket'
     }
   };

@@ -127,7 +127,7 @@
             list.push({
               key: '@' + item.username,
               username: item.username,
-              displayname: item.displayname
+              displayname: item.displayname || item.username
             });
             this.items.push('@' + item.username);
           }, this);

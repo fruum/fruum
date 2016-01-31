@@ -37,7 +37,7 @@ module.exports = function(options, instance, self) {
     });
   }
 
-  //move article/thread/channel under another category
+  //move article/blog/thread/channel under another category
   self.move = function(socket, payload) {
     if (!self.validatePayloadID(socket, payload, 'move')) {
       self.fail(payload);
@@ -115,7 +115,7 @@ module.exports = function(options, instance, self) {
             children: children,
             user: user
           };
-          plugins.move(plugin_payload, function(err, plugin_payload) {
+          plugins.beforeMove(plugin_payload, function(err, plugin_payload) {
             document = plugin_payload.document || document;
             children = plugin_payload.children || children;
             var emit_payload = {
@@ -147,7 +147,10 @@ module.exports = function(options, instance, self) {
                     'fruum:move', emit_payload
                   );
                 }
-                self.success(payload);
+                plugin_payload.document = document;
+                plugins.afterMove(plugin_payload, function() {
+                  self.success(payload);
+                });
               }
               else {
                 self.invalidateDocument(app_id, doc);

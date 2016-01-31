@@ -581,7 +581,9 @@
     <% } else { %>
       <div class="fruum-interactions-buttons">
         <button class="fruum-main-button fruum-js-default-action" data-action="add_post">reply</button>
+        <% if (Fruum.utils.isDesktop()) { %>
         <span class="fruum-secondary-data fruum-helptext">or <b>Enter</b> to start writing</span>
+        <% } %>
       </div>
     <% } %>
       <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')() %>
@@ -620,7 +622,7 @@
         <% } else if (viewing.usage == 3) { %>
         <button class="fruum-main-button" data-action="add_channel">Channel</button>
         <% } %>
-        <% if (viewing.usage < 3 ) { %>
+        <% if (viewing.usage < 3 && Fruum.utils.isDesktop()) { %>
         <span class="fruum-secondary-data fruum-helptext">or <b>Enter</b> to start writing</span>
         <% } %>
 
@@ -641,7 +643,9 @@
 
         <% if (viewing.usage == 0) { %>
         <button class="fruum-main-button fruum-js-default-action" data-action="add_thread">Thread</button>
+          <% if (Fruum.utils.isDesktop()) { %>
         <span class="fruum-secondary-data fruum-helptext">or <b>Enter</b> to start writing</span>
+          <% } %>
         <% } else if (viewing.usage == 3) { %>
         <button class="fruum-main-button" data-action="add_channel">Channel</button>
         <% } %>

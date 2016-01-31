@@ -6,7 +6,7 @@
 var giphy = require('giphy-api')();
 
 function GiphyProcessor(options) {
-  this.add = function(payload, callback) {
+  this.beforeAdd = function(payload, callback) {
     var document = payload.document;
     if (document.get('type') === 'post') {
       var body = document.get('body');

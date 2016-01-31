@@ -39,16 +39,35 @@ function Engine(options, instance) {
 
   //Load plugins
   var plugins = {
-    add: [],
-    update: [],
-    delete: [],
-    archive: [],
-    restore: [],
-    watch: [],
-    unwatch: [],
-    react: [],
-    move: [],
-    report: []
+    beforeAdd: [],
+    afterAdd: [],
+
+    beforeUpdate: [],
+    afterUpdate: [],
+
+    beforeDelete: [],
+    afterDelete: [],
+
+    beforeArchive: [],
+    afterArchive: [],
+
+    beforeRestore: [],
+    afterRestore: [],
+
+    beforeWatch: [],
+    afterWatch: [],
+
+    beforeUnwatch: [],
+    afterUnwatch: [],
+
+    beforeReact: [],
+    afterReact: [],
+
+    beforeMove: [],
+    afterMove: [],
+
+    beforeReport: [],
+    afterReport: []
   };
 
   //schedule cron on plugin
@@ -73,16 +92,36 @@ function Engine(options, instance) {
             var plugin = require(path + 'server');
             plugin = new plugin(options, instance);
             logger.system('Using server plugin: ' + plugin_name);
-            if (plugin.add) plugins.add.push(plugin.add);
-            if (plugin.update) plugins.update.push(plugin.update);
-            if (plugin.delete) plugins.delete.push(plugin.delete);
-            if (plugin.restore) plugins.restore.push(plugin.restore);
-            if (plugin.archive) plugins.archive.push(plugin.archive);
-            if (plugin.watch) plugins.watch.push(plugin.watch);
-            if (plugin.unwatch) plugins.unwatch.push(plugin.unwatch);
-            if (plugin.react) plugins.react.push(plugin.react);
-            if (plugin.move) plugins.move.push(plugin.move);
-            if (plugin.report) plugins.report.push(plugin.report);
+            if (plugin.beforeAdd) plugins.beforeAdd.push(plugin.beforeAdd);
+            if (plugin.afterAdd) plugins.afterAdd.push(plugin.afterAdd);
+
+            if (plugin.beforeUpdate) plugins.beforeUpdate.push(plugin.beforeUpdate);
+            if (plugin.afterUpdate) plugins.afterUpdate.push(plugin.afterUpdate);
+
+            if (plugin.beforeDelete) plugins.beforeDelete.push(plugin.beforeDelete);
+            if (plugin.afterDelete) plugins.afterDelete.push(plugin.afterDelete);
+
+            if (plugin.beforeRestore) plugins.beforeRestore.push(plugin.beforeRestore);
+            if (plugin.afterRestore) plugins.afterRestore.push(plugin.afterRestore);
+
+            if (plugin.beforeArchive) plugins.beforeArchive.push(plugin.beforeArchive);
+            if (plugin.afterArchive) plugins.afterArchive.push(plugin.afterArchive);
+
+            if (plugin.beforeWatch) plugins.beforeWatch.push(plugin.beforeWatch);
+            if (plugin.afterWatch) plugins.afterWatch.push(plugin.afterWatch);
+
+            if (plugin.beforeUnwatch) plugins.beforeUnwatch.push(plugin.beforeUnwatch);
+            if (plugin.afterUnwatch) plugins.afterUnwatch.push(plugin.afterUnwatch);
+
+            if (plugin.beforeReact) plugins.beforeReact.push(plugin.beforeReact);
+            if (plugin.afterReact) plugins.afterReact.push(plugin.afterReact);
+
+            if (plugin.beforeMove) plugins.beforeMove.push(plugin.beforeMove);
+            if (plugin.afterMove) plugins.afterMove.push(plugin.afterMove);
+
+            if (plugin.beforeReport) plugins.beforeReport.push(plugin.beforeReport);
+            if (plugin.afterReport) plugins.afterReport.push(plugin.afterReport);
+
             if (plugin.cron && options.cron[plugin_name]) {
               cronify(plugin_name, plugin, options.cron[plugin_name]);
             }
@@ -97,16 +136,35 @@ function Engine(options, instance) {
   }
 
   //convert plugins to async composed functions
-  plugins.add = async.compose.apply(async.compose, plugins.add);
-  plugins.update = async.compose.apply(async.compose, plugins.update);
-  plugins.delete = async.compose.apply(async.compose, plugins.delete);
-  plugins.restore = async.compose.apply(async.compose, plugins.restore);
-  plugins.archive = async.compose.apply(async.compose, plugins.archive);
-  plugins.watch = async.compose.apply(async.compose, plugins.watch);
-  plugins.unwatch = async.compose.apply(async.compose, plugins.unwatch);
-  plugins.react = async.compose.apply(async.compose, plugins.react);
-  plugins.move = async.compose.apply(async.compose, plugins.move);
-  plugins.report = async.compose.apply(async.compose, plugins.report);
+  plugins.beforeAdd = async.compose.apply(async.compose, plugins.beforeAdd);
+  plugins.afterAdd = async.compose.apply(async.compose, plugins.afterAdd);
+
+  plugins.beforeUpdate = async.compose.apply(async.compose, plugins.beforeUpdate);
+  plugins.afterUpdate = async.compose.apply(async.compose, plugins.afterUpdate);
+
+  plugins.beforeDelete = async.compose.apply(async.compose, plugins.beforeDelete);
+  plugins.afterDelete = async.compose.apply(async.compose, plugins.afterDelete);
+
+  plugins.beforeRestore = async.compose.apply(async.compose, plugins.beforeRestore);
+  plugins.afterRestore = async.compose.apply(async.compose, plugins.afterRestore);
+
+  plugins.beforeArchive = async.compose.apply(async.compose, plugins.beforeArchive);
+  plugins.afterArchive = async.compose.apply(async.compose, plugins.afterArchive);
+
+  plugins.beforeWatch = async.compose.apply(async.compose, plugins.beforeWatch);
+  plugins.afterWatch = async.compose.apply(async.compose, plugins.afterWatch);
+
+  plugins.beforeUnwatch = async.compose.apply(async.compose, plugins.beforeUnwatch);
+  plugins.afterUnwatch = async.compose.apply(async.compose, plugins.afterUnwatch);
+
+  plugins.beforeReact = async.compose.apply(async.compose, plugins.beforeReact);
+  plugins.afterReact = async.compose.apply(async.compose, plugins.afterReact);
+
+  plugins.beforeMove = async.compose.apply(async.compose, plugins.beforeMove);
+  plugins.afterMove = async.compose.apply(async.compose, plugins.afterMove);
+
+  plugins.beforeReport = async.compose.apply(async.compose, plugins.beforeReport);
+  plugins.afterReport = async.compose.apply(async.compose, plugins.afterReport);
 
   //User collection per app
   var app_users = {}, app_applications = {};
@@ -152,6 +210,7 @@ function Engine(options, instance) {
   new api_v1(options, instance);
 
   new require('./engine/utils')(options, instance, this);
+  new require('./engine/hierarchy')(options, instance, this);
   new require('./engine/management')(options, instance, this);
   new require('./engine/application')(options, instance, this);
   new require('./engine/authentication')(options, instance, this);

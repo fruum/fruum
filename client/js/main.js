@@ -53,7 +53,6 @@ Main client app
         message_invalid_app: '.fruum-js-message-invalid-app',
         message_restore: '.fruum-js-message-restore',
         message_report: '.fruum-js-message-report',
-        message_view_error: '.fruum-js-message-view-error',
         restore_undo: '.fruum-js-restore-undo',
         sticky_section: '.fruum-section-sticky',
         close: '.fruum-js-panel-close',
@@ -63,7 +62,8 @@ Main client app
         navigation: '.fruum-js-navigation-section',
         content: '.fruum-js-content-section',
         divider_category_article: '.fruum-js-divider-category-article',
-        divider_article_thread: '.fruum-js-divider-article-thread',
+        divider_article_blog: '.fruum-js-divider-article-blog',
+        divider_blog_thread: '.fruum-js-divider-blog-thread',
         divider_thread_channel: '.fruum-js-divider-thread-channel',
         breadcrumb: '.fruum-js-region-breadcrumb',
         title: '.fruum-section-title',
@@ -73,6 +73,7 @@ Main client app
         loading: '.fruum-is-loading',
         categories: '.fruum-category-list',
         articles: '.fruum-article-list',
+        blogs: '.fruum-blog-list',
         threads: '.fruum-thread-list',
         channels: '.fruum-channel-list',
         posts: '.fruum-post-list',
@@ -90,8 +91,7 @@ Main client app
         'keyup input, textarea': 'onInterceptKeyboard',
         'click @ui.close': 'onClose',
         'click @ui.maximize': 'onMaximize',
-        'click @ui.restore_undo': 'onRestore',
-        'click @ui.message_view_error > a': 'onGoHome'
+        'click @ui.restore_undo': 'onRestore'
       },
       initialize: function() {
         var that = this;
@@ -104,7 +104,8 @@ Main client app
         _.bindAll(this,
           'resize', 'onScroll', 'calculateViewRegions',
           '_scrollTop', '_scrollBottom', '_snapTop', '_snapBottom',
-          'restoreScrollState', 'saveScrollState'
+          'restoreScrollState', 'saveScrollState', 'onGlobalKey',
+          'calculateUpdatesCount'
         );
         $(window).resize(function() {
           Fruum.io.trigger('fruum:resize');
@@ -116,6 +117,7 @@ Main client app
         this.categories = new Collections.Categories();
         this.threads = new Collections.Threads();
         this.articles = new Collections.Articles();
+        this.blogs = new Collections.Blogs();
         this.channels = new Collections.Channels();
         this.posts = new Collections.Posts();
         this.search = new Collections.Search();
@@ -154,6 +156,10 @@ Main client app
           collection: this.articles,
           ui_state: this.ui_state
         }));
+        this.showChildView('blogs', new Views.BlogsView({
+          collection: this.blogs,
+          ui_state: this.ui_state
+        }));
         this.showChildView('threads', new Views.ThreadsView({
           collection: this.threads,
           ui_state: this.ui_state
@@ -187,6 +193,7 @@ Main client app
             categories: this.categories,
             threads: this.threads,
             articles: this.articles,
+            blogs: this.blogs,
             channels: this.channels,
             posts: this.posts
           }
@@ -285,6 +292,17 @@ Main client app
           this.$('.fruum-manage').removeClass('fruum-manage-display');
         });
 
+        // ------------------- SHORTCUTS -------------------
+
+        this.listenTo(this.ui_state, 'change:visible', function() {
+          if (this.ui_state.get('visible')) {
+            $(document).on('keydown', this.onGlobalKey);
+          }
+          else {
+            $(document).off('keydown', this.onGlobalKey);
+          }
+        });
+
         // ------------------- VIEW -------------------
 
         this.bindIO('fruum:view',
@@ -296,26 +314,34 @@ Main client app
             //remove metadata
             delete payload.origin;
             that.ui_state.set({
-              loading: loading
+              loading: loading,
+              view_req: payload.id
             });
             that.socket.emit('fruum:view', payload);
           },
           function recv(payload) {
             if (!payload) {
               that.ui_state.set({
-                loading: ''
+                loading: '',
+                load_state: 'not_found',
+                viewing: {}
               });
-              $(that.ui.message_view_error).slideDown('fast');
+              that.categories.reset();
+              that.articles.reset();
+              that.blogs.reset();
+              that.threads.reset();
+              that.channels.reset();
+              that.posts.reset();
+              that.bookmarksearch.reset();
+              that.onRefresh();
               return;
             }
-
-            if ($(that.ui.message_view_error).is(':visible'))
-              $(that.ui.message_view_error).slideUp('fast');
 
             var breadcrumb = payload.breadcrumb || [];
             var last_doc = breadcrumb.pop() || {};
             that.ui_state.set({
               loading: '',
+              load_state: 'found',
               breadcrumb: breadcrumb,
               online: payload.online || {}
             });
@@ -335,6 +361,7 @@ Main client app
 
             var categories = [],
                 articles = [],
+                blogs = [],
                 threads = [],
                 channels = [],
                 posts = [],
@@ -361,8 +388,10 @@ Main client app
                     categories.push(entry);
                     break;
                   case 'article':
-                  case 'blog':
                     articles.push(entry);
+                    break;
+                  case 'blog':
+                    blogs.push(entry);
                     break;
                   case 'thread':
                     threads.push(entry);
@@ -379,6 +408,7 @@ Main client app
 
             that.categories.reset(categories);
             that.articles.reset(articles);
+            that.blogs.reset(blogs);
             that.threads.reset(threads);
             that.channels.reset(channels);
             that.posts.reset(posts);
@@ -413,6 +443,9 @@ Main client app
             //store on local storage
             Fruum.utils.sessionStorage('fruum:view:' + window.fruumSettings.app_id, last_doc.id);
             if (that.router) that.router.navigate('v/' + last_doc.id);
+
+            //update visit timestamp
+            Fruum.utils.setVisitDate(last_doc.id);
           }
         );
 
@@ -720,6 +753,8 @@ Main client app
             return;
           }
           Fruum.user = payload.user || Fruum.user;
+          Fruum.user.time_diff = Date.now() - Fruum.user.server_now;
+          Fruum.utils.resetVisits();
           that.ui_state.set('connected', true);
           that.onRefresh();
           if (window.fruumSettings.view_id == '*') window.fruumSettings.view_id = undefined;
@@ -756,8 +791,34 @@ Main client app
         });
         this.socket.on('fruum:info', function(payload) {
           //enable notification badge
-          if (payload) {
-            that.$('[data-info-id="' + payload.id + '"]').fadeIn();
+          if (payload && payload.id && that.ui_state.get('viewing').id != payload.id) {
+            Fruum.utils.addVisitUpdate(payload.id);
+            //also update existing documents
+            var model;
+            switch(payload.type) {
+              case 'category':
+                model = that.categories.get(payload.id);
+                break;
+              case 'article':
+                model = that.articles.get(payload.id);
+                break;
+              case 'blog':
+                model = that.blogs.get(payload.id);
+                break;
+              case 'thread':
+                model = that.threads.get(payload.id);
+                break;
+              case 'channel':
+                model = that.channels.get(payload.id);
+                break;
+              case 'post':
+                model = that.posts.get(payload.id);
+                break;
+            }
+            if (model) {
+              model.set(payload);
+              _.defer(that.calculateUpdatesCount);
+            }
           }
         });
         this.socket.on('fruum:online', function(payload) {
@@ -876,10 +937,12 @@ Main client app
         this.ui_state.set('loading', 'connect');
         this.onRefresh();
         Fruum.io.trigger('fruum:resize');
+
+        this.ui_state.set('visible', true);
       },
       onScroll: function() {
         if (this.calculate_regions_timer) return;
-        this.calculate_regions_timer = setTimeout(this.calculateViewRegions, 100);
+        this.calculate_regions_timer = setTimeout(this.calculateViewRegions, 200);
       },
       onRefresh: function() {
         var viewing_type = this.ui_state.get('viewing').type;
@@ -890,10 +953,12 @@ Main client app
           this.getRegion('categories').$el.hide();
           this.getRegion('bookmarksearch').$el.hide();
           this.getRegion('articles').$el.hide();
+          this.getRegion('blogs').$el.hide();
           this.getRegion('threads').$el.hide();
           this.getRegion('channels').$el.hide();
           this.getRegion('divider_category_article').$el.hide();
-          this.getRegion('divider_article_thread').$el.hide();
+          this.getRegion('divider_article_blog').$el.hide();
+          this.getRegion('divider_blog_thread').$el.hide();
           this.getRegion('divider_thread_channel').$el.hide();
           this.getRegion('posts').$el.hide();
           this.getRegion('notifications').$el.show();
@@ -908,10 +973,12 @@ Main client app
           this.getRegion('categories').$el.hide();
           this.getRegion('bookmarksearch').$el.hide();
           this.getRegion('articles').$el.hide();
+          this.getRegion('blogs').$el.hide();
           this.getRegion('threads').$el.hide();
           this.getRegion('channels').$el.hide();
           this.getRegion('divider_category_article').$el.hide();
-          this.getRegion('divider_article_thread').$el.hide();
+          this.getRegion('divider_article_blog').$el.hide();
+          this.getRegion('divider_blog_thread').$el.hide();
           this.getRegion('divider_thread_channel').$el.hide();
           this.getRegion('posts').$el.hide();
           this.getRegion('search').$el.show();
@@ -925,10 +992,12 @@ Main client app
           this.getRegion('categories').$el.hide();
           this.getRegion('bookmarksearch').$el.show();
           this.getRegion('articles').$el.hide();
+          this.getRegion('blogs').$el.hide();
           this.getRegion('threads').$el.hide();
           this.getRegion('channels').$el.hide();
           this.getRegion('divider_category_article').$el.hide();
-          this.getRegion('divider_article_thread').$el.hide();
+          this.getRegion('divider_article_blog').$el.hide();
+          this.getRegion('divider_blog_thread').$el.hide();
           this.getRegion('divider_thread_channel').$el.hide();
           this.getRegion('posts').$el.hide();
           this.getRegion('search').$el.hide();
@@ -944,37 +1013,46 @@ Main client app
           this.getRegion('categories').$el.hide();
           this.getRegion('bookmarksearch').$el.hide();
           this.getRegion('articles').$el.hide();
+          this.getRegion('blogs').$el.hide();
           this.getRegion('threads').$el.hide();
           this.getRegion('channels').$el.hide();
           this.getRegion('divider_category_article').$el.hide();
-          this.getRegion('divider_article_thread').$el.hide();
+          this.getRegion('divider_article_blog').$el.hide();
+          this.getRegion('divider_blog_thread').$el.hide();
           this.getRegion('divider_thread_channel').$el.hide();
           this.getRegion('posts').$el.show();
           this.ui_state.set({
             total_entries: this.posts.length
           });
         }
-        else if (this.categories.length || this.articles.length || this.threads.length || this.channels.length) {
+        else if (this.categories.length || this.articles.length || this.blogs.length || this.threads.length || this.channels.length) {
           this.getRegion('empty').$el.stop(true, true).hide();
           this.getRegion('notifications').$el.hide();
           this.getRegion('search').$el.hide();
           this.getRegion('categories').$el.show();
           this.getRegion('bookmarksearch').$el.hide();
           this.getRegion('articles').$el.show();
+          this.getRegion('blogs').$el.show();
           this.getRegion('threads').$el.show();
           this.getRegion('channels').$el.show();
           this.getRegion('posts').$el.hide();
-          if (this.categories.length && (this.articles.length || this.threads.length || this.channels.length)) {
+          if (this.categories.length && (this.articles.length || this.blogs.length || this.threads.length || this.channels.length)) {
             this.getRegion('divider_category_article').$el.show();
           }
           else {
             this.getRegion('divider_category_article').$el.hide();
           }
-          if (this.articles.length && (this.threads.length || this.channels.length)) {
-            this.getRegion('divider_article_thread').$el.show();
+          if (this.articles.length && (this.blogs.length || this.threads.length || this.channels.length)) {
+            this.getRegion('divider_article_blog').$el.show();
           }
           else {
-            this.getRegion('divider_article_thread').$el.hide();
+            this.getRegion('divider_article_blog').$el.hide();
+          }
+          if (this.blogs.length && (this.threads.length || this.channels.length)) {
+            this.getRegion('divider_blog_thread').$el.show();
+          }
+          else {
+            this.getRegion('divider_blog_thread').$el.hide();
           }
           if (this.threads.length && this.channels.length) {
             this.getRegion('divider_thread_channel').$el.show();
@@ -983,7 +1061,11 @@ Main client app
             this.getRegion('divider_thread_channel').$el.hide();
           }
           this.ui_state.set({
-            total_entries: this.categories.length + this.threads.length + this.channels.length + this.articles.length
+            total_entries: this.categories.length +
+                           this.threads.length +
+                           this.channels.length +
+                           this.articles.length +
+                           this.blogs.length
           });
         }
         else {
@@ -993,10 +1075,12 @@ Main client app
           this.getRegion('notifications').$el.hide();
           this.getRegion('search').$el.hide();
           this.getRegion('articles').$el.hide();
+          this.getRegion('blogs').$el.hide();
           this.getRegion('threads').$el.hide();
           this.getRegion('channels').$el.hide();
           this.getRegion('divider_category_article').$el.hide();
-          this.getRegion('divider_article_thread').$el.hide();
+          this.getRegion('divider_article_blog').$el.hide();
+          this.getRegion('divider_blog_thread').$el.hide();
           this.getRegion('divider_thread_channel').$el.hide();
           this.getRegion('posts').$el.hide();
           this.ui_state.set({
@@ -1015,8 +1099,10 @@ Main client app
               this.categories.remove(payload);
               break;
             case 'article':
-            case 'blog':
               this.articles.remove(payload);
+              break;
+            case 'blog':
+              this.blogs.remove(payload);
               break;
             case 'thread':
               this.threads.remove(payload);
@@ -1048,8 +1134,10 @@ Main client app
               this.categories.add(payload, {merge: true});
               break;
             case 'article':
-            case 'blog':
               this.articles.add(payload, {merge: true});
+              break;
+            case 'blog':
+              this.blogs.add(payload, {merge: true});
               break;
             case 'thread':
               this.threads.add(payload, {merge: true});
@@ -1137,6 +1225,25 @@ Main client app
           search_helper: (start >= 20) && end < total &&
                          this.ui_state.get('viewing').type == 'category'
         });
+        this.calculateUpdatesCount();
+      },
+      calculateUpdatesCount: function() {
+        if (this.ui_state.get('viewing').type != 'category') {
+          this.ui_state.set('updates_count', 0);
+          return;
+        }
+        var top = this.getRegion('content').$el.offset().top,
+            bottom = top + this.getRegion('content').$el.height(),
+            count = 0;
+        //find updates that are not visible
+        var entries = this.$('.fruum-js-has-update');
+        for (var i = 0; i < entries.length; ++i) {
+          if (entries.eq(i).offset().top > bottom) {
+            count++;
+          }
+          else entries.eq(i).removeClass('fruum-js-has-update');
+        }
+        this.ui_state.set('updates_count', count);
       },
       bindIO: function(call, send_fn, recv_fn) {
         if (send_fn) {
@@ -1226,13 +1333,6 @@ Main client app
           this._snapToEl(this.getRegion('posts').$el.find('.fruum-js-entry-default').eq(index - 1));
         }
       },
-      onGoHome: function(event) {
-        if (event) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        Fruum.io.trigger('fruum:view', { id: 'home' });
-      },
       onRestore: function(event) {
         if (event) {
           event.preventDefault();
@@ -1252,6 +1352,7 @@ Main client app
         this.$el.addClass('fruum-hide');
         this.socket.disconnect();
         this.$el.stop(true, true).delay(1000).fadeOut(1);
+        this.ui_state.set('visible', false);
         Fruum.utils.sessionStorage('fruum:open:' + window.fruumSettings.app_id, 0);
       },
       onMaximize: function(event) {
@@ -1267,12 +1368,25 @@ Main client app
           this.$(this.ui.maximize).removeClass('fruum-icon-right').addClass('fruum-icon-left');
         }
       },
+      onGlobalKey: function(event) {
+        switch(event.which) {
+          case 27:
+            if (!window.fruumSettings.fullpage) this.onClose();
+            break;
+          case 13:
+            Fruum.io.trigger('fruum:default_action');
+            break;
+        }
+      },
       onOpen: function() {
         if (!this.$el.hasClass('fruum-hide')) return;
         this.__permanent_abort = false;
         this.$el.stop(true, true).fadeIn(1);
         this.$el.removeClass('fruum-hide');
-        this.ui_state.set('loading', 'connect');
+        this.ui_state.set({
+          loading: 'connect',
+          visible: true
+        });
         this.socket.connect();
         Fruum.utils.sessionStorage('fruum:open:' + window.fruumSettings.app_id, 1);
       },
@@ -1332,6 +1446,8 @@ Main client app
     //initialize plugins
     _.each(Fruum.plugins, function(plugin_fn) {
       var plugin = new plugin_fn();
+      if (plugin.personaSays)
+        Fruum.processors.persona.push(plugin.personaSays);
       if (plugin.post_content)
         Fruum.processors.post.push(plugin.post_content);
       if (plugin.transmit)

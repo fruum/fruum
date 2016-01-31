@@ -38,6 +38,8 @@ module.exports = function(options, instance, self) {
         results: response
       });
       self.success(payload);
+    }, {
+      skipfields: ['attachments']
     });
   }
 

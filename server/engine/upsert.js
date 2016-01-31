@@ -160,7 +160,7 @@ module.exports = function(options, instance, self) {
         document: document,
         user: user
       };
-      plugins.add(plugin_payload, function(err, plugin_payload) {
+      plugins.beforeAdd(plugin_payload, function(err, plugin_payload) {
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:add', document.toJSON());
@@ -168,64 +168,30 @@ module.exports = function(options, instance, self) {
           self.success(payload);
           return;
         }
-        //count number of child documents
-        storage.count_attributes(app_id, { parent: parent_doc.get('id') }, function(total) {
-          storage.add(app_id, document, function(new_document) {
-            if (new_document) {
-              //success
-              self.invalidateDocument(app_id, new_document);
-              self.invalidateDocument(app_id, parent_doc);
-              socket.emit('fruum:add', new_document.toJSON());
-              if (!plugin_payload.broadcast_noop) {
-                self.broadcast(user, new_document);
-                self.broadcast(user, parent_doc, 'fruum:info');
-                self.broadcastNotifications(user, new_document);
-              }
+        storage.add(app_id, document, function(new_document) {
+          if (new_document) {
+            //success
+            if (new_document.get('parent_type') != 'channel') {
+              self.refreshChildrenCount(app_id, new_document.get('parent'), function() {
+                self.refreshUpdateTS(app_id, new_document.get('parent'), now, user);
+              });
+            }
+            self.invalidateDocument(app_id, new_document);
+            socket.emit('fruum:add', new_document.toJSON());
+            if (!plugin_payload.broadcast_noop) {
+              self.broadcast(user, new_document);
+              self.broadcastNotifications(user, new_document);
+            }
+            plugin_payload.document = new_document;
+            plugins.afterAdd(plugin_payload, function() {
               self.success(payload);
-              //update parent counter`
-              storage.update(app_id, parent_doc, {
-                updated: now,
-                children_count: total + 1
-              }, function() {});
-              //if document is article and blog then set the order to be on top
-              if ((new_document.get('type') == 'blog') ||
-                   new_document.get('type') == 'bookmark')
-              {
-                //get all children
-                new_document.set('order', 1);
-                storage.children(app_id, parent_doc, function(children) {
-                  var collection = new Backbone.Collection();
-                  collection.comparator = 'order';
-                  collection.add(new_document.toJSON());
-                  _.each(children, function(child) {
-                    if (_.contains(['article', 'blog'], child.get('type')) &&
-                        child.get('id') != new_document.get('id'))
-                    {
-                      collection.add(child.toJSON());
-                    }
-                  });
-                  //reorder
-                  var order = 1;
-                  collection.each(function(child) {
-                    if (child.get('id') != new_document.get('id')) {
-                      order++;
-                      child.set('order', order);
-                    }
-                    storage.update(app_id, child, { order: child.get('order') }, function(updated_child) {
-                      if (updated_child) {
-                        self.broadcast(user, updated_child);
-                      }
-                    });
-                  });
-                });
-              }
-            }
-            else {
-              //fail
-              socket.emit('fruum:add');
-              self.fail(payload);
-            }
-          });
+            });
+          }
+          else {
+            //fail
+            socket.emit('fruum:add');
+            self.fail(payload);
+          }
         });
       });
     });
@@ -353,7 +319,7 @@ module.exports = function(options, instance, self) {
           document: doc_to_update,
           user: user
         };
-        plugins.update(plugin_payload, function(err, plugin_payload) {
+        plugins.beforeUpdate(plugin_payload, function(err, plugin_payload) {
           doc_to_update = plugin_payload.document || doc_to_update;
           if (plugin_payload.storage_noop) {
             socket.emit('fruum:update', doc_to_update.toJSON());
@@ -366,6 +332,8 @@ module.exports = function(options, instance, self) {
               self.invalidateDocument(app_id, updated_document);
               socket.emit('fruum:update', updated_document.toJSON());
               if (!plugin_payload.broadcast_noop) self.broadcast(user, updated_document);
+              plugin_payload.document = updated_document;
+              plugins.afterUpdate(plugin_payload, function() {});
               //update parent timestamp
               if (update_timestamp) {
                 storage.update(

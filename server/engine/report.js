@@ -41,10 +41,13 @@ module.exports = function(options, instance, self) {
         document: document,
         user: user
       };
-      plugins.report(plugin_payload, function(err, plugin_payload) {
+      plugins.beforeReport(plugin_payload, function(err, plugin_payload) {
         document = plugin_payload.document || document;
         socket.emit('fruum:report', document.toJSON());
-        self.success(payload);
+        plugin_payload.document = document;
+        plugins.afterReport(plugin_payload, function() {
+          self.success(payload);
+        });
       });
     });
   }

@@ -81,6 +81,8 @@ function API_v1(options, instance) {
                 storage.add(application.get('id'), document, function(document) {
                   engine.invalidateDocument(application.get('id'), document);
                   res.json(document.toJSON());
+                  engine.refreshChildrenCount(application.get('id'), document.get('parent'), function() {
+                  });
                 });
               }
             });
@@ -163,6 +165,7 @@ function API_v1(options, instance) {
             storage.delete(application.get('id'), document, function() {
               engine.invalidateDocument(application.get('id'), document);
               res.json(document.toJSON());
+              engine.refreshChildrenCount(application.get('id'), document.get('parent'));
             });
           }
           else {
