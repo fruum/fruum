@@ -8,6 +8,7 @@ window.Fruum.libs._ = require('underscore');
 Fruum = window.Fruum;
 eval(fs.readFileSync(__dirname + '/../client/js/utils.js', 'utf8'));
 Fruum.require[0]();
+Fruum.user = {};
 
 describe("Links", function() {
   it("are detected", function() {
@@ -94,5 +95,23 @@ describe("Attachments", function() {
     expect(Fruum.utils.usesAttachment('foo [[image:yo]] bar', { type: 'image', name: 'yo' })).toBe(true);
     expect(Fruum.utils.usesAttachment('foo [[image:yo]] bar', { type: 'image', name: 'yo2' })).toBe(false);
     expect(Fruum.utils.usesAttachment('foo [[image:yo]] bar', { type: 'file', name: 'yo' })).toBe(false);
+  });
+});
+
+describe("Reaction tooltips", function() {
+  it("are displayed", function() {
+    Fruum.user.username = undefined;
+    expect(Fruum.utils.printReactionTooltip('+1', [])).toBe('');
+    expect(Fruum.utils.printReactionTooltip('+1', ['Joe'])).toBe('+1 by Joe');
+    expect(Fruum.utils.printReactionTooltip('+1', ['Joe', 'Mike'])).toBe('+1 by Joe and Mike');
+    expect(Fruum.utils.printReactionTooltip('+1', ['Joe', 'Mike', 'Nick'])).toBe('+1 by Joe, Mike and Nick');
+    expect(Fruum.utils.printReactionTooltip('+1', ['Joe', 'Mike', 'Nick', 'Paul', 'Mary'])).toBe('+1 by Joe, Mike, Nick, Paul and Mary');
+    expect(Fruum.utils.printReactionTooltip('+1', ['Joe', 'Mike', 'Nick', 'Paul', 'Mary', 'Rebecca'])).toBe('+1 by Joe, Mike, Nick, Paul, Mary and 1 more');
+    Fruum.user.username = 'Joe';
+    expect(Fruum.utils.printReactionTooltip('+1', ['Joe'])).toBe('+1 by you. Click to revoke');
+    expect(Fruum.utils.printReactionTooltip('+1', ['Joe', 'Mike'])).toBe('+1 by you and Mike. Click to revoke');
+    expect(Fruum.utils.printReactionTooltip('+1', ['Joe', 'Mike', 'Nick'])).toBe('+1 by you, Mike and Nick. Click to revoke');
+    expect(Fruum.utils.printReactionTooltip('+1', ['Joe', 'Mike', 'Nick', 'Paul', 'Mary'])).toBe('+1 by you, Mike, Nick, Paul and Mary. Click to revoke');
+    expect(Fruum.utils.printReactionTooltip('+1', ['Joe', 'Mike', 'Nick', 'Paul', 'Mary', 'Rebecca'])).toBe('+1 by you, Mike, Nick, Paul, Mary and 1 more. Click to revoke');
   });
 });
