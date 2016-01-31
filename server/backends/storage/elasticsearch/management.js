@@ -25,6 +25,7 @@ module.exports = function(options, client, self) {
           type: 'info',
           body: {
             info: {
+              _all: { enabled: false },
               properties: {
                 id: { type: 'string', index: 'not_analyzed' },
                 name: { type: 'string' },

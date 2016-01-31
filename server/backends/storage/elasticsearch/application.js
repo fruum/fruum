@@ -62,6 +62,7 @@ module.exports = function(options, client, self) {
               type: 'user',
               body: {
                 user: {
+                  _all: { enabled: false },
                   properties: {
                     id: { type: 'string', index: 'not_analyzed' },
                     anonymous: { type: 'boolean' },
@@ -88,6 +89,7 @@ module.exports = function(options, client, self) {
               type: 'doc',
               body: {
                 doc: {
+                  _all: { enabled: false },
                   properties: {
                     id: { type: 'string', index: 'not_analyzed' },
                     parent: { type: 'string', index: 'not_analyzed' },
