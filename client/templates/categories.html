@@ -1,6 +1,6 @@
 <!-- Category template -->
 <script type="text/template" id="fruum-template-category">
-  <div data-docid="<%- id %>" class="fruum-base-object fruum-link fruum-interactive-element fruum-js-entry-default fruum-js-navigate">
+  <div data-docid="<%- id %>" class="fruum-base-object fruum-link fruum-interactive-element fruum-js-entry-default fruum-js-navigate <% if (children_count && is_new) print('fruum-js-has-update'); %>">
     <div class="fruum-avatar">
       <span class="fruum-avatar-icon" data-initials="<%- Fruum.utils.printInitials(initials) %>"><%- initials %></span>
     </div>
@@ -12,7 +12,6 @@
             <span class="fruum-icon fruum-icon-invisible" data-fruumtipsy-center="Private category"></span>
             <% } %>
             <%= Fruum.utils.printHeader(header) %>
-            <span class="fruum-badge fruum-badge-info" data-fruumtipsy-right="New content" style="display: none;" data-info-id="<%- id %>">!</span>
           </a>
         </h4>
       </div>
@@ -21,6 +20,16 @@
       <span class="fruum-secondary-data">
         <%= Fruum.utils.print(body, attachments) %>
       </span>
+      <% if (children_count) { %>
+      <br>
+      <span class="fruum-counter-container">
+        <% if (is_new) { %>
+        <span class="fruum-icon fruum-icon-dot fruum-counter-updated"></span>
+        <% } %>
+        <span class="fruum-counter-number"><%= children_count %></span>
+        <span class="fruum-counter-label">topic<% if (children_count > 1) print('s'); %></span>
+      </span>
+      <% } %>
     </div>
     <% if (Fruum.user.admin) { %>
     <div class="fruum-manage fruum-interaction-item fruum-js-manage">
@@ -73,92 +82,6 @@
       <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-down" data-action="down" data-fruumtipsy-right="Move down"></a>
       <a href="javascript:;" class="fruum-link fruum-link-negative fruum-icon fruum-icon-delete" data-action="delete" data-fruumtipsy-right="Delete stored search"></a>
     </div>
-    <% } %>
-  </div>
-</script>
-
-<!-- Empty categories area -->
-<script type="text/template" id="fruum-template-empty">
-  <div class="fruum-base-object fruum-helper-object">
-    <% if (Fruum.user.anonymous) { %>
-
-      <% if (viewing.id === 'home') { %>
-        <div class="fruum-avatar">
-          <span class="fruum-avatar-icon">&nbsp;<span class="fruum-icon fruum-icon-edit"></span>&nbsp;</span>
-        </div>
-        <div class="fruum-object-main-data">
-          <div class="fruum-stream-typography">
-            <h4>
-              A message from our writers and bloggers
-            </h4>
-          </div>
-        </div>
-        <div class="fruum-object-additional-data">
-          <span class="fruum-secondary-data">
-            Please visit again later! We're working hard to fill this place up!
-          </span>
-        </div>
-      <% } else { %>
-        <div class="fruum-avatar">
-          <span class="fruum-avatar-icon">OH!</span>
-        </div>
-        <div class="fruum-object-main-data">
-          <div class="fruum-stream-typography">
-            <h4>
-              Got us on that fleeting moment!
-            </h4>
-          </div>
-        </div>
-        <div class="fruum-object-additional-data">
-          <span class="fruum-secondary-data">
-            That fleeting moment were a category is ready but no communication stream has started yet! Please visit again later!
-          </span>
-        </div>
-      <% } %>
-
-    <% } else { %>
-
-      <% if (viewing.id === 'home') { %>
-        <div class="fruum-avatar">
-          <span class="fruum-avatar-icon">&nbsp;<span class="fruum-icon fruum-icon-edit"></span>&nbsp;</span>
-        </div>
-        <div class="fruum-object-main-data">
-          <div class="fruum-stream-typography">
-            <h4>
-              A message from our writers and bloggers
-            </h4>
-          </div>
-        </div>
-        <div class="fruum-object-additional-data">
-          <span class="fruum-secondary-data">
-            We're working hard to fill this place up!
-            <% if (viewing.usage == 0 || viewing.usage == 3 || Fruum.user.admin) { %>
-            Help us by adding a communication stream yourself! Use the buttons on the bottom
-            <% } else { %>
-            Please visit again later!
-            <% } %>
-          </span>
-        </div>
-      <% } else { %>
-        <div class="fruum-avatar">
-          <span class="fruum-avatar-icon">OH!</span>
-        </div>
-        <div class="fruum-object-main-data">
-          <span class="fruum-category-title">
-            Got us empty handed, <%- Fruum.user.displayname %>!
-          </span>
-        </div>
-        <div class="fruum-object-additional-data">
-          <span class="fruum-secondary-data">
-            <% if (viewing.usage == 0 || viewing.usage == 3) { %>
-            Start a communication stream and connect with other people!
-            <% } else { %>
-            Nothing to see here yet! Visit back again later to see all created communication streams!
-            <% } %>
-          </span>
-        </div>
-      <% } %>
-
     <% } %>
   </div>
 </script>

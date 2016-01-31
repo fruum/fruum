@@ -13,7 +13,9 @@
   <div class="fruum-tutorial-messages">Select with <b>arrows</b>, <b>enter</b> to use, <b>esc</b> to exit</div>
   <div class="fruum-options-list fruum-options-twocolumns">
     <% _.each(list, function(item) { %>
-    <div class="fruum-option-item" data-item="<%- item.key %>"><%- item.username %></div>
+    <div class="fruum-option-item" data-item="<%- item.key %>">
+      @<%- item.username %><% if (item.username != item.displayname) { %> - <i><%- item.displayname %></i><% } %>
+    </div>
     <% }); %>
   </div>
 </script>

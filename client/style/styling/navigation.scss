@@ -45,6 +45,7 @@
   line-height: relative-ems( $base-object-dimension, $responsive-small-font );
   $nav-item-margin: relative-ems( 1em, $responsive-tiny-font);
   &.fruum-link {
+    font-weight: $important-font-weight;
     font-size: $responsive-small-font;
   }
   &.fruum-avatar-icon {

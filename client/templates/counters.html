@@ -5,16 +5,20 @@
     <a href="javascript:;" class="fruum-icon fruum-icon-copy" data-action="share" data-fruumtipsy-left="copy link"></a>
   <% if (!Fruum.user.anonymous && viewing.type !== 'channel' && viewing.type !== 'bookmark') { %>
     <% if (Fruum.userUtils.isWatching(viewing.id)) { %>
-    <a href="javascript:;" class="fruum-icon fruum-icon-watch" data-action="unwatch" data-fruumtipsy="stop watching"></a>
+    <a href="javascript:;" class="fruum-icon fruum-icon-watch fruum-item-active" data-action="unwatch" data-fruumtipsy="Click to stop watching"></a>
     <% } else { %>
-    <a href="javascript:;" class="fruum-icon fruum-icon-visible" data-action="watch" data-fruumtipsy="watch"></a>
+    <a href="javascript:;" class="fruum-icon fruum-icon-visible" data-action="watch" data-fruumtipsy="Click to watch"></a>
     <% } %>
   <% } %>
 <% } %>
   </div>
   <div class="fruum-section-nav">
+    <% if (total_entries) { %>
     <span class="fruum-section-nav-link fruum-icon fruum-icon-up fruum-js-filter-up"></span>
     <span class="fruum-section-counts"><b><%- viewing_from %>-<%- viewing_to %></b>/<%- total_entries %></span>
     <span class="fruum-section-nav-link fruum-icon fruum-icon-down fruum-js-filter-down"></span>
+    <% } else { %>
+    &nbsp;
+    <% } %>
   </div>
 </script>

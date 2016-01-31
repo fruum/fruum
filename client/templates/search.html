@@ -1,6 +1,7 @@
 <!-- search results template -->
 <script type="text/template" id="fruum-template-search">
   <div class="fruum-base-object fruum-link fruum-interactive-element fruum-js-navigate fruum-js-entry-search">
+    <% if (type != 'article') { %>
     <div class="fruum-avatar">
       <% if (Fruum.utils.isLink(user_avatar)) { %>
       <img src="<%= user_avatar %>" class="fruum-avatar-icon" width="56"/>
@@ -12,7 +13,7 @@
       </span>
       <% } %>
     </div>
-
+    <% } %>
     <div class="fruum-object-main-data">
       <div class="fruum-stream-typography">
         <h4>
@@ -25,13 +26,14 @@
         </h4>
       </div>
     </div>
-    <% if (body) { %>
+    <% if (type != 'article') { %>
+      <% if (body) { %>
     <div class="fruum-object-additional-data">
       <span class="fruum-secondary-data">
         <%= Fruum.utils.printSearch(body) %>
       </span>
     </div>
-    <% } %>
+      <% } %>
     <div class="fruum-object-additional-data">
       <% if (user_displayname) { %>
       <div class="fruum-primary-data">by <%- user_displayname %></div>
@@ -42,45 +44,9 @@
         <% } %>
       </span>
     </div>
+    <% } %>
     <div class="fruum-object-meta">
       <span class="fruum-avatar-icon" data-initials="<%- Fruum.utils.printInitials(initials) %>"><%- initials %></span>
-    </div>
-  </div>
-</script>
-
-<!-- empty templates -->
-<script type="text/template" id="fruum-template-search-noresults">
-  <div class="fruum-base-object fruum-helper-object">
-    <div class="fruum-avatar">
-      <span class="fruum-avatar-icon">:/</span>
-    </div>
-    <div class="fruum-object-additional-data">
-      <div class="fruum-primary-data">
-        Search bot
-      </div>
-    </div>
-    <div class="fruum-object-main-data">
-      <div class="fruum-stream-typography">
-        <p>We found no results searching for <i><b>"<%- search %>"</b></i>. Please try with a different term.</p>
-      </div>
-    </div>
-  </div>
-</script>
-
-<script type="text/template" id="fruum-template-search-empty">
-  <div class="fruum-base-object fruum-helper-object">
-    <div class="fruum-avatar">
-      <span class="fruum-avatar-icon">&nbsp;<span class="fruum-icon fruum-icon-emoji"></span>&nbsp;</span>
-    </div>
-    <div class="fruum-object-additional-data">
-      <div class="fruum-primary-data">
-        Search bot
-      </div>
-    </div>
-    <div class="fruum-object-main-data">
-      <div class="fruum-stream-typography">
-        <p>Start typing to get some results. Did you know? You can search by <b>#tags</b> as well.</p>
-      </div>
     </div>
   </div>
 </script>

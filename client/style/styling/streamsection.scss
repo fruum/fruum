@@ -8,6 +8,7 @@
     1.1 Objects lists
     1.2 Divider
     1.3 Helper object
+    1.4 Fullpage content
   2. Stream system messages
     2.1 Loading
 
@@ -23,7 +24,7 @@
   position: relative;
   width: 100%;
   font-size: 1em; // reset to base-grid
-  padding: 2em 0;
+  padding: 0;
   padding-right: 0 !important; //nanoscroller fix
   margin-top: 0;
   margin-bottom: 0;
@@ -38,9 +39,10 @@
 #fruum .fruum-object-divider {
   // inherits font size of base-grid
   position: relative;
-  width: 100%;
   height: 1px;
   margin-top: 1.875em;
+  margin-left: 2em;
+  margin-right: 2em;
   margin-bottom: 2em;
   background-color: $dividers-colors;
 }
@@ -55,9 +57,64 @@
     text-transform: none;
     font-family: $avatar-font-family !important;
   }
+  img.fruum-avatar-icon,
+  .fruum-avatar-icon:not([data-initials]) {
+    opacity: 0.5;
+  }
   .fruum-object-main-data,
   .fruum-secondary-data {
     color: $inverted-option-color;
+  }
+  &.fruum-base-object {
+    .fruum-primary-data {
+      color: $muted-text-color;
+      font-weight: $important-font-weight;
+    }
+  }
+}
+
+// 1.4 Empty list media item
+
+#fruum .fruum-search-list,
+#fruum .fruum-empty-list {
+  // inherits font size of base-grid
+  .fruum-media-item {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding-top: 13em;
+    padding-left: 8em;
+    padding-right: 8em;
+    padding-bottom: 2em;
+    text-align: center;
+    color: $muted-text-color;
+  }
+  .fruum-media-image {
+    margin: 0 auto;
+    width: 8em;
+    height: 8em;
+    background-color: $muted-text-color;
+    overflow: hidden;
+    margin-bottom: 1em;
+    opacity: 0.5;
+    .fruum-avatar-icon {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .fruum-media-title {
+    font-size: $responsive-bigger-font;
+    margin-bottom: $bigger-font-basegrid*2;
+  }
+  .fruum-media-description {
+    font-size: $responsive-default-font;
+  }
+  .fruum-media-author {
+    position: relative;
+    display: block;
+    margin-top: $small-font-basegrid;
+    font-size: $responsive-small-font;
+    text-align: right;
   }
 }
 

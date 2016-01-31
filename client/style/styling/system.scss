@@ -14,10 +14,13 @@
     4.3 Tutorial messages
     4.4 Options list
     4.5 Droppable highlight
+    4.6 Helper tabs
   5. Popup data
   6. Badges
-  7. Generic manipulation and typography
-    7.1 Visibility
+  7. Media item
+  8. Generic manipulation and typography
+    8.1 Visibility
+    8.2 Interactive elements hover effect
 
 */
 
@@ -290,7 +293,7 @@
   position: absolute;
   width: 100%;
   z-index: 99;
-  padding: $helper-container-basegrid $helper-container-basegrid*2 $helper-container-basegrid*4;
+  padding: $helper-container-basegrid $helper-container-basegrid*2 $helper-container-basegrid*2;
   bottom: 0;
   left: 0;
   border-top: 1px solid $disabled-text-color;
@@ -300,22 +303,32 @@
   font-size: $responsive-small-font;
   line-height: $helper-container-basegrid*2;
   .fruum-helper-element {
-    margin: $helper-container-basegrid/2 0;
+    clear: both;
+    margin: $helper-container-basegrid*0.5 0 $helper-container-basegrid*1.5;
   }
 }
 
 #fruum .fruum-helper-container .fruum-helper-shortcut {
+  float: left;
+  position: relative;
+  display: block;
   font-family: $system-fonts !important;
-  display: inline-block;
   font-weight: bold;
-  width: 100px;
+  width: 130px;
   color: $base-text-color;
+}
+
+#fruum .fruum-helper-container .fruum-helper-explanation {
+  padding-left: 130px;
+  position: relative;
+  display: block;
 }
 
 #fruum .fruum-helper-container .fruum-helper-close {
   position: absolute;
+  z-index: 1;
   top: 2px;
-  right: 2px;
+  right: relative-ems( $base-grid, relative-ems( $responsive-bigger-font, $responsive-small-font ));
   font-size: relative-ems( $responsive-bigger-font, $responsive-small-font );
   width: 1em;
   height: 1em;
@@ -460,6 +473,46 @@
   }
 }
 
+// 4.6 Helper tabs
+
+#fruum .fruum-helper-tablist {
+  // inherits font size of responsive-small-font
+  position: relative;
+  display: block;
+  width: 100%;
+  margin-bottom: $small-font-basegrid*2;
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+  .fruum-helper-tab {
+    display: block;
+    float: left;
+    font-weight: $base-font-weight;
+    padding-left: $small-font-basegrid;
+    padding-right: $small-font-basegrid;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    &:first-child {
+      margin-left: -1*$small-font-basegrid;
+    }
+    &:not(.fruum-inactive):not(.fruum-active) {
+      color: $muted-action-color;
+      cursor: pointer;
+      cursor: hand;
+      &:hover {
+        color: $main-action-color;
+        border-bottom-color: $muted-text-color;
+      }
+    }
+    &.fruum-active {
+      color: $main-action-color;
+      border-bottom-color: $main-action-color;
+    }
+  }
+}
+
 
 
 // 5. Popup data
@@ -568,9 +621,39 @@
 
 
 
-// 7. Generic manipulation and typography
+// 7. Media item
 
-//  7.1 Visibility
+#fruum .fruum-media-item {
+  position: relative;
+  display: block;
+  width: 100%;
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+  .fruum-media-image {
+    @include block-object-shapes;
+  }
+  .fruum-media-link {
+    color: $negative-action-color;
+    text-decoration: none;
+    &:hover {
+      cursor: pointer;
+      cursor: hand;
+      text-decoration: underline;
+    }
+  }
+  .fruum-media-author {
+    font-weight: $important-font-weight;
+  }
+}
+
+
+
+// 8. Generic manipulation and typography
+
+//  8.1 Visibility
 
 #fruum .fruum-nodisplay {
   display: none !important;
@@ -580,7 +663,7 @@
   float: right;
 }
 
-// 7.2 Interactive elements hover effect
+// 8.2 Interactive elements hover effect
 
 #fruum .fruum-interactive-element {
   transition: background 0.12s;

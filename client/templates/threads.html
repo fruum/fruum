@@ -1,6 +1,6 @@
 <!-- thread template -->
 <script type="text/template" id="fruum-template-thread">
-  <div data-docid="<%- id %>" class="fruum-base-object fruum-link fruum-interactive-element fruum-js-entry-default fruum-js-navigate">
+  <div data-docid="<%- id %>" class="fruum-base-object fruum-link fruum-interactive-element fruum-js-entry-default fruum-js-navigate <% if (is_new) print('fruum-js-has-update'); %>">
     <div class="fruum-avatar">
       <% if (Fruum.utils.isLink(user_avatar)) { %>
       <img src="<%= user_avatar %>" class="fruum-avatar-icon" width="56"/>
@@ -12,7 +12,6 @@
       </span>
       <% } %>
     </div>
-
     <div class="fruum-object-main-data<% if (Fruum.user.admin || (Fruum.user.id == user_id && !Fruum.user.anonymous)) { %> fruum-object-manage-data<% } %>">
       <div class="fruum-stream-typography">
         <h4>
@@ -28,7 +27,9 @@
             <% if (sticky) { %>
             <span class="fruum-icon fruum-icon-sticky" data-fruumtipsy-center="Sticky topic"></span>
             <% } %>
-
+            <% if (!children_count && is_new) { %>
+            <span class="fruum-icon fruum-icon-dot fruum-counter-updated"></span>
+            <% } %>
             <%= Fruum.utils.printHeader(header) %>
 
           </a>
@@ -44,15 +45,15 @@
         by <%- user_displayname || user_username %>
       </div><span class="fruum-secondary-data">
         <% if (children_count) { %>
+          <% if (is_new) { %>
+          <span class="fruum-icon fruum-icon-dot fruum-counter-updated"></span>
+          <% } %>
           <%- children_count %> posts, last one <%- Fruum.libs.moment(parseInt(updated)).fromNow() %>
         <% } else if (created != updated) { %>
           updated <%- Fruum.libs.moment(parseInt(updated)).fromNow() %>
         <% } else { %>
           created <%- Fruum.libs.moment(parseInt(updated)).fromNow() %>
         <% } %>
-
-        <span class="fruum-badge fruum-badge-info" data-fruumtipsy-right="New posts" style="display: none;" data-info-id="<%- id %>">!</span>
-
       </span>
     </div>
     <% if (Fruum.user.admin) { %>
