@@ -115,6 +115,15 @@
       "weeks": 1,
       "months": 0,
       "years": 0
+    },
+    "reset_onboard_after": {
+      "seconds": 0,
+      "minutes": 0,
+      "hours": 0,
+      "days": 0,
+      "weeks": 0,
+      "months": 1,
+      "years": 0
     }
   },
 
@@ -123,6 +132,15 @@
     "views": 10,
     "properties": 100,
     "default": 10
+  },
+
+  "memcached": {
+    "host": "",
+    "username": "",
+    "password": "",
+    "expire_static": 0,
+    "expire_views": 900,
+    "expire_properties": 900
   },
 
   "mandrill": {
