@@ -52,7 +52,7 @@
       <% } %>
     </div>
 
-    <div class="fruum-object-main-data">
+    <div class="fruum-object-main-data fruum-object-manage-data">
       <div class="fruum-stream-typography">
         <h4>
           <a href="<%- Fruum.utils.permaLink(id) %>" class="fruum-link">
@@ -65,7 +65,7 @@
       </div>
     </div>
     <% if (body) { %>
-    <div class="fruum-object-additional-data">
+    <div class="fruum-object-additional-data fruum-object-manage-data">
       <span class="fruum-secondary-data">
         <%= Fruum.utils.printSearch(body) %>
       </span>

@@ -168,7 +168,7 @@
 <!-- User avatar -->
 <script type="text/template" id="fruum-template-interactions-avatar">
   <div class="fruum-user-account">
-    <span class="fruum-link <% if (!Fruum.userUtils.countNotifications()) { %>fruum-link-disabled<% }%> fruum-account-settings fruum-js-avatar-container" <% if (Fruum.userUtils.countNotifications()) { %>data-fruumtipsy-right="Updates on topics I watch"<% } %> data-fruumtipsy-original="Updates on topics I watch">
+    <span class="fruum-link <% if (!Fruum.userUtils.countNotifications()) { %>fruum-link-disabled<% } else { %>fruum-anim-pulsing<% } %> fruum-account-settings fruum-js-avatar-container" <% if (Fruum.userUtils.countNotifications()) { %>data-fruumtipsy-right="Updates on topics I watch"<% } %> data-fruumtipsy-original="Updates on topics I watch">
       <% if (Fruum.utils.isLink(Fruum.user.avatar)) { %>
       <img src="<%= Fruum.user.avatar %>" class="fruum-avatar-icon fruum-js-show-notifications" width="56"/>
       <% } else { %>
@@ -184,6 +184,9 @@
       <span class="fruum-badge fruum-js-show-notifications" data-field="notifications" style="display:none;"></span>
       <% } %>
     </span>
+    <% if (add_category) { %>
+    <span class="fruum-helper-action fruum-icon fruum-icon-category-add" data-action="add_category" data-fruumtipsy-right="Add a category" data-onboard="add_category"></span>
+    <% } %>
   </div>
 </script>
 
@@ -219,7 +222,7 @@
       <button class="fruum-secondary-button" data-action="add_search">Store search</button>
     </div>
     <% } %>
-    <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')() %>
+    <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')({ add_category: false }) %>
   </div>
 </script>
 
@@ -280,17 +283,14 @@
     <div class="fruum-interactions-footer">
       <div class="fruum-interactions-buttons fruum-interactions-group">
         <% if (editing.id) { %>
-        <button class="fruum-secondary-button" data-action="post">Edit</button>
+        <button class="fruum-secondary-button" data-action="post">Edit category</button>
         <% } else { %>
-        <button class="fruum-secondary-button" data-action="post">Add</button>
+        <button class="fruum-secondary-button" data-action="post">Add category</button>
         <% } %>
         <a class="fruum-secondary-button fruum-link-negative" data-action="cancel">cancel</a>
       </div>
       <div class="fruum-user-account">
-        <span
-          class="fruum-helper-action"
-          data-action="help"
-        >?</span>
+        <span class="fruum-helper-action" data-action="help">?</span>
       </div>
     </div>
   </form>
@@ -339,13 +339,10 @@
         <a class="fruum-secondary-button fruum-link-negative" data-action="cancel">cancel</a>
       </div>
       <div class="fruum-user-account">
-        <span
-          class="fruum-helper-action"
-          data-action="help"
-        >?</span>
+        <span class="fruum-helper-action" data-action="help" data-onboard="help">?</span>
         <span class="fruum-helper-action fruum-icon fruum-icon-emoji" data-action="emojipanel"></span>
-        <span class="fruum-helper-action fruum-icon fruum-icon-camera" data-action="attachments"></span>
-        <span class="fruum-helper-action fruum-helper-text" data-action="preview">preview</span>
+        <span class="fruum-helper-action fruum-icon fruum-icon-camera" data-action="attachments" data-onboard="attachments"></span>
+        <span class="fruum-helper-action fruum-helper-text" data-action="preview" data-onboard="preview">preview</span>
       </div>
     </div>
   </form>
@@ -394,13 +391,10 @@
         <a class="fruum-secondary-button fruum-link-negative" data-action="cancel">cancel</a>
       </div>
       <div class="fruum-user-account">
-        <span
-          class="fruum-helper-action"
-          data-action="help"
-        >?</span>
+        <span class="fruum-helper-action" data-action="help" data-onboard="help">?</span>
         <span class="fruum-helper-action fruum-icon fruum-icon-emoji" data-action="emojipanel"></span>
-        <span class="fruum-helper-action fruum-icon fruum-icon-camera" data-action="attachments"></span>
-        <span class="fruum-helper-action fruum-helper-text" data-action="preview">preview</span>
+        <span class="fruum-helper-action fruum-icon fruum-icon-camera" data-action="attachments" data-onboard="attachments"></span>
+        <span class="fruum-helper-action fruum-helper-text" data-action="preview" data-onboard="preview">preview</span>
       </div>
     </div>
   </form>
@@ -449,13 +443,10 @@
         <a class="fruum-secondary-button fruum-link-negative" data-action="cancel">cancel</a>
       </div>
       <div class="fruum-user-account">
-        <span
-          class="fruum-helper-action"
-          data-action="help"
-        >?</span>
+        <span class="fruum-helper-action" data-action="help" data-onboard="help">?</span>
         <span class="fruum-helper-action fruum-icon fruum-icon-emoji" data-action="emojipanel"></span>
-        <span class="fruum-helper-action fruum-icon fruum-icon-camera" data-action="attachments"></span>
-        <span class="fruum-helper-action fruum-helper-text" data-action="preview">preview</span>
+        <span class="fruum-helper-action fruum-icon fruum-icon-camera" data-action="attachments" data-onboard="attachments"></span>
+        <span class="fruum-helper-action fruum-helper-text" data-action="preview" data-onboard="preview">preview</span>
       </div>
     </div>
   </form>
@@ -486,10 +477,7 @@
         <a class="fruum-secondary-button fruum-link-negative" data-action="cancel">cancel</a>
       </div>
       <div class="fruum-user-account">
-        <span
-          class="fruum-helper-action"
-          data-action="help"
-        >?</span>
+        <span class="fruum-helper-action" data-action="help">?</span>
       </div>
     </div>
   </form>
@@ -518,10 +506,7 @@
         <span class="fruum-secondary-data">press <b>Enter</b> to reply</span>
       </div>
       <div class="fruum-user-account">
-        <span
-          class="fruum-helper-action"
-          data-action="help"
-        >?</span>
+        <span class="fruum-helper-action" data-action="help">?</span>
         <span class="fruum-helper-action fruum-icon fruum-icon-emoji" data-action="emojipanel"></span>
       </div>
     </div>
@@ -553,13 +538,10 @@
         <a class="fruum-secondary-button fruum-link-negative" data-action="cancel">cancel</a>
       </div>
       <div class="fruum-user-account">
-        <span
-          class="fruum-helper-action"
-          data-action="help"
-        >?</span>
+        <span class="fruum-helper-action" data-action="help" data-onboard="help">?</span>
         <span class="fruum-helper-action fruum-icon fruum-icon-emoji" data-action="emojipanel"></span>
-        <span class="fruum-helper-action fruum-icon fruum-icon-camera" data-action="attachments"></span>
-        <span class="fruum-helper-action fruum-helper-text" data-action="preview">preview</span>
+        <span class="fruum-helper-action fruum-icon fruum-icon-camera" data-action="attachments" data-onboard="attachments"></span>
+        <span class="fruum-helper-action fruum-helper-text" data-action="preview" data-onboard="preview">preview</span>
       </div>
     </div>
   </form>
@@ -580,13 +562,13 @@
       <% } %>
     <% } else { %>
       <div class="fruum-interactions-buttons">
-        <button class="fruum-main-button fruum-js-default-action" data-action="add_post">reply</button>
+        <button class="fruum-main-button fruum-js-default-action" data-action="add_post" data-onboard="add_stream">reply</button>
         <% if (Fruum.utils.isDesktop()) { %>
-        <span class="fruum-secondary-data fruum-helptext">or <b>Enter</b> to start writing</span>
+        <span class="fruum-secondary-data fruum-helptext">or press <b>Enter</b> to start writing</span>
         <% } %>
       </div>
     <% } %>
-      <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')() %>
+      <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')({ add_category: false }) %>
     </div>
   </form>
 </script>
@@ -597,7 +579,7 @@
   <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
   <form action="" class="fruum-interactions-form">
     <div class="fruum-interactions-footer">
-      <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')() %>
+      <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')({ add_category: false }) %>
     </div>
   </form>
 </script>
@@ -611,23 +593,18 @@
     <div class="fruum-interactions-footer">
       <div class="fruum-interactions-buttons">
 
-        <button class="fruum-main-button" data-action="add_category">Category</button>
-
         <% if (viewing.usage == 0) { %>
-        <button class="fruum-main-button fruum-js-default-action" data-action="add_thread">Thread</button>
+        <button class="fruum-main-button fruum-cta-button fruum-js-default-action" data-action="add_thread" data-onboard="add_stream">Add Thread</button>
         <% } else if (viewing.usage == 1) { %>
-        <button class="fruum-main-button fruum-js-default-action" data-action="add_article">Article</button>
+        <button class="fruum-main-button fruum-cta-button fruum-js-default-action" data-action="add_article" data-onboard="add_stream">Add Article</button>
         <% } else if (viewing.usage == 2) { %>
-        <button class="fruum-main-button fruum-js-default-action" data-action="add_blog">Blog</button>
+        <button class="fruum-main-button fruum-cta-button fruum-js-default-action" data-action="add_blog" data-onboard="add_stream">Add Blog</button>
         <% } else if (viewing.usage == 3) { %>
-        <button class="fruum-main-button" data-action="add_channel">Channel</button>
-        <% } %>
-        <% if (viewing.usage < 3 && Fruum.utils.isDesktop()) { %>
-        <span class="fruum-secondary-data fruum-helptext">or <b>Enter</b> to start writing</span>
+        <button class="fruum-main-button fruum-cta-button" data-action="add_channel" data-onboard="add_stream">Add Channel</button>
         <% } %>
 
       </div>
-      <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')() %>
+      <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')({ add_category: true }) %>
     </div>
   </form>
 </script>
@@ -642,16 +619,13 @@
       <div class="fruum-interactions-buttons">
 
         <% if (viewing.usage == 0) { %>
-        <button class="fruum-main-button fruum-js-default-action" data-action="add_thread">Thread</button>
-          <% if (Fruum.utils.isDesktop()) { %>
-        <span class="fruum-secondary-data fruum-helptext">or <b>Enter</b> to start writing</span>
-          <% } %>
+        <button class="fruum-main-button fruum-js-default-action" data-action="add_thread" data-onboard="add_stream">Add Thread</button>
         <% } else if (viewing.usage == 3) { %>
-        <button class="fruum-main-button" data-action="add_channel">Channel</button>
+        <button class="fruum-main-button" data-action="add_channel" data-onboard="add_stream">Add Channel</button>
         <% } %>
 
       </div>
-      <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')() %>
+      <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')({ add_category: false }) %>
     </div>
   </form>
 </script>

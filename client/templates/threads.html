@@ -28,7 +28,7 @@
             <span class="fruum-icon fruum-icon-sticky" data-fruumtipsy-center="Sticky topic"></span>
             <% } %>
             <% if (!children_count && is_new) { %>
-            <span class="fruum-icon fruum-icon-dot fruum-counter-updated"></span>
+            <span class="fruum-icon fruum-icon-dot fruum-counter-updated fruum-anim-popup"></span>
             <% } %>
             <%= Fruum.utils.printHeader(header) %>
 
@@ -46,7 +46,7 @@
       </div><span class="fruum-secondary-data">
         <% if (children_count) { %>
           <% if (is_new) { %>
-          <span class="fruum-icon fruum-icon-dot fruum-counter-updated"></span>
+          <span class="fruum-icon fruum-icon-dot fruum-counter-updated fruum-anim-popup"></span>
           <% } %>
           <%- children_count %> posts, last one <%- Fruum.libs.moment(parseInt(updated)).fromNow() %>
         <% } else if (created != updated) { %>

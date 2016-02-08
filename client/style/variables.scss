@@ -110,13 +110,18 @@ $forum-error-color: #FFA1B7; //E36056; // forum error color
 $forum-message-text-color: #383E45; // forum messages color
 
 
+/* Onboarding colors */
+$onboard-bg: #f4e6c1;
+$onboard-cta: $forum-base-color;
+
+
 
 /* Avatar variables */
 $avatar-font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 $avatar-default-background: $disabled-text-color;
 $avatar-text-color: #FFFFFF;
 
-$avatar-big: 7em;
+$avatar-big: 6.5em;
 $avatar-big-font: $responsive-big-font;
 
 $avatar-medium: 4em;

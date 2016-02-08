@@ -15,6 +15,7 @@
   4. Managing actions
     4.1 Manage section
     4.2 Item interactions
+    4.3 Item micro-animations
 
 */
 
@@ -326,9 +327,11 @@
   line-height: 1em;
   font-size: $responsive-big-font;
   margin-top: $big-font-basegrid;
-  span:not(:hover),
   a:not(:hover) {
     opacity: 0.3;
+    & > .fruum-icon {
+      opacity: 0.3;
+    }
   }
   a:not(:first-child) {
     margin-left: $big-font-basegrid*2;
@@ -346,19 +349,28 @@
     }
   }
   .fruum-action-pill {
-    display: inline-block;
+    position: relative;
+    display: block;
+    float: left;
     min-width: 4.2em;
     color: $base-text-color;
     margin-right: $big-font-basegrid;
     font-size: 50%;
+    text-decoration: none;
+    height: 100%;
     &:not(:hover) {
       opacity: 0.4;
     }
+    & > .fruum-icon:empty:before,
     &.fruum-icon:before {
       font-size: 250%;
+      line-height: 0.4;
+    }
+    & > .fruum-icon:empty:before {
+      margin-right: 0.2em;
     }
   }
-  a.fruum-icon{
+  a {
     color: $base-text-color;
     &.fruum-item-active {
       color: $forum-base-color;

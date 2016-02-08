@@ -32,7 +32,7 @@
     </div>
     <% if (Fruum.user.admin) { %>
       <% if (_.contains(['article', 'blog', 'thread'], viewing.type)) { %>
-    <div class="fruum-manage fruum-js-manage">
+    <div class="fruum-manage fruum-js-manage" data-onboard="manage">
       <a href="javascript:;" class="fruum-link fruum-manage-close fruum-icon fruum-icon-close"></a>
 
       <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit <%- viewing.type %>"></a>
@@ -51,7 +51,7 @@
       <a href="javascript:;" class="fruum-link fruum-link-negative fruum-icon fruum-icon-delete" data-action="delete" data-fruumtipsy-right="Delete <%- viewing.type %>"></a>
     </div>
       <% } else if (viewing.type === 'channel') { %>
-    <div class="fruum-manage fruum-js-manage">
+    <div class="fruum-manage fruum-js-manage" data-onboard="manage">
       <a href="javascript:;" class="fruum-link fruum-manage-close fruum-icon fruum-icon-close"></a>
 
       <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit channel"></a>
@@ -65,7 +65,7 @@
       <a href="javascript:;" class="fruum-link fruum-link-negative fruum-icon fruum-icon-delete" data-action="delete" data-fruumtipsy-right="Delete channel"></a>
     </div>
       <% } else if (viewing.type === 'bookmark') { %>
-    <div class="fruum-manage fruum-js-manage">
+    <div class="fruum-manage fruum-js-manage" data-onboard="manage">
       <a href="javascript:;" class="fruum-link fruum-manage-close fruum-icon fruum-icon-close"></a>
 
       <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-left="Edit stored search"></a>
@@ -78,10 +78,10 @@
 
     </div>
       <% } else { %>
-    <a href="javascript:;" class="fruum-manage fruum-link fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit category"></a>
+    <a href="javascript:;" class="fruum-manage fruum-link fruum-icon fruum-icon-edit" data-onboard="edit" data-action="edit" data-fruumtipsy-right="Edit category"></a>
       <% } %>
     <% } else if (!Fruum.user.anonymous && Fruum.user.id == viewing.user_id && _.contains(['channel', 'thread'], viewing.type)) { %>
-    <a href="javascript:;" class="fruum-manage fruum-link fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit <%- viewing.type %>"></a>
+    <a href="javascript:;" class="fruum-manage fruum-link fruum-icon fruum-icon-edit" data-onboard="edit" data-action="edit" data-fruumtipsy-right="Edit <%- viewing.type %>"></a>
     <% } %>
   </div>
   <% } %>

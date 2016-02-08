@@ -254,11 +254,8 @@
   clear: both;
   width: 100%;
   font-size: 1em; // reset to base-grid
-  &:not(.fruum-section-empty) {
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
-  }
   .fruum-section-title {
+    margin-top: 1em;
     padding-bottom: 0;
   }
 }
@@ -310,16 +307,17 @@
   .fruum-section-nav {
     float: right;
     font-size: inherit; // $responsive-default-font
-    line-height: $default-font-basegrid*4;
+    line-height: $default-font-basegrid*3;
   }
 
   .fruum-item-actions {
     // inherits a font-size of responsive-default-font
+    display: block;
     font-size: relative-ems( $responsive-big-font, $responsive-default-font);
     margin-top: 0;
     width: auto;
     float: left;
-    line-height: relative-ems( $default-font-basegrid, relative-ems( $responsive-big-font, $responsive-default-font) )*4;
+    line-height: relative-ems( $default-font-basegrid, relative-ems( $responsive-big-font, $responsive-default-font) )*3;
   }
 }
 

@@ -1,22 +1,22 @@
 <!-- breadcrumb template -->
 <script type="text/template" id="fruum-template-breadcrumb">
-  <% if (!viewing.id) { %>
-  <% } else if (searching || has_notifications) { %>
+  <div <% if (viewing.id && !searching && !has_notifications && breadcrumb.length) { %>data-onboard="breadcrumb"<% } %> >
+    <% if (!viewing.id) { %>
+    <% } else if (searching || has_notifications) { %>
     <div class="fruum-navigation-item fruum-link fruum-js-search-close" >
       <span class="fruum-avatar-icon fruum-link">
         <span class="fruum-icon fruum-icon-left"></span>
       </span>back
     </div>
-  <% } else { %>
-    <% if (breadcrumb.length) { %>
+    <% } else if (breadcrumb.length) { %>
       <% for (var i = 0; i < breadcrumb.length; ++i) { %>
-        <div class="fruum-navigation-item fruum-avatar-icon fruum-link fruum-js-navigate" data-id="<%- breadcrumb[i].id %>" data-initials="<%- Fruum.utils.printInitials(breadcrumb[i].initials) %>">
-          <%- breadcrumb[i].initials %>
-        </div>
+    <div class="fruum-navigation-item fruum-avatar-icon fruum-link fruum-js-navigate" data-id="<%- breadcrumb[i].id %>" data-initials="<%- Fruum.utils.printInitials(breadcrumb[i].initials) %>">
+      <%- breadcrumb[i].initials %>
+    </div>
       <% } %>
-      <div class="fruum-navigation-item fruum-link fruum-icon fruum-icon-left fruum-js-navigate" data-id="<%- breadcrumb[breadcrumb.length - 1].id %>" >
-        back to <%= Fruum.utils.printHeader(breadcrumb[breadcrumb.length - 1].header) %>
-      </div>
+    <div class="fruum-navigation-item fruum-link fruum-icon fruum-icon-left fruum-js-navigate" data-id="<%- breadcrumb[breadcrumb.length - 1].id %>" >
+      back to <%= Fruum.utils.printHeader(breadcrumb[breadcrumb.length - 1].header) %>
+    </div>
     <% } %>
-  <% } %>
+  </div>
 </script>
