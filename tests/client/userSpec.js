@@ -395,4 +395,17 @@ describe("User client", function() {
       });
     });
   });
+
+  it("can set onboarding", function(done) {
+    user_connect(function(socket) {
+      socket.emit('fruum:onboard', { onboard: 1234 });
+      socket.on('fruum:onboard', function(response) {
+        socket.removeListener('fruum:onboard', this);
+        expect(response.onboard).toBe(1234);
+        socket.disconnect();
+        done();
+      });
+    });
+  });
+
 });
