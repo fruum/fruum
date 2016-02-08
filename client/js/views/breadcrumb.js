@@ -40,6 +40,7 @@ Breadcrumb view
           event.preventDefault();
           event.stopPropagation();
         }
+        Fruum.io.trigger('fruum:unset_onboard', 'breadcrumb');
         Fruum.io.trigger('fruum:view', { id: $(event.target).closest('[data-id]').data('id') });
       },
       onCloseSearch: function(event) {

@@ -497,4 +497,19 @@ module.exports = function(options) {
   - callback: done function callback
   */
   this.gc_users = function(app_id, timestamp, callback) { callback(); }
+
+  /*
+  Summary:
+  Reset onboarding for inactive users
+
+  Description:
+  Reset onboarding for all inactive users who have logged in less than the a specific
+  unix timestamp
+
+  Parameters:
+  - app_id: the application id
+  - timestamp: a unix timestamp
+  - callback: done function callback
+  */
+  this.gc_onboard = function(app_id, timestamp, callback) { callback(); }
 }

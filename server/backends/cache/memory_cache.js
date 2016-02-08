@@ -65,10 +65,13 @@ module.exports = function(options, storage) {
     q.array.push(entry);
   };
   //get a value from cache
-  this.get = function(queue, key) {
-    var q = get_queue(queue);
-    var entry = q.hash[key];
-    if (entry) return entry.value;
+  this.get = function(queue, key, callback) {
+    var q = get_queue(queue),
+        entry = q.hash[key],
+        value;
+
+    if (entry) value = entry.value;
+    callback(value);
   };
   //delete a value from cache
   this.del = function(queue, key) {

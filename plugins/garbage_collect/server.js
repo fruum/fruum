@@ -10,7 +10,8 @@ var _ = require('underscore'),
 function GarbageCollect(options, instance) {
   var keep_archived_for = null,
       keep_chat_for = null,
-      keep_inactive_users_for = null;
+      keep_inactive_users_for = null,
+      reset_onboard_after = null;
 
   if (options.garbage_collect.keep_archived_for)
     keep_archived_for = moment.duration(options.garbage_collect.keep_archived_for).asMilliseconds();
@@ -20,6 +21,9 @@ function GarbageCollect(options, instance) {
 
   if (options.garbage_collect.keep_inactive_users_for)
     keep_inactive_users_for = moment.duration(options.garbage_collect.keep_inactive_users_for).asMilliseconds();
+
+  if (options.garbage_collect.reset_onboard_after)
+    reset_onboard_after = moment.duration(options.garbage_collect.reset_onboard_after).asMilliseconds();
 
   function process_app(application) {
     if (keep_archived_for) {
@@ -35,6 +39,11 @@ function GarbageCollect(options, instance) {
     if (keep_inactive_users_for) {
       logger.system("Garbage collecting [" + application.get('id') + "] for inactive users older than " + moment(Date.now() - keep_inactive_users_for).fromNow());
       instance.storage.gc_users(application.get('id'), Date.now() - keep_inactive_users_for, function() {});
+    }
+
+    if (reset_onboard_after) {
+      logger.system("Resetting onboarding [" + application.get('id') + "] for inactive users older than " + moment(Date.now() - reset_onboard_after).fromNow());
+      instance.storage.gc_onboard(application.get('id'), Date.now() - reset_onboard_after, function() {});
     }
   }
 

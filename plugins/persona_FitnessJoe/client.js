@@ -22,16 +22,16 @@
       write: ['Hey <username>, do you have a nice thought or idea to share in here? Writing something that people will find interesting gives a great sense of accomplishment!'],
     },
     empty_category_thread: {
-      read: ['Hey <username>, no discussions here yet. You can visit again later or <b>login and start a discussion</b>!'],
+      read: ['Hey <username>, no discussions here yet. You can visit again later or <b>login and add a thread</b>!'],
       write: ['Hey <username>, no discussions here yet. Sharing an idea is not like writing it on a stone or something! Work with others to mold an idea into something great!'],
     },
     empty_category_blog: {
       read: ['Hey <username>, no blogposts here yet. Visit again later for updates, in the meantime get up from your chair to stretch and relax your eyes.'],
-      write: ['Hey, noone has added a blogpost here yet. You can be the first to add a good blogpost, <username>!'],
+      write: ['Hey, noone has added a blogpost here yet. You can be the first to <b>add a good blogpost</b>, <username>!'],
     },
     empty_category_channel: {
       read: ['No chats in here yet. Could be because people are currently away or never made it in here :). Consider coming back later!'],
-      write: ['No chats in here yet <username>. But you can change that! Pick your topic and add a chat in here!'],
+      write: ['No chats in here yet <username>. But you can change that! Pick your topic and <b>add a chat</b> in here!'],
     },
     empty_category: {
       read: ['Noone has added content here yet. But people are working hard to populate this category! Be sure to come back later!'],

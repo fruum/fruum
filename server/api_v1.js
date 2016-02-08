@@ -82,6 +82,7 @@ function API_v1(options, instance) {
                   engine.invalidateDocument(application.get('id'), document);
                   res.json(document.toJSON());
                   engine.refreshChildrenCount(application.get('id'), document.get('parent'), function() {
+                    engine.refreshNotify(application.get('id'), document.get('parent'));
                   });
                 });
               }
@@ -165,7 +166,9 @@ function API_v1(options, instance) {
             storage.delete(application.get('id'), document, function() {
               engine.invalidateDocument(application.get('id'), document);
               res.json(document.toJSON());
-              engine.refreshChildrenCount(application.get('id'), document.get('parent'));
+              engine.refreshChildrenCount(application.get('id'), document.get('parent'), function() {
+                engine.refreshNotify(application.get('id'), document.get('parent'));
+              });
             });
           }
           else {

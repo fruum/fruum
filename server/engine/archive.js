@@ -50,7 +50,9 @@ module.exports = function(options, instance, self) {
           return;
         }
         storage.delete(app_id, document, function() {
-          self.refreshChildrenCount(app_id, document.get('parent'));
+          self.refreshChildrenCount(app_id, document.get('parent'), function() {
+            self.refreshNotify(app_id, document.get('parent'), user);
+          });
           self.invalidateDocument(app_id, document);
           socket.emit('fruum:delete', document.toJSON());
           if (!plugin_payload.broadcast_noop) self.broadcast(user, document, 'fruum:delete');
@@ -101,7 +103,9 @@ module.exports = function(options, instance, self) {
           return;
         }
         storage.archive(app_id, document, function() {
-          self.refreshChildrenCount(app_id, document.get('parent'));
+          self.refreshChildrenCount(app_id, document.get('parent'), function() {
+            self.refreshNotify(app_id, document.get('parent'), user);
+          });
           self.invalidateDocument(app_id, document);
           socket.emit('fruum:archive', document.toJSON());
           if (!plugin_payload.broadcast_noop) self.broadcast(user, document, 'fruum:archive');
@@ -152,7 +156,9 @@ module.exports = function(options, instance, self) {
           return;
         }
         storage.restore(app_id, document, function() {
-          self.refreshChildrenCount(app_id, document.get('parent'));
+          self.refreshChildrenCount(app_id, document.get('parent'), function() {
+            self.refreshNotify(app_id, document.get('parent'), user);
+          });
           self.invalidateDocument(app_id, document);
           socket.emit('fruum:restore', document.toJSON());
           if (!plugin_payload.broadcast_noop) self.broadcast(user, document, 'fruum:restore');

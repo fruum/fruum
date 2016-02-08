@@ -14,7 +14,10 @@ Main client app
 
     function loadHTML() {
       $('head').append('<style>' + fruum_css + '</style>');
-      $(window.fruumSettings.container || 'body').append(fruum_html);
+      if (window.fruumSettings.container && $(window.fruumSettings.container).length)
+        $(window.fruumSettings.container).html(fruum_html);
+      else
+        $('body').append(fruum_html);
       run();
     }
 
@@ -210,6 +213,10 @@ Main client app
         new Views.ShareView({
           ui_state: this.ui_state,
           el: this.regions.share
+        });
+        new Views.OnboardingView({
+          ui_state: this.ui_state,
+          root_el: this.$el
         });
         this.listenTo(this.notifications, 'reset', function() {
           if (this.notifications.length) Fruum.io.trigger('fruum:clear_search');
@@ -706,6 +713,15 @@ Main client app
                 });
               }
             }
+          }
+        );
+
+        this.bindIO('fruum:onboard',
+          function send(payload) {
+            that.socket.emit('fruum:onboard', payload);
+          },
+          function recv(payload) {
+            //noop
           }
         );
 

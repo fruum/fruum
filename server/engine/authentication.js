@@ -175,6 +175,7 @@ module.exports = function(options, instance, self) {
                   user.set({
                     watch: storage_user.get('watch'),
                     notifications: storage_user.get('notifications'),
+                    onboard: storage_user.get('onboard'),
                     meta: storage_user.get('meta'),
                     last_logout: storage_user.get('last_logout')
                   });

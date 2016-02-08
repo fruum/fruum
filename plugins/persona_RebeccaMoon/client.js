@@ -23,7 +23,7 @@
     },
     empty_category_thread: {
       read: ['Hi <username>, no one has started a discussion in here yet. Hey! you could <b>login and share your thoughts now!</b>'],
-      write: ['Hi <username>, no discussions here yet. You could <b>start a discussion here!</b>'],
+      write: ['Hi <username>, no discussions here yet. You could <b>add a thread</b> here!'],
     },
     empty_category_blog: {
       read: ['Hi, people haven&#39;t added any blogpost in <categoryname>! Please do visit again for any updates!'],

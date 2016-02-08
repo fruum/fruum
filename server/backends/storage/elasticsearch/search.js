@@ -279,22 +279,24 @@ module.exports = function(options, client, self) {
   }
 
   self.count_attributes = function(app_id, attributes, callback) {
-    client.count({
-      index: self.toAppIndex(app_id),
-      type: 'doc',
-      refresh: true,
-      body: {
-        query: self.createSearchQSL(attributes)
-      }
-    }, function(error, response) {
-      if (error) {
-        logger.error(app_id, 'count_attributes', error);
-        callback(0);
-        return;
-      }
-      else {
-        callback(response.count || 0);
-      }
+    self.refreshIndex(app_id, function() {
+      client.count({
+        index: self.toAppIndex(app_id),
+        type: 'doc',
+        refresh: true,
+        body: {
+          query: self.createSearchQSL(attributes)
+        }
+      }, function(error, response) {
+        if (error) {
+          logger.error(app_id, 'count_attributes', error);
+          callback(0);
+          return;
+        }
+        else {
+          callback(response.count || 0);
+        }
+      });
     });
   }
 }

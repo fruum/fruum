@@ -205,7 +205,7 @@ module.exports = function(options, instance, self) {
   //high level function add document to cache
   self.cacheResponse = function(app_id, user, doc_id, response) {
     if (!user) return;
-    self.cache.put('views', _gen_cache_key(app_id, user.get('admin'), doc_id), response);
+    self.cache.put('views', _gen_cache_key(app_id, user.get('admin'), doc_id), JSON.stringify(response));
   }
   self.invalidateCache = function(app_id, doc_id) {
     self.cache.del('views', _gen_cache_key(app_id, true, doc_id));
@@ -223,13 +223,22 @@ module.exports = function(options, instance, self) {
   self.getCachedResponse = function(app_id, user, doc_id, hit, miss) {
     if (!user) return;
     var key = _gen_cache_key(app_id, user.get('admin'), doc_id);
-    var data = self.cache.get('views', key);
-    if (data) {
-      hit && hit(data);
-    }
-    else {
-      miss && miss();
-    }
+    self.cache.get('views', key, function(value) {
+      if (value) {
+        try {
+          value = JSON.parse(value);
+        }
+        catch(err) {
+          value = undefined;
+        }
+      }
+      if (value) {
+        hit && hit(value);
+      }
+      else {
+        miss && miss();
+      }
+    });
   }
 
   // ---------------------------------- EMAIL UTILS ----------------------------

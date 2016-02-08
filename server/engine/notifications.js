@@ -104,6 +104,40 @@ module.exports = function(options, instance, self) {
     self.success(payload);
   }
 
+  self.onboard = function(socket, payload) {
+    if (!self.validatePayloadID(socket, null, 'onboard')) {
+      self.fail(payload);
+      return;
+    }
+    var app_id = socket.app_id,
+        onboard = payload.onboard|0,
+        user = socket.fruum_user;
+
+    if (user.get('anonymous')) {
+      logger.error(app_id, 'onboard_anonymous_noperm', user);
+      socket.emit('fruum:onboard');
+      self.fail(payload);
+      return;
+    }
+
+    //get latest user
+    storage.get_user(app_id, user.get('id'), function(storage_user) {
+      if (storage_user) {
+        user.set('onboard', onboard);
+        storage.update_user(app_id, user, { onboard: onboard }, function(updated_user) {
+          if (updated_user) {
+            socket.emit('fruum:onboard', payload);
+            self.success(payload);
+          }
+          else {
+            socket.emit('fruum:onboard');
+            self.fail(payload);
+          }
+        });
+      }
+    });
+  }
+
   // ------------------------------- TEMPLATES ---------------------------------
 
   self.notificationTemplate = function(application, template, success, fail) {

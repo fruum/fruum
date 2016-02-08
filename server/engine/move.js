@@ -147,6 +147,12 @@ module.exports = function(options, instance, self) {
                     'fruum:move', emit_payload
                   );
                 }
+                self.refreshChildrenCount(app_id, original_document.get('parent'), function() {
+                  self.refreshNotify(app_id, original_document.get('parent'), user);
+                });
+                self.refreshChildrenCount(app_id, category_doc.get('id'), function() {
+                  self.refreshNotify(app_id, category_doc.get('id'), user);
+                });
                 plugin_payload.document = document;
                 plugins.afterMove(plugin_payload, function() {
                   self.success(payload);

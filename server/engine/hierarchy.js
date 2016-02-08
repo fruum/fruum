@@ -58,4 +58,20 @@ module.exports = function(options, instance, self) {
     });
   }
 
+  self.refreshNotify = function(app_id, doc_id, user) {
+    storage.get(app_id, doc_id, function(document) {
+      if (!document) {
+        return;
+      }
+      self.invalidateDocument(app_id, document);
+      logger.info(app_id, 'refresh_notify', document.get('id'));
+      if (user) {
+        self.broadcastInfo(user, document);
+      }
+      if (document.get('parent')) {
+        self.refreshNotify(app_id, document.get('parent'), user);
+      }
+    });
+  }
+
 }
