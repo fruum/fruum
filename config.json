@@ -50,9 +50,10 @@
   "------------------- PLUGIN SCHEDULED TASKS -------------------": "",
 
   "cron": {
-    "_help": "https://github.com/tejasmanohar/node-schedule/wiki/Cron-style-Scheduling",
-    "garbage_collect": "0 0 */4 * * *",
-    "monitor": "0 0 0 * * *"
+    "_help": "https://www.npmjs.com/package/node-schedule",
+    "_quickhelp": "minute(0-59) hour(0-23) day(1-31) month(1-12) weekday(0-7)",
+    "garbage_collect": "0 */4 * * *",
+    "monitor": "0 0 * * *"
   },
 
   "------------------------ ACTIVE PLUGIN  ------------------------": "",

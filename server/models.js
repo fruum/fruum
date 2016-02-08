@@ -292,6 +292,9 @@ var Application = Backbone.Model.extend({
     log += divider + 'theme:' + this.get('theme');
     log += divider + 'private_key:' + this.get('private_key');
     log += divider + 'api_keys:' + this.get('api_keys').length;
+    if (humanize) {
+      log += divider + 'meta:' + JSON.stringify(this.get('meta'));
+    }
     return log;
   },
   //get sass override text from theme path
