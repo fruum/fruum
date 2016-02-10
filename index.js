@@ -20,6 +20,7 @@ var cli = cliArgs([
   { name: 'list-apps', type: Boolean, description: 'List all apps' },
   { name: 'gc-app', type: String, description: 'Purge archived docs of <app_id>' },
   { name: 'reset-users', type: String, description: 'Delete all users of app <api_key>' },
+  { name: 'list-users', type: String, description: 'List all users of app <api_key>' },
 
   { name: 'add-app', type: String, description: 'Register app <app_id>' },
   { name: 'update-app', type: String, description: 'Update app <app_id>' },
@@ -166,6 +167,14 @@ else {
       action: 'reset_users',
       params: {
         app_id: options['reset-users']
+      }
+    }
+  }
+  else if (options['list-users']) {
+    cli_cmd = {
+      action: 'list_users',
+      params: {
+        app_id: options['list-users']
       }
     }
   }

@@ -1,0 +1,48 @@
+<script type="text/template" id="fruum-template-persona">
+  <div class="fruum-base-object fruum-helper-object">
+    <div class="fruum-avatar">
+      <% if (avatar_url) { %>
+      <img src="<%= avatar_url %>" class="fruum-avatar-icon" width="56"/>
+      <% } else { %>
+      <span
+        class="fruum-avatar-icon"
+        data-initials="<%- avatar_initials %>">
+        <%- avatar_initials %>
+      </span>
+      <% } %>
+    </div>
+    <div class="fruum-object-additional-data">
+      <div class="fruum-primary-data">
+        <%- name %>
+      </div>
+    </div>
+    <div class="fruum-object-main-data">
+      <div class="fruum-stream-typography">
+        <p>
+          <%= text %>
+        </p>
+      </div>
+    </div>
+  </div>
+</script>
+
+<script type="text/template" id="fruum-template-persona-fullpage">
+  <div class="fruum-media-item">
+    <div class="fruum-media-image">
+      <% if (avatar_url) { %>
+      <img src="<%= avatar_url %>" class="fruum-avatar-icon"/>
+      <% } else { %>
+      <span
+        class="fruum-avatar-icon"
+        data-initials="<%- avatar_initials %>">
+        <%- avatar_initials %>
+      </span>
+      <% } %>
+    </div>
+    <div class="fruum-media-title"><%= topic %></div>
+    <div class="fruum-media-description">
+      <%= text %>
+    </div>
+    <div class="fruum-media-author"><%- name %></div>
+  </div>
+</script>

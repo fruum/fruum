@@ -43,7 +43,10 @@
           event.stopPropagation();
         }
         var viewing = this.model.get('viewing');
-        if (viewing.id) Fruum.io.trigger('fruum:watch', { id: viewing.id });
+        if (viewing.id) {
+          Fruum.io.trigger('fruum:unset_onboard', 'watch');
+          Fruum.io.trigger('fruum:watch', { id: viewing.id });
+        }
       },
       onUnwatch: function(event) {
         if (event) {
@@ -51,7 +54,10 @@
           event.stopPropagation();
         }
         var viewing = this.model.get('viewing');
-        if (viewing.id) Fruum.io.trigger('fruum:unwatch', { id: viewing.id });
+        if (viewing.id) {
+          Fruum.io.trigger('fruum:unset_onboard', 'watch');
+          Fruum.io.trigger('fruum:unwatch', { id: viewing.id });
+        }
       },
       onShare: function(event) {
         if (event) {
@@ -61,9 +67,10 @@
         Fruum.io.trigger('fruum:share', $(event.target));
       },
       templateHelpers: function() {
-        var editing = this.model.get('editing');
+        var editing = this.model.get('editing'),
+            viewing = this.model.get('viewing');
         return {
-          hide_actions: this.model.get('searching') ||
+          hide_actions: this.model.get('searching') || !viewing.id ||
                         _.contains(['thread', 'article', 'blog'], editing.type)
         };
       }

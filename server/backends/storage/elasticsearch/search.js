@@ -16,39 +16,45 @@ module.exports = function(options, client, self) {
 
   // -------------------------------- SEARCH -----------------------------------
 
-  function _search(app_id, query, callback) {
+  function _search(app_id, query, callback, params) {
+    var body = {
+      from: 0,
+      size: query.max_results,
+      sort: query.sort,
+      query: {
+        filtered: {
+          filter: {
+            bool: {
+              must_not: query.must_not,
+              must: query.must
+            }
+          },
+          query: {
+            bool: {
+              should: query.should
+            }
+          }
+        }
+      },
+      highlight: {
+        pre_tags: ['{{{'],
+        post_tags: ['}}}'],
+        fields: {
+          header: {},
+          body: {}
+        }
+      }
+    };
+    if (params && params.skipfields && params.skipfields.length) {
+      body._source = {
+        exclude: params.skipfields
+      }
+    }
     client.search({
       index: self.toAppIndex(app_id),
       type: 'doc',
       refresh: true,
-      body: {
-        from: 0,
-        size: query.max_results,
-        sort: query.sort,
-        query: {
-          filtered: {
-            filter: {
-              bool: {
-                must_not: query.must_not,
-                must: query.must
-              }
-            },
-            query: {
-              bool: {
-                should: query.should
-              }
-            }
-          }
-        },
-        highlight: {
-          pre_tags: ['{{{'],
-          post_tags: ['}}}'],
-          fields: {
-            header: {},
-            body: {}
-          }
-        }
-      }
+      body: body
     }, function(error, response) {
       var results = [];
       if (!error && response && response.hits && response.hits.hits) {
@@ -75,7 +81,7 @@ module.exports = function(options, client, self) {
     });
   }
 
-  self.search = function(app_id, payload, callback) {
+  self.search = function(app_id, payload, callback, params) {
     //failsafe
     var q = payload.text || '',
         permission = payload.permission|0;
@@ -130,9 +136,30 @@ module.exports = function(options, client, self) {
       }
       return '';
     }).trim();
+
+    //include users
+    var users = [];
+    q = q.replace(/(^|\s)(@[a-z\d-]+)/ig, function(user) {
+      user = user.replace('@', '').trim();
+      if (user) {
+        users.push(user);
+        must.push({ term: { user_username: user } });
+      }
+      return '';
+    }).trim();
+    //exclude users
+    q = q.replace(/(^|\s)(-@[a-z\d-]+)/ig, function(user) {
+      user = user.replace('-#', '').trim();
+      if (user) {
+        users.push(user);
+        must_not.push({ term: { user_username: user } });
+      }
+      return '';
+    }).trim();
+
     //disable highlighting on tagged search
-    query.highlight = tags.length == 0;
-    if (tags.length) {
+    query.highlight = (tags.length == 0) && (users.length == 0);
+    if (tags.length || users.length) {
       query.max_results = options.elasticsearch.max_children;
     }
 
@@ -186,8 +213,8 @@ module.exports = function(options, client, self) {
 
     //add some default sorting
     if (!sort.length) {
-      //in case of tags, sort by dated descending
-      if (tags.length) {
+      //in case of tags or users, sort by dated descending
+      if (tags.length || users.length) {
         sort.push({ created : {order : 'desc'} });
       }
     }
@@ -219,21 +246,27 @@ module.exports = function(options, client, self) {
       );
     }
 
-    _search(app_id, query, callback);
+    _search(app_id, query, callback, params);
   }
 
   // --------------------------- SEARCH ON FIELDS ------------------------------
 
-  self.search_attributes = function(app_id, attributes, callback) {
+  self.search_attributes = function(app_id, attributes, callback, params) {
+    var body = {
+      from: 0,
+      size: options.elasticsearch.max_children,
+      query: self.createSearchQSL(attributes)
+    };
+    if (params && params.skipfields && params.skipfields.length) {
+      body._source = {
+        exclude: params.skipfields
+      }
+    }
     client.search({
       index: self.toAppIndex(app_id),
       type: 'doc',
       refresh: true,
-      body: {
-        from: 0,
-        size: options.elasticsearch.max_children,
-        query: self.createSearchQSL(attributes)
-      }
+      body: body
     }, function(error, response) {
       var results = [];
       if (!error && response && response.hits && response.hits.hits) {
@@ -246,22 +279,24 @@ module.exports = function(options, client, self) {
   }
 
   self.count_attributes = function(app_id, attributes, callback) {
-    client.count({
-      index: self.toAppIndex(app_id),
-      type: 'doc',
-      refresh: true,
-      body: {
-        query: self.createSearchQSL(attributes)
-      }
-    }, function(error, response) {
-      if (error) {
-        logger.error(app_id, 'count_attributes', error);
-        callback(0);
-        return;
-      }
-      else {
-        callback(response.count || 0);
-      }
+    self.refreshIndex(app_id, function() {
+      client.count({
+        index: self.toAppIndex(app_id),
+        type: 'doc',
+        refresh: true,
+        body: {
+          query: self.createSearchQSL(attributes)
+        }
+      }, function(error, response) {
+        if (error) {
+          logger.error(app_id, 'count_attributes', error);
+          callback(0);
+          return;
+        }
+        else {
+          callback(response.count || 0);
+        }
+      });
     });
   }
 }

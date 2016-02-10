@@ -38,7 +38,10 @@ Categories view
       },
       templateHelpers: function() {
         return {
-          viewing: this.ui_state.get('viewing')
+          viewing: this.ui_state.get('viewing'),
+          is_new: Fruum.utils.isNewVisit(
+            this.model.get('id'), this.model.get('updated')
+          )
         }
       },
       getTemplate: function() {

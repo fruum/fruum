@@ -28,7 +28,7 @@
       test: 'marked'
     },
     socketio: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.4/socket.io.min.js',
+      url: '//cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js',
       test: 'io.Socket'
     }
   };
@@ -150,6 +150,9 @@
   }
   //initialize loader on document ready
   ready(function() {
+    //loader html (replaced by server)
+    var preview_html = '__html__';
+
     window.fruumSettings = window.fruumSettings || {};
     //replaced by server
     window.fruumSettings.app_id = '__app_id__';
@@ -157,48 +160,49 @@
     window.fruumSettings.pushstate = Boolean('__pushstate__'|0);
     window.fruumSettings.sso = Boolean('__sso__'|0);
 
+    //force fullpage
     if (window.fruumSettings.container && window.fruumSettings.fullpage == undefined) {
       window.fruumSettings.fullpage = true;
     }
-
-    if (!window.fruumSettings.fullpage) {
-      //add css
-      (function() {
-        //this is replaced by server
-        var css = '__css__';
-        var style = document.createElement('style');
-        style.type = 'text/css';
-        if (style.styleSheet)
-          style.styleSheet.cssText = css;
-        else
-          style.appendChild(document.createTextNode(css));
-        (document.head || document.getElementsByTagName('head')[0]).appendChild(style);
-      })();
-
-      //add html
-      (function() {
-        //this is replaced by server
-        var html = '__html__';
-        var div = document.createElement('div');
-        div.innerHTML = html;
-        var frag = document.createDocumentFragment();
-        var child;
-        while(child = div.firstChild) {
-          frag.appendChild(child);
-        }
-        (document.body || document.getElementsByTagName('body')[0]).appendChild(frag);
-      })();
+    //force history
+    if (window.fruumSettings.fullpage && window.fruumSettings.history == undefined) {
+      window.fruumSettings.history = true;
     }
-    else {
-      //force history api on full page
-      if (window.fruumSettings.history == undefined)
-        window.fruumSettings.history = true;
-    }
-
     //force restore
     if (window.fruumSettings.history && window.fruumSettings.restore == undefined) {
       window.fruumSettings.restore = true;
     }
+
+    //add css
+    (function() {
+      //this is replaced by server
+      var css = '__css__';
+      var style = document.createElement('style');
+      style.type = 'text/css';
+      if (style.styleSheet)
+        style.styleSheet.cssText = css;
+      else
+        style.appendChild(document.createTextNode(css));
+      (document.head || document.getElementsByTagName('head')[0]).appendChild(style);
+    })();
+
+    //add html
+    (function() {
+      //this is replaced by server
+      var div = document.createElement('div');
+      div.innerHTML = preview_html;
+      var frag = document.createDocumentFragment();
+      var child;
+      while(child = div.firstChild) {
+        frag.appendChild(child);
+      }
+      var parent;
+      if (window.fruumSettings.container)
+        parent = document.querySelectorAll(window.fruumSettings.container)[0];
+      else
+        parent = (document.body || document.getElementsByTagName('body')[0]);
+      if (parent) parent.appendChild(frag);
+    })();
 
     var el_preview = document.getElementById('fruum-preview');
     var loaded = false;
@@ -206,7 +210,10 @@
     function launch_fruum() {
       if (!loaded) {
         loaded = true;
-        add_class(el_preview, 'fruum-clicked');
+        if (window.fruumSettings.container)
+          add_class(el_preview, 'fruum-fullpage');
+        else
+          add_class(el_preview, 'fruum-clicked');
         //this is replaced by server
         window.fruumSettings.fruum_host = '__url__';
         //append fruum

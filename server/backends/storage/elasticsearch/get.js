@@ -12,7 +12,7 @@ module.exports = function(options, client, self) {
 
   // -------------------------------- GET SINGLE--------------------------------
 
-  self.get = function(app_id, id, callback) {
+  self.get = function(app_id, id, callback, params) {
     client.get({
       index: self.toAppIndex(app_id),
       type: 'doc',
@@ -31,15 +31,17 @@ module.exports = function(options, client, self) {
 
   // ------------------------------ GET MULTIPLE -------------------------------
 
-  self.mget = function(app_id, id_array, callback) {
-    client.mget({
+  self.mget = function(app_id, id_array, callback, params) {
+    var data = {
       index: self.toAppIndex(app_id),
       type: 'doc',
       refresh: true,
-      body: {
-        ids: id_array
-      }
-    }, function(error, response) {
+      body: { ids: id_array }
+    };
+    if (params && params.skipfields && params.skipfields.length) {
+      data._sourceExclude = params.skipfields;
+    }
+    client.mget(data, function(error, response) {
       var values = {};
       if (error) {}
       else if (response && response.docs) {
@@ -55,32 +57,38 @@ module.exports = function(options, client, self) {
 
   // -------------------------------- CHILDREN ---------------------------------
 
-  self.children = function(app_id, document, callback) {
+  self.children = function(app_id, document, callback, params) {
     var order = 'desc';
     if (document.get('parent_type') == 'thread' ||
         document.get('parent_type') == 'artile') order = 'asc';
     var id = document.get('id');
-    client.search({
-      index: self.toAppIndex(app_id),
-      type: 'doc',
-      refresh: true,
-      body: {
-        from: 0,
-        size: options.elasticsearch.max_children,
-        sort: [{ created : {order : order}}],
-        query: {
-          filtered: {
-            filter: {
-              bool: {
-                must: [
-                  { term: { parent: id } },
-                  { term: { archived: false } }
-                ]
-              }
+    var body = {
+      from: 0,
+      size: options.elasticsearch.max_children,
+      sort: [{ created : {order : order}}],
+      query: {
+        filtered: {
+          filter: {
+            bool: {
+              must: [
+                { term: { parent: id } },
+                { term: { archived: false } }
+              ]
             }
           }
         }
       }
+    };
+    if (params && params.skipfields && params.skipfields.length) {
+      body._source = {
+        exclude: params.skipfields
+      }
+    }
+    client.search({
+      index: self.toAppIndex(app_id),
+      type: 'doc',
+      refresh: true,
+      body: body
     }, function(error, response) {
       var values = [];
       if(error) {}

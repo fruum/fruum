@@ -189,6 +189,18 @@ module.exports = function(options, instance, self) {
     });
   }
 
+  // ------------------------------- LIST USERS -------------------------------
+
+  self.list_users = function(payload) {
+    storage.match_users(payload.app_id, {}, function(list) {
+      _.each(list, function(user) {
+        console.log(user.toLog(true));
+      });
+      console.log('Total users: ' + list.length);
+      self.success(payload);
+    });
+  }
+
   // ------------------------------- PROPERTIES -------------------------------
 
   self.set_app_property = function(payload) {

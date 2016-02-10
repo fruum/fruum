@@ -28,6 +28,9 @@ module.exports = {
   gc_users: function (source, q) {
     return source.admin == false && !(source.watch || []).length && source.last_login <= q;
   },
+  gc_onboard: function (source, q) {
+    return source.last_login <= q;
+  },
   match_users: function(source, q) {
     return _.isMatch(source, q);
   },

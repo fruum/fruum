@@ -52,22 +52,35 @@ module.exports = function(options, client, self) {
       document.get('header').substr(0, 64).toLowerCase().replace(/\[(.*?)\]/g, '')
     ), 0, callback);
   }
-  //count search results based on qsl
-  self.count = function(app_id, body_qsl, callback) {
-    client.count({
-      index: self.toAppIndex(app_id),
-      type: 'doc',
-      refresh: true,
-      body: body_qsl
+  //refresh index
+  self.refreshIndex = function(app_id, callback) {
+    client.indices.refresh({
+      index: self.toAppIndex(app_id)
     }, function(error, response) {
       if (error) {
-        logger.error(app_id, '_count', error);
-        callback(0);
-        return;
+        logger.error(app_id, '_refreshIndex', error);
       }
-      else {
-        callback(response.count || 0);
-      }
+      callback && callback();
+    });
+  }
+  //count search results based on qsl
+  self.count = function(app_id, body_qsl, callback) {
+    self.refreshIndex(app_id, function() {
+      client.count({
+        index: self.toAppIndex(app_id),
+        type: 'doc',
+        refresh: true,
+        body: body_qsl
+      }, function(error, response) {
+        if (error) {
+          logger.error(app_id, '_count', error);
+          callback(0);
+          return;
+        }
+        else {
+          callback(response.count || 0);
+        }
+      });
     });
   }
   //bulk operations

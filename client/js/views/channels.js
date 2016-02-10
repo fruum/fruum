@@ -33,10 +33,12 @@ Channels view
         'click @ui.edit': 'onEdit'
       },
       initialize: function(options) {
-        this.template_helpers = options;
+        this.options = options;
       },
       templateHelpers: function() {
-        return this.template_helpers;
+        return {
+          online: this.options.online
+        }
       },
       onNavigate: function(event) {
         if (event) {

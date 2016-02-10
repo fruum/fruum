@@ -43,7 +43,7 @@ module.exports = function(options, instance, self) {
         reaction: reaction,
         user: user
       };
-      plugins.react(plugin_payload, function(err, plugin_payload) {
+      plugins.beforeReact(plugin_payload, function(err, plugin_payload) {
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:react', document.toJSON());
@@ -55,7 +55,10 @@ module.exports = function(options, instance, self) {
         storage.react(app_id, document, user, reaction, function() {
           socket.emit('fruum:react', document.toJSON());
           self.broadcast(user, document);
-          self.success(payload);
+          plugin_payload.document = document;
+          plugins.afterReact(plugin_payload, function() {
+            self.success(payload);
+          });
         });
       });
     });

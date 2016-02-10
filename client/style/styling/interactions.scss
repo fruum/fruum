@@ -107,6 +107,10 @@ $pointer-dimensions: basegrid-mod( 12px );
   margin: 0;
   width: 100%;
   height: 100%;
+  .fruum-object-divider {
+    margin-top: 0.875em;
+    margin-bottom: 1em;
+  }
 }
 
 #fruum .fruum-preview-container,
@@ -173,6 +177,9 @@ $pointer-dimensions: basegrid-mod( 12px );
     .fruum-secondary-data:only-child {
       // font-size of small-font
       line-height: $small-font-basegrid*4;
+    }
+    .fruum-secondary-data.fruum-helptext {
+      opacity: 0.45;
     }
     .fruum-right-action {
       float: right;
@@ -307,8 +314,10 @@ $pointer-dimensions: basegrid-mod( 12px );
   .fruum-account-settings {
     position: relative;
     display: block;
+    float: right;
     max-width: 100%;
     text-align: right;
+    margin-left: 1em;
   }
 
   .fruum-badge {

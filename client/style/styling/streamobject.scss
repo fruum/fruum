@@ -9,11 +9,13 @@
     1.2 Primary data
     1.3 Secondary data
     1.4 Object card
+    1.5 Object counter
   2. Avatar basic styling
   3. Base elements customizations
   4. Managing actions
     4.1 Manage section
     4.2 Item interactions
+    4.3 Item micro-animations
 
 */
 
@@ -132,6 +134,33 @@
   text-transform: uppercase;
   color: $background-helper-base-color;
   background-color: $muted-text-color;
+}
+
+// 1.5 Object counter
+#fruum .fruum-counter-container {
+  display: inline-block;
+  font-size: $responsive-small-font;
+  color: $disabled-text-color;
+  padding: $small-font-basegrid*0.5 0;
+  line-height: 1em;
+  font-weight: $important-font-weight;
+}
+
+#fruum .fruum-counter-updated {
+  color: $forum-base-color;
+}
+
+#fruum .fruum-base-object:hover .fruum-counter-container {
+  background-color: fade-out( darken( $background-helper-base-color, 5% ), 0.2 );
+  padding-left: $small-font-basegrid*0.5;
+  padding-right: $small-font-basegrid*0.5;
+  margin-left: -0.5*$small-font-basegrid;
+  &.fruum-counter-newcontent {
+    opacity: 1;
+  }
+  .fruum-counter-label {
+    opacity: 1;
+  }
 }
 
 
@@ -298,15 +327,16 @@
   line-height: 1em;
   font-size: $responsive-big-font;
   margin-top: $big-font-basegrid;
-  span:not(:hover),
   a:not(:hover) {
     opacity: 0.3;
+    & > .fruum-icon {
+      opacity: 0.3;
+    }
   }
   a:not(:first-child) {
     margin-left: $big-font-basegrid*2;
   }
   a.fruum-item-active:not(:hover):not(.fruum-action-pill) {
-    color: $base-text-color;
     opacity: 0.5;
   }
   .fruum-maintain-block,
@@ -319,23 +349,32 @@
     }
   }
   .fruum-action-pill {
-    display: inline-block;
+    position: relative;
+    display: block;
+    float: left;
     min-width: 4.2em;
     color: $base-text-color;
     margin-right: $big-font-basegrid;
     font-size: 50%;
+    text-decoration: none;
+    height: 100%;
     &:not(:hover) {
       opacity: 0.4;
     }
+    & > .fruum-icon:empty:before,
     &.fruum-icon:before {
       font-size: 250%;
+      line-height: 0.4;
     }
+    & > .fruum-icon:empty:before {
+      margin-right: 0.2em;
+    }
+  }
+  a {
+    color: $base-text-color;
     &.fruum-item-active {
       color: $forum-base-color;
     }
-  }
-  a.fruum-icon{
-    color: $base-text-color;
   }
 }
 

@@ -151,7 +151,11 @@ $enormous-font-basegrid: relative-ems( $base-grid, $responsive-enormous-font );
   border: none;
   font-weight: $important-font-weight;
   color: $main-action-color;
-  background-color: darken( $background-helper-base-color, 2% );
+  @if ( lightness($background-helper-base-color) > 10 ) {
+    background-color: darken( $background-helper-base-color, 6% );
+  } @else {
+    background-color: lighten( $background-helper-base-color, 6% );
+  }
   transition: background-color 0.2s;
   -moz-transition: background-color 0.2s;
   -webkit-transition: background-color 0.2s;

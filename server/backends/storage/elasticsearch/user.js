@@ -167,6 +167,7 @@ module.exports = function(options, client, self) {
   // --------------------------------- SEARCH ----------------------------------
 
   self.search_users = function(app_id, q, callback) {
+    q = '*' + (q || '').replace('@', '') + '*';
     client.search({
       index: self.toAppIndex(app_id),
       type: 'user',
@@ -175,10 +176,9 @@ module.exports = function(options, client, self) {
         from: 0,
         size: 20,
         query: {
-          match_phrase_prefix: {
-            username: {
-              query: q
-            }
+          query_string: {
+            query: q,
+            fields: ['username', 'displayname']
           }
         }
       }

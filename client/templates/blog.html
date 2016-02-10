@@ -1,0 +1,62 @@
+<!-- blog template -->
+<script type="text/template" id="fruum-template-blog">
+  <div data-docid="<%- id %>" class="fruum-base-object fruum-link fruum-interactive-element fruum-js-entry-default fruum-js-navigate <% if (is_new) print('fruum-js-has-update'); %>">
+
+    <div class="fruum-object-main-data<% if (Fruum.user.admin || (Fruum.user.id == user_id && !Fruum.user.anonymous)) { %> fruum-object-manage-data<% } %>">
+      <div class="fruum-stream-typography">
+        <h4>
+          <a href="<%- Fruum.utils.permaLink(id) %>" class="fruum-link">
+            <% if (!visible) { %>
+            <span class="fruum-icon fruum-icon-invisible" data-fruumtipsy-center="Topic is private"></span>
+            <% } %>
+
+            <% if (locked) { %>
+            <span class="fruum-icon fruum-icon-locked" data-fruumtipsy-center="Topic is locked"></span>
+            <% } %>
+
+            <% if (sticky) { %>
+            <span class="fruum-icon fruum-icon-sticky" data-fruumtipsy-center="Sticky topic"></span>
+            <% } %>
+            <% if (!children_count && is_new) { %>
+            <span class="fruum-icon fruum-icon-dot fruum-counter-updated fruum-anim-popup"></span>
+            <% } %>
+            <%= Fruum.utils.printHeader(header) %>
+          </a>
+          <div class="fruum-tags-container">
+            <% _.each(tags, function(tag) { %><a href="javascript:;" class="fruum-tag" data-initials="<%- tag.toUpperCase().charAt(0) %>" data-search-shortcut="#<%- tag %>"><%- tag %></a><% }); %>
+          </div>
+        </h4>
+      </div>
+    </div>
+    <div class="fruum-object-additional-data">
+      <span class="fruum-primary-data">
+        <%- user_displayname || user_username %> <%- Fruum.libs.moment(parseInt(created)).fromNow() %>
+      </span>
+    </div>
+    <div class="fruum-object-main-data fruum-secondary-data">
+      <%= Fruum.utils.printSummary(body) %>
+    </div>
+    <div class="fruum-object-additional-data">
+      <span class="fruum-secondary-data">
+        <% if (children_count) { %>
+          <% if (is_new) { %>
+        <span class="fruum-icon fruum-icon-dot fruum-counter-updated"></span>
+          <% } %>
+        <span class="fruum-link">
+          <%- children_count %> comments, last one <%- Fruum.libs.moment(parseInt(updated)).fromNow() %>
+        </span>
+        <% } %>
+      </span>
+    </div>
+    <% if (Fruum.user.admin) { %>
+    <div class="fruum-manage fruum-interaction-item fruum-js-manage">
+      <a href="javascript:;" class="fruum-link fruum-manage-close fruum-icon fruum-icon-close"></a>
+      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit article"></a>
+      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-left" data-action="move" data-fruumtipsy-right="Move to category"></a>
+      <a href="javascript:;" class="fruum-link fruum-link-negative fruum-icon fruum-icon-delete" data-action="delete" data-fruumtipsy-right="Delete article"></a>
+    </div>
+    <% } else if (Fruum.user.id == user_id && !Fruum.user.anonymous) { %>
+    <a href="javascript:;" class="fruum-manage fruum-link fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit post"></a>>
+    <% } %>
+  </div>
+</script>

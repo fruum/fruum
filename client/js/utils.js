@@ -81,6 +81,30 @@ Utilities
       return re.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
     }
 
+    // --------------------------------- VISITS --------------------------------
+
+    var visit_date = {}, visit_updates = {};
+    Fruum.utils.resetVisits = function() {
+      visit_date = {};
+      visit_updates = {};
+    }
+    Fruum.utils.addVisitUpdate = function(view_id) {
+      visit_updates[view_id] = true;
+    }
+    Fruum.utils.setVisitDate = function(view_id) {
+      delete visit_updates[view_id];
+      if (Fruum.user.anonymous) return;
+      visit_date[view_id] = Date.now() - (Fruum.user.time_diff || 0);
+    }
+    Fruum.utils.isNewVisit = function(view_id, timestamp) {
+      return visit_updates[view_id] ||
+             (!Fruum.user.anonymous &&
+             (timestamp > (visit_date[view_id] || Fruum.user.last_visit)) &&
+             (timestamp < Fruum.user.server_now));
+    }
+
+    // --------------------------------- VIEWS ---------------------------------
+
     //Make Marionette itemviews work without the parent div
     Fruum.utils.marionette_itemview_without_tag = function(view) {
       return view.extend({
@@ -103,6 +127,9 @@ Utilities
         }
       });
     }
+
+    // ------------------------------- DISPLAY ---------------------------------
+
     //Check if string is url
     Fruum.utils.isLink = function(url) {
       url = (url || '').trim().toLowerCase();
@@ -148,31 +175,30 @@ Utilities
       var m = (text || '').match(/\B:([\-+\w]*)$/);
       if (m && m[0].length > 1) return m[0];
     }
-    //analyze url
-    Fruum.utils.getLocation = function(href) {
-      var match = href.match(/^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)(\/[^?#]*)(\?[^#]*|)(#.*|)$/);
-      if (match) {
-        return {
-          protocol: match[1],
-          host: match[2],
-          hostname: match[3],
-          port: match[4],
-          pathname: match[5],
-          search: match[6],
-          hash: match[7]
-        }
-      }
-      else {
-        return {
-          protocol: '',
-          host: '',
-          hostname: '',
-          port: '',
-          pathname: '',
-          search: '',
-          hash: ''
-        }
-      }
+    //Persona processor
+    Fruum.utils.personaSays = function(payload) {
+      //build all available responses
+      var responses = [];
+      _.each(Fruum.processors.persona, function(persona) {
+        var response = persona(payload);
+        if (response) responses.push(response);
+      });
+      if (!responses.length) responses.push({});
+      //pick a random one
+      var final = responses[_.random(0, responses.length - 1)];
+      //add failsafes
+      final.avatar_url = final.avatar_url || '';
+      final.avatar_initials = final.avatar_initials || 'FRB';
+      final.name = final.name || 'Fruum bot';
+      final.text = final.text || 'Least said sooner mended. Something went really wrong!';
+      final.topic = final.topic || '';
+      //do some variable processing
+      var username = Fruum.user.displayname || final.default_username || 'user';
+      final.text = final.text.
+        replace(/<username>/g, username).
+        replace(/<categoryname>/g, payload.categoryname || 'category').
+        replace(/<search>/g, payload.search || '');
+      return final;
     }
     //Markdown display
     Fruum.utils.print = function(post, attachments) {
@@ -207,6 +233,34 @@ Utilities
       if (count < 1000) return '' + count;
       return (count / 1000).toFixed(1) + 'K';
     }
+    Fruum.utils.printReactionTooltip = function(action, reactions) {
+      if (!reactions.length) return '';
+      var users = _.without(reactions.slice(0), Fruum.user.username),
+          ret = '', has_you = false;
+      if (users.length != reactions.length) {
+        has_you = true;
+        users.unshift('you');
+      }
+      if (users.length > 5) {
+        for (var i = 0; i < 4; ++i) {
+          ret += users[i] + ', ';
+        }
+        ret += users[4] + ' and ' + (users.length - 5) + ' more';
+      }
+      else if (users.length > 1) {
+        for (var i = 0; i < users.length - 2; ++i) {
+          ret += users[i] + ', ';
+        }
+        ret += users[users.length - 2] + ' and ' + users[users.length - 1];
+      }
+      else {
+        ret += users[0];
+      }
+      if (has_you) {
+        ret += '. Click to revoke';
+      }
+      return action + ' by ' + ret;
+    }
     //if message contains attachment
     Fruum.utils.usesAttachment = function(message, attachment) {
       return Boolean(message.match(new RegExp(Fruum.utils.escape_regex('[[' + attachment.type + ':' + attachment.name + ']]'), 'g')));
@@ -231,6 +285,35 @@ Utilities
       text = Fruum.utils.printSummary(text);
       //do some highlighting
       return text.replace(/\{\{\{(.+?)\}\}\}/g, '<span class="highlight">$1</span>');
+    }
+
+    // ------------------------------- GENERIC ---------------------------------
+
+    //analyze url
+    Fruum.utils.getLocation = function(href) {
+      var match = href.match(/^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)(\/[^?#]*)(\?[^#]*|)(#.*|)$/);
+      if (match) {
+        return {
+          protocol: match[1],
+          host: match[2],
+          hostname: match[3],
+          port: match[4],
+          pathname: match[5],
+          search: match[6],
+          hash: match[7]
+        }
+      }
+      else {
+        return {
+          protocol: '',
+          host: '',
+          hostname: '',
+          port: '',
+          pathname: '',
+          search: '',
+          hash: ''
+        }
+      }
     }
     //If computer is Mac or IOS
     Fruum.utils.isMacLike = function() {

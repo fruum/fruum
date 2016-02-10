@@ -1,0 +1,142 @@
+/*
+
+  Onboarding help classes
+
+  Contents
+  1. Custom onboard colors
+  2. Item for onboarding
+  3. Onboarding object
+  4. Onboarding typography
+
+*/
+
+
+
+// 1. Custom onboard colors
+$onboard-text: desaturate( invert( $onboard-bg ), 80% );
+@if ( lightness( $onboard-text ) > 8*lightness( $onboard-bg ) ) {
+  $onboard-text: darken( $onboard-text, 15% );
+}
+$border-color: darken( desaturate( $onboard-bg, 70% ), 40% );
+@if ( lightness( $onboard-bg ) < 20 ) {
+  $border-color: lighten( desaturate( $onboard-bg, 70% ), 40% );
+}
+
+
+// 2. Item for onboarding
+
+// make data-onboard attribute containing element have some actual dimensions
+#fruum *[data-onboard]:not([class]) {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+}
+
+
+
+// 3. Onboarding object
+
+#fruum .fruum-onboarding {
+  position: absolute;
+  left: $fruum-whitespace;
+  right: $fruum-whitespace;
+  margin-top: 2em;
+  margin-bottom: 2em;
+  z-index: 4;
+  background-color: $onboard-bg;
+  border: 1px solid $border-color;
+  padding: $base-grid*0.5 $base-grid;
+  @include block-object-default();
+  $background-faded: fade-out( desaturate( invert( $background-helper-base-color ), 20% ), 0.6 );
+  box-shadow: 0 0 1em $background-faded;
+  -moz-box-shadow: 0 0 1em $background-faded;
+  -webkit-box-shadow: 0 0 1em $background-faded;
+  &:after{
+    content: '';
+    display: table;
+    clear: both;
+  }
+  > .fruum-onboarding-arrowtop {
+    position: absolute;
+    width: 0;
+    height: 0;
+    top: -1.4em;
+    margin-left: -1*$fruum-whitespace - 0.9em;
+    &:before,
+    &:after {
+      content: '';
+      position: absolute;
+      display: block;
+      width: 0;
+      height: 0;
+      left: 0;
+      top: -1px;
+      z-index: 0;
+      border-bottom: 1.4em solid $border-color;
+      border-left: 0.9em dotted transparent;
+      border-right: 0.9em dotted transparent;
+    }
+    &:after {
+      top: 0;
+      z-index: 2;
+      border-bottom-color: $onboard-bg;
+    }
+  }
+  > .fruum-onboarding-arrowbottom {
+    position: absolute;
+    display: block;
+    width: 0;
+    height: 0;
+    bottom: -1.4em;
+    margin-left: -1*$fruum-whitespace - 0.9em;
+    &:before,
+    &:after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 0;
+      left: 0;
+      bottom: -1px;
+      z-index: 0;
+      border-top: 1.4em solid $border-color;
+      border-left: 0.9em dotted transparent;
+      border-right: 0.9em dotted transparent;
+    }
+    &:after {
+      bottom: 0;
+      z-index: 2;
+      border-top-color: $onboard-bg;
+    }
+  }
+}
+
+
+
+// 4. Onboarding typography
+
+#fruum .fruum-onboarding-message {
+  position: relative;
+  display: block;
+  color: $onboard-text;
+  font-size: $responsive-small-font;
+  font-weight: $base-font-weight;
+  line-height: $small-font-basegrid*3;
+  strong,b {
+    font-weight: $important-font-weight;
+  }
+  strong {
+    color: darken( $onboard-text, 25% );
+    @if( lightness( $onboard-text ) > 60 ) {
+      color: lighten( $onboard-text, 25% );
+    }
+  }
+  a {
+    font-weight: $important-font-weight;
+    color: $onboard-cta;
+    text-decoration: none;
+    &:hover {
+      color: lighten( $onboard-cta, 10% );
+      text-decoration: underline;
+    }
+  }
+}

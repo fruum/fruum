@@ -4,19 +4,163 @@
 <script type="text/template" id="fruum-template-interactions-help">
   <div class="fruum-helper-container fruum-js-help" style="display: none;">
     <div class="fruum-helper-close fruum-icon fruum-icon-close fruum-link fruum-link-secondary" data-action="help"></div>
-    <% if (Fruum.utils.isDesktop()) { %>
-    <div class="fruum-helper-element">
-      <b class="fruum-helper-shortcut"><%- Fruum.utils.shortcutModifier('b') %></b>
-      <b>Bold text</b>
+    <div class="fruum-helper-tablist">
+      <% if (Fruum.utils.isDesktop()) { %>
+      <div class="fruum-helper-tab" data-help-tab="shortcuts">Shortcuts</div>
+      <% } %>
+      <div class="fruum-helper-tab" data-help-tab="linksandimages">Links & images</div>
+      <div class="fruum-helper-tab" data-help-tab="text">Text</div>
+      <div class="fruum-helper-tab" data-help-tab="lists">Lists</div>
+      <div class="fruum-helper-tab" data-help-tab="tables">Tables</div>
     </div>
-    <div class="fruum-helper-element">
-      <b class="fruum-helper-shortcut"><%- Fruum.utils.shortcutModifier('i') %></b>
-      <i>Italic text</i>
+    <% if (Fruum.utils.isDesktop()) { %>
+    <div class="fruum-nodisplay" data-help-content="shortcuts">
+      <div class="fruum-helper-element">
+        <b class="fruum-helper-shortcut"><%- Fruum.utils.shortcutModifier('enter') %></b>
+        Submit reply
+      </div>
+      <div class="fruum-helper-element">
+        <b class="fruum-helper-shortcut"><%- Fruum.utils.shortcutModifier('b') %></b>
+        <b>Bold text</b>
+      </div>
+      <div class="fruum-helper-element">
+        <b class="fruum-helper-shortcut"><%- Fruum.utils.shortcutModifier('i') %></b>
+        <i>Italic text</i>
+      </div>
+      <div class="fruum-helper-element">&nbsp;</div>
+      <div class="fruum-helper-element">&nbsp;</div>
+      <div class="fruum-helper-element">&nbsp;</div>
+      <div class="fruum-helper-element">&nbsp;</div>
+      <div class="fruum-helper-element">&nbsp;</div>
+      <div class="fruum-helper-element">&nbsp;</div>
     </div>
     <% } %>
-    <div class="fruum-helper-element">&nbsp;</div>
+    <div class="fruum-nodisplay" data-help-content="text">
+      <div class="fruum-helper-element">
+        <b class="fruum-helper-shortcut">Headers</b>
+        <span class="fruum-helper-explanation">
+          Type '# Head title' for heading1, '## Head title' for heading2 etc.
+        </span>
+      </div>
+      <div class="fruum-helper-element">
+        <b class="fruum-helper-shortcut">Paragraph</b>
+        <span class="fruum-helper-explanation">
+          Simply write some text and then leave a blank line
+        </span>
+      </div>
+      <div class="fruum-helper-element">
+        <b class="fruum-helper-shortcut">Bold text</b>
+        <span class="fruum-helper-explanation">
+          **Bold text**
+        </span>
+      </div>
+      <div class="fruum-helper-element">
+        <b class="fruum-helper-shortcut">Italic text</b>
+        <span class="fruum-helper-explanation">
+          *Italic text*
+        </span>
+      </div>
+      <div class="fruum-helper-element">
+        <b class="fruum-helper-shortcut">Strike through</b>
+        <span class="fruum-helper-explanation">
+          ~~Strikethrough text~~
+        </span>
+      </div>
+      <div class="fruum-helper-element">
+        <b class="fruum-helper-shortcut">Horizontal line</b>
+        <span class="fruum-helper-explanation">
+          type '___' or '---' or '***' will add an &lt;hr/> html element
+        </span>
+      </div>
+      <div class="fruum-helper-element">
+        <b class="fruum-helper-shortcut">Blockquote</b>
+        <span class="fruum-helper-explanation">
+          Type a '> ' to start writing inside your blockquote
+        </span>
+      </div>
+      <div class="fruum-helper-element">
+        <b class="fruum-helper-shortcut">Inline code</b>
+        <span class="fruum-helper-explanation">
+          ` place code here `
+        </span>
+      </div>
+      <div class="fruum-helper-element">
+        <b class="fruum-helper-shortcut">Block code</b>
+        <span class="fruum-helper-explanation">
+          ``` place code here ```
+        </span>
+      </div>
+    </div>
+    <div class="fruum-nodisplay" data-help-content="linksandimages">
+      <div class="fruum-helper-element">
+        <b class="fruum-helper-shortcut">Link on text</b>
+        <span class="fruum-helper-explanation">
+          type '[link name](http://link.url)'
+        </span>
+      </div>
+      <div class="fruum-helper-element">
+        <b class="fruum-helper-shortcut">Add image</b>
+        <span class="fruum-helper-explanation">
+          type '![image alt text](http://image.url)'
+        </span>
+      </div>
+      <div class="fruum-helper-element">&nbsp;</div>
+      <div class="fruum-helper-element">&nbsp;</div>
+      <div class="fruum-helper-element">&nbsp;</div>
+      <div class="fruum-helper-element">&nbsp;</div>
+      <div class="fruum-helper-element">&nbsp;</div>
+      <div class="fruum-helper-element">&nbsp;</div>
+      <div class="fruum-helper-element">&nbsp;</div>
+    </div>
+    <div class="fruum-nodisplay" data-help-content="lists">
+      <div class="fruum-helper-element">
+        <b class="fruum-helper-shortcut">Unordered list</b>
+        <span class="fruum-helper-explanation">
+          type '* ' or '- ' or '+ ' before each list element.
+        </span>
+      </div>
+      <div class="fruum-helper-element">
+        <b class="fruum-helper-shortcut">Ordered list</b>
+        <span class="fruum-helper-explanation">
+          type '1. 'for first element, '2. ' for second, etc.
+        </span>
+      </div>
+      <div class="fruum-helper-element">&nbsp;</div>
+      <div class="fruum-helper-element">
+        <i>You can have indended lists on list elements by adding spaces on the start of a new line.</i>
+      </div>
+      <div class="fruum-helper-element">&nbsp;</div>
+      <div class="fruum-helper-element">&nbsp;</div>
+      <div class="fruum-helper-element">&nbsp;</div>
+      <div class="fruum-helper-element">&nbsp;</div>
+      <div class="fruum-helper-element">&nbsp;</div>
+    </div>
+    <div class="fruum-nodisplay" data-help-content="tables">
+      <div class="fruum-helper-element">
+        <b class="fruum-helper-shortcut">Table</b>
+        <span class="fruum-helper-explanation">
+          Tables are created by adding pipes as dividers between each cell, and by adding a line of dashes (also separated by bars) beneath the header.
+        </span>
+      </div>
+      <div class="fruum-helper-element">
+        <b class="fruum-helper-shortcut">Table alignment</b>
+        <span class="fruum-helper-explanation">
+          Align text to right by adding a ':' on the right side of the dashes. To center align add ':' on both side of dashes, ':-----:'
+        </span>
+      </div>
+      <div class="fruum-helper-element">&nbsp;</div>
+      <div class="fruum-helper-element">
+        <b><i>Example</i></b><br>
+        | Option | Description |<br>
+        | ------ | ----------- |<br>
+        | one    | The first cell here |<br>
+        | two    | The second cell here |<br>
+        | three  | The third cell here |<br>
+      </div>
+      <div class="fruum-helper-element">&nbsp;</div>
+    </div>
     <div class="fruum-helper-element">
-      For text formatting we use the <a href="http://www.wikiwand.com/en/Markdown" class="fruum-link" target="_blank">Markdown format</a>. Please check it out to see all supported styling.
+      All posts are markdown formatted. <a href="http://daringfireball.net/projects/markdown/" class="fruum-link" target="_blank">Click here for an extensive markdown guide</a>.
     </div>
   </div>
 </script>
@@ -24,7 +168,7 @@
 <!-- User avatar -->
 <script type="text/template" id="fruum-template-interactions-avatar">
   <div class="fruum-user-account">
-    <span class="fruum-link <% if (!Fruum.userUtils.countNotifications()) { %>fruum-link-disabled<% }%> fruum-account-settings fruum-js-avatar-container" <% if (Fruum.userUtils.countNotifications()) { %>data-fruumtipsy-right="Updates on topics I watch"<% } %> data-fruumtipsy-original="Updates on topics I watch">
+    <span class="fruum-link <% if (!Fruum.userUtils.countNotifications()) { %>fruum-link-disabled<% } else { %>fruum-anim-pulsing<% } %> fruum-account-settings fruum-js-avatar-container" <% if (Fruum.userUtils.countNotifications()) { %>data-fruumtipsy-right="Updates on topics I watch"<% } %> data-fruumtipsy-original="Updates on topics I watch">
       <% if (Fruum.utils.isLink(Fruum.user.avatar)) { %>
       <img src="<%= Fruum.user.avatar %>" class="fruum-avatar-icon fruum-js-show-notifications" width="56"/>
       <% } else { %>
@@ -40,6 +184,9 @@
       <span class="fruum-badge fruum-js-show-notifications" data-field="notifications" style="display:none;"></span>
       <% } %>
     </span>
+    <% if (add_category) { %>
+    <span class="fruum-helper-action fruum-icon fruum-icon-category-add" data-action="add_category" data-fruumtipsy-right="Add a category" data-onboard="add_category"></span>
+    <% } %>
   </div>
 </script>
 
@@ -57,6 +204,15 @@
   </div>
 </script>
 
+<!-- Messages -->
+<script type="text/template" id="fruum-template-interactions-updates">
+  <div class="fruum-interaction-messages">
+    <div class="fruum-messages fruum-message-info fruum-js-updates-drawer" style="display: none;">
+      <b class="fruum-icon fruum-icon-dot fruum-counter-updated"><span class="fruum-js-updates-number"></span> more updates</b> below, κeep scrolling to view.
+    </div>
+  </div>
+</script>
+
 <!-- Search mode -->
 <script type="text/template" id="fruum-template-interactions-searching">
   <div class="fruum-interactions-footer">
@@ -66,7 +222,7 @@
       <button class="fruum-secondary-button" data-action="add_search">Store search</button>
     </div>
     <% } %>
-    <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')() %>
+    <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')({ add_category: false }) %>
   </div>
 </script>
 
@@ -127,17 +283,14 @@
     <div class="fruum-interactions-footer">
       <div class="fruum-interactions-buttons fruum-interactions-group">
         <% if (editing.id) { %>
-        <button class="fruum-secondary-button" data-action="post">Edit</button>
+        <button class="fruum-secondary-button" data-action="post">Edit category</button>
         <% } else { %>
-        <button class="fruum-secondary-button" data-action="post">Add</button>
+        <button class="fruum-secondary-button" data-action="post">Add category</button>
         <% } %>
         <a class="fruum-secondary-button fruum-link-negative" data-action="cancel">cancel</a>
       </div>
       <div class="fruum-user-account">
-        <span
-          class="fruum-helper-action"
-          data-action="help"
-        >?</span>
+        <span class="fruum-helper-action" data-action="help">?</span>
       </div>
     </div>
   </form>
@@ -186,13 +339,10 @@
         <a class="fruum-secondary-button fruum-link-negative" data-action="cancel">cancel</a>
       </div>
       <div class="fruum-user-account">
-        <span
-          class="fruum-helper-action"
-          data-action="help"
-        >?</span>
+        <span class="fruum-helper-action" data-action="help" data-onboard="help">?</span>
         <span class="fruum-helper-action fruum-icon fruum-icon-emoji" data-action="emojipanel"></span>
-        <span class="fruum-helper-action fruum-icon fruum-icon-camera" data-action="attachments"></span>
-        <span class="fruum-helper-action fruum-helper-text" data-action="preview">preview</span>
+        <span class="fruum-helper-action fruum-icon fruum-icon-camera" data-action="attachments" data-onboard="attachments"></span>
+        <span class="fruum-helper-action fruum-helper-text" data-action="preview" data-onboard="preview">preview</span>
       </div>
     </div>
   </form>
@@ -241,13 +391,10 @@
         <a class="fruum-secondary-button fruum-link-negative" data-action="cancel">cancel</a>
       </div>
       <div class="fruum-user-account">
-        <span
-          class="fruum-helper-action"
-          data-action="help"
-        >?</span>
+        <span class="fruum-helper-action" data-action="help" data-onboard="help">?</span>
         <span class="fruum-helper-action fruum-icon fruum-icon-emoji" data-action="emojipanel"></span>
-        <span class="fruum-helper-action fruum-icon fruum-icon-camera" data-action="attachments"></span>
-        <span class="fruum-helper-action fruum-helper-text" data-action="preview">preview</span>
+        <span class="fruum-helper-action fruum-icon fruum-icon-camera" data-action="attachments" data-onboard="attachments"></span>
+        <span class="fruum-helper-action fruum-helper-text" data-action="preview" data-onboard="preview">preview</span>
       </div>
     </div>
   </form>
@@ -296,13 +443,10 @@
         <a class="fruum-secondary-button fruum-link-negative" data-action="cancel">cancel</a>
       </div>
       <div class="fruum-user-account">
-        <span
-          class="fruum-helper-action"
-          data-action="help"
-        >?</span>
+        <span class="fruum-helper-action" data-action="help" data-onboard="help">?</span>
         <span class="fruum-helper-action fruum-icon fruum-icon-emoji" data-action="emojipanel"></span>
-        <span class="fruum-helper-action fruum-icon fruum-icon-camera" data-action="attachments"></span>
-        <span class="fruum-helper-action fruum-helper-text" data-action="preview">preview</span>
+        <span class="fruum-helper-action fruum-icon fruum-icon-camera" data-action="attachments" data-onboard="attachments"></span>
+        <span class="fruum-helper-action fruum-helper-text" data-action="preview" data-onboard="preview">preview</span>
       </div>
     </div>
   </form>
@@ -333,10 +477,7 @@
         <a class="fruum-secondary-button fruum-link-negative" data-action="cancel">cancel</a>
       </div>
       <div class="fruum-user-account">
-        <span
-          class="fruum-helper-action"
-          data-action="help"
-        >?</span>
+        <span class="fruum-helper-action" data-action="help">?</span>
       </div>
     </div>
   </form>
@@ -365,10 +506,7 @@
         <span class="fruum-secondary-data">press <b>Enter</b> to reply</span>
       </div>
       <div class="fruum-user-account">
-        <span
-          class="fruum-helper-action"
-          data-action="help"
-        >?</span>
+        <span class="fruum-helper-action" data-action="help">?</span>
         <span class="fruum-helper-action fruum-icon fruum-icon-emoji" data-action="emojipanel"></span>
       </div>
     </div>
@@ -400,13 +538,10 @@
         <a class="fruum-secondary-button fruum-link-negative" data-action="cancel">cancel</a>
       </div>
       <div class="fruum-user-account">
-        <span
-          class="fruum-helper-action"
-          data-action="help"
-        >?</span>
+        <span class="fruum-helper-action" data-action="help" data-onboard="help">?</span>
         <span class="fruum-helper-action fruum-icon fruum-icon-emoji" data-action="emojipanel"></span>
-        <span class="fruum-helper-action fruum-icon fruum-icon-camera" data-action="attachments"></span>
-        <span class="fruum-helper-action fruum-helper-text" data-action="preview">preview</span>
+        <span class="fruum-helper-action fruum-icon fruum-icon-camera" data-action="attachments" data-onboard="attachments"></span>
+        <span class="fruum-helper-action fruum-helper-text" data-action="preview" data-onboard="preview">preview</span>
       </div>
     </div>
   </form>
@@ -416,6 +551,7 @@
 <!-- Viewing thread -->
 <script type="text/template" id="fruum-template-interactions-view-thread">
   <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-messages')() %>
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-updates')() %>
   <div class="fruum-interactions-stream-update" style="display:none;"><!-- template --></div>
   <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
   <form action="" class="fruum-interactions-form">
@@ -426,10 +562,13 @@
       <% } %>
     <% } else { %>
       <div class="fruum-interactions-buttons">
-        <button class="fruum-main-button" data-action="add_post">reply</button>
+        <button class="fruum-main-button fruum-js-default-action" data-action="add_post" data-onboard="add_stream">reply</button>
+        <% if (Fruum.utils.isDesktop()) { %>
+        <span class="fruum-secondary-data fruum-helptext">or press <b>Enter</b> to start writing</span>
+        <% } %>
       </div>
     <% } %>
-      <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')() %>
+      <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')({ add_category: false }) %>
     </div>
   </form>
 </script>
@@ -440,7 +579,7 @@
   <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
   <form action="" class="fruum-interactions-form">
     <div class="fruum-interactions-footer">
-      <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')() %>
+      <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')({ add_category: false }) %>
     </div>
   </form>
 </script>
@@ -448,25 +587,24 @@
 <!-- Admin actions -->
 <script type="text/template" id="fruum-template-interactions-admin">
   <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-messages')() %>
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-updates')() %>
   <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
   <form action="" class="fruum-interactions-form">
     <div class="fruum-interactions-footer">
       <div class="fruum-interactions-buttons">
 
-        <button class="fruum-main-button" data-action="add_category">Category</button>
-
         <% if (viewing.usage == 0) { %>
-        <button class="fruum-main-button" data-action="add_thread">Thread</button>
+        <button class="fruum-main-button fruum-cta-button fruum-js-default-action" data-action="add_thread" data-onboard="add_stream">Add Thread</button>
         <% } else if (viewing.usage == 1) { %>
-        <button class="fruum-main-button" data-action="add_article">Article</button>
+        <button class="fruum-main-button fruum-cta-button fruum-js-default-action" data-action="add_article" data-onboard="add_stream">Add Article</button>
         <% } else if (viewing.usage == 2) { %>
-        <button class="fruum-main-button" data-action="add_blog">Blog</button>
+        <button class="fruum-main-button fruum-cta-button fruum-js-default-action" data-action="add_blog" data-onboard="add_stream">Add Blog</button>
         <% } else if (viewing.usage == 3) { %>
-        <button class="fruum-main-button" data-action="add_channel">Channel</button>
+        <button class="fruum-main-button fruum-cta-button" data-action="add_channel" data-onboard="add_stream">Add Channel</button>
         <% } %>
 
       </div>
-      <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')() %>
+      <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')({ add_category: true }) %>
     </div>
   </form>
 </script>
@@ -474,19 +612,20 @@
 <!-- User actions -->
 <script type="text/template" id="fruum-template-interactions-user">
   <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-messages')() %>
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-updates')() %>
   <input type="hidden" data-field="parent" value="<%- editing.parent || viewing.id %>" />
   <form action="" class="fruum-interactions-form">
     <div class="fruum-interactions-footer">
       <div class="fruum-interactions-buttons">
 
         <% if (viewing.usage == 0) { %>
-        <button class="fruum-main-button" data-action="add_thread">Thread</button>
+        <button class="fruum-main-button fruum-js-default-action" data-action="add_thread" data-onboard="add_stream">Add Thread</button>
         <% } else if (viewing.usage == 3) { %>
-        <button class="fruum-main-button" data-action="add_channel">Channel</button>
+        <button class="fruum-main-button" data-action="add_channel" data-onboard="add_stream">Add Channel</button>
         <% } %>
 
       </div>
-      <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')() %>
+      <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-avatar')({ add_category: false }) %>
     </div>
   </form>
 </script>
@@ -494,6 +633,7 @@
 <!-- Anonymous user -->
 <script type="text/template" id="fruum-template-interactions-anonymous">
   <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-messages')() %>
+  <%= Fruum.libs.Marionette.TemplateCache.get('#fruum-template-interactions-updates')() %>
   <div class="fruum-interactions-stream-update" style="display:none;"><!-- template --></div>
   <div class="fruum-interactions-footer">
     <div class="fruum-interactions-buttons">

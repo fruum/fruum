@@ -62,6 +62,7 @@ module.exports = function(options, client, self) {
               type: 'user',
               body: {
                 user: {
+                  _all: { enabled: false },
                   properties: {
                     id: { type: 'string', index: 'not_analyzed' },
                     anonymous: { type: 'boolean' },
@@ -73,6 +74,7 @@ module.exports = function(options, client, self) {
                     created: { type: 'long' },
                     last_login: { type: 'long' },
                     last_logout: { type: 'long' },
+                    onboard: { type: 'integer' },
                     meta: { type: 'object', enabled: false }
                   }
                 }
@@ -88,6 +90,7 @@ module.exports = function(options, client, self) {
               type: 'doc',
               body: {
                 doc: {
+                  _all: { enabled: false },
                   properties: {
                     id: { type: 'string', index: 'not_analyzed' },
                     parent: { type: 'string', index: 'not_analyzed' },

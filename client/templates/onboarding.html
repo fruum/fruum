@@ -1,0 +1,17 @@
+<script type="text/template" id="fruum-template-onboarding-top">
+  <div class="fruum-onboarding" style="opacity: 0; top: <%= top %>px;">
+    <div class="fruum-onboarding-arrowtop" style="left: <%= left %>px;"></div>
+    <div class="fruum-onboarding-message">
+      <%= tip %> <a href="javascript:;" class="fruum-js-onboarding-ok"><%= (Math.random()>0.5)?'Thanks, got it!':'Got it!' %></a>
+    </div>
+  </div>
+</script>
+
+<script type="text/template" id="fruum-template-onboarding-bottom">
+  <div class="fruum-onboarding" style="opacity: 0; bottom: <%= bottom %>px;">
+    <div class="fruum-onboarding-arrowbottom" style="left: <%= left %>px"></div>
+    <div class="fruum-onboarding-message">
+      <%= tip %> <a href="javascript:;" class="fruum-js-onboarding-ok"><%= (Math.random()>0.5)?'Thanks, got it!':'Got it!' %></a>
+    </div>
+  </div>
+</script>

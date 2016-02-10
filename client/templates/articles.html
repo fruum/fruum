@@ -1,6 +1,6 @@
 <!-- article template -->
 <script type="text/template" id="fruum-template-article">
-  <div data-docid="<%- id %>" class="fruum-base-object fruum-link fruum-interactive-element fruum-js-entry-default fruum-js-navigate">
+  <div data-docid="<%- id %>" class="fruum-base-object fruum-link fruum-interactive-element fruum-js-entry-default fruum-js-navigate <% if (is_new) print('fruum-js-has-update'); %>">
 
     <div class="fruum-object-main-data<% if (Fruum.user.admin || (Fruum.user.id == user_id && !Fruum.user.anonymous)) { %> fruum-object-manage-data<% } %>">
       <div class="fruum-stream-typography">
@@ -17,7 +17,9 @@
             <% if (sticky) { %>
             <span class="fruum-icon fruum-icon-sticky" data-fruumtipsy-center="Sticky topic"></span>
             <% } %>
-
+            <% if (is_new) { %>
+            <span class="fruum-icon fruum-icon-dot fruum-counter-updated fruum-anim-popup"></span>
+            <% } %>
             <%= Fruum.utils.printHeader(header) %>
           </a>
           <div class="fruum-tags-container">
@@ -25,26 +27,6 @@
           </div>
         </h4>
       </div>
-    </div>
-    <% if (type == 'blog') { %>
-    <div class="fruum-object-additional-data">
-      <span class="fruum-primary-data">
-        <%- user_displayname || user_username %> <%- Fruum.libs.moment(parseInt(created)).fromNow() %>
-      </span>
-    </div>
-    <% } %>
-    <div class="fruum-object-main-data fruum-secondary-data">
-      <%= Fruum.utils.printSummary(body) %>
-    </div>
-    <div class="fruum-object-additional-data">
-      <span class="fruum-secondary-data">
-        <% if (children_count) { %>
-          <span class="fruum-link">
-            <%- children_count %> comments, last one <%- Fruum.libs.moment(parseInt(updated)).fromNow() %>
-          </span>
-        <% } %>
-        <span class="fruum-badge fruum-badge-info" data-fruumtipsy-right="New comments" style="display: none;" data-info-id="<%- id %>">!</span>
-      </span>
     </div>
     <% if (Fruum.user.admin) { %>
     <div class="fruum-manage fruum-interaction-item fruum-js-manage">

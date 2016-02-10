@@ -88,21 +88,21 @@
     <div class="fruum-item-actions">
       <% if (!Fruum.user.anonymous) { %>
 
-        <% if (react_up.length && react_up.indexOf(Fruum.user.username) >= 0) { %>
-      <a href="javascript:;" class="fruum-action-pill fruum-icon fruum-icon-thumbsup fruum-item-active" data-action="react" data-reaction="up" data-fruumtipsy-left="click to revoke"><%= Fruum.utils.printReaction(react_up.length) %></a>
+        <% if (react_up.length) { %>
+      <a href="javascript:;" class="fruum-action-pill <% if (react_up.indexOf(Fruum.user.username) >= 0) print('fruum-item-active'); else print('fruum-anim-onhover '); %>" data-action="react" data-reaction="up" data-fruumtipsy-left="<%- Fruum.utils.printReactionTooltip('+1', react_up) %>"><span class="fruum-anim-landtopleft fruum-icon fruum-icon-thumbsup"></span><%= Fruum.utils.printReaction(react_up.length) %></a>
         <% } else { %>
-      <a href="javascript:;" class="fruum-action-pill fruum-icon fruum-icon-thumbsup <% if (!react_up.length) print( 'fruum-interaction-item'); %>" data-action="react" data-reaction="up"><%= Fruum.utils.printReaction(react_up.length) %></a>
+      <a href="javascript:;" class="fruum-action-pill fruum-anim-onhover fruum-interaction-item" data-action="react" data-reaction="up"><span class="fruum-anim-landtopleft fruum-icon fruum-icon-thumbsup"></span><%= Fruum.utils.printReaction(react_up.length) %></a>
         <% } %>
 
-        <% if (react_down.length && react_down.indexOf(Fruum.user.username) >= 0) { %>
-      <a href="javascript:;" class="fruum-action-pill fruum-icon fruum-icon-thumbsdown fruum-item-active" data-action="react" data-reaction="down" data-fruumtipsy-left="click to revoke"><%= Fruum.utils.printReaction(react_down.length) %></a>
+        <% if (react_down.length) { %>
+      <a href="javascript:;" class="fruum-action-pill fruum-anim-onhover <% if (react_down.indexOf(Fruum.user.username) >= 0) print('fruum-item-active'); else print('fruum-anim-onhover '); %>" data-action="react" data-reaction="down" data-fruumtipsy-left="<%- Fruum.utils.printReactionTooltip('-1', react_down) %>"><span class="fruum-anim-landbottomleft fruum-icon fruum-icon-thumbsdown"></span><%= Fruum.utils.printReaction(react_down.length) %></a>
         <% } else { %>
-      <a href="javascript:;" class="fruum-action-pill fruum-icon fruum-icon-thumbsdown <% if (!react_down.length) print( 'fruum-interaction-item'); %>" data-action="react" data-reaction="down"><%= Fruum.utils.printReaction(react_down.length) %></a>
+      <a href="javascript:;" class="fruum-action-pill fruum-anim-onhover fruum-interaction-item" data-action="react" data-reaction="down"><span class="fruum-anim-landbottomleft fruum-icon fruum-icon-thumbsdown"></span><%= Fruum.utils.printReaction(react_down.length) %></a>
         <% } %>
 
       <% } else { %>
-      <span class="fruum-action-pill fruum-icon fruum-icon-thumbsup <% if (!react_up.length) print( 'fruum-interaction-item'); %>" data-fruumtipsy-left="login to vote"><% if (react_up.length) print( react_up.length ) %></span>
-      <span class="fruum-action-pill fruum-icon fruum-icon-thumbsdown <% if (!react_down.length) print( 'fruum-interaction-item'); %>" data-fruumtipsy-left="login to vote"><% if (react_down.length) print( react_down.length ) %></span>
+      <span class="fruum-action-pill <% if (!react_up.length) print('fruum-interaction-item'); %>" data-fruumtipsy-left="login to vote"><span class="fruum-icon fruum-icon-thumbsup"></span><% if (react_up.length) print(react_up.length) %></span>
+      <span class="fruum-action-pill <% if (!react_down.length) print('fruum-interaction-item'); %>" data-fruumtipsy-left="login to vote"><span class="fruum-icon fruum-icon-thumbsdown"></span><% if (react_down.length) print(react_down.length) %></span>
       <% } %>
       <a href="javascript:;" class="fruum-icon fruum-icon-copy fruum-maintain-action fruum-interaction-item" data-action="share" data-fruumtipsy-right="copy link"></a>
       <% if (!Fruum.user.anonymous && Fruum.user.id == user_id && !Fruum.user.admin) { %>
@@ -110,7 +110,7 @@
       <% } %>
       <% if (!Fruum.user.anonymous) { %>
         <% if (Fruum.user.id != user_id && !Fruum.user.admin) { %>
-      <a href="javascript:;" class="fruum-icon fruum-icon-flag fruum-maintain-action" data-action="report" data-fruumtipsy-right="Report this"></a>
+      <a href="javascript:;" class="fruum-icon fruum-icon-flag fruum-maintain-action fruum-interaction-item" data-action="report" data-fruumtipsy-right="Report this"></a>
         <% } %>
         <% if (Fruum.user.admin) { %>
       <div class="fruum-maintain-block fruum-interaction-item fruum-js-more-source">
@@ -179,21 +179,21 @@
     <div class="fruum-item-actions">
       <% if (!Fruum.user.anonymous) { %>
 
-        <% if (react_up.length && react_up.indexOf(Fruum.user.username) >= 0) { %>
-      <a href="javascript:;" class="fruum-action-pill fruum-icon fruum-icon-thumbsup fruum-item-active" data-action="react" data-reaction="up" data-fruumtipsy-left="click to revoke"><%= Fruum.utils.printReaction(react_up.length) %></a>
+        <% if (react_up.length) { %>
+      <a href="javascript:;" class="fruum-action-pill <% if (react_up.indexOf(Fruum.user.username) >= 0) print('fruum-item-active'); else print('fruum-anim-onhover '); %>" data-action="react" data-reaction="up" data-fruumtipsy-left="<%- Fruum.utils.printReactionTooltip('+1', react_up) %>"><span class="fruum-anim-landtopleft fruum-icon fruum-icon-thumbsup"></span><%= Fruum.utils.printReaction(react_up.length) %></a>
         <% } else { %>
-      <a href="javascript:;" class="fruum-action-pill fruum-icon fruum-icon-thumbsup" data-action="react" data-reaction="up"><%= Fruum.utils.printReaction(react_up.length) %></a>
+      <a href="javascript:;" class="fruum-action-pill fruum-anim-onhover" data-action="react" data-reaction="up"><span class="fruum-anim-landtopleft fruum-icon fruum-icon-thumbsup"></span><%= Fruum.utils.printReaction(react_up.length) %></a>
         <% } %>
 
-        <% if (react_down.length && react_down.indexOf(Fruum.user.username) >= 0) { %>
-      <a href="javascript:;" class="fruum-action-pill fruum-icon fruum-icon-thumbsdown fruum-item-active" data-action="react" data-reaction="down" data-fruumtipsy-left="click to revoke"><%= Fruum.utils.printReaction(react_down.length) %></a>
+        <% if (react_down.length) { %>
+      <a href="javascript:;" class="fruum-action-pill <% if (react_down.indexOf(Fruum.user.username) >= 0) print('fruum-item-active'); else print('fruum-anim-onhover'); %>" data-action="react" data-reaction="down" data-fruumtipsy-left="<%- Fruum.utils.printReactionTooltip('-1', react_down) %>"><span class="fruum-anim-landbottomleft fruum-icon fruum-icon-thumbsdown"></span><%= Fruum.utils.printReaction(react_down.length) %></a>
         <% } else { %>
-      <a href="javascript:;" class="fruum-action-pill fruum-icon fruum-icon-thumbsdown" data-action="react" data-reaction="down"><%= Fruum.utils.printReaction(react_down.length) %></a>
+      <a href="javascript:;" class="fruum-action-pill fruum-anim-onhover" data-action="react" data-reaction="down"><span class="fruum-anim-landbottomleft fruum-icon fruum-icon-thumbsdown"></span><%= Fruum.utils.printReaction(react_down.length) %></a>
         <% } %>
 
       <% } else { %>
-      <span class="fruum-action-pill fruum-icon fruum-icon-thumbsup" data-fruumtipsy-left="login to vote"><%= Fruum.utils.printReaction(react_up.length) %></span>
-      <span class="fruum-action-pill fruum-icon fruum-icon-thumbsdown" data-fruumtipsy-left="login to vote"><%= Fruum.utils.printReaction(react_down.length) %></span>
+      <span class="fruum-action-pill" data-fruumtipsy-left="login to vote"><span class="fruum-icon fruum-icon-thumbsup"></span><%= Fruum.utils.printReaction(react_up.length) %></span>
+      <span class="fruum-action-pill" data-fruumtipsy-left="login to vote"><span class="fruum-icon fruum-icon-thumbsdown"></span><%= Fruum.utils.printReaction(react_down.length) %></span>
       <% } %>
       <a href="javascript:;" class="fruum-icon fruum-icon-copy fruum-maintain-action" data-action="share" data-fruumtipsy-right="copy link"></a>
       <% if (!Fruum.user.anonymous && Fruum.user.id == user_id && !Fruum.user.admin) { %>
@@ -221,123 +221,4 @@
     </div>
 
   </div>
-</script>
-
-<!-- ***************************** EMPTY VIEWS ***************************** -->
-
-<!-- Empty thread -->
-<script type="text/template" id="fruum-template-post-empty-thread">
-  <div class="fruum-base-object fruum-helper-object">
-    <div class="fruum-avatar">
-      <span class="fruum-avatar-icon">AWK</span>
-    </div>
-
-    <div class="fruum-object-additional-data">
-      <div class="fruum-primary-data">
-        Awkwardness bot
-      </div>
-      <span class="fruum-secondary-data">
-        right now
-      </span>
-    </div>
-
-    <div class="fruum-object-main-data">
-      <div class="fruum-stream-typography">
-        <% if (viewing.usage == 0 || Fruum.user.admin) { %>
-        No posts here! But you came for a reason right?<br>
-        Add your message to kickstart the communication!
-        <% } else { %>
-        This is really awkward!! Someone forgot to add an actual message!!<br>
-        Please visit later for any updates.
-        <% } %>
-      </div>
-    </div>
-  </div>
-</script>
-
-<!-- Empty article -->
-<script type="text/template" id="fruum-template-post-empty-article">
-  <div class="fruum-base-object fruum-helper-object">
-    <div class="fruum-avatar">
-      <span class="fruum-avatar-icon">LIB</span>
-    </div>
-
-    <div class="fruum-object-additional-data">
-      <div class="fruum-primary-data">
-        Librarian bot
-      </div>
-      <span class="fruum-secondary-data">
-        right now
-      </span>
-    </div>
-
-    <div class="fruum-object-main-data">
-      <div class="fruum-stream-typography">
-        Lets shed some light to this world!
-      </div>
-    </div>
-  </div>
-</script>
-
-<!-- Empty channel -->
-<script type="text/template" id="fruum-template-post-empty-channel">
-  <div class="fruum-base-object fruum-helper-object">
-    <div class="fruum-avatar">
-      <span class="fruum-avatar-icon">:)</span>
-    </div>
-
-    <div class="fruum-object-additional-data">
-      <div class="fruum-primary-data">
-        Lonely bot
-      </div>
-      <span class="fruum-secondary-data">
-        right now
-      </span>
-    </div>
-
-    <div class="fruum-object-main-data">
-      <div class="fruum-stream-typography">
-        <% if (!Fruum.user.anonymous) { %>
-        <% var msg = Math.ceil(Math.random()*5); %>
-        <% if (msg == 1) { %>
-          Hey <%- Fruum.user.displayname %>,welcome! Seems that we're the only ones here!<br>
-          Type your message or let's wait for another one to come.
-        <% } %>
-        <% if (msg == 2) { %>
-          Hi there <%- Fruum.user.displayname %>! Nobody in here at the moment.<br>
-          Visit again later or start messaging out!
-        <% } %>
-        <% if (msg == 3) { %>
-          We are just the two of us here <%- Fruum.user.displayname %>.<br>
-          How about start sharing your thoughts? I'm sure more will join!
-        <% } %>
-        <% if (msg == 4) { %>
-          This channel is at it's start! What is missing is a sparkle!<br>
-          Type your message and pass the sparkle!
-        <% } %>
-        <% if (msg == 5) { %>
-          Welcome <%- Fruum.user.displayname %>! Noone has shared his thoughts on this channel yet!
-          Be the first to write a few words and give life to this communication stream!
-        <% } %>
-        <% } else { %>
-          Hello, channel is empty right now! You can visit again later.
-        <% } %>
-      </div>
-    </div>
-  </div>
-</script>
-
-<!-- failsafe empty area -->
-<script type="text/template" id="fruum-template-post-empty-default">
-  <div class="fruum-base-object fruum-helper-object"></div>
-</script>
-
-<!-- failsafe category area -->
-<script type="text/template" id="fruum-template-post-empty-category">
-  <div class="fruum-base-object fruum-helper-object"></div>
-</script>
-
-<!-- failsafe bookmark area -->
-<script type="text/template" id="fruum-template-post-empty-bookmark">
-  <div class="fruum-base-object fruum-helper-object"></div>
 </script>

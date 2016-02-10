@@ -22,6 +22,12 @@ Collections
       model: Fruum.models.Document,
       comparator: 'order'
     });
+    Fruum.collections.Blogs = Backbone.Collection.extend({
+      model: Fruum.models.Document,
+      comparator: function(a, b) {
+        return b.get('created') - a.get('created');
+      }
+    });
     Fruum.collections.Channels = Backbone.Collection.extend({
       model: Fruum.models.Document,
       comparator: 'header'

@@ -125,6 +125,9 @@ function FruumServer(options, cli_cmd, ready) {
       case 'reset_users':
         engine.reset_users(cli_cmd.params);
         break;
+      case 'list_users':
+        engine.list_users(cli_cmd.params);
+        break;
       case 'gc_app':
         engine.gc(cli_cmd.params.app_id);
         break;
@@ -178,6 +181,7 @@ function FruumServer(options, cli_cmd, ready) {
     'client/js/views/posts.js',
     'client/js/views/threads.js',
     'client/js/views/articles.js',
+    'client/js/views/blogs.js',
     'client/js/views/channels.js',
     'client/js/views/autocomplete.js',
     'client/js/views/emojipanel.js',
@@ -186,6 +190,7 @@ function FruumServer(options, cli_cmd, ready) {
     'client/js/views/search.js',
     'client/js/views/bookmark.js',
     'client/js/views/notifications.js',
+    'client/js/views/onboarding.js',
     'client/js/views/share.js',
     'client/js/views/move.js',
     'client/js/views/empty.js'
@@ -207,12 +212,13 @@ function FruumServer(options, cli_cmd, ready) {
       return;
     }
     var cache_key = cache_entry.key.replace('{app_id}', app_id);
-    var cache_data = engine.cache.get(cache_entry.queue, cache_key);
-    if (cache_data) {
-      res.send(cache_data);
-      return;
-    }
-    callback(app_id, cache_key, cache_entry.queue);
+    engine.cache.get(cache_entry.queue, cache_key, function(value) {
+      if (value) {
+        res.send(value);
+        return;
+      }
+      callback(app_id, cache_key, cache_entry.queue);
+    });
   }
   //same as above but return application object as well
   function req_api_key_and_application(req, res, cache_namespace, callback) {
@@ -304,6 +310,7 @@ function FruumServer(options, cli_cmd, ready) {
         .setDir(fruum_root)
         .load('client/templates/main.html')
         .concat(_.union([
+          'client/templates/persona.html',
           'client/templates/breadcrumb.html',
           'client/templates/interactions.html',
           'client/templates/autocomplete.html',
@@ -312,10 +319,12 @@ function FruumServer(options, cli_cmd, ready) {
           'client/templates/search.html',
           'client/templates/bookmark.html',
           'client/templates/notifications.html',
+          'client/templates/onboarding.html',
           'client/templates/categories.html',
           'client/templates/loading.html',
           'client/templates/threads.html',
           'client/templates/articles.html',
+          'client/templates/blog.html',
           'client/templates/channels.html',
           'client/templates/title.html',
           'client/templates/filters.html',
@@ -533,6 +542,9 @@ function FruumServer(options, cli_cmd, ready) {
           });
           socket.on('fruum:typing', function(payload) {
             engine.typing(socket, payload || {});
+          });
+          socket.on('fruum:onboard', function(payload) {
+            engine.onboard(socket, payload || {});
           });
           socket.on('fruum:optimize', function(payload) {
             engine.optimize(socket, payload || {});

@@ -13,6 +13,7 @@
 @import 'styling/streamsection';
 @import 'styling/streamobject';
 @import 'styling/interactions';
+@import 'styling/micro-animation';
 
 // Generic styles
 @import 'styling/avatars';
@@ -27,6 +28,9 @@
 
 // Nanoscroller
 @import 'styling/nanoscroller';
+
+// Onboarding
+@import 'styling/onboarding';
 
 // Fruum smartphones
 
@@ -45,6 +49,8 @@
   @import 'styling/interactions-mediumscreen';
   @import 'styling/stream-mediumscreen';
   @import 'styling/tags-mediumscreen';
+
+  @import 'styling/onboarding-mediumscreen';
 }
 
 @media (min-device-width: 1200px) {

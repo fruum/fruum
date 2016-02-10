@@ -1,6 +1,8 @@
 #!/bin/bash
 loglevel="none"
 
+echo ">>> REMOVING PREVIOUS TEST DATABASE"
+node index.js --log-level $loglevel --delete-app test --config "./tests/config.test.json"
 echo ">>> CREATING TEST DATABASE"
 node index.js --log-level $loglevel --add-app test --config "./tests/config.test.json"
 echo ">>> CREATING API KEY"

@@ -59,6 +59,7 @@ Handles the top part
           event.preventDefault();
           event.stopPropagation();
         }
+        Fruum.io.trigger('fruum:unset_onboard', 'manage');
         Fruum.io.trigger('fruum:toggle_manage', this.ui.manage);
       },
       onLocked: function(event) {
@@ -99,6 +100,7 @@ Handles the top part
           Fruum.io.trigger('fruum:show_bookmark', viewing);
         }
         else {
+          Fruum.io.trigger('fruum:unset_onboard', 'edit');
           Fruum.io.trigger('fruum:edit', viewing);
         }
       },

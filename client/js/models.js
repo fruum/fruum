@@ -79,6 +79,8 @@ Models
 
         search: '',
         loading: '',
+        load_state: '',
+        view_req: '',
 
         interacting: false,
         searching: false,
@@ -87,6 +89,7 @@ Models
         connected: false,
         optimizing: 0,
         search_helper: false,
+        updates_count: 0,
 
         navigation_height: 0,
         interactions_height: 0,

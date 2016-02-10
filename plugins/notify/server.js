@@ -135,7 +135,7 @@ function Notify(options, instance) {
     }
   }
 
-  this.add = function(payload, callback) {
+  this.afterAdd = function(payload, callback) {
     //proceed without locking
     callback(null, payload);
 
@@ -174,6 +174,50 @@ function Notify(options, instance) {
       process_mentions(payload, users);
     });
   }
+
+  // -------------------------------- REACTION ---------------------------------
+
+  this.beforeReact = function(payload, callback) {
+    var reaction,
+        document = payload.document,
+        user = payload.user,
+        previous_count = (document.get('react_' + payload.reaction) || []).length;
+
+    switch(payload.reaction) {
+      case 'up': reaction = '+1'; break;
+      case 'down': reaction = '-1'; break;
+    }
+
+    //proceed without locking
+    callback(null, payload);
+
+    if (!reaction || previous_count || user.get('id') == document.get('user_id')) return;
+    //find application
+    instance.storage.get_app(payload.app_id, function(application) {
+      if (!application) return;
+      //find user of the document
+      instance.storage.get_user(payload.app_id, document.get('user_id'), function(doc_user) {
+        if (!doc_user) return;
+        //construct email
+        instance.engine.notificationTemplate(application, 'reaction', function(email_template) {
+          var context = {
+            date: moment(new Date()).format('D MMM YYYY'),
+            application: application.toJSON(),
+            getShareURL: application.getShareURL.bind(application),
+            user: doc_user.toJSON(),
+            reaction_user: user.toJSON(),
+            reaction: reaction,
+            document: instance.email.prettyJSON(document)
+          }
+          instance.email.send(application, doc_user, {
+            subject: email_template.subject(context),
+            html: instance.email.inlineCSS(email_template.html(context))
+          }, function() {});
+        });
+      });
+    });
+  }
+
 }
 
 module.exports = Notify;

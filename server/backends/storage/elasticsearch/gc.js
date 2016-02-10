@@ -58,6 +58,56 @@ module.exports = function(options, client, self) {
     }
   }
 
+  self._updateArray = function(app_id, type_index, timestamp, hits, validator, attributes, callback) {
+    if (options.elasticsearch.use_bulk) {
+      var body = [];
+      _.each(hits, function(hit) {
+        if (validator(hit._source, timestamp)) {
+          body.push({ update: {
+            _index: hit._index,
+            _type: type_index,
+            _id: hit._source.id,
+            doc: attributes
+          }});
+        }
+      });
+      client.bulk({
+        refresh: true,
+        body: body
+      }, function(error, response) {
+        if (error) {
+          logger.error('_all', 'update_bulk', error);
+        }
+        else {
+          logger.info('_all', 'update_bulk', body.length + ' updated for timestamp ' + timestamp);
+        }
+        callback();
+      });
+    }
+    else {
+      var body = [];
+      _.each(hits, function(hit) {
+        if (validator(hit._source, timestamp)) {
+          body.push({
+            index: self.toAppIndex(app_id),
+            type: type_index,
+            id: hit._source.id,
+            body: { doc: attributes }
+          });
+        }
+      });
+      var counter = body.length;
+      _.each(body, function(entry) {
+        client.update(entry, function(error, response) {
+          counter--;
+          if (error) logger.error(app_id, 'update_bulk', error);
+          else logger.info(app_id, 'update_bulk', entry.id);
+          if (!counter) callback();
+        });
+      });
+    }
+  }
+
   self.gc_archived = function(app_id, timestamp, callback) {
     client.search({
       index: self.toAppIndex(app_id),
@@ -153,6 +203,46 @@ module.exports = function(options, client, self) {
       }
       else if (response.hits && response.hits.hits && response.hits.hits.length) {
         self._purgeArray(app_id, 'user', timestamp, response.hits.hits, validators.gc_users, callback);
+        return;
+      }
+      callback();
+    });
+  }
+
+  self.gc_onboard = function(app_id, timestamp, callback) {
+    client.search({
+      index: self.toAppIndex(app_id),
+      type: 'user',
+      refresh: true,
+      body: {
+        from: 0,
+        size: options.elasticsearch.max_children,
+        query: {
+          filtered: {
+            filter: {
+              bool: {
+                must: [
+                  { range: { last_login: { lte: timestamp } } }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }, function(error, response) {
+      if (error) {
+        logger.error(app_id, 'gc', error);
+      }
+      else if (response.hits && response.hits.hits && response.hits.hits.length) {
+        self._updateArray(
+          app_id,
+          'user',
+          timestamp,
+          response.hits.hits,
+          validators.gc_onboard,
+          { onboard: 0 },
+          callback
+        );
         return;
       }
       callback();

@@ -50,14 +50,18 @@
   "------------------- PLUGIN SCHEDULED TASKS -------------------": "",
 
   "cron": {
-    "_help": "https://github.com/tejasmanohar/node-schedule/wiki/Cron-style-Scheduling",
-    "garbage_collect": "0 0 */4 * * *",
-    "monitor": "0 0 0 * * *"
+    "_help": "https://www.npmjs.com/package/node-schedule",
+    "_quickhelp": "minute(0-59) hour(0-23) day(1-31) month(1-12) weekday(0-7)",
+    "garbage_collect": "0 */4 * * *",
+    "monitor": "0 0 * * *"
   },
 
   "------------------------ ACTIVE PLUGIN  ------------------------": "",
 
   "plugins": [
+    "persona_FitnessJoe",
+    "persona_RebeccaMoon",
+
     "mozilla_persona",
     "giphy",
     "youtube",
@@ -112,6 +116,15 @@
       "weeks": 1,
       "months": 0,
       "years": 0
+    },
+    "reset_onboard_after": {
+      "seconds": 0,
+      "minutes": 0,
+      "hours": 0,
+      "days": 0,
+      "weeks": 0,
+      "months": 1,
+      "years": 0
     }
   },
 
@@ -120,6 +133,15 @@
     "views": 10,
     "properties": 100,
     "default": 10
+  },
+
+  "memcached": {
+    "host": "",
+    "username": "",
+    "password": "",
+    "expire_static": 0,
+    "expire_views": 900,
+    "expire_properties": 900
   },
 
   "mandrill": {

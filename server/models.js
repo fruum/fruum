@@ -11,6 +11,7 @@ var _ = require('underscore'),
     request = require('request'),
     path = require('path'),
     fs = require('fs'),
+    moment = require('moment'),
     root_path = path.resolve(__dirname + '/..'),
     PROPERTY_PREFIX = 'prop_';
 
@@ -188,6 +189,8 @@ var User = Backbone.Model.extend({
     last_login: 0,
     //last logout date in unix timestamp
     last_logout: 0,
+    //onboard mask
+    onboard: 0,
     //watch list of doc ids
     watch: [],
     //tags
@@ -217,18 +220,22 @@ var User = Backbone.Model.extend({
            this.get('admin') != user.get('admin') ||
            this.get('avatar') != user.get('avatar');
   },
-  toLog: function() {
+  toLog: function(humanize) {
     var log = '[user] id:' + this.get('id');
+    var divider = humanize?'\n       ':' ';
     if (this.get('admin')) {
-      log += ' (admin)'
+      log += divider + '(ADMIN)';
     }
     if (this.get('anonymous')) {
-      log += ' (anonymous)'
+      log += divider + '(ANONYMOUS)';
     }
     else {
-      log += ' username:' + this.get('username');
-      log += ' displayname:' + this.get('displayname');
-      log += ' email:' + this.get('email');
+      log += divider + 'username:' + this.get('username');
+      log += divider + 'displayname:' + this.get('displayname');
+      log += divider + 'email:' + this.get('email');
+    }
+    if (humanize && this.get('last_login')) {
+      log += divider + 'last_login:' + moment(this.get('last_login')).format('D-MMM-YYYY');
     }
     return log;
   }
@@ -285,6 +292,9 @@ var Application = Backbone.Model.extend({
     log += divider + 'theme:' + this.get('theme');
     log += divider + 'private_key:' + this.get('private_key');
     log += divider + 'api_keys:' + this.get('api_keys').length;
+    if (humanize) {
+      log += divider + 'meta:' + JSON.stringify(this.get('meta'));
+    }
     return log;
   },
   //get sass override text from theme path

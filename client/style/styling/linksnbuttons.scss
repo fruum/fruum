@@ -15,6 +15,7 @@
 
 #fruum .fruum-link {
   text-decoration: none;
+  font-weight: inherit;
   font-size: inherit;
   line-height: inherit;
   color: $secondary-action-color;
@@ -54,9 +55,11 @@
 #fruum button.fruum-main-button {
   &:not(.fruum-link) {
     @include default-button-block;
+    &.fruum-button-active,
     &:hover {
       @include default-button-hover;
     }
+    &.fruum-button-active,
     &:active {
       @include button-active;
     }
@@ -107,10 +110,12 @@
     -moz-transition: background-color 0.2s;
     -webkit-transition: background-color 0.2s;
     &.fruum-is-active,
+    &.fruum-button-active,
     &:hover {
       color: $secondary-action-text;
       background-color: $secondary-action-color;
     }
+    &.fruum-button-active,
     &:active {
       @include button-active;
     }

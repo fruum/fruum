@@ -10,7 +10,7 @@ var _ = require('underscore'),
 
 function Report(options, instance) {
 
-  this.report = function(payload, callback) {
+  this.afterReport = function(payload, callback) {
     //get application model
     instance.storage.get_app(payload.app_id, function(application) {
       //find admins

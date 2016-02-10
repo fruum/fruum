@@ -235,7 +235,7 @@ $avatar-color-length: length($avatar-colors);
 .content-description {
   font-size: $stream-default-font;
   line-height: 1.618;
-
+  color: $base-text-color;
   > *:last-child {
     margin-bottom: 0;
   }

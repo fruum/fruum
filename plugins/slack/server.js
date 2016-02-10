@@ -9,7 +9,7 @@ var _ = require('underscore'),
 
 var fruum_username = 'Fruum',
     fruum_icon_emoji = ':racing_car:',
-    fruum_icon_url = 'http://fruum.github.io/static/slack.jpg';
+    fruum_icon_url = 'https://fruum.github.io/static/slack.png';
 
 function Slack(options, instance) {
 
@@ -64,6 +64,8 @@ function Slack(options, instance) {
             response += '<' + link + '|' + document.get('header') + '>\n';
           });
           res.send(response);
+        }, {
+          skipfields: ['attachments', 'body']
         });
       }
     });
@@ -72,7 +74,7 @@ function Slack(options, instance) {
   // ---------------------------------- WEBHOOKS -------------------------------
 
   //Report to slack when a new document has been added
-  this.add = function(payload, callback) {
+  this.afterAdd = function(payload, callback) {
     //do not block operation
     callback(null, payload);
     //check if we have an outgoing webhook registered in the app

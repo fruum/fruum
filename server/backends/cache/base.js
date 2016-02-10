@@ -28,11 +28,9 @@ module.exports = function(options, storage) {
   Parameters:
   - queue: Name of the cache queue
   - key: Key name
-
-  Returns:
-  The value or undefined if key does not exist.
+  - callback function passing the stored value or undefined
   */
-  this.get = function(queue, key) {};
+  this.get = function(queue, key, callback) { callback(); };
 
   /*
   Summary:

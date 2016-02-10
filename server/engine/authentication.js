@@ -48,8 +48,17 @@ module.exports = function(options, instance, self) {
           delete app_applications[app_id];
         }
         //update last logout timestamp
-        if (user.get('id'))
-          storage.update_user(app_id, user, { last_logout: Date.now() }, function() {});
+        if (user.get('id')) {
+          var now = Date.now();
+          storage.update_user(app_id, user, { last_logout: now }, function(updated_user) {
+            if (updated_user) {
+              logger.info(app_id, 'update_last_logout', updated_user.get('username') + ': ' + now);
+            }
+            else {
+              logger.error(app_id, 'update_last_logout_failed', user);
+            }
+          });
+        }
       }
       user.set('socket', null);
       delete socket.fruum_user;
@@ -73,6 +82,10 @@ module.exports = function(options, instance, self) {
       var app = app_applications[app_id];
       app_users[app_id] = app_users[app_id] || [];
       app_users[app_id].push(user);
+      //add default last visit timestamp
+      user.set('last_visit', user.get('last_logout') || Date.now());
+      //add a server time now
+      user.set('server_now', Date.now());
       socket.emit('fruum:auth', {
         user: user.toJSON()
       });
@@ -162,7 +175,9 @@ module.exports = function(options, instance, self) {
                   user.set({
                     watch: storage_user.get('watch'),
                     notifications: storage_user.get('notifications'),
-                    meta: storage_user.get('meta')
+                    onboard: storage_user.get('onboard'),
+                    meta: storage_user.get('meta'),
+                    last_logout: storage_user.get('last_logout')
                   });
                   if (storage_user.needsUpdate(user)) {
                     //update user details (including posts)
@@ -176,6 +191,8 @@ module.exports = function(options, instance, self) {
                       onready(updated_user);
                     });
                   }
+                }, {
+                  skipfields: ['header', 'body', 'tags', 'attachments']
                 }
               );
             }
