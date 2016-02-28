@@ -1,0 +1,221 @@
+<!-- Header part -->
+<script type="text/template" id="fruum-template-profile-header">
+  <div class="fruum-helper-header">
+    <div class="fruum-helper-close fruum-icon fruum-icon-left fruum-link" data-action="close">back to topics</div>
+  </div>
+</script>
+
+<!-- Main card -->
+<script type="text/template" id="fruum-template-profile-maincard">
+  <div class="fruum-avatar">
+    <% if (Fruum.utils.isLink(avatar)) { %>
+    <img src="<%= avatar %>" class="fruum-avatar-icon" width="56"/>
+    <% } else { %>
+    <span
+      class="fruum-avatar-icon"
+      data-initials="<%- Fruum.utils.getInitials(displayname) %>">
+      <%- Fruum.utils.getInitials(displayname) %>
+    </span>
+    <% } %>
+  </div>
+
+  <div class="fruum-maincard-title">
+    <%- displayname || username %>
+  </div>
+
+  <div class="fruum-maincard-subtitle">
+    @<%- username %>
+    <% if (admin) { %>
+    <span class="fruum-tag" data-initials="A">admin</span>
+    <% } %>
+    <% if (blocked) { %>
+    <span class="fruum-tag" data-initials="B">blocked</span>
+    <% } %>
+  </div>
+
+  <div class="fruum-maincard-secodarydata">
+    <% if (last_login == 'online') { %>
+    Online
+    <% } else if (last_login > 0) { %>
+    Last seen <b><%- Fruum.libs.moment(parseInt(last_login)).fromNow() %></b>
+    <% } %>
+  </div>
+
+  <div class="fruum-maincard-score">
+    <b><%- karma %></b> karma
+  </div>
+</script>
+
+<!-- Tabs -->
+<script type="text/template" id="fruum-template-profile-tabs">
+  <% if (topics) { %>
+  <div class="fruum-helper-tab" data-tab="topics"><b><%- topics %></b> <%- (topics > 1?'topics':'topic') %></div>
+  <% } %>
+
+  <% if (replies) { %>
+  <div class="fruum-helper-tab" data-tab="replies"><b><%- replies %></b> <%- (replies > 1?'replies':'reply') %></div>
+  <% } %>
+
+  <% if (notifications) { %>
+  <div class="fruum-helper-tab" data-tab="notifications"><b><%- notifications %></b> <%- (notifications > 1?'notifications':'notification') %></div>
+  <% } %>
+
+  <div class="fruum-helper-tab" data-tab="users"><b><%- users %></b> <%- (users == 1?'member':'members') %></div>
+</script>
+
+<!-- Actions -->
+<script type="text/template" id="fruum-template-profile-actions">
+  <form action="#" class="fruum-interactions-form">
+    <div class="fruum-interactions-footer">
+      <div class="fruum-interactions-buttons">
+        <% if (Fruum.user.admin && id != Fruum.user.id) { %>
+          <% if (blocked) { %>
+        <button class="fruum-main-button" data-action="unblock">Unblock @<%- username %></button>
+          <% } else { %>
+        <button class="fruum-main-button" data-action="block">Block @<%- username %></button>
+          <% } %>
+        <% } %>
+      </div>
+    </div>
+  </form>
+</script>
+
+<!-- Main layout -->
+<script type="text/template" id="fruum-template-profile-layout">
+  <div class="fruum-navigation-section fruum-js-profile-navigation">
+
+    <div class="fruum-js-profile-region-header">
+      <!-- fruum-template-profile-header -->
+    </div>
+
+    <div class="fruum-helper-maincard fruum-js-profile-region-maincard">
+      <!-- fruum-template-profile-maincard -->
+    </div>
+
+    <div class="fruum-helper-tablist fruum-js-profile-tabs">
+      <!-- fruum-template-profile-tabs -->
+    </div>
+
+  </div>
+
+  <div class="fruum-content-section nano">
+    <div class="fruum-objects-list fruum-js-profile-content nano-content" style="display: block;"></div>
+  </div>
+
+  <div class="fruum-interactions-section fruum-js-profile-actions">
+    <!-- fruum-template-profile-actions -->
+  </div>
+</script>
+
+<!-- Document template -->
+<script type="text/template" id="fruum-template-profile-document">
+  <div class="fruum-base-object fruum-link fruum-interactive-element fruum-js-navigate">
+    <% if (is_notification) { %>
+    <div class="fruum-avatar">
+      <% if (type === 'category') { %>
+      <span
+        class="fruum-avatar-icon"
+        data-initials="<%- Fruum.utils.printInitials(initials) %>">
+        <%- initials %>
+      </span>
+      <% } else if (Fruum.utils.isLink(user_avatar)) { %>
+      <img src="<%= user_avatar %>" class="fruum-avatar-icon" width="56"/>
+      <% } else { %>
+      <span
+        class="fruum-avatar-icon"
+        data-initials="<%- Fruum.utils.getInitials(user_displayname) %>">
+        <%- Fruum.utils.getInitials(user_displayname) %>
+      </span>
+      <% } %>
+    </div>
+    <% } %>
+
+    <div class="fruum-object-main-data fruum-object-manage-data">
+      <div class="fruum-stream-typography">
+        <h4>
+          <a class="fruum-link">
+            <%= Fruum.utils.printHeader(header) %>
+          </a>
+        </h4>
+      </div>
+    </div>
+    <% if (body) { %>
+    <div class="fruum-object-additional-data fruum-object-manage-data">
+      <span class="fruum-secondary-data">
+        <%= Fruum.utils.printSearch(body) %>
+      </span>
+    </div>
+    <% } else if (inappropriate) { %>
+    <div class="fruum-object-additional-data fruum-object-manage-data">
+      <span class="fruum-secondary-data">
+        <i>Post removed by moderator</i>
+      </span>
+    </div>
+    <% } %>
+    <div class="fruum-object-additional-data">
+      <% if (type !== 'category' && (user_displayname || user_username)) { %>
+      <div class="fruum-primary-data">by <%- user_displayname || user_username %></div>
+      <% } %>
+      <span class="fruum-secondary-data">
+        <% if (type === 'category') { %>
+          Category content has been updated
+        <% } else if (children_count) { %>
+          <%- children_count %> posts, last one <%- Fruum.libs.moment(parseInt(updated)).fromNow() %>
+        <% } %>
+      </span>
+    </div>
+    <% if (type !== 'category') { %>
+    <div class="fruum-object-meta">
+      <span class="fruum-avatar-icon" data-initials="<%- Fruum.utils.printInitials(initials) %>"><%- initials %></span>
+    </div>
+    <% } %>
+  </div>
+</script>
+
+<!-- User template -->
+<script type="text/template" id="fruum-template-profile-user">
+  <div class="fruum-base-object fruum-link fruum-interactive-element fruum-js-navigate">
+    <div class="fruum-avatar">
+      <% if (Fruum.utils.isLink(avatar)) { %>
+      <img src="<%= avatar %>" class="fruum-avatar-icon" width="56"/>
+      <% } else { %>
+      <span
+        class="fruum-avatar-icon"
+        data-initials="<%- Fruum.utils.getInitials(displayname) %>">
+        <%- Fruum.utils.getInitials(displayname) %>
+      </span>
+      <% } %>
+    </div>
+
+    <div class="fruum-object-main-data fruum-object-manage-data">
+      <div class="fruum-stream-typography">
+        <h4>
+          <a class="fruum-link">
+            <%- displayname  %>
+          </a>
+        </h4>
+      </div>
+    </div>
+    <div class="fruum-object-additional-data fruum-object-manage-data">
+      <span class="fruum-secondary-data">
+        <% if (admin) { %>
+        <span class="fruum-tag" data-initials="A">admin</span>
+        <% } else { %>
+        <span class="fruum-tag" data-initials="U">member</span>
+        <% } %>
+        <% if (blocked) { %>
+        <span class="fruum-tag" data-initials="B">blocked</span>
+        <% } %>
+      </span>
+    </div>
+    <div class="fruum-object-additional-data">
+      <div class="fruum-primary-data"><b>@<%- username %></b></div>
+      <span class="fruum-secondary-data">last seen <%- Fruum.libs.moment(parseInt(last_login)).fromNow() %></span>
+    </div>
+
+    <div class="fruum-object-meta">
+      <span class="fruum-meta-content"><% if (karma >= 0) print('+'); %><b><%= karma %></b></span>
+    </div>
+
+  </div>
+</script>

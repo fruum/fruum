@@ -54,5 +54,6 @@
 }
 
 @media (min-device-width: 1200px) {
+  @import 'styling/system-largescreen';
   @import 'styling/base-largescreen';
 }

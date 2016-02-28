@@ -51,12 +51,9 @@
     <% if (Fruum.user.admin) { %>
     <div class="fruum-manage fruum-interaction-item fruum-js-manage">
       <a href="javascript:;" class="fruum-link fruum-manage-close fruum-icon fruum-icon-close"></a>
-      <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit article"></a>
       <a href="javascript:;" class="fruum-link fruum-link-secondary fruum-icon fruum-icon-left" data-action="move" data-fruumtipsy-right="Move to category"></a>
       <a href="javascript:;" class="fruum-link fruum-link-negative fruum-icon fruum-icon-delete" data-action="delete" data-fruumtipsy-right="Delete article"></a>
     </div>
-    <% } else if (Fruum.user.id == user_id && !Fruum.user.anonymous) { %>
-    <a href="javascript:;" class="fruum-manage fruum-link fruum-icon fruum-icon-edit" data-action="edit" data-fruumtipsy-right="Edit post"></a>>
     <% } %>
   </div>
 </script>

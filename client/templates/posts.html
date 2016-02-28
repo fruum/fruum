@@ -65,7 +65,7 @@
 
     <div class="fruum-object-additional-data<% if (Fruum.user.id == user_id && !Fruum.user.anonymous) { %> fruum-object-manage-data<% } %>">
       <div class="fruum-primary-data">
-        <%- user_displayname || user_username %>
+        <a href="javascript:;" class="fruum-link fruum-js-profile"><%- user_displayname || user_username %></a>
       </div>
       <span class="fruum-secondary-data">
         <%- Fruum.libs.moment(parseInt(created)).fromNow() %>
@@ -141,7 +141,7 @@
     <div class="fruum-object-additional-data fruum-object-manage-data">
 
       <div class="fruum-primary-data">
-        <%- user_displayname || user_username %>
+        <a href="javascript:;" class="fruum-link fruum-js-profile"><%- user_displayname || user_username %></a>
       </div>
       <span class="fruum-secondary-data">
         <%- Fruum.libs.moment(parseInt(created)).fromNow() %>
