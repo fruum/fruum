@@ -68,6 +68,31 @@ function anonymous_connect(ready) {
   });
 }
 
+function bob_create(ready) {
+  var user_payload = {
+    id: 'bob',
+    admin: false,
+    anonymous: false,
+    username: 'bob',
+    displayname: 'bob'
+  }
+  var socket = io.connect('http://localhost:3000', {'force new connection': true});
+  socket.on('connect', function() {
+    socket.removeListener('connect', this);
+    socket.emit('fruum:auth', {
+      app_id: 'test',
+      user: user_payload
+    });
+    socket.on('fruum:auth', function(payload) {
+      socket.removeListener('fruum:auth', this);
+      socket.removeListener('connect', this);
+      socket.disconnect();
+      socket = null;
+      ready();
+    });
+  });
+}
+
 function _delete(done) {
   //reset category
   request({
@@ -284,6 +309,55 @@ function load_fixture(done) {
   });
 }
 
+function load_bob(done) {
+  request({
+    method: 'POST',
+    url: url + '/api/v1/testkey/docs',
+    json: true,
+    body: {
+      id: 'bob_thread',
+      type: 'thread',
+      parent: 'home',
+      header: 'bob thread',
+      body: 'bob body',
+      permission: 0,
+      user_id: 'bob'
+    }
+  }, function() {
+    request({
+      method: 'POST',
+      url: url + '/api/v1/testkey/docs',
+      json: true,
+      body: {
+        id: 'bob_thread_user',
+        type: 'thread',
+        parent: 'home',
+        header: 'bob thread',
+        body: 'bob body',
+        permission: 1,
+        user_id: 'bob'
+      }
+    }, function() {
+      request({
+        method: 'POST',
+        url: url + '/api/v1/testkey/docs',
+        json: true,
+        body: {
+          id: 'bob_thread_admin',
+          type: 'thread',
+          parent: 'home',
+          header: 'bob thread',
+          body: 'bob body',
+          permission: 2,
+          user_id: 'bob'
+        }
+      }, function() {
+        bob_create(done);
+      });
+    });
+  });
+}
+
 function set_field(id, fields, done) {
   fields.id = id;
   request({
@@ -298,6 +372,8 @@ module.exports = {
   admin_connect: admin_connect,
   user_connect: user_connect,
   anonymous_connect: anonymous_connect,
+  bob_create: bob_create,
+  load_bob: load_bob,
   load_fixture: load_fixture,
   set_field: set_field
 }
