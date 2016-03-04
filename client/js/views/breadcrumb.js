@@ -26,15 +26,6 @@ Breadcrumb view
         'click @ui.close_search': 'onCloseSearch',
         'click @ui.navigate': 'onNavigate'
       },
-      initialize: function(options) {
-        this.notifications = options.notifications;
-        this.listenTo(this.notifications, 'reset', this.render);
-      },
-      templateHelpers: function() {
-        return {
-          has_notifications: this.notifications.length
-        }
-      },
       onNavigate: function(event) {
         if (event) {
           event.preventDefault();
@@ -48,8 +39,7 @@ Breadcrumb view
           event.preventDefault();
           event.stopPropagation();
         }
-        if (this.notifications.length) this.notifications.reset();
-        else Fruum.io.trigger('fruum:clear_search');
+        Fruum.io.trigger('fruum:clear_search');
       }
     });
   });

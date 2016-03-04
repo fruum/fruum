@@ -201,6 +201,41 @@ module.exports = function(options, instance, self) {
     });
   }
 
+  // ------------------------------- SEARCH USERS -------------------------------
+
+  self.search_users = function(payload) {
+    storage.search_users(payload.app_id, payload.value, function(list) {
+      _.each(list, function(user) {
+        console.log(user.toLog(true));
+      });
+      console.log('Total users: ' + list.length);
+      self.success(payload);
+    });
+  }
+
+  // ------------------------------- DELETE USER -------------------------------
+
+  self.delete_user = function(payload) {
+    storage.get_user(payload.app_id, payload.value, function(user) {
+      if (user) {
+        storage.delete_user(payload.app_id, user, function(deleted_user) {
+          if (deleted_user) {
+            logger.info(payload.app_id, 'delete_user', deleted_user);
+            self.success(payload);
+          }
+          else {
+            logger.error(payload.app_id, 'delete_user_failed', user);
+            self.fail(payload);
+          }
+        });
+      }
+      else {
+        logger.error(payload.app_id, 'delete_user_id_not_found', payload.value);
+        self.fail(payload);
+      }
+    });
+  }
+
   // ------------------------------- PROPERTIES -------------------------------
 
   self.set_app_property = function(payload) {

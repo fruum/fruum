@@ -31,7 +31,6 @@ function ElasticSearch(options) {
   require('./elasticsearch/search')(options, client, this);
   require('./elasticsearch/set')(options, client, this);
   require('./elasticsearch/watch')(options, client, this);
-  require('./elasticsearch/react')(options, client, this);
   require('./elasticsearch/user')(options, client, this);
   require('./elasticsearch/gc')(options, client, this);
 }

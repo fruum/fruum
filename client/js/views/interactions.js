@@ -30,7 +30,8 @@ Handles the bottom input part
         attachments: '[data-action="attachments"]',
         help_panel: '.fruum-js-help',
         help_tab: '[data-help-tab]',
-        show_notifications: '.fruum-js-show-notifications',
+        karma_notify: '.fruum-js-karma-notify',
+        show_profile: '.fruum-js-show-profile',
         avatar_container: '.fruum-js-avatar-container',
         preview_panel: '.fruum-js-preview',
         field_parent: '[data-field="parent"]',
@@ -79,7 +80,7 @@ Handles the bottom input part
         'click @ui.add_search': 'onAddSearch',
         'click @ui.cancel': 'onCancel',
         'click @ui.preview': 'onPreview',
-        'click @ui.show_notifications': 'onShowNotifications',
+        'click @ui.show_profile': 'onShowProfile',
         //capture changes and store them
         'blur @ui.field_body': 'onBodyBlur',
         'keyup @ui.field_body': 'onKeyBody',
@@ -94,11 +95,13 @@ Handles the bottom input part
         );
         //helper to mark how many posts the user has submitted for onboarding
         this.post_count = 0;
+        this.new_karma = 0;
         this.ui_state = this.model;
         this.collections = options.collections;
         this.listenTo(Fruum.io, 'fruum:resize', this.onResize);
         this.listenTo(Fruum.io, 'fruum:update_notify', this.onUpdateNotify);
         this.listenTo(Fruum.io, 'fruum:message', this.onMessage);
+        this.listenTo(Fruum.io, 'fruum:new_karma', this.onNewKarma);
         this.listenTo(Fruum.io, 'fruum:default_action', function() {
           var el = this.$('.fruum-js-default-action');
           if (el.length) {
@@ -207,14 +210,26 @@ Handles the bottom input part
       typeNotificationEnd: function() {
         this.type_notification_timer = null;
       },
-      onShowNotifications: function(event) {
+      onShowProfile: function(event) {
         if (event) {
           event.preventDefault();
           event.stopPropagation();
         }
-        if (Fruum.userUtils.countNotifications()) {
-          Fruum.io.trigger('fruum:set_onboard');
-          Fruum.io.trigger('fruum:notifications', { ids: Fruum.user.notifications });
+        Fruum.io.trigger('fruum:profile', {
+          username: Fruum.user.username,
+          id: Fruum.user.id
+        });
+      },
+      onNewKarma: function(diff) {
+        this.new_karma += diff;
+        this.consumeKarma();
+      },
+      consumeKarma: function() {
+        var el = this.$(this.ui.karma_notify);
+        if (this.new_karma && el.length) {
+          el.find('.fruum-js-karma-diff').html( (this.new_karma > 0?'+':'-') + this.new_karma );
+          el.delay(500).fadeIn('fast').delay(4000).fadeOut('slow');
+          this.new_karma = 0;
         }
       },
 
@@ -371,6 +386,7 @@ Handles the bottom input part
                   break;
               }
               that.startOnboard();
+              that.consumeKarma();
             });
         });
       },

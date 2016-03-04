@@ -64,6 +64,22 @@ Models
         meta: {}
       }
     });
+    //User profile
+    Fruum.models.Profile = Backbone.Model.extend({
+      defaults: {
+        id: '',
+        username: '',
+        displayname: '',
+        avatar: '',
+        karma: 0,
+        admin: false,
+        blocked: false,
+        joined: 0, //timestamp
+        last_login: 0, //timestamp or 'online'.
+        topics: 0,
+        replies: 0
+      }
+    });
     //UI state
     Fruum.models.UIState = Backbone.Model.extend({
       defaults: {
@@ -82,6 +98,8 @@ Models
         load_state: '',
         view_req: '',
 
+        profile: '',
+        profile_total_users: 0,
         interacting: false,
         searching: false,
         has_search_string: false,

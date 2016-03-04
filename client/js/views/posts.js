@@ -24,6 +24,7 @@ Posts view
         share: '[data-action="share"]',
         more_source: '.fruum-js-more-source',
         more_target: '.fruum-js-more-target',
+        profile: '.fruum-js-profile',
         links: 'a[href]'
       },
       modelEvents: {
@@ -37,6 +38,7 @@ Posts view
         'click @ui.inappropriate': 'onInappropriate',
         'click @ui.delete': 'onDelete',
         'click @ui.share': 'onShare',
+        'click @ui.profile': 'onProfile',
         'click @ui.links': 'onLink'
       },
       initialize: function(options) {
@@ -53,6 +55,16 @@ Posts view
           return '#fruum-template-post-master';
         }
         return '#fruum-template-post';
+      },
+      onProfile: function(event) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        Fruum.io.trigger('fruum:profile', {
+          id: this.model.get('user_id'),
+          username: this.model.get('user_username')
+        });
       },
       onMore: function(event) {
         if (event) {
@@ -114,12 +126,18 @@ Posts view
       },
       onLink: function(event) {
         var href = $(event.target).attr('href') || '';
+        //relative link
         if (href.indexOf('#fruum:') == 0) {
           event.preventDefault();
           event.stopPropagation();
           href = href.replace('#fruum:', '');
           Fruum.api.open(href);
         }
+        //absolute forum link
+        else if (href.indexOf(Fruum.utils.permaLink('')) == 0) {
+          Fruum.api.open(href.replace(Fruum.utils.permaLink(''), ''));
+        }
+        //external link
         else if (href.toLowerCase().indexOf('http://') == 0 ||
                  href.toLowerCase().indexOf('https://') == 0)
         {

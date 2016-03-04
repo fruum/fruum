@@ -131,6 +131,12 @@ function FruumServer(options, cli_cmd, ready) {
       case 'gc_app':
         engine.gc(cli_cmd.params.app_id);
         break;
+      case 'search_users':
+        engine.search_users(cli_cmd.params);
+        break;
+      case 'delete_user':
+        engine.delete_user(cli_cmd.params);
+        break;
     }
     return;
   }
@@ -173,6 +179,7 @@ function FruumServer(options, cli_cmd, ready) {
     'client/js/models.js',
     'client/js/collections.js',
     'client/js/views/loading.js',
+    'client/js/views/profile.js',
     'client/js/views/breadcrumb.js',
     'client/js/views/title.js',
     'client/js/views/filters.js',
@@ -189,7 +196,6 @@ function FruumServer(options, cli_cmd, ready) {
     'client/js/views/interactions.js',
     'client/js/views/search.js',
     'client/js/views/bookmark.js',
-    'client/js/views/notifications.js',
     'client/js/views/onboarding.js',
     'client/js/views/share.js',
     'client/js/views/move.js',
@@ -310,6 +316,7 @@ function FruumServer(options, cli_cmd, ready) {
         .setDir(fruum_root)
         .load('client/templates/main.html')
         .concat(_.union([
+          'client/templates/profile.html',
           'client/templates/persona.html',
           'client/templates/breadcrumb.html',
           'client/templates/interactions.html',
@@ -318,7 +325,6 @@ function FruumServer(options, cli_cmd, ready) {
           'client/templates/attachments.html',
           'client/templates/search.html',
           'client/templates/bookmark.html',
-          'client/templates/notifications.html',
           'client/templates/onboarding.html',
           'client/templates/categories.html',
           'client/templates/loading.html',
@@ -548,6 +554,21 @@ function FruumServer(options, cli_cmd, ready) {
           });
           socket.on('fruum:optimize', function(payload) {
             engine.optimize(socket, payload || {});
+          });
+          socket.on('fruum:profile', function(payload) {
+            engine.profile(socket, payload || {});
+          });
+          socket.on('fruum:user:block', function(payload) {
+            engine.block_user(socket, payload || {});
+          });
+          socket.on('fruum:user:unblock', function(payload) {
+            engine.unblock_user(socket, payload || {});
+          });
+          socket.on('fruum:user:feed', function(payload) {
+            engine.user_feed(socket, payload || {});
+          });
+          socket.on('fruum:user:list', function(payload) {
+            engine.user_list(socket, payload || {});
           });
         }
       });

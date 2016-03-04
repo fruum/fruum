@@ -300,7 +300,7 @@ module.exports = function(options) {
     the search query string
   - params: (optional)
     {
-      skipfields: ['attachments', 'body', ...] //skip document fields
+      skipfields: ['attachments', 'body', ...], //skip document fields
     }
   */
   this.search = function(app_id, payload, callback, params) { callback([]); }
@@ -316,7 +316,10 @@ module.exports = function(options) {
     the search
   - params: (optional)
     {
-      skipfields: ['attachments', 'body', ...] //skip document fields
+      skipfields: ['attachments', 'body', ...], //skip document fields
+      from: 0, //pagination start index
+      size: 100, //max results to fetch
+      sort: [{ <field> : {order : 'asc|desc'} }]
     }
   */
   this.search_attributes = function(app_id, attributes, callback, params) { callback([]); }
@@ -360,22 +363,6 @@ module.exports = function(options) {
   */
   this.unwatch = function(app_id, document, user, callback) { callback(); }
 
-  // -------------------------------- REACTION ---------------------------------
-
-  /*
-  Summary:
-  Add user reaction
-
-  Parameters:
-  - app_id: the application id
-  - document: Document model to unwatch
-  - user: User model who is unwatching the document
-  - reaction: Reaction string, e.g. "up", "down"
-  - callback: function callback, passing the document as parameter on success,
-    undefined on error
-  */
-  this.react = function(app_id, document, user, reaction, callback) { callback(); }
-
   // ---------------------------------- USERS ----------------------------------
 
   /*
@@ -406,6 +393,18 @@ module.exports = function(options) {
 
   /*
   Summary:
+  Delete user
+
+  Parameters:
+  - app_id: the application id
+  - user: User model
+  - callback: function callback, passing the user as parameter on success,
+    undefined on error
+  */
+  this.delete_user = function(app_id, user, callback) { callback(user); }
+
+  /*
+  Summary:
   Get user by user id
 
   Parameters:
@@ -425,8 +424,27 @@ module.exports = function(options) {
   - attributes: an object with fields to match, e.g. { username: 'foo' }
   - callback: function callback, passing a list of user models that match the
     specified attributes
+  - params: (optional)
+    {
+      skipfields: ['tags', 'meta', ...] //skip user fields
+      from: 0, //pagination start index
+      size: 100, //max results to fetch
+      sort: [{ <field> : {order : 'asc|desc'} }]
+    }
   */
-  this.match_users = function(app_id, attributes, callback) { callback([]); }
+  this.match_users = function(app_id, attributes, callback, params) { callback([]); }
+
+  /*
+  Summary:
+  Count users matching attributes
+
+  Parameters:
+  - app_id: the application id
+  - attributes: an object with fields to match, e.g. { username: 'foo' }
+  - callback: function callback, passing the number of users that match the
+    specified attributes
+  */
+  this.count_users = function(app_id, attributes, callback) { callback(0); }
 
   /*
   Summary:

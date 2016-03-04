@@ -42,5 +42,14 @@ Collections
     Fruum.collections.Notifications = Backbone.Collection.extend({
       model: Fruum.models.Document
     });
+    Fruum.collections.ProfileTopics = Backbone.Collection.extend({
+      model: Fruum.models.Document
+    });
+    Fruum.collections.ProfileReplies = Backbone.Collection.extend({
+      model: Fruum.models.Document
+    });
+    Fruum.collections.ProfileUsers = Backbone.Collection.extend({
+      model: Fruum.models.Profile
+    });
   });
 })();

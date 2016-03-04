@@ -29,12 +29,17 @@ function Report(options, instance) {
             };
             //send email to each admin
             _.each(administrators, function(admin) {
-              logger.info(payload.app_id, 'report_notify_admin:' + admin.get('username'), payload.document);
-              context.administrator = admin.toJSON();
-              instance.email.send(application, admin, {
-                subject: email_template.subject(context),
-                html: instance.email.inlineCSS(email_template.html(context))
-              }, function() {});
+              if (admin.get('blocked')) {
+                logger.info(application.get('id'), 'report_notify_admin_skip_blocked_user', admin);
+              }
+              else {
+                logger.info(payload.app_id, 'report_notify_admin:' + admin.get('username'), payload.document);
+                context.administrator = admin.toJSON();
+                instance.email.send(application, admin, {
+                  subject: email_template.subject(context),
+                  html: instance.email.inlineCSS(email_template.html(context))
+                }, function() {});
+              }
             });
           });
         }

@@ -18,7 +18,11 @@
     </div>
     <div class="fruum-object-additional-data">
       <span class="fruum-secondary-data">
-        <%= Fruum.utils.print(body, attachments) %>
+        <% if (body) { %>
+          <%= Fruum.utils.print(body, attachments) %>
+        <% } else { %>
+          View thoughts and ideas in category, and share your own
+        <% } %>
       </span>
       <% if (children_count) { %>
       <br>

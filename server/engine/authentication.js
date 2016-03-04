@@ -47,12 +47,18 @@ module.exports = function(options, instance, self) {
           delete app_users[app_id];
           delete app_applications[app_id];
         }
-        //update last logout timestamp
+        //update last logout timestamp and karma
         if (user.get('id')) {
           var now = Date.now();
-          storage.update_user(app_id, user, { last_logout: now }, function(updated_user) {
+          storage.update_user(app_id, user, {
+            last_logout: now,
+            logout_karma: user.get('karma')
+          }, function(updated_user) {
             if (updated_user) {
-              logger.info(app_id, 'update_last_logout', updated_user.get('username') + ': ' + now);
+              logger.info(app_id, 'update_last_logout',
+                          updated_user.get('username') + ': ' + now);
+              logger.info(app_id, 'update_logout_karma',
+                          updated_user.get('username') + ': ' + updated_user.get('logout_karma'));
             }
             else {
               logger.error(app_id, 'update_last_logout_failed', user);
@@ -153,6 +159,13 @@ module.exports = function(options, instance, self) {
               });
             }
             else {
+              //check for blocked user
+              if (storage_user.get('blocked')) {
+                //continue as anonymous
+                user.set(user.defaults);
+                onready(user);
+                return;
+              }
               //find new notifications
               storage.search_attributes(
                 app_id,
@@ -176,6 +189,8 @@ module.exports = function(options, instance, self) {
                     watch: storage_user.get('watch'),
                     notifications: storage_user.get('notifications'),
                     onboard: storage_user.get('onboard'),
+                    karma: storage_user.get('karma'),
+                    logout_karma: storage_user.get('logout_karma'),
                     meta: storage_user.get('meta'),
                     last_logout: storage_user.get('last_logout')
                   });

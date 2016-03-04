@@ -45,9 +45,11 @@ module.exports = function(options, client, self) {
         }
       }
     };
-    if (params && params.skipfields && params.skipfields.length) {
-      body._source = {
-        exclude: params.skipfields
+    if (params) {
+      if (params.skipfields && params.skipfields.length) {
+        body._source = {
+          exclude: params.skipfields
+        }
       }
     }
     client.search({
@@ -257,9 +259,16 @@ module.exports = function(options, client, self) {
       size: options.elasticsearch.max_children,
       query: self.createSearchQSL(attributes)
     };
-    if (params && params.skipfields && params.skipfields.length) {
-      body._source = {
-        exclude: params.skipfields
+    if (params) {
+      if (params.from > 0) body.from = params.from;
+      if (params.size > 0) body.size = params.size;
+      if (params.skipfields && params.skipfields.length) {
+        body._source = {
+          exclude: params.skipfields
+        }
+      }
+      if (params.sort && params.sort.length) {
+        body.sort = params.sort;
       }
     }
     client.search({

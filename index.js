@@ -8,42 +8,197 @@ var config = require('./settings'),
     cliArgs = require('command-line-args');
 
 var cli = cliArgs([
-  { name: 'help', type: Boolean, description: 'Print usage instructions' },
+  {
+    name: 'help',
+    type: Boolean,
+    description: 'Print usage instructions'
+  },
+  {
+    name: 'log-level',
+    typeLabel: '[info|debug|error]',
+    type: String,
+    description: 'Set log level'
+  },
+  {
+    name: 'config',
+    typeLabel: '<path to config.json>',
+    type: String,
+    description: 'Use custom config file'
+  },
 
-  { name: 'log-level', type: String, description: 'Set log level [info, debug, error]' },
-  { name: 'config', type: String, description: 'Use custom config file' },
+  {
+    name: 'setup',
+    type: Boolean,
+    description: 'Setup database (should be called once)'
+  },
+  {
+    name: 'migrate',
+    type: Boolean,
+    description: 'Migrate database changes'
+  },
+  {
+    name: 'teardown',
+    type: Boolean,
+    description: 'Tear down database (WILL DESTROY ALL DATA)'
+  },
 
-  { name: 'setup', type: Boolean, description: 'Setup database (should be called once)' },
-  { name: 'migrate', type: Boolean, description: 'Migrate database changes' },
-  { name: 'teardown', type: Boolean, description: 'Tear down database (WILL DESTROY ALL DATA)' },
+  {
+    name: 'list-apps',
+    type: Boolean,
+    description: 'List all apps'
+  },
+  {
+    name: 'gc-app',
+    typeLabel: '<app_id>',
+    type: String,
+    description: 'Purge archived docs'
+  },
+  {
+    name: 'reset-users',
+    typeLabel: '<app_id>',
+    type: String,
+    description: 'Delete all app users'
+  },
+  {
+    name: 'list-users',
+    typeLabel: '<app_id>',
+    type: String,
+    description: 'List all app users'
+  },
+  {
+    name: 'search-users',
+    typeLabel: '<app_id> --value <query>',
+    type: String,
+    description: 'Search for users in app'
+  },
+  {
+    name: 'delete-user',
+    typeLabel: '<app_id> --value <userid>',
+    type: String,
+    description: 'Delete user'
+  },
+  {
+    name: 'add-app',
+    typeLabel: '<app_id> [...params...]',
+    type: String,
+    description: 'Add new app'
+  },
+  {
+    name: 'update-app',
+    typeLabel: '<app_id> [...params...]',
+    type: String,
+    description: 'Update app'
+  },
+  {
+    name: 'name',
+    typeLabel: '<name>',
+    type: String,
+    description: 'App name for [...params...]'
+  },
+  {
+    name: 'description',
+    typeLabel: '<description>',
+    type: String,
+    description: 'App description for [...params...]'
+  },
+  {
+    name: 'url',
+    typeLabel: '<url>',
+    type: String,
+    description: 'Website url for [...params...]'
+  },
+  {
+    name: 'auth-url',
+    typeLabel: '<url>',
+    type: String,
+    description: 'Authentication url for [...params...]'
+  },
+  {
+    name: 'fullpage-url',
+    typeLabel: '<url>',
+    type: String,
+    description: 'Full page url for [...params...]'
+  },
+  {
+    name: 'pushstate',
+    typeLabel: '[true|false]',
+    type: String,
+    description: 'Pushstate on fullpage for [...params...]'
+  },
+  {
+    name: 'theme',
+    typeLabel: '<string>',
+    type: String,
+    description: 'Set theme for [...params...]'
+  },
+  {
+    name: 'notifications-email',
+    typeLabel: '<email>',
+    type: String,
+    description: 'Notifications email for [...params...]'
+  },
+  {
+    name: 'contact-email',
+    typeLabel: '<email>',
+    type: String,
+    description: 'Contact email <string> for [...params...]'
+  },
+  {
+    name: 'delete-app',
+    typeLabel: '<app_id>',
+    type: String,
+    description: 'Delete app'
+  },
 
-  { name: 'list-apps', type: Boolean, description: 'List all apps' },
-  { name: 'gc-app', type: String, description: 'Purge archived docs of <app_id>' },
-  { name: 'reset-users', type: String, description: 'Delete all users of app <api_key>' },
-  { name: 'list-users', type: String, description: 'List all users of app <api_key>' },
+  {
+    name: 'create-api-key',
+    typeLabel: '<app_id> [--using <api_key>]',
+    type: String,
+    description: 'Create API key'
+  },
+  {
+    name: 'using',
+    typeLabel: '<api_key>',
+    type: String,
+    description: 'Optional param for create-api-key'
+  },
+  {
+    name: 'list-api-keys',
+    typeLabel: '<app_id>',
+    type: String,
+    description: 'List API keys'
+  },
+  {
+    name: 'delete-api-key',
+    typeLabel: '<api_key>',
+    type: String,
+    description: 'Delete API key'
+  },
 
-  { name: 'add-app', type: String, description: 'Register app <app_id>' },
-  { name: 'update-app', type: String, description: 'Update app <app_id>' },
-  { name: 'name', type: String, description: 'App name <name>' },
-  { name: 'description', type: String, description: 'App description <description>' },
-  { name: 'url', type: String, description: 'Website url <url>' },
-  { name: 'auth-url', type: String, description: 'Authentication url <url>' },
-  { name: 'fullpage-url', type: String, description: 'Full page url <url>' },
-  { name: 'pushstate', type: String, description: 'Pushstate on fullpage [true|false]' },
-  { name: 'theme', type: String, description: 'Custom theme <string>' },
-  { name: 'notifications-email', type: String, description: 'Application notifications email <string>' },
-  { name: 'contact-email', type: String, description: 'Application contact email <string>' },
-  { name: 'delete-app', type: String, description: 'Delete app <app_id>' },
-
-  { name: 'create-api-key', type: String, description: 'Create API key <app_id>' },
-  { name: 'using', type: String, description: 'Combined with --create-api-key to explicitely define the api key' },
-  { name: 'list-api-keys', type: String, description: 'List API keys <app_id>' },
-  { name: 'delete-api-key', type: String, description: 'Delete API key <api_key>' },
-
-  { name: 'set-app-property', type: String, description: 'Set app property <app_id>' },
-  { name: 'get-app-property', type: String, description: 'Get app property <app_id>' },
-  { name: 'property', type: String, description: 'Property name' },
-  { name: 'value', type: String, description: 'Value name' },
+  {
+    name: 'set-app-property',
+    typeLabel: '<app_id> --property <key> --value <value>',
+    type: String,
+    description: 'Set app property'
+  },
+  {
+    name: 'get-app-property',
+    typeLabel: '<app_id> --property <key>',
+    type: String,
+    description: 'Get app property'
+  },
+  {
+    name: 'property',
+    typeLabel: '<key>',
+    type: String,
+    description: 'Property name'
+  },
+  {
+    name: 'value',
+    typeLabel: '<value>',
+    type: String,
+    description: 'Value name'
+  },
 
 ]);
 //parse command line values
@@ -175,6 +330,24 @@ else {
       action: 'list_users',
       params: {
         app_id: options['list-users']
+      }
+    }
+  }
+  else if (options['search-users']) {
+    cli_cmd = {
+      action: 'search_users',
+      params: {
+        app_id: options['search-users'],
+        value: options['value']
+      }
+    }
+  }
+  else if (options['delete-user']) {
+    cli_cmd = {
+      action: 'delete_user',
+      params: {
+        app_id: options['delete-user'],
+        value: options['value']
       }
     }
   }

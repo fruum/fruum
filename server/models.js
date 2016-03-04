@@ -142,6 +142,7 @@ var Document = Backbone.Model.extend({
     return this.get('visible') &&
            this.get('type') != 'channel' &&
            this.get('parent_type') != 'channel' &&
+           this.get('permission') == 0 &&
            !this.get('archived') &&
            !this.get('inappropriate');
   },
@@ -149,6 +150,8 @@ var Document = Backbone.Model.extend({
     var json = this.toJSON();
     //remove escaping of > and ` used by markdown
     json.body = (json.body || '').replace(/&gt;/g, '>').replace(/&#x60;/g, '`');
+    //remove images
+    json.body = json.body.replace(/\[\[\b\S+?\b\]\]/g, '');
     json.body = marked(json.body);
     return json;
   },
@@ -177,6 +180,8 @@ var User = Backbone.Model.extend({
     anonymous: true,
     //is admin?
     admin: false,
+    //is blocked?
+    blocked: false,
     //user details
     username: '',
     displayname: '',
@@ -191,6 +196,10 @@ var User = Backbone.Model.extend({
     last_logout: 0,
     //onboard mask
     onboard: 0,
+    //karma
+    karma: 0,
+    //karma during last logout
+    logout_karma: 0,
     //watch list of doc ids
     watch: [],
     //tags
@@ -226,6 +235,9 @@ var User = Backbone.Model.extend({
     if (this.get('admin')) {
       log += divider + '(ADMIN)';
     }
+    if (this.get('blocked')) {
+      log += divider + '(BLOCKED)';
+    }
     if (this.get('anonymous')) {
       log += divider + '(ANONYMOUS)';
     }
@@ -233,6 +245,7 @@ var User = Backbone.Model.extend({
       log += divider + 'username:' + this.get('username');
       log += divider + 'displayname:' + this.get('displayname');
       log += divider + 'email:' + this.get('email');
+      log += divider + 'karma:' + this.get('karma');
     }
     if (humanize && this.get('last_login')) {
       log += divider + 'last_login:' + moment(this.get('last_login')).format('D-MMM-YYYY');

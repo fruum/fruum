@@ -123,7 +123,7 @@ Utilities
         },
         onAttach: function() {
           this.$el.delay(this.__delay_transition || 10).
-                  animate({ opacity: 1 }, 400);
+                  animate({ opacity: 1 }, 200);
         }
       });
     }
@@ -139,7 +139,7 @@ Utilities
     Fruum.utils.getInitials = function(name) {
       name = (name || '').toUpperCase().split(' ');
       var response = '';
-      for (var i = 0; i < name.length; ++i) {
+      for (var i = 0; i < name.length && i < 3; ++i) {
         if (name[i]) response += name[i][0];
       }
       return response;

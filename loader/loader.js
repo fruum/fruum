@@ -216,18 +216,42 @@
           add_class(el_preview, 'fruum-clicked');
         //this is replaced by server
         window.fruumSettings.fruum_host = '__url__';
-        //append fruum
-        if (window.fruumSettings.bundle) {
-          load_script(window.fruumSettings.fruum_host +
-                      '/_/get/js/bundle/' +
-                      window.fruumSettings.app_id);
+
+        //check for bot in fullpage mode
+        if (window.fruumSettings.container &&
+            window.fruumSettings.fullpage_url &&
+            /bot|googlebot|crawler|spider|robot|crawling/i.test(navigator.userAgent))
+        {
+          //load static HTML
+          var request = new XMLHttpRequest(),
+              docid = window.fruumSettings.view_id;
+          request.open('GET',
+            window.fruumSettings.fruum_host +
+            '/_/robot/' + window.fruumSettings.app_id +
+            (docid?'/v/' + docid:''), true);
+
+          request.onload = function() {
+            if (request.status >= 200 && request.status < 400) {
+              var el = document.querySelectorAll(window.fruumSettings.container)[0];
+              el.innerHTML = request.responseText;
+            }
+          };
+          request.send();
         }
         else {
-          load_dependencies(function() {
+          //append fruum
+          if (window.fruumSettings.bundle) {
             load_script(window.fruumSettings.fruum_host +
-                        '/_/get/js/compact/' +
+                        '/_/get/js/bundle/' +
                         window.fruumSettings.app_id);
-          });
+          }
+          else {
+            load_dependencies(function() {
+              load_script(window.fruumSettings.fruum_host +
+                          '/_/get/js/compact/' +
+                          window.fruumSettings.app_id);
+            });
+          }
         }
       }
     }

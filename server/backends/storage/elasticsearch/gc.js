@@ -190,6 +190,7 @@ module.exports = function(options, client, self) {
                 must: [
                   { range: { last_login: { lte: timestamp } } },
                   { term: { admin: false } },
+                  { term: { karma: 0 } },
                   { missing: { field: 'watch' } }
                 ]
               }

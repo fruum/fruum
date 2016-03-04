@@ -110,6 +110,16 @@ module.exports = function(options, instance, self) {
   self.isID = function(obj) {
     return (typeof obj === 'string') || (typeof obj === 'number');
   };
+  //find online user based on user id
+  self.findOnlineUser = function(app_id, user_id) {
+    var app = app_users[app_id];
+    if (!app) return;
+    var ret;
+    _.each(app, function(user) {
+      if (user.get('id') == user_id) ret = user;
+    });
+    return ret;
+  };
   //emits notification signals to all users watching this document
   self.broadcastNotifications = function(by_user, document) {
     var app = app_users[by_user.get('app_id')];

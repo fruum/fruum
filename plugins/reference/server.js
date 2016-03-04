@@ -109,9 +109,20 @@ function ReferencePlugin(options, instance) {
   this.beforeReport = function(payload, callback) {
     callback(null, payload);
   }
-  //process a document before it is been reported as inappropriate
+  //process a document after it is been reported as inappropriate
   //payload: { app_id: app_id, user: User, document: Document }
   this.afterReport = function(payload, callback) {
+    callback(null, payload);
+  }
+
+  //process a document before a field is set
+  //payload: { app_id: app_id, user: User, document: Document, field: field, value: value }
+  this.beforeField = function(payload, callback) {
+    callback(null, payload);
+  }
+  //process a document after a field is set
+  //payload: { app_id: app_id, user: User, document: Document, field: field, value: value }
+  this.afterField = function(payload, callback) {
     callback(null, payload);
   }
 

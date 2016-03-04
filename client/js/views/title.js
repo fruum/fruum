@@ -34,15 +34,6 @@ Handles the top part
         'click @ui.visible': 'onVisible',
         'click @ui.locked': 'onLocked'
       },
-      initialize: function(options) {
-        this.notifications = options.notifications;
-        this.listenTo(this.notifications, 'reset', this.render);
-      },
-      templateHelpers: function() {
-        return {
-          has_notifications: this.notifications.length
-        }
-      },
       onSearch: function(event) {
         if (event) {
           event.preventDefault();
