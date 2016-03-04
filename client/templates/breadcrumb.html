@@ -1,8 +1,8 @@
 <!-- breadcrumb template -->
 <script type="text/template" id="fruum-template-breadcrumb">
-  <div <% if (viewing.id && !searching && !has_notifications && breadcrumb.length) { %>data-onboard="breadcrumb"<% } %> >
+  <div <% if (viewing.id && !searching && breadcrumb.length) { %>data-onboard="breadcrumb"<% } %> >
     <% if (!viewing.id) { %>
-    <% } else if (searching || has_notifications) { %>
+    <% } else if (searching) { %>
     <div class="fruum-navigation-item fruum-link fruum-js-search-close" >
       <span class="fruum-avatar-icon fruum-link">
         <span class="fruum-icon fruum-icon-left"></span>

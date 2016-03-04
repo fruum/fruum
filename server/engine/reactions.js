@@ -5,7 +5,8 @@
 'use strict';
 
 var _ = require('underscore'),
-    logger = require('../logger');
+    logger = require('../logger'),
+    valid_reactions = ['up', 'down'];
 
 module.exports = function(options, instance, self) {
   var storage = self.storage,
@@ -50,15 +51,47 @@ module.exports = function(options, instance, self) {
           self.success(payload);
           return;
         }
+        logger.info(app_id, 'update_reaction_' + reaction + ':' + document.get('id'), user);
         //success
-        self.invalidateDocument(app_id, document);
-        storage.react(app_id, document, user, reaction, function() {
-          socket.emit('fruum:react', document.toJSON());
-          self.broadcast(user, document);
-          plugin_payload.document = document;
-          plugins.afterReact(plugin_payload, function() {
-            self.success(payload);
-          });
+        var username = user.get('username'),
+            attributes = {},
+            reaction_list = document.get('react_' + reaction),
+            has_reaction = false,
+            balance = 0;
+
+        if (reaction_list && reaction_list.indexOf(username) >= 0) {
+          has_reaction = true;
+        }
+        //remove from previous reactions
+        _.each(valid_reactions, function(entry) {
+          var field = 'react_' + entry,
+              list = document.get(field);
+          if (!list) return;
+          var len = list.length;
+          list = _.without(list, username);
+          if (len != list.length) balance--;
+          if (entry === reaction && !has_reaction) {
+            list.push(username);
+            balance++;
+          }
+          document.set(field, list);
+          attributes[field] = list;
+        });
+        storage.update(app_id, document, attributes, function(updated_doc) {
+          if (updated_doc) {
+            self.invalidateDocument(app_id, updated_doc);
+            socket.emit('fruum:react', updated_doc.toJSON());
+            self.broadcast(user, updated_doc);
+            plugin_payload.document = updated_doc;
+            plugin_payload.balance = balance;
+            plugins.afterReact(plugin_payload, function() {
+              self.success(payload);
+            });
+          }
+          else {
+            socket.emit('fruum:react');
+            self.fail(payload);
+          }
         });
       });
     });

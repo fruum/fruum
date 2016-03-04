@@ -93,6 +93,7 @@ function Notify(options, instance) {
   this.find_mentions = find_mentions;
 
   function notify(application, user, email_template, document) {
+    if (user.get('blocked')) return;
     var context = {
       date: moment(new Date()).format('D MMM YYYY'),
       application: application.toJSON(),
@@ -198,6 +199,7 @@ function Notify(options, instance) {
       //find user of the document
       instance.storage.get_user(payload.app_id, document.get('user_id'), function(doc_user) {
         if (!doc_user) return;
+        if (doc_user.get('blocked')) return;
         //construct email
         instance.engine.notificationTemplate(application, 'reaction', function(email_template) {
           var context = {

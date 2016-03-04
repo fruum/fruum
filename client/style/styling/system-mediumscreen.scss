@@ -1,3 +1,9 @@
+// proper reset maincard for medium screens
+
+#fruum .fruum-helper-container .fruum-helper-maincard {
+  font-size: $base-grid-medium;
+}
+
 // Handle custom interactive elements hover visibility. Here we set a default visibility
 
 #fruum .fruum-interactive-element {

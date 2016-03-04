@@ -17,7 +17,6 @@ Categories view
       ui: {
         navigate: '.fruum-js-navigate',
         manage: '.fruum-js-manage',
-        edit: '[data-action="edit"]',
         up: '[data-action="up"]',
         down: '[data-action="down"]',
         delete: '[data-action="delete"]'
@@ -28,7 +27,6 @@ Categories view
       events: {
         'click @ui.manage': 'onManage',
         'click @ui.navigate': 'onNavigate',
-        'click @ui.edit': 'onEdit',
         'click @ui.up': 'onUp',
         'click @ui.down': 'onDown',
         'click @ui.delete': 'onDelete'
@@ -63,19 +61,6 @@ Categories view
           event.stopPropagation();
         }
         Fruum.io.trigger('fruum:toggle_manage', this.ui.manage);
-      },
-      onEdit: function(event) {
-        if (event) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        Fruum.io.trigger('fruum:close_manage');
-        if (this.model.get('type') == 'bookmark') {
-          Fruum.io.trigger('fruum:show_bookmark', this.model.toJSON());
-        }
-        else {
-          Fruum.io.trigger('fruum:edit', this.model.toJSON());
-        }
       },
       onUp: function(event) {
         if (event) {

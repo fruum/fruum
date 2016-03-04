@@ -94,6 +94,11 @@
     left: auto;
     right: 2em;
     top: 1em;
+    text-align: right;
+    .fruum-meta-content {
+      font-size: $responsive-small-font;
+      color: $disabled-text-color;
+    }
   }
   .fruum-object-manage-data {
     // inherits font-size of base-grid

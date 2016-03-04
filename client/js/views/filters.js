@@ -29,14 +29,6 @@ Search button
         _.bindAll(this, '_search');
         this.listenTo(Fruum.io, 'fruum:clear_search', this.onSearchClose);
         this.listenTo(Fruum.io, 'fruum:set_search', this.onSearchSet);
-
-        this.notifications = options.notifications;
-        this.listenTo(this.notifications, 'reset', this.render);
-      },
-      templateHelpers: function() {
-        return {
-          has_notifications: this.notifications.length
-        }
       },
       onSearchSet: function(query) {
         this.model.set('searching', true);

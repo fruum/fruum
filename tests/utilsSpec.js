@@ -21,6 +21,7 @@ describe("Links", function() {
 describe("Initials", function() {
   it("are extracted", function() {
     expect(Fruum.utils.getInitials('Foo junior Bar')).toBe('FJB');
+    expect(Fruum.utils.getInitials('A B C D E')).toBe('ABC');
     expect(Fruum.utils.getInitials('foo')).toBe('F');
   });
 

@@ -67,7 +67,10 @@ function Engine(options, instance) {
     afterMove: [],
 
     beforeReport: [],
-    afterReport: []
+    afterReport: [],
+
+    beforeField: [],
+    afterField: []
   };
 
   //schedule cron on plugin
@@ -122,6 +125,9 @@ function Engine(options, instance) {
             if (plugin.beforeReport) plugins.beforeReport.push(plugin.beforeReport);
             if (plugin.afterReport) plugins.afterReport.push(plugin.afterReport);
 
+            if (plugin.beforeField) plugins.beforeField.push(plugin.beforeField);
+            if (plugin.afterField) plugins.afterField.push(plugin.afterField);
+
             if (plugin.cron && options.cron[plugin_name]) {
               cronify(plugin_name, plugin, options.cron[plugin_name]);
             }
@@ -165,6 +171,9 @@ function Engine(options, instance) {
 
   plugins.beforeReport = async.compose.apply(async.compose, plugins.beforeReport);
   plugins.afterReport = async.compose.apply(async.compose, plugins.afterReport);
+
+  plugins.beforeField = async.compose.apply(async.compose, plugins.beforeField);
+  plugins.afterField = async.compose.apply(async.compose, plugins.afterField);
 
   //User collection per app
   var app_users = {}, app_applications = {};
@@ -224,6 +233,8 @@ function Engine(options, instance) {
   new require('./engine/move')(options, instance, this);
   new require('./engine/report')(options, instance, this);
   new require('./engine/optimize')(options, instance, this);
+  new require('./engine/profile')(options, instance, this);
+  new require('./engine/user')(options, instance, this);
 
 }
 module.exports = Engine;

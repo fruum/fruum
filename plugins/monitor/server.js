@@ -101,8 +101,13 @@ function Monitor(options, instance) {
             html: instance.email.inlineCSS(email_template.html(context))
           };
           _.each(administrators, function(admin) {
-            logger.info(application.get('id'), 'monitor_notify', admin);
-            instance.email.send(application, admin, email, function() {});
+            if (admin.get('blocked')) {
+              logger.info(application.get('id'), 'monitor_notify_skip_blocked_user', admin);
+            }
+            else {
+              logger.info(application.get('id'), 'monitor_notify', admin);
+              instance.email.send(application, admin, email, function() {});
+            }
           });
         });
       }

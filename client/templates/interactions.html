@@ -168,20 +168,21 @@
 <!-- User avatar -->
 <script type="text/template" id="fruum-template-interactions-avatar">
   <div class="fruum-user-account">
-    <span class="fruum-link <% if (!Fruum.userUtils.countNotifications()) { %>fruum-link-disabled<% } else { %>fruum-anim-pulsing<% } %> fruum-account-settings fruum-js-avatar-container" <% if (Fruum.userUtils.countNotifications()) { %>data-fruumtipsy-right="Updates on topics I watch"<% } %> data-fruumtipsy-original="Updates on topics I watch">
+    <span class="fruum-interactions-display-update fruum-js-karma-notify" style="display:none;"><b class="fruum-js-karma-diff"></b> karma</span>
+    <span class="fruum-link <% if (Fruum.userUtils.countNotifications()) { %>fruum-anim-pulsing<% } %> fruum-account-settings fruum-js-avatar-container" <% if (Fruum.userUtils.countNotifications()) { %>data-fruumtipsy-right="Updates on topics I watch"<% } %> data-fruumtipsy-original="Updates on topics I watch">
       <% if (Fruum.utils.isLink(Fruum.user.avatar)) { %>
-      <img src="<%= Fruum.user.avatar %>" class="fruum-avatar-icon fruum-js-show-notifications" width="56"/>
+      <img src="<%= Fruum.user.avatar %>" class="fruum-avatar-icon fruum-js-show-profile" width="56"/>
       <% } else { %>
       <span
-        class="fruum-avatar-icon fruum-js-show-notifications"
+        class="fruum-avatar-icon fruum-js-show-profile"
         data-initials="<%- Fruum.utils.getInitials(Fruum.user.displayname) %>">
         <%- Fruum.utils.getInitials(Fruum.user.displayname) %>
       </span>
       <% } %>
       <% if (Fruum.userUtils.countNotifications()) { %>
-      <span class="fruum-badge fruum-js-show-notifications" data-field="notifications"><%= Fruum.userUtils.countNotifications() %></span>
+      <span class="fruum-badge fruum-js-show-profile" data-field="notifications"><%= Fruum.userUtils.countNotifications() %></span>
       <% } else { %>
-      <span class="fruum-badge fruum-js-show-notifications" data-field="notifications" style="display:none;"></span>
+      <span class="fruum-badge fruum-js-show-profile" data-field="notifications" style="display:none;"></span>
       <% } %>
     </span>
     <% if (add_category) { %>

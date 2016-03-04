@@ -67,6 +67,7 @@ module.exports = function(options, client, self) {
                     id: { type: 'string', index: 'not_analyzed' },
                     anonymous: { type: 'boolean' },
                     admin: { type: 'boolean' },
+                    blocked: { type: 'boolean' },
                     username: { type: 'string' },
                     displayname: { type: 'string' },
                     email: { type: 'string', index: 'not_analyzed' },
@@ -75,6 +76,8 @@ module.exports = function(options, client, self) {
                     last_login: { type: 'long' },
                     last_logout: { type: 'long' },
                     onboard: { type: 'integer' },
+                    karma: { type: 'integer' },
+                    logout_karma: { type: 'integer' },
                     meta: { type: 'object', enabled: false }
                   }
                 }

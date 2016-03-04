@@ -12,6 +12,8 @@
     3.3 Tags area
   4. User account section
   5. Interaction updates
+    5.1 Stream updates
+    5.2 Overlay update
 
 */
 
@@ -338,6 +340,8 @@ $pointer-dimensions: basegrid-mod( 12px );
 
 // 5. Interaction updates
 
+// 5.1 Stream update
+
 #fruum .fruum-interactions-stream-update {
   position: absolute;
   bottom: 100%;
@@ -357,4 +361,22 @@ $pointer-dimensions: basegrid-mod( 12px );
   .fruum-mini-loader:before {
     line-height: 1.3em;
   }
+}
+
+// 5.2 Overlay update
+
+#fruum .fruum-interactions-display-update {
+  //inherits font-size of base-grid
+  position: absolute;
+  display: block;
+  top: 0;
+  right: relative-ems( $avatar-small + 1*$fruum-whitespace, $responsive-small-font );
+  z-index: 1;
+  height: 100%;
+  width: auto;
+  padding: 0 $small-font-basegrid*2;
+  font-size: $responsive-small-font;
+  color: $disabled-text-color;
+  white-space: nowrap;
+  background-color: rgba( $background-helper-base-color, 0.75 );
 }

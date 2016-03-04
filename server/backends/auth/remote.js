@@ -49,7 +49,10 @@ function RemoteAuth(options, storage) {
         if (!err) {
           try {
             logger.info(application.get('id'), 'remote_auth_response', body);
-            callback(new Models.User(body || {}));
+            var u = new Models.User(body || {});
+            //make sure that username does not contain spaces
+            u.set('username', (u.get('username') || '').replace(/\s+/g, '_'));
+            callback(u);
             return;
           }
           catch(e) {

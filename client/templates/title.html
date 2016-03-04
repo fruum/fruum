@@ -1,6 +1,6 @@
   <!-- title template -->
 <script type="text/template" id="fruum-template-title">
-<% if (!searching && !has_notifications) { %>
+<% if (!searching) { %>
   <% if (viewing.id) { %>
   <div>
     <div class="fruum-stream-typography">
@@ -85,9 +85,5 @@
     <% } %>
   </div>
   <% } %>
-<% } else if (has_notifications) { %>
-  <div class="fruum-stream-typography">
-    <h4>Updates on topics I watch</h4>
-  </div>
 <% } %>
 </script>

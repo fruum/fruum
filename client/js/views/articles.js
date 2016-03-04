@@ -22,8 +22,7 @@ Articles view
         up: '[data-action="up"]',
         down: '[data-action="down"]',
         move: '[data-action="move"]',
-        delete: '[data-action="delete"]',
-        edit: '[data-action="edit"]'
+        delete: '[data-action="delete"]'
       },
       modelEvents: {
         'change': 'render'
@@ -35,8 +34,7 @@ Articles view
         'click @ui.delete': 'onDelete',
         'click @ui.up': 'onUp',
         'click @ui.down': 'onDown',
-        'click @ui.move': 'onMove',
-        'click @ui.edit': 'onEdit'
+        'click @ui.move': 'onMove'
       },
       templateHelpers: function() {
         return {
@@ -101,14 +99,6 @@ Articles view
         }
         Fruum.io.trigger('fruum:close_manage');
         Fruum.io.trigger('fruum:show_move', this.model.toJSON());
-      },
-      onEdit: function(event) {
-        if (event) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        Fruum.io.trigger('fruum:close_manage');
-        Fruum.io.trigger('fruum:edit', this.model.toJSON());
       }
     }));
     Fruum.views.ArticlesView = Marionette.CollectionView.extend({

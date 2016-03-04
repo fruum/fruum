@@ -75,6 +75,7 @@
     "monitor",
     "notify",
     "slack",
+    "karma",
     "garbage_collect"
   ],
 
@@ -128,6 +129,19 @@
     }
   },
 
+  "karma": {
+    "added_category": 0,
+    "added_thread": 2,
+    "added_article": 2,
+    "added_blog": 2,
+    "added_channel": 0,
+    "got_reply": 2,
+    "replied": 1,
+    "got_react_up": 10,
+    "got_react_down": -1,
+    "got_inappropriate": -50
+  },
+
   "memory_cache": {
     "static": 50,
     "views": 10,
@@ -146,6 +160,11 @@
 
   "mandrill": {
     "api_key": ""
+  },
+
+  "mailgun": {
+    "api_key": "",
+    "domain": ""
   },
 
   "mozilla_persona": {

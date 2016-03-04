@@ -280,12 +280,18 @@ module.exports = function(options, client, self) {
         var term_val = {};
         key = key.replace(negative, '');
         term_val[key] = value;
-        not_matches.push({ term: term_val });
+        if (_.isArray(value))
+          not_matches.push({ terms: term_val });
+        else
+          not_matches.push({ term: term_val });
       }
       else {
         var term_val = {};
         term_val[key] = value;
-        matches.push({ term: term_val });
+        if (_.isArray(value))
+          matches.push({ terms: term_val });
+        else
+          matches.push({ term: term_val });
       }
     }
     return {

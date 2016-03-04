@@ -1,5 +1,7 @@
 var Utils = require('./utils'),
     anonymous_connect = Utils.anonymous_connect,
+    bob_create = Utils.bob_create,
+    load_bob = Utils.load_bob,
     load_fixture = Utils.load_fixture,
     set_field = Utils.set_field;
 
@@ -227,4 +229,82 @@ describe("Anonymous client", function() {
       });
     });
   });
+
+  it("cannot block user", function(done) {
+    bob_create(function() {
+      anonymous_connect(function(socket) {
+        var payload = {
+          id: 'bob'
+        }
+        socket.emit('fruum:user:block', payload);
+        socket.on('fruum:user:block', function(response) {
+          socket.removeListener('fruum:user:block', this);
+          expect(response).toBeUndefined();
+          socket.disconnect();
+          done();
+        });
+      });
+    });
+  });
+
+  it("cannot unblock user", function(done) {
+    bob_create(function() {
+      anonymous_connect(function(socket) {
+        var payload = {
+          id: 'bob'
+        }
+        socket.emit('fruum:user:unblock', payload);
+        socket.on('fruum:user:unblock', function(response) {
+          socket.removeListener('fruum:user:unblock', this);
+          expect(response).toBeUndefined();
+          socket.disconnect();
+          done();
+        });
+      });
+    });
+  });
+
+  it("can view profile", function(done) {
+    load_bob(function() {
+      anonymous_connect(function(socket) {
+        var payload = {
+          id: 'bob'
+        }
+        socket.emit('fruum:profile', payload);
+        socket.on('fruum:profile', function(response) {
+          socket.removeListener('fruum:profile', this);
+          expect(response).toEqual(jasmine.objectContaining({
+            id: 'bob',
+            topics: 1,
+            replies: 0
+          }));
+          socket.disconnect();
+          done();
+        });
+      });
+    });
+  });
+
+  it("can view profile feed", function(done) {
+    load_bob(function() {
+      anonymous_connect(function(socket) {
+        var payload = {
+          id: 'bob',
+          feed: 'topics'
+        }
+        socket.emit('fruum:user:feed', payload);
+        socket.on('fruum:user:feed', function(response) {
+          socket.removeListener('fruum:user:feed', this);
+          expect(response).toEqual(jasmine.objectContaining({
+            id: 'bob',
+            feed: 'topics'
+          }));
+          expect(response.docs.length).toBe(1);
+          socket.disconnect();
+          done();
+        });
+      });
+    });
+  });
+
 });

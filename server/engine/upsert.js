@@ -400,36 +400,60 @@ module.exports = function(options, instance, self) {
         self.fail(payload);
         return;
       }
-      var attributes = {};
-      attributes[payload.field] = payload.value;
-      if (payload.field == 'visible') {
-        storage.update_subtree(app_id, document, attributes, function(updated_document) {
-          if (updated_document) {
-            self.invalidateDocument(app_id, updated_document);
-            socket.emit('fruum:field', updated_document.toJSON());
-            self.broadcast(user, updated_document, 'fruum:dirty', true);
-            self.success(payload);
-          }
-          else {
-            socket.emit('fruum:field');
-            self.fail(payload);
-          }
-        });
-      }
-      else {
-        storage.update(app_id, document, attributes, function(updated_document) {
-          if (updated_document) {
-            self.invalidateDocument(app_id, updated_document);
-            socket.emit('fruum:field', updated_document.toJSON());
-            self.broadcast(user, updated_document);
-            self.success(payload);
-          }
-          else {
-            socket.emit('fruum:field');
-            self.fail(payload);
-          }
-        });
-      }
+      //process plugins
+      var plugin_payload = {
+        app_id: app_id,
+        document: document,
+        user: user,
+        field: payload.field,
+        value: payload.value
+      };
+      plugins.beforeField(plugin_payload, function(err, plugin_payload) {
+        document = plugin_payload.document || document;
+        if (plugin_payload.storage_noop) {
+          socket.emit('fruum:field', document.toJSON());
+          if (!plugin_payload.broadcast_noop)
+            self.broadcast(user, document, 'fruum:dirty', true);
+          self.success(payload);
+          return;
+        }
+        var attributes = {};
+        attributes[payload.field] = payload.value;
+        if (payload.field == 'visible') {
+          storage.update_subtree(app_id, document, attributes, function(updated_document) {
+            if (updated_document) {
+              self.invalidateDocument(app_id, updated_document);
+              socket.emit('fruum:field', updated_document.toJSON());
+              self.broadcast(user, updated_document, 'fruum:dirty', true);
+              plugin_payload.document = updated_document;
+              plugins.afterField(plugin_payload, function() {
+                self.success(payload);
+              });
+            }
+            else {
+              socket.emit('fruum:field');
+              self.fail(payload);
+            }
+          });
+        }
+        else {
+          storage.update(app_id, document, attributes, function(updated_document) {
+            if (updated_document) {
+              self.invalidateDocument(app_id, updated_document);
+              socket.emit('fruum:field', updated_document.toJSON());
+              self.broadcast(user, updated_document);
+              plugin_payload.document = updated_document;
+              plugins.afterField(plugin_payload, function() {
+                self.success(payload);
+              });
+            }
+            else {
+              socket.emit('fruum:field');
+              self.fail(payload);
+            }
+          });
+        }
+      });
     });
   }
 }

@@ -21,8 +21,7 @@ Threads view
         manage: '.fruum-js-manage',
         sticky: '[data-action="sticky"]',
         move: '[data-action="move"]',
-        delete: '[data-action="delete"]',
-        edit: '[data-action="edit"]'
+        delete: '[data-action="delete"]'
       },
       modelEvents: {
         'change': 'render'
@@ -33,8 +32,7 @@ Threads view
         'click @ui.navigate': 'onNavigate',
         'click @ui.sticky': 'onSticky',
         'click @ui.delete': 'onDelete',
-        'click @ui.move': 'onMove',
-        'click @ui.edit': 'onEdit'
+        'click @ui.move': 'onMove'
       },
       templateHelpers: function() {
         return {
@@ -95,14 +93,6 @@ Threads view
         }
         Fruum.io.trigger('fruum:close_manage');
         Fruum.io.trigger('fruum:show_move', this.model.toJSON());
-      },
-      onEdit: function(event) {
-        if (event) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        Fruum.io.trigger('fruum:close_manage');
-        Fruum.io.trigger('fruum:edit', this.model.toJSON());
       }
     }));
     Fruum.views.ThreadsView = Marionette.CollectionView.extend({
