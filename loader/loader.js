@@ -12,15 +12,15 @@
       test: '_.reduce'
     },
     backbone: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.3/backbone-min.js',
+      url: '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone-min.js',
       test: 'Backbone.Model'
     },
     marionette: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.4.4/backbone.marionette.min.js',
+      url: '//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.4.5/backbone.marionette.min.js',
       test: 'Marionette.ItemView'
     },
     moment: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js',
+      url: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js',
       test: 'moment.isMoment'
     },
     marked: {
