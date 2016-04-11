@@ -7,7 +7,7 @@
 var _ = require('underscore'),
     Backbone = require('backbone'),
     marked = require('marked'),
-    xss = require('xss'),
+    DOMPurify = require('dompurify')(require('jsdom').jsdom().defaultView),
     request = require('request'),
     path = require('path'),
     fs = require('fs'),
@@ -78,12 +78,7 @@ var Document = Backbone.Model.extend({
     if (comparator && comparator.get('body') === body) return;
     //find code blocks
     body = body.replace(/```([^`]+)```/g, function(a, b) { return '```' + _.escape(b) + '```'; });
-    body = xss(body, {
-      whiteList: {
-        a: ['href', 'title', 'target'],
-        code: []
-      }
-    });
+    body = DOMPurify.sanitize(body);
     //revert code blocks
     body = body.replace(/```([^`]+)```/g, function(a, b) { return '```' + _.unescape(b) + '```'; });
     this.set('body', body);

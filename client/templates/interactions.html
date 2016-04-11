@@ -171,7 +171,7 @@
     <span class="fruum-interactions-display-update fruum-js-karma-notify" style="display:none;"><b class="fruum-js-karma-diff"></b> karma</span>
     <span class="fruum-link <% if (Fruum.userUtils.countNotifications()) { %>fruum-anim-pulsing<% } %> fruum-account-settings fruum-js-avatar-container" <% if (Fruum.userUtils.countNotifications()) { %>data-fruumtipsy-right="Updates on topics I watch"<% } %> data-fruumtipsy-original="Updates on topics I watch">
       <% if (Fruum.utils.isLink(Fruum.user.avatar)) { %>
-      <img src="<%= Fruum.user.avatar %>" class="fruum-avatar-icon fruum-js-show-profile" width="56"/>
+      <img src="<%- Fruum.user.avatar %>" class="fruum-avatar-icon fruum-js-show-profile" width="56"/>
       <% } else { %>
       <span
         class="fruum-avatar-icon fruum-js-show-profile"
@@ -253,7 +253,7 @@
             autocomplete="off"
             class="fruum-interactions-input fruum-secondary-data"
             placeholder="it's about..."
-            data-field="body"><%= editing.body || '' %></textarea>
+            data-field="body"><%- editing.body || '' %></textarea>
         </span>
       </div>
     </div>
@@ -319,7 +319,7 @@
         autocomplete="off"
         class="fruum-interactions-input fruum-secondary-data"
         placeholder="it's about..."
-        data-field="body"><%= editing.body || '' %></textarea>
+        data-field="body"><%- editing.body || '' %></textarea>
     </div>
     <div class="fruum-interactions-customizations">
       <b class="fruum-secondary-data">TAGS:</b>
@@ -371,7 +371,7 @@
         autocomplete="off"
         class="fruum-interactions-input fruum-secondary-data"
         placeholder="it's about..."
-        data-field="body"><%= editing.body || '' %></textarea>
+        data-field="body"><%- editing.body || '' %></textarea>
     </div>
     <div class="fruum-interactions-customizations">
       <b class="fruum-secondary-data">TAGS:</b>
@@ -423,7 +423,7 @@
         autocomplete="off"
         class="fruum-interactions-input fruum-secondary-data"
         placeholder="it's about..."
-        data-field="body"><%= editing.body || '' %></textarea>
+        data-field="body"><%- editing.body || '' %></textarea>
     </div>
     <div class="fruum-interactions-customizations">
       <b class="fruum-secondary-data">TAGS:</b>
@@ -526,7 +526,7 @@
     <div class="fruum-stream-typography">
       <textarea
         autocomplete="off" class="fruum-interactions-input"
-        placeholder="you say..." data-field="body"><%= editing.body || '' %></textarea>
+        placeholder="you say..." data-field="body"><%- editing.body || '' %></textarea>
       <div class="fruum-js-preview fruum-preview-container" style="display:none;"></div>
     </div>
     <div class="fruum-interactions-footer">

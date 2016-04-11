@@ -9,6 +9,7 @@ Handles the bottom input part
 
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
+        toMarkdown = Fruum.libs.toMarkdown,
         Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette;
 
@@ -86,7 +87,8 @@ Handles the bottom input part
         'keyup @ui.field_body': 'onKeyBody',
         'keyup @ui.field_header': 'onKeyHeader',
         'keyup @ui.field_initials': 'onKeyInitials',
-        'keyup @ui.field_tags': 'onKeyTags'
+        'keyup @ui.field_tags': 'onKeyTags',
+        'paste @ui.field_body': 'onPasteBody'
       },
       initialize: function(options) {
         _.bindAll(this,
@@ -420,7 +422,12 @@ Handles the bottom input part
           var h = this.ui.field_body.height();
           this.ui.field_body.hide();
           this.ui.preview_panel.css('display','inline-block').height(h).html(
-            Fruum.utils.print(this.ui.field_body.val(), this.ui_state.get('editing').attachments)
+            Fruum.utils.xssProtect(
+              Fruum.utils.print(
+                this.ui.field_body.val(),
+                this.ui_state.get('editing').attachments
+              )
+            )
           );
         }
         else {
@@ -552,6 +559,31 @@ Handles the bottom input part
           //check if all fields are empty
           if (!this.ui.field_header.val() && !this.ui.field_body.val()) {
             this.onCancel();
+          }
+        }
+      },
+      onPasteBody: function(event) {
+        var clp = (event.originalEvent || event).clipboardData;
+        if (clp && clp.getData) {
+          var text = clp.getData('text/html') || '';
+          if (text) {
+            try {
+              text = toMarkdown(text, { converters: [
+                {
+                  filter: ['html', 'body', 'span', 'div'],
+                  replacement: function(innerHTML) {
+                    return innerHTML;
+                  }
+                },
+                {
+                  filter: ['head', 'script', 'style', 'input', 'form'],
+                  replacement: function() { return ''; }
+                }
+              ]});
+              event.preventDefault();
+              this.ui.field_body.replaceSelection(text)
+            }
+            catch(err) {}
           }
         }
       },

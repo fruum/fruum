@@ -502,8 +502,10 @@ Main client app
             if (that.ui_state.get('jumpto_post') > 0) {
               var jumpto_post = that.ui_state.get('jumpto_post');
               that.ui_state.set('jumpto_post', 0);
-              _.defer(function() {
-                that.jumpToPost(jumpto_post);
+              that.listenToOnce(Fruum.io, 'fruum:layout', function() {
+                _.defer(function() {
+                  that.jumpToPost(jumpto_post);
+                });
               });
             }
             else if (last_doc.type === 'channel') {
@@ -861,6 +863,10 @@ Main client app
           $(that.ui.message_signin).slideUp('fast');
           that.ui_state.get('viewing').id = undefined;
           window.fruumSettings.view_id = undefined;
+          if (window.fruumSettings.jumpto|0) {
+            that.ui_state.set('jumpto_post', window.fruumSettings.jumpto|0);
+            window.fruumSettings.jumpto = undefined;
+          }
           //check for karma update
           var karma_diff = Fruum.user.karma - Fruum.user.logout_karma;
           if (karma_diff) Fruum.io.trigger('fruum:new_karma', karma_diff);
@@ -1288,6 +1294,7 @@ Main client app
         });
         this.getRegion('content').$el.nanoScroller({ reset: true });
         this.onScroll();
+        Fruum.io.trigger('fruum:layout');
       },
       resize_to_bottom: function() {
         this.getRegion('content').$el.height(
@@ -1397,7 +1404,9 @@ Main client app
       },
       //hard scroll to el
       _snapToEl: function(el) {
-        this.getRegion('content').$el.nanoScroller({ scrollTo: el });
+        if (el && el.length) {
+          this.getRegion('content').$el.nanoScroller({ scrollTo: el });
+        }
       },
       //hard scroll bottom
       _snapBottom: function() {
@@ -1582,6 +1591,7 @@ Main client app
       open: function(doc_id) {
         if (!app.rootView.isOpen()) {
           window.fruumSettings.view_id = doc_id;
+          window.fruumSettings.jumpto = undefined;
           app.rootView.onOpen();
         }
         //if we are already viewing the same document, abort
