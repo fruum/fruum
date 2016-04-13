@@ -42,7 +42,7 @@
   <div data-docid="<%- id %>" class="fruum-base-object fruum-link fruum-interactive-element fruum-js-navigate fruum-js-entry-default">
     <div class="fruum-avatar">
       <% if (Fruum.utils.isLink(user_avatar)) { %>
-      <img src="<%= user_avatar %>" class="fruum-avatar-icon" width="56"/>
+      <img src="<%- user_avatar %>" class="fruum-avatar-icon" width="56"/>
       <% } else { %>
       <span
         class="fruum-avatar-icon"

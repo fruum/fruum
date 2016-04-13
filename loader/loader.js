@@ -12,20 +12,28 @@
       test: '_.reduce'
     },
     backbone: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.3/backbone-min.js',
+      url: '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone-min.js',
       test: 'Backbone.Model'
     },
     marionette: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.4.4/backbone.marionette.min.js',
+      url: '//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.4.5/backbone.marionette.min.js',
       test: 'Marionette.ItemView'
     },
     moment: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js',
+      url: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js',
       test: 'moment.isMoment'
     },
     marked: {
       url: '//cdnjs.cloudflare.com/ajax/libs/marked/0.3.5/marked.min.js',
       test: 'marked'
+    },
+    purify: {
+      url: '//cdnjs.cloudflare.com/ajax/libs/dompurify/0.7.4/purify.min.js',
+      test: 'DOMPurify.sanitize'
+    },
+    to_markdown: {
+      url: '//cdnjs.cloudflare.com/ajax/libs/to-markdown/3.0.0/to-markdown.min.js',
+      test: 'toMarkdown'
     },
     socketio: {
       url: '//cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js',
@@ -56,7 +64,7 @@
         load_dependency(dependencies.backbone, function() {
           load_dependency(dependencies.marionette, function() {
             //load rest in parallel
-            var libs = ['moment', 'marked', 'socketio'],
+            var libs = ['moment', 'marked', 'purify', 'to_markdown', 'socketio'],
                 libs_loaded = 0;
             function cb() {
               libs_loaded++;
@@ -284,21 +292,26 @@
       }
     }
     function detectViewID() {
+      var viewid = '';
       if (window.location.hash &&
           window.location.hash.indexOf('#v/') == 0 &&
           window.fruumSettings.history &&
           !window.fruumSettings.pushstate)
       {
-        return window.location.hash.replace('#v/', '');
+        viewid = window.location.hash.replace('#v/', '');
       }
       else if (window.fruumSettings.pushstate &&
                window.fruumSettings.fullpage_url &&
                window.fruumSettings.history &&
                window.location.href.indexOf(window.fruumSettings.fullpage_url + 'v/') == 0)
       {
-        return window.location.href.replace(
+        viewid = window.location.href.replace(
           window.fruumSettings.fullpage_url + 'v/', ''
         );
+      }
+      return {
+        id: viewid.split('/')[0],
+        jumpto: viewid.split('/')[1]
       }
     }
     //bind event
@@ -323,7 +336,9 @@
       });
       //check for fruum hastag on url
       if (window.fruumSettings.restore) {
-        window.fruumSettings.view_id = detectViewID();
+        var detect_view = detectViewID();
+        window.fruumSettings.view_id = detect_view.id;
+        window.fruumSettings.jumpto = detect_view.jumpto;
         if (window.fruumSettings.view_id) {
           launch_fruum();
         }
@@ -339,7 +354,9 @@
       }
     }
     else {
-      window.fruumSettings.view_id = detectViewID();
+      var detect_view = detectViewID();
+      window.fruumSettings.view_id = detect_view.id;
+      window.fruumSettings.jumpto = detect_view.jumpto;
       launch_fruum();
     }
   });

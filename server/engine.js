@@ -23,18 +23,23 @@ function Engine(options, instance) {
   //Load email engine class
   logger.system("Using email engine: " + options.email_engine);
   var EmailEngine = require('./backends/email/' + options.email_engine);
+  //Load dispatch engine class
+  logger.system("Using dispatch engine: " + options.dispatch_engine);
+  var DispatchEngine = require('./backends/dispatch/' + options.dispatch_engine);
 
   //Engine instances
   var storage = new StorageEngine(options);
   var auth = new AuthEngine(options, storage);
   var cache = new CacheEngine(options, storage);
   var email = new EmailEngine(options, storage);
+  var dispatch = new DispatchEngine(options);
 
   //register backends to instance
   instance.storage = storage;
   instance.auth = auth;
   instance.cache = cache;
   instance.email = email;
+  instance.dispatch = dispatch;
   instance.engine = this;
 
   //Load plugins
@@ -184,6 +189,7 @@ function Engine(options, instance) {
   this.storage = storage;
   this.auth = auth;
   this.email = email;
+  this.dispatch = dispatch;
   this.plugins = plugins;
   this.app_users = app_users;
   this.app_applications = app_applications;

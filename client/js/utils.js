@@ -6,6 +6,7 @@ Utilities
   'use strict';
   window.Fruum.require.push(function () {
     var marked = Fruum.libs.marked,
+        sanitize = Fruum.libs.DOMPurify.sanitize,
         _ = Fruum.libs._;
 
     var at_user = ['@[.+-_0-9A-Za-z\xaa\xb5\xba\xc0-\xd6\xd8-\xf6',
@@ -174,6 +175,16 @@ Utilities
     Fruum.utils.autocompleteEmoji = function(text) {
       var m = (text || '').match(/\B:([\-+\w]*)$/);
       if (m && m[0].length > 1) return m[0];
+    }
+    //XSS protect
+    Fruum.utils.xssProtect = function(text) {
+      text = text || '';
+      //find code blocks
+      text = text.replace(/```([^`]+)```/g, function(a, b) { return '```' + _.escape(b) + '```'; });
+      text = sanitize(text);
+      //revert code blocks
+      text = text.replace(/```([^`]+)```/g, function(a, b) { return '```' + _.unescape(b) + '```'; });
+      return text;
     }
     //Persona processor
     Fruum.utils.personaSays = function(payload) {

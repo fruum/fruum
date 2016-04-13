@@ -9,7 +9,7 @@
 <script type="text/template" id="fruum-template-profile-maincard">
   <div class="fruum-avatar">
     <% if (Fruum.utils.isLink(avatar)) { %>
-    <img src="<%= avatar %>" class="fruum-avatar-icon" width="56"/>
+    <img src="<%- avatar %>" class="fruum-avatar-icon" width="56"/>
     <% } else { %>
     <span
       class="fruum-avatar-icon"
@@ -119,7 +119,7 @@
         <%- initials %>
       </span>
       <% } else if (Fruum.utils.isLink(user_avatar)) { %>
-      <img src="<%= user_avatar %>" class="fruum-avatar-icon" width="56"/>
+      <img src="<%- user_avatar %>" class="fruum-avatar-icon" width="56"/>
       <% } else { %>
       <span
         class="fruum-avatar-icon"
@@ -177,7 +177,7 @@
   <div class="fruum-base-object fruum-link fruum-interactive-element fruum-js-navigate">
     <div class="fruum-avatar">
       <% if (Fruum.utils.isLink(avatar)) { %>
-      <img src="<%= avatar %>" class="fruum-avatar-icon" width="56"/>
+      <img src="<%- avatar %>" class="fruum-avatar-icon" width="56"/>
       <% } else { %>
       <span
         class="fruum-avatar-icon"
@@ -214,7 +214,7 @@
     </div>
 
     <div class="fruum-object-meta">
-      <span class="fruum-meta-content"><% if (karma >= 0) print('+'); %><b><%= karma %></b></span>
+      <span class="fruum-meta-content"><% if (karma >= 0) print('+'); %><b><%- karma %></b></span>
     </div>
 
   </div>

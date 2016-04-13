@@ -256,7 +256,9 @@ function FruumServer(options, cli_cmd, ready) {
             'client/js/libs/marionette.js',
             'client/js/libs/moment.js',
             'client/js/libs/marked.js',
+            'client/js/libs/purify.js',
             'client/js/libs/socketio.js',
+            'client/js/libs/to_markdown.js',
             'client/js/libs/postload.js'
           ],
           web_app,

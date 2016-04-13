@@ -2,7 +2,7 @@
   <div class="fruum-base-object fruum-helper-object">
     <div class="fruum-avatar">
       <% if (avatar_url) { %>
-      <img src="<%= avatar_url %>" class="fruum-avatar-icon" width="56"/>
+      <img src="<%- avatar_url %>" class="fruum-avatar-icon" width="56"/>
       <% } else { %>
       <span
         class="fruum-avatar-icon"
@@ -30,7 +30,7 @@
   <div class="fruum-media-item">
     <div class="fruum-media-image">
       <% if (avatar_url) { %>
-      <img src="<%= avatar_url %>" class="fruum-avatar-icon"/>
+      <img src="<%- avatar_url %>" class="fruum-avatar-icon"/>
       <% } else { %>
       <span
         class="fruum-avatar-icon"

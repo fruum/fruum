@@ -6,6 +6,7 @@
   "auth_engine": "reference",
   "cache_engine": "memory_cache",
   "email_engine": "base",
+  "dispatch_engine": "base",
 
   "elasticsearch": {
     "index_prefix": "fruum_test_",

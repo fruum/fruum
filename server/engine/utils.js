@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore'),
+    Models = require('../models'),
     logger = require('../logger');
 
 function _gen_cache_key(app_id, admin, doc_id) {
@@ -80,6 +81,8 @@ module.exports = function(options, instance, self) {
   var app_users = self.app_users,
       app_applications = self.app_applications;
 
+  // ------------------------------ CALLBACKS ----------------------------------
+
   self.success = function(payload) {
     if (payload) {
       if (payload._success) payload._success(payload);
@@ -92,6 +95,8 @@ module.exports = function(options, instance, self) {
       if (payload._always) payload._always(payload);
     }
   }
+
+  // ------------------------------ VALIDATORS ---------------------------------
 
   self.validatePayloadID = function(socket, payload, command) {
     if (payload && !self.isID(payload.id)) {
@@ -110,6 +115,144 @@ module.exports = function(options, instance, self) {
   self.isID = function(obj) {
     return (typeof obj === 'string') || (typeof obj === 'number');
   };
+
+  // ------------------------------- BROADCAST ---------------------------------
+
+  //emits notification signals to all users watching this document
+  self.broadcastNotifications = function(by_user, document) {
+    instance.dispatch.emit({
+      type: 'notify',
+      app_id: by_user.get('app_id'),
+      user_session: by_user.get('session'),
+      document: document.toJSON()
+    });
+  };
+  function __broadcastNotifications(payload) {
+    if (!payload) return;
+    var app = app_users[payload.app_id];
+    if (!app) return;
+    var document = new Models.Document(payload.document);
+    if (document.get('type') != 'post' || document.get('parent_type') == 'channel') return;
+    var doc_id = document.get('parent');
+    _.each(app, function(user) {
+      var viewing = user.get('viewing'),
+          watch = user.get('watch') || [],
+          socket = user.get('socket');
+      if (user.get('session') != payload.user_session && socket && viewing != doc_id && watch.indexOf(doc_id) != -1) {
+        if ((user.get('admin') || document.get('visible')) &&
+            document.get('permission') <= user.get('permission'))
+        {
+          socket.emit('fruum:notify', { id: doc_id });
+        }
+      }
+    });
+  }
+
+  //emits a signal to all users viewing the same parent, in order to request
+  //a refresh
+  self.broadcast = function(by_user, document, action, no_admin_check) {
+    instance.dispatch.emit({
+      type: 'default',
+      app_id: by_user.get('app_id'),
+      user_session: by_user.get('session'),
+      document: document.toJSON(),
+      action: action,
+      no_admin_check: no_admin_check
+    });
+  };
+  function __broadcast(payload) {
+    if (!payload) return;
+    var app = app_users[payload.app_id];
+    if (!app) return;
+    var document = new Models.Document(payload.document),
+        parent = document.get('parent'),
+        id = document.get('id'),
+        json = document.toJSON();
+    _.each(app, function(user) {
+      var viewing = user.get('viewing'),
+          socket = user.get('socket');
+      if ((viewing == parent || viewing == id) && user.get('session') != payload.user_session && socket) {
+        if (((user.get('admin') || document.get('visible')) &&
+           document.get('permission') <= user.get('permission')) || payload.no_admin_check)
+        {
+          socket.emit(payload.action || 'fruum:dirty', json);
+        }
+      }
+    });
+  }
+
+  //emits an update signal
+  self.broadcastInfo = function(by_user, document) {
+    instance.dispatch.emit({
+      type: 'info',
+      app_id: by_user.get('app_id'),
+      user_session: by_user.get('session'),
+      document: document.toJSON()
+    });
+  };
+  function __broadcastInfo(payload) {
+    if (!payload) return;
+    var app = app_users[payload.app_id];
+    if (!app) return;
+    var document = new Models.Document(payload.document),
+        json = {
+          id: document.get('id'),
+          type: document.get('type'),
+          children_count: document.get('children_count'),
+          updated: document.get('updated')
+        };
+    _.each(app, function(user) {
+      var socket = user.get('socket');
+      if (user.get('session') != payload.user_session && socket) {
+        if (((user.get('admin') || document.get('visible')) &&
+           document.get('permission') <= user.get('permission')))
+        {
+          socket.emit('fruum:info', json);
+        }
+      }
+    });
+  }
+
+  //broadbast to all users viewing a document
+  self.broadcastRaw = function(app_id, doc_id, action, json) {
+    instance.dispatch.emit({
+      type: 'raw',
+      app_id: app_id,
+      doc_id: doc_id,
+      action: action,
+      json: json
+    });
+  }
+  function __broadcastRaw(payload) {
+    if (!payload) return;
+    var app = app_users[payload.app_id];
+    if (!app) return;
+    _.each(app, function(user) {
+      if (user.get('viewing') == payload.doc_id && user.get('socket'))
+        user.get('socket').emit(payload.action, payload.json)
+    });
+  }
+
+  //register dispatch events
+  instance.dispatch.on(function(payload) {
+    switch (payload.type) {
+      case 'raw':
+        __broadcastRaw(payload);
+        break;
+      case 'info':
+        __broadcastInfo(payload);
+        break;
+      case 'notify':
+        __broadcastNotifications(payload);
+        break;
+      case 'default':
+        __broadcast(payload);
+        break;
+    }
+  });
+
+  // --------------------------------- USERS -----------------------------------
+
   //find online user based on user id
   self.findOnlineUser = function(app_id, user_id) {
     var app = app_users[app_id];
@@ -119,65 +262,6 @@ module.exports = function(options, instance, self) {
       if (user.get('id') == user_id) ret = user;
     });
     return ret;
-  };
-  //emits notification signals to all users watching this document
-  self.broadcastNotifications = function(by_user, document) {
-    var app = app_users[by_user.get('app_id')];
-    if (!app || document.get('type') != 'post' || document.get('parent_type') == 'channel') return;
-    var doc_id = document.get('parent');
-    _.each(app, function(user) {
-      var viewing = user.get('viewing'),
-          watch = user.get('watch') || [],
-          socket = user.get('socket');
-      if (user != by_user && socket && viewing != doc_id && watch.indexOf(doc_id) != -1) {
-        if ((user.get('admin') || document.get('visible')) &&
-            document.get('permission') <= user.get('permission'))
-        {
-          socket.emit('fruum:notify', { id: doc_id });
-        }
-      }
-    });
-  };
-  //emits a signal to all users viewing the same parent, in order to request
-  //a refresh
-  self.broadcast = function(by_user, document, action, no_admin_check) {
-    var app = app_users[by_user.get('app_id')];
-    if (!app) return;
-    var parent = document.get('parent'),
-        id = document.get('id'),
-        json = document.toJSON();
-    _.each(app, function(user) {
-      var viewing = user.get('viewing'),
-          socket = user.get('socket');
-      if ((viewing == parent || viewing == id) && user != by_user && socket) {
-        if (((user.get('admin') || document.get('visible')) &&
-           document.get('permission') <= user.get('permission')) || no_admin_check)
-        {
-          socket.emit(action || 'fruum:dirty', json);
-        }
-      }
-    });
-  };
-  //emits an update signal
-  self.broadcastInfo = function(by_user, document) {
-    var app = app_users[by_user.get('app_id')];
-    if (!app) return;
-    _.each(app, function(user) {
-      var socket = user.get('socket'),
-          json = {
-            id: document.get('id'),
-            type: document.get('type'),
-            children_count: document.get('children_count'),
-            updated: document.get('updated')
-          };
-      if (user != by_user && socket) {
-        if (((user.get('admin') || document.get('visible')) &&
-           document.get('permission') <= user.get('permission')))
-        {
-          socket.emit('fruum:info', json);
-        }
-      }
-    });
   };
   //count normal users viewing a document
   self.countNormalUsers = function(app_id, doc_id) {
@@ -189,15 +273,6 @@ module.exports = function(options, instance, self) {
     });
     return counter;
   };
-  //broadbast to all users viewing a document
-  self.broadcastRaw = function(app_id, doc_id, action, json) {
-    var app = app_users[app_id];
-    if (!app) return;
-    _.each(app, function(user) {
-      if (user.get('viewing') == doc_id && user.get('socket'))
-        user.get('socket').emit(action, json)
-    });
-  }
   //find user mentions, returns a list of usernames
   self.findMentions = function(text) {
     var users = [];
