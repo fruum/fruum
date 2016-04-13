@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore'),
+    uuid = require('uuid'),
     Models = require('../models'),
     logger = require('../logger');
 
@@ -100,6 +101,7 @@ module.exports = function(options, instance, self) {
         viewing: 0,
         socket: socket,
         app_id: socket.app_id,
+        session: uuid.v1(),
         permission: 0
       });
       //add permission level

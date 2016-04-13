@@ -21,6 +21,7 @@
   "auth_engine": "remote",
   "cache_engine": "memory_cache",
   "email_engine": "mandrill",
+  "dispatch_engine": "base",
 
   "--------------------- DOCUMENT SETTINGS --------------------- ": "",
 
@@ -165,6 +166,12 @@
   "mailgun": {
     "api_key": "",
     "domain": ""
+  },
+
+  "redis": {
+    "host": "127.0.0.1",
+    "port": 6379,
+    "password": ""
   },
 
   "mozilla_persona": {
