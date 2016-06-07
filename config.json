@@ -168,6 +168,17 @@
     "domain": ""
   },
 
+  "__smtp_help": "https://www.npmjs.com/package/nodemailer",
+  "smtp": {
+    "host": "",
+    "port": 465,
+    "secure": true,
+    "auth": {
+      "user": "",
+      "pass": ""
+    }
+  },
+
   "redis": {
     "host": "127.0.0.1",
     "port": 6379,
