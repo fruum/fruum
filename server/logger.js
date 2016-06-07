@@ -15,6 +15,9 @@ function build_log(app_id, reason, object) {
     else if (object.toLog) {
       msg += object.toLog();
     }
+    else if (object.toString) {
+      msg += object.toString();
+    }
     else {
       msg += JSON.stringify(object);
     }
