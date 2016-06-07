@@ -20,7 +20,7 @@
       test: 'Marionette.ItemView'
     },
     moment: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js',
+      url: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js',
       test: 'moment.isMoment'
     },
     marked: {
@@ -36,7 +36,7 @@
       test: 'toMarkdown'
     },
     socketio: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js',
+      url: '//cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.6/socket.io.min.js',
       test: 'io.Socket'
     }
   };
