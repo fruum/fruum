@@ -63,7 +63,6 @@
     "persona_FitnessJoe",
     "persona_RebeccaMoon",
 
-    "mozilla_persona",
     "giphy",
     "youtube",
     "vimeo",
@@ -185,9 +184,8 @@
     "password": ""
   },
 
-  "mozilla_persona": {
-    "_help": "A regural expression to match admin emails",
-    "admins": "@"
+  "sentry": {
+    "dsn": ""
   }
 
 }
