@@ -5,7 +5,11 @@ Utilities
 (function() {
   'use strict';
   window.Fruum.require.push(function () {
-    var marked = Fruum.libs.marked,
+    var remarkable = new Fruum.libs.Remarkable({
+          html: true,
+          breaks: true,
+          linkify: true
+        }),
         sanitize = Fruum.libs.DOMPurify.sanitize,
         _ = Fruum.libs._;
 
@@ -232,7 +236,7 @@ Utilities
           }
         });
       }
-      return marked(post);
+      return remarkable.render(post);
     }
     Fruum.utils.printHeader = function(text) {
       //emojify

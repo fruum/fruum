@@ -6,7 +6,12 @@
 
 var _ = require('underscore'),
     Backbone = require('backbone'),
-    marked = require('marked'),
+    Remarkable = require('remarkable'),
+    remarkable = new Remarkable({
+      html: true,
+      breaks: true,
+      linkify: true
+    }),
     DOMPurify = require('dompurify')(require('jsdom').jsdom().defaultView),
     request = require('request'),
     path = require('path'),
@@ -147,7 +152,7 @@ var Document = Backbone.Model.extend({
     json.body = (json.body || '').replace(/&gt;/g, '>').replace(/&#x60;/g, '`');
     //remove images
     json.body = json.body.replace(/\[\[\b\S+?\b\]\]/g, '');
-    json.body = marked(json.body);
+    json.body = remarkable.render(json.body);
     return json;
   },
   setParentDocument: function(parent_doc) {

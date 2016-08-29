@@ -3,7 +3,7 @@ var fs = require('fs'), window = {};
 
 eval(fs.readFileSync(__dirname + '/../client/js/defs.js', 'utf8'));
 window.Fruum.libs = window.Fruum.libs || {};
-window.Fruum.libs.marked = require('marked');
+window.Fruum.libs.Remarkable = require('remarkable');
 window.Fruum.libs._ = require('underscore');
 window.Fruum.libs.DOMPurify = require('dompurify')(require('jsdom').jsdom().defaultView);
 Fruum = window.Fruum;
