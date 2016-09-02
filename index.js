@@ -5,9 +5,10 @@
 //load the settings
 var config = require('./settings'),
     logger = require('./server/logger'),
-    cliArgs = require('command-line-args');
+    commandLineArgs = require('command-line-args'),
+    commandLineUsage = require('command-line-usage');
 
-var cli = cliArgs([
+var cli_definitions = [
   {
     name: 'help',
     type: Boolean,
@@ -199,16 +200,24 @@ var cli = cliArgs([
     type: String,
     description: 'Value name'
   },
+];
 
-]);
+var options = commandLineArgs(cli_definitions);
 //parse command line values
-var options = cli.parse(), cli_cmd;
+var cli_cmd;
 
 if (options.help) {
-  console.log(cli.getUsage({
-    header: 'Fruum command line arguments',
-    footer: ''
-  }));
+  console.log(commandLineUsage([
+    {
+       header: 'Fruum',
+       content: 'Command line options'
+     },
+     {
+       header: 'Options',
+       optionList: cli_definitions
+     }
+
+  ]));
 }
 else {
   if (options.setup) {

@@ -4,7 +4,12 @@
 
 'use strict';
 
-var marked = require('marked'),
+var Remarkable = require('remarkable'),
+    remarkable = new Remarkable({
+      html: true,
+      breaks: true,
+      linkify: true
+    }),
     _ = require('underscore'),
     juice = require('juice'),
     declassify = require('declassify'),
@@ -70,7 +75,7 @@ module.exports = function(options, storage) {
         }
       });
     }
-    body = marked(body);
+    body = remarkable.render(body);
     json.body = body;
     //process user
     json.image_url = is_link(json.user_avatar)?json.user_avatar:null;

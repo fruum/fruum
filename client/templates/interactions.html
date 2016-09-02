@@ -638,9 +638,11 @@
   <div class="fruum-interactions-stream-update" style="display:none;"><!-- template --></div>
   <div class="fruum-interactions-footer">
     <div class="fruum-interactions-buttons">
-      <% if (window.fruumSettings && window.fruumSettings.login) { %>
-        <button class="fruum-main-button fruum-cta-button" onclick="<%- window.fruumSettings.login %>">login</button>
-        <span class="fruum-secondary-data">and write your thought.</span>
+      <% if (window.fruumSettings && window.fruumSettings.login && !Fruum.libs._.keys(window.fruumSettings.user).length) { %>
+      <button class="fruum-main-button fruum-cta-button" onclick="<%- window.fruumSettings.login %>">login</button>
+      <span class="fruum-secondary-data">and write your thought.</span>
+      <% } else if (window.fruumSettings && Fruum.libs._.keys(window.fruumSettings.user).length) { %>
+      <!-- User credentials are present and system is probably trying to login -->
       <% } else { %>
       <span class="fruum-secondary-data">
         To post or reply, please login first.

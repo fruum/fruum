@@ -6,13 +6,13 @@ window.Fruum.libs.Backbone = Backbone.noConflict();
 window.Fruum.libs.Marionette = Marionette.noConflict();
 window.Fruum.libs.io = window.io;
 window.Fruum.libs.moment = window.moment;
-window.Fruum.libs.marked = window.marked;
+window.Fruum.libs.Remarkable = window.Remarkable;
 window.Fruum.libs.DOMPurify = window.DOMPurify;
 window.Fruum.libs.toMarkdown = window.toMarkdown;
 
 delete window.io;
 delete window.moment;
-delete window.marked;
+delete window.Remarkable;
 delete window.DOMPurify;
 delete window.toMarkdown;
 
@@ -20,8 +20,8 @@ if (window.___socket_io___)
   window.io = window.___socket_io___;
 if (window.__momentjs__)
   window.moment = window.__momentjs__;
-if (window.__markedjs__)
-  window.marked = window.__markedjs__;
+if (window.__remarkablejs__)
+  window.Remarkable = window.__remarkablejs__;
 if (window.__dompurify__)
   window.DOMPurify = window.__dompurify__;
 if (window.__toMarkdown__)
@@ -29,7 +29,7 @@ if (window.__toMarkdown__)
 
 delete window.___socket_io___;
 delete window.__momentjs__;
-delete window.__markedjs__;
+delete window.__remarkablejs__;
 delete window.__dompurify__;
 delete window.__toMarkdown__;
 

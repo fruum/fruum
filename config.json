@@ -60,10 +60,8 @@
   "------------------------ ACTIVE PLUGIN  ------------------------": "",
 
   "plugins": [
-    "persona_FitnessJoe",
-    "persona_RebeccaMoon",
+    "persona_GenericEmpty",
 
-    "mozilla_persona",
     "giphy",
     "youtube",
     "vimeo",
@@ -96,8 +94,8 @@
       "seconds": 0,
       "minutes": 0,
       "hours": 0,
-      "days": 0,
-      "weeks": 1,
+      "days": 1,
+      "weeks": 0,
       "months": 0,
       "years": 0
     },
@@ -105,7 +103,7 @@
       "seconds": 0,
       "minutes": 0,
       "hours": 0,
-      "days": 1,
+      "days": 5,
       "weeks": 0,
       "months": 0,
       "years": 0
@@ -185,9 +183,8 @@
     "password": ""
   },
 
-  "mozilla_persona": {
-    "_help": "A regural expression to match admin emails",
-    "admins": "@"
+  "sentry": {
+    "dsn": ""
   }
 
 }

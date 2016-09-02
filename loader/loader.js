@@ -16,27 +16,27 @@
       test: 'Backbone.Model'
     },
     marionette: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.4.5/backbone.marionette.min.js',
+      url: '//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.4.7/backbone.marionette.min.js',
       test: 'Marionette.ItemView'
     },
     moment: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js',
+      url: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js',
       test: 'moment.isMoment'
     },
-    marked: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/marked/0.3.5/marked.min.js',
-      test: 'marked'
+    remarkable: {
+      url: '//cdnjs.cloudflare.com/ajax/libs/remarkable/1.6.2/remarkable.min.js',
+      test: 'Remarkable'
     },
     purify: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/dompurify/0.7.4/purify.min.js',
+      url: '//cdnjs.cloudflare.com/ajax/libs/dompurify/0.8.2/purify.min.js',
       test: 'DOMPurify.sanitize'
     },
     to_markdown: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/to-markdown/3.0.0/to-markdown.min.js',
+      url: '//cdnjs.cloudflare.com/ajax/libs/to-markdown/3.0.1/to-markdown.min.js',
       test: 'toMarkdown'
     },
     socketio: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.6/socket.io.min.js',
+      url: '//cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js',
       test: 'io.Socket'
     }
   };
@@ -64,7 +64,7 @@
         load_dependency(dependencies.backbone, function() {
           load_dependency(dependencies.marionette, function() {
             //load rest in parallel
-            var libs = ['moment', 'marked', 'purify', 'to_markdown', 'socketio'],
+            var libs = ['moment', 'remarkable', 'purify', 'to_markdown', 'socketio'],
                 libs_loaded = 0;
             function cb() {
               libs_loaded++;
@@ -331,7 +331,7 @@
       bind_event('[fruum-link]', 'mouseover', function(e) {
         process_mouseover(e, is_fruum_attr(this));
       });
-      bind_event('a[fruum-link]', 'mouseout', function(e) {
+      bind_event('[fruum-link]', 'mouseout', function(e) {
         process_mouseout(e, is_fruum_attr(this));
       });
       //check for fruum hastag on url

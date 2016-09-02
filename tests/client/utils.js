@@ -1,6 +1,6 @@
 var io = require('socket.io-client'),
     request = require('request'),
-    url = 'http://localhost:3000';
+    url = 'http://test:testkey@localhost:3000';
 
 function admin_connect(ready) {
   var user_payload = {
@@ -97,7 +97,7 @@ function _delete(done) {
   //reset category
   request({
     method: 'DELETE',
-    url: url + '/api/v1/testkey/docs/category',
+    url: url + '/api/v1/docs/category',
     json: true
   }, done);
 }
@@ -106,7 +106,7 @@ function _category(done) {
   //create category
   request({
     method: 'POST',
-    url: url + '/api/v1/testkey/docs',
+    url: url + '/api/v1/docs',
     json: true,
     body: {
       id: 'category',
@@ -123,7 +123,7 @@ function _locked_category(done) {
   //create category
   request({
     method: 'POST',
-    url: url + '/api/v1/testkey/docs',
+    url: url + '/api/v1/docs',
     json: true,
     body: {
       id: 'locked_category',
@@ -141,7 +141,7 @@ function _user_category(done) {
   //create category
   request({
     method: 'POST',
-    url: url + '/api/v1/testkey/docs',
+    url: url + '/api/v1/docs',
     json: true,
     body: {
       id: 'user_category',
@@ -160,7 +160,7 @@ function _user_category(done) {
   //create category
   request({
     method: 'POST',
-    url: url + '/api/v1/testkey/docs',
+    url: url + '/api/v1/docs',
     json: true,
     body: {
       id: 'user_category',
@@ -179,7 +179,7 @@ function _admin_category(done) {
   //create category
   request({
     method: 'POST',
-    url: url + '/api/v1/testkey/docs',
+    url: url + '/api/v1/docs',
     json: true,
     body: {
       id: 'admin_category',
@@ -197,7 +197,7 @@ function _admin_category(done) {
 function _article(done) {
   request({
     method: 'POST',
-    url: url + '/api/v1/testkey/docs',
+    url: url + '/api/v1/docs',
     json: true,
     body: {
       id: 'article',
@@ -212,7 +212,7 @@ function _article(done) {
 function _thread(done) {
   request({
     method: 'POST',
-    url: url + '/api/v1/testkey/docs',
+    url: url + '/api/v1/docs',
     json: true,
     body: {
       id: 'thread',
@@ -227,7 +227,7 @@ function _thread(done) {
 function _move_thread(done) {
   request({
     method: 'POST',
-    url: url + '/api/v1/testkey/docs',
+    url: url + '/api/v1/docs',
     json: true,
     body: {
       id: 'move_thread',
@@ -242,7 +242,7 @@ function _move_thread(done) {
 function _locked_thread(done) {
   request({
     method: 'POST',
-    url: url + '/api/v1/testkey/docs',
+    url: url + '/api/v1/docs',
     json: true,
     body: {
       id: 'locked_thread',
@@ -258,7 +258,7 @@ function _locked_thread(done) {
 function _channel(done) {
   request({
     method: 'POST',
-    url: url + '/api/v1/testkey/docs',
+    url: url + '/api/v1/docs',
     json: true,
     body: {
       id: 'channel',
@@ -273,7 +273,7 @@ function _channel(done) {
 function _bookmark(done) {
   request({
     method: 'POST',
-    url: url + '/api/v1/testkey/docs',
+    url: url + '/api/v1/docs',
     json: true,
     body: {
       id: 'bookmark',
@@ -312,7 +312,7 @@ function load_fixture(done) {
 function load_bob(done) {
   request({
     method: 'POST',
-    url: url + '/api/v1/testkey/docs',
+    url: url + '/api/v1/docs',
     json: true,
     body: {
       id: 'bob_thread',
@@ -326,7 +326,7 @@ function load_bob(done) {
   }, function() {
     request({
       method: 'POST',
-      url: url + '/api/v1/testkey/docs',
+      url: url + '/api/v1/docs',
       json: true,
       body: {
         id: 'bob_thread_user',
@@ -340,7 +340,7 @@ function load_bob(done) {
     }, function() {
       request({
         method: 'POST',
-        url: url + '/api/v1/testkey/docs',
+        url: url + '/api/v1/docs',
         json: true,
         body: {
           id: 'bob_thread_admin',
@@ -362,7 +362,7 @@ function set_field(id, fields, done) {
   fields.id = id;
   request({
     method: 'PUT',
-    url: url + '/api/v1/testkey/docs/' + id,
+    url: url + '/api/v1/docs/' + id,
     json: true,
     body: fields
   }, done);

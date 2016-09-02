@@ -16,11 +16,25 @@ var path = require('path'),
     fs = require('fs'),
     _ = require('underscore'),
     buildify = require('buildify'),
+    raven = require('raven'),
     logger = require('./logger');
 
 function FruumServer(options, cli_cmd, ready) {
   logger.system("Starting Fruum");
   options = options || {};
+
+  //start sentry
+  if (options.sentry && options.sentry.dsn) {
+    logger.system("Sentry is enabled");
+    var sentry_client = new raven.Client(options.sentry.dsn);
+    sentry_client.patchGlobal(function() {
+      process.exit(1);
+    });
+  }
+  else {
+    logger.system("Sentry is disabled");
+  }
+
   //defaults
   options.static_root = path.resolve(
      __dirname + '/../' + (options.static_root || 'static')
@@ -58,6 +72,10 @@ function FruumServer(options, cli_cmd, ready) {
   if (cli_cmd) delete options.plugins;
 
   // ------------------------------ SERVER SETUP -------------------------------
+
+  if (options.sentry && options.sentry.dsn) {
+    app.use(raven.middleware.express.requestHandler(options.sentry.dsn));
+  }
 
   //enable CORS
   app.use(function(req, res, next) {
@@ -255,7 +273,7 @@ function FruumServer(options, cli_cmd, ready) {
             'client/js/libs/backbone.js',
             'client/js/libs/marionette.js',
             'client/js/libs/moment.js',
-            'client/js/libs/marked.js',
+            'client/js/libs/remarkable.js',
             'client/js/libs/purify.js',
             'client/js/libs/socketio.js',
             'client/js/libs/to_markdown.js',
@@ -576,6 +594,10 @@ function FruumServer(options, cli_cmd, ready) {
       });
     });
   });
+
+  if (options.sentry && options.sentry.dsn) {
+    app.use(raven.middleware.express.errorHandler(options.sentry.dsn));
+  }
 
   // ----------------------------- HTTP SERVER ---------------------------------
 
