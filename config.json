@@ -60,8 +60,7 @@
   "------------------------ ACTIVE PLUGIN  ------------------------": "",
 
   "plugins": [
-    "persona_FitnessJoe",
-    "persona_RebeccaMoon",
+    "persona_GenericEmpty",
 
     "giphy",
     "youtube",
