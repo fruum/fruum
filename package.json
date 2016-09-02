@@ -19,6 +19,7 @@
   "dependencies": {
     "async": "^2.0.1",
     "backbone": "^1.3.3",
+    "basic-auth": "^1.0.4",
     "body-parser": "^1.15.2",
     "buildify": "^0.4.0",
     "command-line-args": "^3.0.1",
