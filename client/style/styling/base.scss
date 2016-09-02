@@ -45,7 +45,7 @@ body > #fruum {
 *:not(body) > #fruum {
   position: relative;
   width: 100%;
-  max-width: optimal-width() + 14em;
+//  max-width: optimal-width() + 14em;
   margin: 0 auto;
   height: 100%;
 }

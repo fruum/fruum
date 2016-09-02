@@ -203,8 +203,8 @@ Utilities
       var final = responses[_.random(0, responses.length - 1)];
       //add failsafes
       final.avatar_url = final.avatar_url || '';
-      final.avatar_initials = final.avatar_initials || 'FRB';
-      final.name = final.name || 'Fruum bot';
+      final.avatar_initials = final.avatar_initials || '';
+      final.name = final.name || '';
       final.text = final.text || 'Least said sooner mended. Something went really wrong!';
       final.topic = final.topic || '';
       //do some variable processing

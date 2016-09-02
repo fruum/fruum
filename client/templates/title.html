@@ -16,7 +16,11 @@
         <% if (viewing.type == 'bookmark') print('</i>'); %>
         <% if (viewing.type == 'category') { %>
           <span class="fruum-secondary-data">
-            <%- ((viewing.body || '').split('\n')[0]) || 'View thoughts and ideas in category, and share your own' %>
+            <% if (viewing.body) { %>
+              <%= Fruum.utils.print(viewing.body) %>
+            <% } else { %>
+              View thoughts and ideas in category, and share your own
+            <% } %>
           </span>
         <% } else if (viewing.type == 'bookmark') { %>
           <span class="fruum-secondary-data">

@@ -1,5 +1,7 @@
 <script type="text/template" id="fruum-template-persona">
   <div class="fruum-base-object fruum-helper-object">
+
+    <% if (avatar_url || avatar_initials) { %>
     <div class="fruum-avatar">
       <% if (avatar_url) { %>
       <img src="<%- avatar_url %>" class="fruum-avatar-icon" width="56"/>
@@ -11,11 +13,22 @@
       </span>
       <% } %>
     </div>
+    <% } else { %>
+    <div class="fruum-avatar">
+      <span class="fruum-avatar-icon">
+        !
+      </span>
+    </div>
+    <% }%>
+
+    <% if (name) { %>
     <div class="fruum-object-additional-data">
       <div class="fruum-primary-data">
         <%- name %>
       </div>
     </div>
+    <% } %>
+
     <div class="fruum-object-main-data">
       <div class="fruum-stream-typography">
         <p>
@@ -23,11 +36,14 @@
         </p>
       </div>
     </div>
+
   </div>
 </script>
 
 <script type="text/template" id="fruum-template-persona-fullpage">
   <div class="fruum-media-item">
+
+    <% if (avatar_url || avatar_initials) { %>
     <div class="fruum-media-image">
       <% if (avatar_url) { %>
       <img src="<%- avatar_url %>" class="fruum-avatar-icon"/>
@@ -39,10 +55,21 @@
       </span>
       <% } %>
     </div>
+    <% } else { %>
+    <div class="fruum-avatar">
+      <span class="fruum-avatar-icon">
+        !
+      </span>
+    </div>
+    <% }%>
+
     <div class="fruum-media-title"><%= topic %></div>
     <div class="fruum-media-description">
       <%= text %>
     </div>
+
+    <% if (name) { %>
     <div class="fruum-media-author"><%- name %></div>
+    <% } %>
   </div>
 </script>
