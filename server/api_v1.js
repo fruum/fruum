@@ -53,6 +53,8 @@ function API_v1(options, instance) {
     }
   }
 
+  // ------------------------------- DOCUMENTS API -----------------------------
+
   // GET ALL documents
   router.get('/docs/', function(req, res) {
     get_app(req, res, function(application) {
@@ -191,6 +193,155 @@ function API_v1(options, instance) {
           notFound(req, res, 'Invalid document');
         }
       });
+    });
+  });
+
+  // ------------------------------- PRESENCE API -----------------------------
+
+  function serialize_user(user) {
+    return {
+      id: user.get('id'),
+      admin: user.get('admin'),
+      blocked: user.get('blocked'),
+      username: user.get('username'),
+      displayname: user.get('displayname'),
+      email: user.get('email'),
+      avatar: user.get('avatar'),
+      created: user.get('created'),
+      last_login: user.get('last_login'),
+      last_logout: user.get('last_logout'),
+      karma: user.get('karma'),
+      viewing_docid: user.get('viewing'),
+      viewing_docpath: user.get('viewing_path'),
+    };
+  }
+
+  //presence overview
+  router.get('/presence/overview', function(req, res) {
+    get_app(req, res, function(application) {
+      var response = {
+        total: 0,
+        anonymous: 0,
+        authenticated: 0
+      };
+      var users = instance.engine.app_users[application.get('id')];
+      if (users) {
+        _.each(users, function(user) {
+          if (!user.get('socket')) return;
+          response.total++;
+          if (user.get('anonymous')) response.anonymous++;
+          else response.authenticated++;
+        }, this);
+      }
+      res.json(response);
+    });
+  });
+
+  //presence overview viewing a document
+  router.get('/presence/overview/:id', function(req, res) {
+    var viewing_id = req.params.id;
+    get_app(req, res, function(application) {
+      var response = {
+        total: 0,
+        anonymous: 0,
+        authenticated: 0
+      };
+      var users = instance.engine.app_users[application.get('id')];
+      if (users) {
+        var children = req.query.children !== undefined;
+        _.each(users, function(user) {
+          if (user.get('socket') &&
+              (user.get('viewing') == viewing_id ||
+                (children && _.contains(user.get('viewing_path'), viewing_id))
+              )
+          ) {
+            response.total++;
+            if (user.get('anonymous')) response.anonymous++;
+            else response.authenticated++;
+          }
+        }, this);
+      }
+      res.json(response);
+    });
+  });
+
+  //presence document breakdown
+  router.get('/presence/docs', function(req, res) {
+    get_app(req, res, function(application) {
+      var response = {
+        docs: {},
+        paths: {}
+      };
+      var users = instance.engine.app_users[application.get('id')];
+      if (users) {
+        _.each(users, function(user) {
+          var doc_id = user.get('viewing');
+          var path_id = (user.get('viewing_path') || []).join('/');
+          if (!user.get('socket') || !doc_id || !path_id) return;
+          var doc_entry = response.docs[doc_id] || {
+            total: 0,
+            anonymous: 0,
+            authenticated: 0
+          };
+          var path_entry = response.paths[path_id] || {
+            total: 0,
+            anonymous: 0,
+            authenticated: 0
+          };
+          doc_entry.total++;
+          path_entry.total++;
+          if (user.get('anonymous')) {
+            doc_entry.anonymous++;
+            path_entry.anonymous++;
+          }
+          else {
+            doc_entry.authenticated++;
+            path_entry.authenticated++;
+          }
+          response.docs[doc_id] = doc_entry;
+          response.paths[path_id] = path_entry;
+        }, this);
+      }
+      res.json(response);
+    });
+  });
+
+  //presence users
+  router.get('/presence/users', function(req, res) {
+    get_app(req, res, function(application) {
+      var response = [];
+      var users = instance.engine.app_users[application.get('id')];
+      if (users) {
+        _.each(users, function(user) {
+          if (!user.get('anonymous') && user.get('socket')) {
+            response.push(serialize_user(user));
+          }
+        }, this);
+      }
+      res.json(response);
+    });
+  });
+
+  //presence users
+  router.get('/presence/users/:id', function(req, res) {
+    var viewing_id = req.params.id;
+    get_app(req, res, function(application) {
+      var response = [];
+      var users = instance.engine.app_users[application.get('id')];
+      if (users) {
+        var children = req.query.children !== undefined;
+        _.each(users, function(user) {
+          if (!user.get('anonymous') &&
+              user.get('socket') &&
+              (user.get('viewing') == viewing_id ||
+                (children && _.contains(user.get('viewing_path'), viewing_id))
+              )
+          ) {
+            response.push(serialize_user(user));
+          }
+        }, this);
+      }
+      res.json(response);
     });
   });
 

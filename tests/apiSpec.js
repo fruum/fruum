@@ -1,7 +1,7 @@
 var request = require('request'),
     url = 'http://test:testkey@localhost:3000';
 
-describe("API call", function() {
+describe("Document API", function() {
 
   it("creates document", function(done) {
     var payload = {
@@ -225,4 +225,100 @@ describe("API call", function() {
       done();
     });
   });
+});
+
+describe("Presence API", function() {
+
+  it("gets overview", function(done) {
+    request({
+      url: url + '/api/v1/presence/overview',
+      json: true,
+    }, function(err, res, body) {
+      expect(err).toBe(null);
+      expect(body).toEqual(jasmine.objectContaining({
+        total: 0,
+        anonymous: 0,
+        authenticated: 0
+      }));
+      done();
+    });
+  });
+
+  it("gets overview under document", function(done) {
+    request({
+      url: url + '/api/v1/presence/overview/home',
+      json: true,
+    }, function(err, res, body) {
+      expect(err).toBe(null);
+      expect(body).toEqual(jasmine.objectContaining({
+        total: 0,
+        anonymous: 0,
+        authenticated: 0
+      }));
+      done();
+    });
+  });
+
+  it("gets overview under document (with children)", function(done) {
+    request({
+      url: url + '/api/v1/presence/overview/home?children',
+      json: true,
+    }, function(err, res, body) {
+      expect(err).toBe(null);
+      expect(body).toEqual(jasmine.objectContaining({
+        total: 0,
+        anonymous: 0,
+        authenticated: 0
+      }));
+      done();
+    });
+  });
+
+  it("gets users", function(done) {
+    request({
+      url: url + '/api/v1/presence/users',
+      json: true,
+    }, function(err, res, body) {
+      expect(err).toBe(null);
+      expect(body.length).toEqual(0);
+      done();
+    });
+  });
+
+  it("gets users under document", function(done) {
+    request({
+      url: url + '/api/v1/presence/users/home',
+      json: true,
+    }, function(err, res, body) {
+      expect(err).toBe(null);
+      expect(body.length).toEqual(0);
+      done();
+    });
+  });
+
+  it("gets users under document (with children)", function(done) {
+    request({
+      url: url + '/api/v1/presence/users/home?children',
+      json: true,
+    }, function(err, res, body) {
+      expect(err).toBe(null);
+      expect(body.length).toEqual(0);
+      done();
+    });
+  });
+
+  it("gets document overview", function(done) {
+    request({
+      url: url + '/api/v1/presence/docs',
+      json: true,
+    }, function(err, res, body) {
+      expect(err).toBe(null);
+      expect(body).toEqual(jasmine.objectContaining({
+        docs: {},
+        paths: {}
+      }));
+      done();
+    });
+  });
+
 });
