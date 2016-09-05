@@ -15,7 +15,12 @@ module.exports = function(options, instance, self) {
 
   function process_view(app_id, user, id, response) {
     if (!user.get('socket')) return;
-    user.set('viewing', id);
+    user.set({
+      viewing: id,
+      viewing_path: _.map(response.breadcrumb, function(path) {
+        return path.id;
+      }),
+    });
     user.get('socket').emit('fruum:view', response);
     //store previous values
     var prev_channel_id = user.get('channel_id'),

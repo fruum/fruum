@@ -50,9 +50,17 @@ $char-list: append($char-list, "~" );
   text-transform: uppercase;
   color: $avatar-text-color;
   background-color: $avatar-default-background;
+  @if ($avatar-border-width & $avatar-border-style & $avatar-border-color) {
+  border: $avatar-border-width $avatar-border-style $avatar-border-color;
+  }
   &.fruum-avatar-inverted {
+    border: none;
     background-color: transparent;
+    @if ($avatar-border-width & $avatar-border-style & $avatar-border-color) {
+    color: $avatar-border-color;
+    } @else {
     color: $avatar-default-background;
+    }
   }
 }
 
@@ -64,5 +72,5 @@ $char-list-length: length($char-list);
 $avatar-color-length: length($avatar-colors);
 @for $i from 1 through $char-list-length {
   #{"#fruum *:not(img)[data-initials^=\"" + nth($char-list, $i) + "\"]"} { background-color: nth($avatar-colors, 1 + (($i - 1) % $avatar-color-length)) }
-  #{"#fruum .fruum-avatar-icon.fruum-avatar-inverted:not(img)[data-initials^=\"" + nth($char-list, $i) + "\"]"} { background-color: transparent;color: nth($avatar-colors, 1 + (($i - 1) % $avatar-color-length)) }
+  #{"#fruum .fruum-avatar-icon.fruum-avatar-inverted:not(img)[data-initials^=\"" + nth($char-list, $i) + "\"]"} { background-color: transparent;@if ($avatar-border-color) { color: $avatar-border-color } @else { color: nth($avatar-colors, 1 + (($i - 1) % $avatar-color-length)) }}
 }

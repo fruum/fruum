@@ -77,18 +77,18 @@ $responsive-cpl: 120;
 
 /* App colors */
 
-$background-base-color: #FCFCFC; //FFFFFF; // Forum background base color
+$background-base-color: #FCFCFC; // Forum background base color
 $background-helper-base-color: $background-base-color; // Forum helper background color - must always be set!! no transparent!! -
-$dividers-colors: #EDEDED; //F4EAF5; //CCCCCC; // Space dividers colors
+$dividers-colors: #EDEDED; // Space dividers colors
 
 
-$important-text-color: darken( #E5E4E5, 75%); //#141410; // important text color
-$base-text-color: darken( #E5E4E5, 55%); //#303027; // basic text color
+$important-text-color: darken( #E5E4E5, 75%); // important text color
+$base-text-color: darken( #E5E4E5, 55%); // basic text color
 $disabled-text-color: lighten($base-text-color, 25%); // disabled text color
 $muted-text-color: #D1CFD1; //E9E9DA; // muted text color
 $inverted-option-color: #CCCCCC; //CCCCCC; // inverted option color
 
-$main-action-color: #383E45; //EB064C; // main action color
+$main-action-color: #383E45; // main action color
 $main-action-color-highlight: lighten($main-action-color, 15%); // main action highlight color
 $main-action-text-color: #FFFFFF; // main action text color
 
@@ -96,7 +96,7 @@ $secondary-action-color: saturate( $main-action-color, 40%); //#0b4f52; // secon
 $secondary-action-color-highlight: lighten($secondary-action-color, 10%); //secondary action highlight color
 $secondary-action-text: #FFFFFF; // secondary action text color
 
-$negative-action-color: #F5003A; //0d8691; // negative action color
+$negative-action-color: #F5003A; // negative action color
 $negative-action-color-highlight: lighten($negative-action-color, 15%); // negative action highlight color
 
 $muted-action-color: lighten( $main-action-color, 40% ); //#EFF1C7; // muted action color
@@ -104,9 +104,9 @@ $muted-action-color: lighten( $main-action-color, 40% ); //#EFF1C7; // muted act
 
 /* System colors */
 $forum-base-color: #F5003A; // forum main color, used as main links color inside your content
-$forum-header-color: #E5E4E5; //2A2A2A; // forum header color
-$forum-warning-color: #EDE7CB; //EDE39C; // forum warning color
-$forum-error-color: #FFA1B7; //E36056; // forum error color
+$forum-header-color: #E5E4E5; // forum header color
+$forum-warning-color: #EDE7CB; // forum warning color
+$forum-error-color: #FFA1B7; // forum error color
 $forum-message-text-color: #383E45; // forum messages color
 
 
@@ -119,6 +119,9 @@ $onboard-cta: $forum-base-color;
 /* Avatar variables */
 $avatar-font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 $avatar-default-background: $disabled-text-color;
+$avatar-border-style: null;
+$avatar-border-width: null;
+$avatar-border-color: null;
 $avatar-text-color: #FFFFFF;
 
 $avatar-big: 6.5em;
@@ -130,7 +133,10 @@ $avatar-medium-font: $responsive-default-font;
 $avatar-small: 2em;
 $avatar-small-font: $responsive-tiny-font; // TODO: update with responsive font!!
 
-$avatar-colors: (#ffc000,#0e9e4b,#10509e,#67276f,#86162b,#cb0a35,#201f24,#696969,#1d9a87,#ac1313,#97217d,#168cb8,#da7e06);
+/* Old avatar colors set
+ $avatar-colors: (#ffc000,#0e9e4b,#10509e,#67276f,#86162b,#cb0a35,#201f24,#696969,#1d9a87,#ac1313,#97217d,#168cb8,#da7e06);
+*/
+$avatar-colors: (#d0c08e,#83c49e,#8ba5c5,#ac87b0,#c68390,#d09494,#a295d4,#b4ca95,#5fbfb0,#be6eac,#5fa9c4,#e4b87f);
 
 
 
