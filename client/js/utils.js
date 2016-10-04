@@ -13,6 +13,18 @@ Utilities
         sanitize = Fruum.libs.DOMPurify.sanitize,
         _ = Fruum.libs._;
 
+    //custom validator
+    if (remarkable.inline && remarkable.inline.validateLink) {
+      remarkable.inline.__validateLink = remarkable.inline.validateLink;
+      remarkable.inline.validateLink = function(url) {
+        if (!remarkable.inline.__validateLink(url)) {
+          //allow inline images
+          return url.indexOf('data:image') == 0;
+        }
+        return true;
+      }
+    }
+
     var at_user = ['@[.+-_0-9A-Za-z\xaa\xb5\xba\xc0-\xd6\xd8-\xf6',
       '\xf8-\u02c1\u02c6-\u02d1\u02e0-\u02e4\u02ec\u02ee\u0370-\u0374\u0376',
       '-\u0377\u037a-\u037d\u0386\u0388-\u038a\u038c\u038e-\u03a1\u03a3-',

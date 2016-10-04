@@ -20,11 +20,11 @@
       test: 'Marionette.ItemView'
     },
     moment: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js',
+      url: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js',
       test: 'moment.isMoment'
     },
     remarkable: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/remarkable/1.6.2/remarkable.min.js',
+      url: '//cdnjs.cloudflare.com/ajax/libs/remarkable/1.7.1/remarkable.min.js',
       test: 'Remarkable'
     },
     purify: {
