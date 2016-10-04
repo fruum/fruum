@@ -53,6 +53,19 @@ function API_v1(options, instance) {
     }
   }
 
+  function get_user(req, res, callback) {
+    get_app(req, res, function(application) {
+      storage.get_user(application.get('id'), req.params.userid, function(user) {
+        if (!user) {
+          notFound(req, res, 'User id does not exist');
+        }
+        else {
+          callback(user, application);
+        }
+      });
+    });
+  }
+
   // ------------------------------- DOCUMENTS API -----------------------------
 
   // GET ALL documents
@@ -196,7 +209,7 @@ function API_v1(options, instance) {
     });
   });
 
-  // ------------------------------- PRESENCE API -----------------------------
+  // ------------------------------- PRESENCE API ------------------------------
 
   function serialize_user(user) {
     return {
@@ -342,6 +355,89 @@ function API_v1(options, instance) {
         }, this);
       }
       res.json(response);
+    });
+  });
+
+  // -------------------------------- USERS API --------------------------------
+
+  router.post('/users', function(req, res) {
+    get_app(req, res, function(application) {
+      var user = new Models.User(req.body);
+      storage.add_user(application.get('id'), user, function(new_user) {
+        if (new_user) {
+          res.json(serialize_user(new_user));
+        }
+        else {
+          badRequest(req, res);
+        }
+      });
+    });
+  });
+  router.get('/users/:userid', function(req, res) {
+    get_user(req, res, function(user, application) {
+      res.json(serialize_user(user));
+    });
+  });
+  router.put('/users/:userid', function(req, res) {
+    get_user(req, res, function(user, application) {
+      user.set(req.body);
+      storage.update_user(application.get('id'), user, null, function(updated_user) {
+        if (updated_user) {
+          res.json(serialize_user(updated_user));
+        }
+        else {
+          badRequest(req, res);
+        }
+      });
+    });
+  });
+  router.get('/users/:userid/topics', function(req, res) {
+    get_user(req, res, function(user, application) {
+      var permission = (req.query.admin !== undefined)?2:1;
+      var query = {
+        user_id: user.get('id'),
+        type: ['thread', 'blog'],
+        permission__lte: permission
+      };
+      if (req.query.count !== undefined) {
+        storage.count_attributes(application.get('id'), query, function(total) {
+          res.json(total);
+        });
+      }
+      else {
+        storage.search_attributes(application.get('id'), query, function(docs) {
+          res.json(_.map(docs, function(document) {
+            return document.toJSON();
+          }));
+        }, {
+          sort: [{ updated: { order: 'desc' }}]
+        });
+      }
+    });
+  });
+  router.get('/users/:userid/replies', function(req, res) {
+    get_user(req, res, function(user, application) {
+      var permission = (req.query.admin !== undefined)?2:1;
+      var query = {
+        user_id: user.get('id'),
+        type: 'post',
+        parent_type__not: 'channel',
+        permission__lte: permission
+      };
+      if (req.query.count !== undefined) {
+        storage.count_attributes(application.get('id'), query, function(total) {
+          res.json(total);
+        });
+      }
+      else {
+        storage.search_attributes(application.get('id'), query, function(docs) {
+          res.json(_.map(docs, function(document) {
+            return document.toJSON();
+          }));
+        }, {
+          sort: [{ updated: { order: 'desc' }}]
+        });
+      }
     });
   });
 

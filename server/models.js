@@ -20,6 +20,18 @@ var _ = require('underscore'),
     root_path = path.resolve(__dirname + '/..'),
     PROPERTY_PREFIX = 'prop_';
 
+//custom validator
+if (remarkable.inline && remarkable.inline.validateLink) {
+  remarkable.inline.__validateLink = remarkable.inline.validateLink;
+  remarkable.inline.validateLink = function(url) {
+    if (!remarkable.inline.__validateLink(url)) {
+      //allow inline images
+      return url.indexOf('data:image') == 0;
+    }
+    return true;
+  }
+}
+
 // --------------------------------- DOCUMENT ---------------------------------
 
 var Document = Backbone.Model.extend({

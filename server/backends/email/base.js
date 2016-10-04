@@ -15,6 +15,18 @@ var Remarkable = require('remarkable'),
     declassify = require('declassify'),
     logger = require('../../logger');
 
+//custom validator
+if (remarkable.inline && remarkable.inline.validateLink) {
+  remarkable.inline.__validateLink = remarkable.inline.validateLink;
+  remarkable.inline.validateLink = function(url) {
+    if (!remarkable.inline.__validateLink(url)) {
+      //allow inline images
+      return url.indexOf('data:image') == 0;
+    }
+    return true;
+  }
+}
+
 function escape_regex(re) {
   return re.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 }
