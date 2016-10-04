@@ -337,7 +337,7 @@ describe("Admin client", function() {
           expect(response).toEqual(jasmine.objectContaining({
             id: 'bob',
             topics: 3,
-            replies: 0
+            replies: 1
           }));
           socket.disconnect();
           done();

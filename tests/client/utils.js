@@ -352,7 +352,21 @@ function load_bob(done) {
           user_id: 'bob'
         }
       }, function() {
-        bob_create(done);
+        request({
+          method: 'POST',
+          url: url + '/api/v1/docs',
+          json: true,
+          body: {
+            id: 'bob_reply_admin',
+            type: 'post',
+            parent: 'bob_thread_admin',
+            body: 'bob body',
+            permission: 2,
+            user_id: 'bob'
+          }
+        }, function() {
+          bob_create(done);
+        });
       });
     });
   });
