@@ -4,8 +4,7 @@
 
 'use strict';
 
-var _ = require('underscore'),
-    logger = require('../logger');
+var _ = require('underscore');
 
 module.exports = function(options, instance, self) {
   var storage = self.storage;
@@ -18,8 +17,7 @@ module.exports = function(options, instance, self) {
     var app_id = socket.app_id,
         userid = payload.id,
         username = payload.username,
-        permission = socket.fruum_user.get('permission'),
-        is_admin = socket.fruum_user.get('admin');
+        permission = socket.fruum_user.get('permission');
 
     function finalize(user) {
       if (user) {
@@ -32,23 +30,25 @@ module.exports = function(options, instance, self) {
           admin: user.get('admin'),
           blocked: user.get('blocked'),
           joined: user.get('created'),
-          last_login: self.findOnlineUser(app_id, user.get('id'))?'online':user.get('last_login'),
+          last_login: self.findOnlineUser(app_id, user.get('id'))
+            ? 'online'
+            : user.get('last_login'),
           topics: 0,
-          replies: 0
-        }
-        //count threads
+          replies: 0,
+        };
+        // count threads
         storage.count_attributes(app_id, {
           user_id: user.get('id'),
           type: ['thread', 'blog'],
-          permission__lte: permission
+          permission__lte: permission,
         }, function(topics) {
           data.topics = topics;
-          //count replies
+          // count replies
           storage.count_attributes(app_id, {
             user_id: user.get('id'),
             type: 'post',
             parent_type__not: 'channel',
-            permission__lte: permission
+            permission__lte: permission,
           }, function(replies) {
             data.replies = replies;
             if (payload.count_users) {
@@ -57,31 +57,28 @@ module.exports = function(options, instance, self) {
                 socket.emit('fruum:profile', data);
                 self.success(payload);
               });
-            }
-            else {
+            } else {
               socket.emit('fruum:profile', data);
               self.success(payload);
             }
           });
         });
-      }
-      else {
+      } else {
         socket.emit('fruum:profile');
         self.fail(payload);
       }
     }
 
-    //get user by id
+    // get user by id
     if (userid) {
       storage.get_user(app_id, userid, finalize);
-    }
-    //or by username
-    else {
+    } else {
+      // or by username
       storage.match_users(app_id, { username: username }, function(user) {
         finalize(user[0]);
       });
     }
-  }
+  };
 
   // -------------------------- USER PROFILE HISTORY ---------------------------
 
@@ -94,7 +91,7 @@ module.exports = function(options, instance, self) {
         userid = payload.id,
         permission = socket.fruum_user.get('permission');
 
-    //default pagination
+    // default pagination
     payload.from = payload.from || 0;
     payload.size = payload.size || 50;
 
@@ -105,16 +102,15 @@ module.exports = function(options, instance, self) {
           data = {
             user_id: user.get('id'),
             type: ['thread', 'blog'],
-            permission__lte: permission
-          }
-        }
-        else {
+            permission__lte: permission,
+          };
+        } else {
           data = {
             user_id: user.get('id'),
             type: 'post',
             parent_type__not: 'channel',
-            permission__lte: permission
-          }
+            permission__lte: permission,
+          };
         }
         storage.search_attributes(app_id, data, function(docs) {
           var response = {
@@ -125,23 +121,22 @@ module.exports = function(options, instance, self) {
               return document.toJSON();
             }),
             from: payload.from,
-            size: payload.size
-          }
+            size: payload.size,
+          };
           socket.emit('fruum:user:feed', response);
           self.success(payload);
         }, {
           skipfields: ['attachments'],
           from: payload.from,
           size: payload.size,
-          sort: [{ updated: { order: 'desc' }}]
+          sort: [{ updated: { order: 'desc' } }],
         });
-      }
-      else {
+      } else {
         socket.emit('fruum:user:feed');
         self.fail(payload);
       }
     });
-  }
+  };
 
   // ------------------------------ USER LIST ----------------------------------
 
@@ -151,10 +146,9 @@ module.exports = function(options, instance, self) {
       return;
     }
 
-    var app_id = socket.app_id,
-        user = socket.fruum_user;
+    var app_id = socket.app_id;
 
-    //default pagination
+    // default pagination
     payload.from = payload.from || 0;
     payload.size = payload.size || 50;
 
@@ -170,19 +164,18 @@ module.exports = function(options, instance, self) {
             avatar: user.get('avatar'),
             created: user.get('created'),
             last_login: user.get('last_login'),
-            karma: user.get('karma')
+            karma: user.get('karma'),
           };
         }),
         from: payload.from,
-        size: payload.size
-      }
+        size: payload.size,
+      };
       socket.emit('fruum:user:list', response);
       self.success(payload);
     }, {
       from: payload.from,
       size: payload.size,
-      sort: [{ last_login: { order: 'desc'} }]
+      sort: [{ last_login: { order: 'desc' } }],
     });
-  }
-
-}
+  };
+};

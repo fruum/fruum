@@ -9,16 +9,14 @@ var logger = require('winston');
 function build_log(app_id, reason, object) {
   var msg = '[' + app_id + '] [' + reason + '] ';
   if (object) {
-    //string type
-    if (typeof object === 'string') msg += object;
-    //backbone model
-    else if (object.toLog) {
+    // string type
+    if (typeof object === 'string') {
+      msg += object;
+    } else if (object.toLog) { // backbone model
       msg += object.toLog();
-    }
-    else if (object.toString) {
+    } else if (object.toString) {
       msg += object.toString();
-    }
-    else {
+    } else {
       msg += JSON.stringify(object);
     }
   }
@@ -37,5 +35,5 @@ module.exports = {
   },
   level: function(level) {
     logger.level = level;
-  }
+  },
 };

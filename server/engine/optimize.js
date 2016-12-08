@@ -4,16 +4,13 @@ Optimize attachments
 
 'use strict';
 
-var _ = require('underscore'),
-    fs = require('fs'),
-    stream = require('stream'),
+var stream = require('stream'),
     streamBuffers = require('stream-buffers'),
     PngQuant = require('pngquant'),
     jpeg = require('jpeg-js'),
     logger = require('../logger');
 
 module.exports = function(options, instance, self) {
-
   // -------------------------------- COMPRESS IMAGES -----------------------------------
 
   self.optimize = function(socket, payload) {
@@ -31,8 +28,7 @@ module.exports = function(options, instance, self) {
         mime = 'data:image/png;base64,';
         data = payload.data.replace(mime, '');
         compressor = new PngQuant([64]);
-      }
-      else if (payload.data.indexOf('data:image/jpeg;base64,') == 0) {
+      } else if (payload.data.indexOf('data:image/jpeg;base64,') == 0) {
         try {
           logger.info(app_id, 'optimizing', payload.data.length);
           mime = 'data:image/jpeg;base64,';
@@ -41,8 +37,7 @@ module.exports = function(options, instance, self) {
           payload.data = mime + data.data.toString('base64');
           payload.optimized_size = payload.data.length;
           logger.info(app_id, 'optimized_to', payload.data.length);
-        }
-        catch(e) {
+        } catch (e) {
           logger.error(app_id, 'jpeg_compress', e);
         }
         socket.emit('fruum:optimize', payload);
@@ -55,7 +50,7 @@ module.exports = function(options, instance, self) {
         var readStream = new streamBuffers.ReadableStreamBuffer(),
             writeStream = new stream.PassThrough();
 
-        //handle errors
+        // handle errors
         readStream.on('error', function(e) {
           logger.error(app_id, 'optimize_readstream', e);
           socket.emit('fruum:optimize', payload);
@@ -69,7 +64,7 @@ module.exports = function(options, instance, self) {
           socket.emit('fruum:optimize', payload);
         });
 
-        //write stream
+        // write stream
         writeStream.data = [];
         writeStream.on('data', function(chunk) {
           this.data.push(chunk);
@@ -82,16 +77,15 @@ module.exports = function(options, instance, self) {
           socket.emit('fruum:optimize', payload);
         });
 
-        //read stream
+        // read stream
         readStream.pipe(compressor).pipe(writeStream);
         readStream.put(new Buffer(data.replace(mime, ''), 'base64'));
         readStream.stop();
-      }
-      else {
+      } else {
         socket.emit('fruum:optimize', payload);
       }
+    } else {
+      socket.emit('fruum:optimize', payload);
     }
-    else socket.emit('fruum:optimize', payload);
-  }
-
-}
+  };
+};

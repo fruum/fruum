@@ -11,7 +11,7 @@ module.exports = function(options, instance, self) {
   var storage = self.storage,
       plugins = self.plugins;
 
-  //return a list of all forum categories
+  // return a list of all forum categories
   self.categories = function(socket, payload) {
     if (!self.validatePayloadID(socket, null, 'categories')) {
       self.fail(payload);
@@ -31,13 +31,13 @@ module.exports = function(options, instance, self) {
         response.push(document.toJSON());
       });
       socket.emit('fruum:categories', {
-        categories: response
+        categories: response,
       });
       self.success(payload);
     });
-  }
+  };
 
-  //move article/blog/thread/channel under another category
+  // move article/blog/thread/channel under another category
   self.move = function(socket, payload) {
     if (!self.validatePayloadID(socket, payload, 'move')) {
       self.fail(payload);
@@ -59,7 +59,7 @@ module.exports = function(options, instance, self) {
       self.fail(payload);
       return;
     }
-    //get document
+    // get document
     storage.get(app_id, id, function(document) {
       if (!document) {
         logger.error(app_id, 'move_invalid_doc', '' + id);
@@ -68,7 +68,7 @@ module.exports = function(options, instance, self) {
         return;
       }
       var original_document = document.clone();
-      //get target category
+      // get target category
       storage.get(app_id, category_id, function(category_doc) {
         if (!category_doc) {
           logger.error(app_id, 'move_invalid_category_doc', '' + category_id);
@@ -76,8 +76,8 @@ module.exports = function(options, instance, self) {
           self.fail(payload);
           return;
         }
-        //validate document type
-        switch(document.get('type')) {
+        // validate document type
+        switch (document.get('type')) {
           case 'thread':
           case 'article':
           case 'blog':
@@ -89,38 +89,38 @@ module.exports = function(options, instance, self) {
             self.fail(payload);
             return;
         }
-        //validate category type
+        // validate category type
         if (category_doc.get('type') != 'category') {
           logger.error(app_id, 'move_invalid_document_type', '' + id);
           socket.emit('fruum:move');
           self.fail(payload);
           return;
         }
-        //already under the proper category
+        // already under the proper category
         if (document.get('parent') == category_doc.get('id')) {
           self.success(payload);
           return;
         }
-        //get children
+        // get children
         storage.children(app_id, document, function(children) {
           document.setParentDocument(category_doc);
           _.each(children, function(child) {
             child.setParentDocument(document);
           });
-          //process plugins
+          // process plugins
           var plugin_payload = {
             app_id: app_id,
             document: document,
             category: category_doc,
             children: children,
-            user: user
+            user: user,
           };
-          plugins.beforeMove(plugin_payload, function(err, plugin_payload) {
+          plugins.beforeMove(plugin_payload, function(err, plugin_payload) { // eslint-disable-line
             document = plugin_payload.document || document;
             children = plugin_payload.children || children;
             var emit_payload = {
               source: original_document.toJSON(),
-              target: document.toJSON()
+              target: document.toJSON(),
             };
             if (plugin_payload.storage_noop) {
               self.invalidateDocument(app_id, original_document);
@@ -129,7 +129,7 @@ module.exports = function(options, instance, self) {
               self.success(payload);
               return;
             }
-            //save
+            // save
             children.push(document);
             function process() {
               var doc = children.shift();
@@ -157,8 +157,7 @@ module.exports = function(options, instance, self) {
                 plugins.afterMove(plugin_payload, function() {
                   self.success(payload);
                 });
-              }
-              else {
+              } else {
                 self.invalidateDocument(app_id, doc);
                 storage.update(app_id, doc, null, function() {
                   process();
@@ -170,5 +169,5 @@ module.exports = function(options, instance, self) {
         });
       });
     });
-  }
-}
+  };
+};

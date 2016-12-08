@@ -4,8 +4,7 @@
 
 'use strict';
 
-var _ = require('underscore'),
-    logger = require('../logger');
+var logger = require('../logger');
 
 module.exports = function(options, instance, self) {
   var storage = self.storage,
@@ -35,13 +34,13 @@ module.exports = function(options, instance, self) {
         self.fail(payload);
         return;
       }
-      //process plugins
+      // process plugins
       var plugin_payload = {
         app_id: app_id,
         document: document,
-        user: user
+        user: user,
       };
-      plugins.beforeReport(plugin_payload, function(err, plugin_payload) {
+      plugins.beforeReport(plugin_payload, function(err, plugin_payload) { // eslint-disable-line
         document = plugin_payload.document || document;
         socket.emit('fruum:report', document.toJSON());
         plugin_payload.document = document;
@@ -50,5 +49,5 @@ module.exports = function(options, instance, self) {
         });
       });
     });
-  }
-}
+  };
+};

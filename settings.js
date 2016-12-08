@@ -2,14 +2,13 @@
   Read settings from config.json
 *******************************************************************************/
 
-'use strict;'
+'use strict;';
 
 var _ = require('underscore'),
     config = require('./config.json');
 try {
   config = _.extend(config, require('./config.local.json'));
-}
-catch(e) {}
+} catch (e) {}
 
 module.exports = function(options) {
   var final = config;

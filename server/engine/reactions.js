@@ -37,14 +37,14 @@ module.exports = function(options, instance, self) {
         self.fail(payload);
         return;
       }
-      //process plugins
+      // process plugins
       var plugin_payload = {
         app_id: app_id,
         document: document,
         reaction: reaction,
-        user: user
+        user: user,
       };
-      plugins.beforeReact(plugin_payload, function(err, plugin_payload) {
+      plugins.beforeReact(plugin_payload, function(err, plugin_payload) { // eslint-disable-line
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:react', document.toJSON());
@@ -52,7 +52,7 @@ module.exports = function(options, instance, self) {
           return;
         }
         logger.info(app_id, 'update_reaction_' + reaction + ':' + document.get('id'), user);
-        //success
+        // success
         var username = user.get('username'),
             attributes = {},
             reaction_list = document.get('react_' + reaction),
@@ -62,7 +62,7 @@ module.exports = function(options, instance, self) {
         if (reaction_list && reaction_list.indexOf(username) >= 0) {
           has_reaction = true;
         }
-        //remove from previous reactions
+        // remove from previous reactions
         _.each(valid_reactions, function(entry) {
           var field = 'react_' + entry,
               list = document.get(field);
@@ -87,13 +87,12 @@ module.exports = function(options, instance, self) {
             plugins.afterReact(plugin_payload, function() {
               self.success(payload);
             });
-          }
-          else {
+          } else {
             socket.emit('fruum:react');
             self.fail(payload);
           }
         });
       });
     });
-  }
-}
+  };
+};

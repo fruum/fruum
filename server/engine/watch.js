@@ -4,8 +4,7 @@
 
 'use strict';
 
-var _ = require('underscore'),
-    logger = require('../logger');
+var logger = require('../logger');
 
 module.exports = function(options, instance, self) {
   var storage = self.storage,
@@ -35,13 +34,13 @@ module.exports = function(options, instance, self) {
         self.fail(payload);
         return;
       }
-      //process plugins
+      // process plugins
       var plugin_payload = {
         app_id: app_id,
         document: document,
-        user: user
+        user: user,
       };
-      plugins.beforeWatch(plugin_payload, function(err, plugin_payload) {
+      plugins.beforeWatch(plugin_payload, function(err, plugin_payload) { // eslint-disable-line
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:watch', document.toJSON());
@@ -57,7 +56,7 @@ module.exports = function(options, instance, self) {
         });
       });
     });
-  }
+  };
 
   self.unwatch = function(socket, payload) {
     if (!self.validatePayloadID(socket, payload, 'unwatch')) {
@@ -81,13 +80,13 @@ module.exports = function(options, instance, self) {
         self.fail(payload);
         return;
       }
-      //process plugins
+      // process plugins
       var plugin_payload = {
         app_id: app_id,
         document: document,
-        user: user
+        user: user,
       };
-      plugins.beforeUnwatch(plugin_payload, function(err, plugin_payload) {
+      plugins.beforeUnwatch(plugin_payload, function(err, plugin_payload) { // eslint-disable-line
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:unwatch', document.toJSON());
@@ -103,5 +102,5 @@ module.exports = function(options, instance, self) {
         });
       });
     });
-  }
-}
+  };
+};

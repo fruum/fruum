@@ -4,13 +4,11 @@
 
 'use strict';
 
-var _ = require('underscore'),
-    logger = require('../logger');
+var logger = require('../logger');
 
 module.exports = function(options, instance, self) {
   var storage = self.storage,
-      auth = self.auth,
-      email = self.email;
+      auth = self.auth;
 
   // ---------------------------------- SETUP ----------------------------------
 
@@ -18,7 +16,7 @@ module.exports = function(options, instance, self) {
     logger.system('Setup database');
     auth.setup();
     storage.setup();
-  }
+  };
 
   // --------------------------------- MIGRATE ---------------------------------
 
@@ -26,7 +24,7 @@ module.exports = function(options, instance, self) {
     logger.system('Migrate database');
     auth.migrate();
     storage.migrate();
-  }
+  };
 
   // ---------------------------------- TEARDOWN ----------------------------------
 
@@ -34,12 +32,12 @@ module.exports = function(options, instance, self) {
     logger.system('Teardown database');
     auth.teardown();
     storage.teardown();
-  }
+  };
 
   // ----------------------------- GARBAGE COLLECT -----------------------------
 
   self.gc = function(app_id) {
     logger.system('Delete archived documents');
     storage.gc_archived(app_id, Date.now(), function() {});
-  }
-}
+  };
+};

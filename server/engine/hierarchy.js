@@ -4,8 +4,7 @@
 
 'use strict';
 
-var _ = require('underscore'),
-    logger = require('../logger');
+var logger = require('../logger');
 
 module.exports = function(options, instance, self) {
   var storage = self.storage;
@@ -20,10 +19,10 @@ module.exports = function(options, instance, self) {
         storage.count_attributes(app_id, {
           parent: doc_id,
           archived: false,
-          type__not: 'category'
+          type__not: 'category',
         }, function(total) {
           storage.update(app_id, document, {
-            children_count: total
+            children_count: total,
           }, function(updated_doc) {
             if (updated_doc) {
               self.invalidateDocument(app_id, updated_doc);
@@ -34,7 +33,7 @@ module.exports = function(options, instance, self) {
         });
       });
     }, 2000);
-  }
+  };
 
   self.refreshUpdateTS = function(app_id, doc_id, now, user) {
     storage.get(app_id, doc_id, function(document) {
@@ -42,7 +41,7 @@ module.exports = function(options, instance, self) {
         return;
       }
       storage.update(app_id, document, {
-        updated: now
+        updated: now,
       }, function(updated_doc) {
         if (updated_doc) {
           self.invalidateDocument(app_id, updated_doc);
@@ -56,7 +55,7 @@ module.exports = function(options, instance, self) {
         }
       });
     });
-  }
+  };
 
   self.refreshNotify = function(app_id, doc_id, user) {
     storage.get(app_id, doc_id, function(document) {
@@ -72,6 +71,5 @@ module.exports = function(options, instance, self) {
         self.refreshNotify(app_id, document.get('parent'), user);
       }
     });
-  }
-
-}
+  };
+};
