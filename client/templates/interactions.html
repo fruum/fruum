@@ -533,6 +533,10 @@
       <div class="fruum-interactions-buttons">
         <% if (editing.id) { %>
         <button class="fruum-main-button" data-action="post">edit</button>
+        <% } else if (viewing.type == 'article') { %>
+        <button class="fruum-main-button" data-action="post">comment</button>
+        <% } else if (viewing.type == 'blog') { %>
+        <button class="fruum-main-button" data-action="post">comment</button>
         <% } else { %>
         <button class="fruum-main-button" data-action="post">reply</button>
         <% } %>
@@ -563,7 +567,15 @@
       <% } %>
     <% } else { %>
       <div class="fruum-interactions-buttons">
-        <button class="fruum-main-button fruum-js-default-action" data-action="add_post" data-onboard="add_stream">reply</button>
+        <button class="fruum-main-button fruum-js-default-action" data-action="add_post" data-onboard="add_stream">
+          <% if (viewing.type == 'article') { %>
+          comment
+          <% } else if (viewing.type == 'blog') { %>
+          comment
+          <% } else { %>
+          reply
+          <% } %>
+        </button>
         <% if (Fruum.utils.isDesktop()) { %>
         <span class="fruum-secondary-data fruum-helptext">or press <b>Enter</b> to start writing</span>
         <% } %>

@@ -8,7 +8,7 @@
         <% if (!viewing.visible) { %>
           <span class="fruum-icon fruum-icon-invisible" data-fruumtipsy-center="Private"></span>
         <% } %>
-        <% if (viewing.locked) { %>
+        <% if (viewing.locked && (Fruum.user.admin || viewing.type != 'article')) { %>
           <span class="fruum-icon fruum-icon-locked" data-fruumtipsy-center="Locked"></span>
         <% } %>
         <% if (viewing.type == 'bookmark') print('<i>'); %>

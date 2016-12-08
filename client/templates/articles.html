@@ -10,7 +10,7 @@
             <span class="fruum-icon fruum-icon-invisible" data-fruumtipsy-center="Topic is private"></span>
             <% } %>
 
-            <% if (locked) { %>
+            <% if (locked && (Fruum.user.admin || type != 'article')) { %>
             <span class="fruum-icon fruum-icon-locked" data-fruumtipsy-center="Topic is locked"></span>
             <% } %>
 
