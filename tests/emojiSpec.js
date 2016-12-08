@@ -1,11 +1,12 @@
+/* globals describe, it, expect */
+
 var fs = require('fs'), window = {};
 
 eval(fs.readFileSync(__dirname + '/../client/js/defs.js', 'utf8'));
-Fruum = window.Fruum;
 eval(fs.readFileSync(__dirname + '/../client/js/emoji.js', 'utf8'));
 
-describe("Emoji", function() {
-  it("to be replacing icon", function() {
+describe('Emoji', function() {
+  it('to be replacing icon', function() {
     expect(window.Fruum.emoji.convert(':D')).toBe('<span data-fruumemoji="' + window.Fruum.emoji.symbols[':D'] + '"></span>');
     expect(window.Fruum.emoji.convert(':sadface:')).toBe('<span data-fruumemoji="' + window.Fruum.emoji.symbols[':sadface:'] + '"></span>');
     expect(window.Fruum.emoji.convert('foo :sadface: bar')).toBe(

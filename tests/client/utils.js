@@ -1,3 +1,5 @@
+/* globals expect, jasmine */
+
 var io = require('socket.io-client'),
     request = require('request'),
     url = 'http://test:testkey@localhost:3000';
@@ -8,14 +10,14 @@ function admin_connect(ready) {
     admin: true,
     anonymous: false,
     username: 'god',
-    displayname: 'God'
-  }
+    displayname: 'God',
+  };
   var socket = io.connect('http://localhost:3000', {'force new connection': true});
   socket.on('connect', function() {
     socket.removeListener('connect', this);
     socket.emit('fruum:auth', {
       app_id: 'test',
-      user: user_payload
+      user: user_payload,
     });
     socket.on('fruum:auth', function(payload) {
       expect(payload.user).toEqual(jasmine.objectContaining(user_payload));
@@ -31,14 +33,14 @@ function user_connect(ready) {
     admin: false,
     anonymous: false,
     username: 'human',
-    displayname: 'Human'
-  }
+    displayname: 'Human',
+  };
   var socket = io.connect('http://localhost:3000', {'force new connection': true});
   socket.on('connect', function() {
     socket.removeListener('connect', this);
     socket.emit('fruum:auth', {
       app_id: 'test',
-      user: user_payload
+      user: user_payload,
     });
     socket.on('fruum:auth', function(payload) {
       expect(payload.user).toEqual(jasmine.objectContaining(user_payload));
@@ -51,14 +53,14 @@ function user_connect(ready) {
 function anonymous_connect(ready) {
   var user_payload = {
     admin: false,
-    anonymous: true
-  }
+    anonymous: true,
+  };
   var socket = io.connect('http://localhost:3000', {'force new connection': true});
   socket.on('connect', function() {
     socket.removeListener('connect', this);
     socket.emit('fruum:auth', {
       app_id: 'test',
-      user: user_payload
+      user: user_payload,
     });
     socket.on('fruum:auth', function(payload) {
       expect(payload.user).toEqual(jasmine.objectContaining(user_payload));
@@ -74,14 +76,14 @@ function bob_create(ready) {
     admin: false,
     anonymous: false,
     username: 'bob',
-    displayname: 'bob'
-  }
+    displayname: 'bob',
+  };
   var socket = io.connect('http://localhost:3000', {'force new connection': true});
   socket.on('connect', function() {
     socket.removeListener('connect', this);
     socket.emit('fruum:auth', {
       app_id: 'test',
-      user: user_payload
+      user: user_payload,
     });
     socket.on('fruum:auth', function(payload) {
       socket.removeListener('fruum:auth', this);
@@ -93,17 +95,17 @@ function bob_create(ready) {
   });
 }
 
-function _delete(done) {
-  //reset category
+function _delete(done) { // eslint-disable-line
+  // reset category
   request({
     method: 'DELETE',
     url: url + '/api/v1/docs/category',
-    json: true
+    json: true,
   }, done);
 }
 
 function _category(done) {
-  //create category
+  // create category
   request({
     method: 'POST',
     url: url + '/api/v1/docs',
@@ -114,13 +116,13 @@ function _category(done) {
       parent: 'home',
       parent_type: 'category',
       header: 'category header',
-      body: 'category body'
-    }
+      body: 'category body',
+    },
   }, done);
 }
 
 function _locked_category(done) {
-  //create category
+  // create category
   request({
     method: 'POST',
     url: url + '/api/v1/docs',
@@ -132,13 +134,13 @@ function _locked_category(done) {
       parent_type: 'category',
       header: 'locked category header',
       body: 'locked category body',
-      usage: 4
-    }
+      usage: 4,
+    },
   }, done);
 }
 
 function _user_category(done) {
-  //create category
+  // create category
   request({
     method: 'POST',
     url: url + '/api/v1/docs',
@@ -151,32 +153,13 @@ function _user_category(done) {
       header: 'user category header',
       body: 'user category body',
       usage: 0,
-      permission: 1
-    }
-  }, done);
-}
-
-function _user_category(done) {
-  //create category
-  request({
-    method: 'POST',
-    url: url + '/api/v1/docs',
-    json: true,
-    body: {
-      id: 'user_category',
-      type: 'category',
-      parent: 'home',
-      parent_type: 'category',
-      header: 'user category header',
-      body: 'user category body',
-      usage: 0,
-      permission: 1
-    }
+      permission: 1,
+    },
   }, done);
 }
 
 function _admin_category(done) {
-  //create category
+  // create category
   request({
     method: 'POST',
     url: url + '/api/v1/docs',
@@ -189,8 +172,8 @@ function _admin_category(done) {
       header: 'admin category header',
       body: 'admin category body',
       usage: 0,
-      permission: 2
-    }
+      permission: 2,
+    },
   }, done);
 }
 
@@ -204,8 +187,8 @@ function _article(done) {
       type: 'article',
       parent: 'category',
       header: 'article header',
-      body: 'article body'
-    }
+      body: 'article body',
+    },
   }, done);
 }
 
@@ -219,8 +202,8 @@ function _thread(done) {
       type: 'thread',
       parent: 'category',
       header: 'thread header',
-      body: 'thread body'
-    }
+      body: 'thread body',
+    },
   }, done);
 }
 
@@ -234,8 +217,8 @@ function _move_thread(done) {
       type: 'thread',
       parent: 'category',
       header: 'move_thread header',
-      body: 'move_thread body'
-    }
+      body: 'move_thread body',
+    },
   }, done);
 }
 
@@ -250,8 +233,8 @@ function _locked_thread(done) {
       parent: 'category',
       header: 'locked thread header',
       body: 'locked thread body',
-      locked: true
-    }
+      locked: true,
+    },
   }, done);
 }
 
@@ -265,8 +248,8 @@ function _channel(done) {
       type: 'channel',
       parent: 'category',
       header: 'channel header',
-      body: 'channel body'
-    }
+      body: 'channel body',
+    },
   }, done);
 }
 
@@ -280,8 +263,8 @@ function _bookmark(done) {
       type: 'bookmark',
       parent: 'category',
       header: 'bookmark header',
-      body: 'bookmark body'
-    }
+      body: 'bookmark body',
+    },
   }, done);
 }
 
@@ -321,8 +304,8 @@ function load_bob(done) {
       header: 'bob thread',
       body: 'bob body',
       permission: 0,
-      user_id: 'bob'
-    }
+      user_id: 'bob',
+    },
   }, function() {
     request({
       method: 'POST',
@@ -335,8 +318,8 @@ function load_bob(done) {
         header: 'bob thread',
         body: 'bob body',
         permission: 1,
-        user_id: 'bob'
-      }
+        user_id: 'bob',
+      },
     }, function() {
       request({
         method: 'POST',
@@ -349,8 +332,8 @@ function load_bob(done) {
           header: 'bob thread',
           body: 'bob body',
           permission: 2,
-          user_id: 'bob'
-        }
+          user_id: 'bob',
+        },
       }, function() {
         request({
           method: 'POST',
@@ -362,8 +345,8 @@ function load_bob(done) {
             parent: 'bob_thread_admin',
             body: 'bob body',
             permission: 2,
-            user_id: 'bob'
-          }
+            user_id: 'bob',
+          },
         }, function() {
           bob_create(done);
         });
@@ -378,7 +361,7 @@ function set_field(id, fields, done) {
     method: 'PUT',
     url: url + '/api/v1/docs/' + id,
     json: true,
-    body: fields
+    body: fields,
   }, done);
 }
 
@@ -389,5 +372,5 @@ module.exports = {
   bob_create: bob_create,
   load_bob: load_bob,
   load_fixture: load_fixture,
-  set_field: set_field
-}
+  set_field: set_field,
+};

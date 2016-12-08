@@ -1,11 +1,13 @@
+/* globals window:true, describe, it, expect */
+
 window = {};
 window.Fruum = {};
 window.Fruum.plugins = [];
 eval(require('fs').readFileSync(__dirname + '/../../plugins/imagelinks/client.js', 'utf8'));
 var plugin = new window.Fruum.plugins[0]();
 
-describe("Imagelinks plugin", function() {
-  it("to replace image links with markdown", function() {
+describe('Imagelinks plugin', function() {
+  it('to replace image links with markdown', function() {
     expect(plugin.post_content('https://foo.com/foo.jpg')).toEqual(
       ' ![https://foo.com/foo.jpg](https://foo.com/foo.jpg) '
     );

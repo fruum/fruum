@@ -1,3 +1,5 @@
+/* globals describe, it, expect, jasmine */
+
 var Utils = require('./utils'),
     user_connect = Utils.user_connect,
     bob_create = Utils.bob_create,
@@ -5,15 +7,15 @@ var Utils = require('./utils'),
     load_fixture = Utils.load_fixture,
     set_field = Utils.set_field;
 
-describe("User client", function() {
-  it("cannot create category", function(done) {
+describe('User client', function() {
+  it('cannot create category', function(done) {
     user_connect(function(socket) {
       var payload = {
         parent: 'home',
         type: 'category',
         header: 'foo',
-        body: 'bar'
-      }
+        body: 'bar',
+      };
       socket.emit('fruum:add', payload);
       socket.on('fruum:add', function(response) {
         socket.removeListener('fruum:add', this);
@@ -24,7 +26,7 @@ describe("User client", function() {
     });
   });
 
-  it("cannot get all categories", function(done) {
+  it('cannot get all categories', function(done) {
     user_connect(function(socket) {
       socket.emit('fruum:categories', {});
       socket.on('fruum:categories', function(response) {
@@ -36,15 +38,15 @@ describe("User client", function() {
     });
   });
 
-  it("cannot create article", function(done) {
+  it('cannot create article', function(done) {
     set_field('home', {usage: 1}, function() {
       user_connect(function(socket) {
         var payload = {
           parent: 'home',
           type: 'article',
           header: 'foo',
-          body: 'bar'
-        }
+          body: 'bar',
+        };
         socket.emit('fruum:add', payload);
         socket.on('fruum:add', function(response) {
           socket.removeListener('fruum:add', this);
@@ -56,15 +58,15 @@ describe("User client", function() {
     });
   });
 
-  it("cannot create blog", function(done) {
+  it('cannot create blog', function(done) {
     set_field('home', {usage: 2}, function() {
       user_connect(function(socket) {
         var payload = {
           parent: 'home',
           type: 'blog',
           header: 'foo',
-          body: 'bar'
-        }
+          body: 'bar',
+        };
         socket.emit('fruum:add', payload);
         socket.on('fruum:add', function(response) {
           socket.removeListener('fruum:add', this);
@@ -76,14 +78,14 @@ describe("User client", function() {
     });
   });
 
-  it("cannot create bookmark", function(done) {
+  it('cannot create bookmark', function(done) {
     user_connect(function(socket) {
       var payload = {
         parent: 'home',
         type: 'bookmark',
         header: 'bookmark',
-        body: '#foo'
-      }
+        body: '#foo',
+      };
       socket.emit('fruum:add', payload);
       socket.on('fruum:add', function(response) {
         socket.removeListener('fruum:add', this);
@@ -94,15 +96,15 @@ describe("User client", function() {
     });
   });
 
-  it("can create thread", function(done) {
+  it('can create thread', function(done) {
     set_field('home', {usage: 0}, function() {
       user_connect(function(socket) {
         var payload = {
           parent: 'home',
           type: 'thread',
           header: 'foo',
-          body: 'bar'
-        }
+          body: 'bar',
+        };
         socket.emit('fruum:add', payload);
         socket.on('fruum:add', function(response) {
           socket.removeListener('fruum:add', this);
@@ -114,15 +116,15 @@ describe("User client", function() {
     });
   });
 
-  it("can create channel", function(done) {
+  it('can create channel', function(done) {
     set_field('home', {usage: 3}, function() {
       user_connect(function(socket) {
         var payload = {
           parent: 'home',
           type: 'channel',
           header: 'foo',
-          body: 'bar'
-        }
+          body: 'bar',
+        };
         socket.emit('fruum:add', payload);
         socket.on('fruum:add', function(response) {
           socket.removeListener('fruum:add', this);
@@ -134,14 +136,14 @@ describe("User client", function() {
     });
   });
 
-  it("creates thread on user category", function(done) {
+  it('creates thread on user category', function(done) {
     user_connect(function(socket) {
       var payload = {
         parent: 'user_category',
         type: 'thread',
         header: 'foo',
-        body: 'bar'
-      }
+        body: 'bar',
+      };
       socket.emit('fruum:add', payload);
       socket.on('fruum:add', function(response) {
         socket.removeListener('fruum:add', this);
@@ -152,14 +154,14 @@ describe("User client", function() {
     });
   });
 
-  it("cannot create thread on admin category", function(done) {
+  it('cannot create thread on admin category', function(done) {
     user_connect(function(socket) {
       var payload = {
         parent: 'admin_category',
         type: 'thread',
         header: 'foo',
-        body: 'bar'
-      }
+        body: 'bar',
+      };
       socket.emit('fruum:add', payload);
       socket.on('fruum:add', function(response) {
         socket.removeListener('fruum:add', this);
@@ -170,14 +172,14 @@ describe("User client", function() {
     });
   });
 
-  it("can reply to thread", function(done) {
+  it('can reply to thread', function(done) {
     user_connect(function(socket) {
       load_fixture(function() {
         var payload = {
           parent: 'thread',
           type: 'post',
-          body: 'post body'
-        }
+          body: 'post body',
+        };
         socket.emit('fruum:add', payload);
         socket.on('fruum:add', function(response) {
           socket.removeListener('fruum:add', this);
@@ -189,15 +191,15 @@ describe("User client", function() {
     });
   });
 
-  it("cannot reply to locked thread", function(done) {
+  it('cannot reply to locked thread', function(done) {
     user_connect(function(socket) {
       load_fixture(function() {
         var payload = {
           parent: 'locked_thread',
           type: 'post',
           header: 'post header',
-          body: 'post body'
-        }
+          body: 'post body',
+        };
         socket.emit('fruum:add', payload);
         socket.on('fruum:add', function(response) {
           socket.removeListener('fruum:add', this);
@@ -209,15 +211,15 @@ describe("User client", function() {
     });
   });
 
-  it("cannot create thread to locked category", function(done) {
+  it('cannot create thread to locked category', function(done) {
     user_connect(function(socket) {
       load_fixture(function() {
         var payload = {
           parent: 'locked_category',
           type: 'thread',
           header: 'foo',
-          body: 'bar'
-        }
+          body: 'bar',
+        };
         socket.emit('fruum:add', payload);
         socket.on('fruum:add', function(response) {
           socket.removeListener('fruum:add', this);
@@ -229,15 +231,15 @@ describe("User client", function() {
     });
   });
 
-  it("cannot create channel to locked category", function(done) {
+  it('cannot create channel to locked category', function(done) {
     user_connect(function(socket) {
       load_fixture(function() {
         var payload = {
           parent: 'locked_category',
           type: 'channel',
           header: 'foo',
-          body: 'bar'
-        }
+          body: 'bar',
+        };
         socket.emit('fruum:add', payload);
         socket.on('fruum:add', function(response) {
           socket.removeListener('fruum:add', this);
@@ -249,7 +251,7 @@ describe("User client", function() {
     });
   });
 
-  it("can create thread to subcategory", function(done) {
+  it('can create thread to subcategory', function(done) {
     set_field('category', {usage: 0}, function() {
       user_connect(function(socket) {
         load_fixture(function() {
@@ -257,8 +259,8 @@ describe("User client", function() {
             parent: 'category',
             type: 'thread',
             header: 'foo',
-            body: 'bar'
-          }
+            body: 'bar',
+          };
           socket.emit('fruum:add', payload);
           socket.on('fruum:add', function(response) {
             socket.removeListener('fruum:add', this);
@@ -271,7 +273,7 @@ describe("User client", function() {
     });
   });
 
-  it("cannot create thread to subcategory with disabled threads", function(done) {
+  it('cannot create thread to subcategory with disabled threads', function(done) {
     set_field('category', {usage: 4}, function() {
       user_connect(function(socket) {
         load_fixture(function() {
@@ -279,8 +281,8 @@ describe("User client", function() {
             parent: 'category',
             type: 'thread',
             header: 'foo',
-            body: 'bar'
-          }
+            body: 'bar',
+          };
           socket.emit('fruum:add', payload);
           socket.on('fruum:add', function(response) {
             socket.removeListener('fruum:add', this);
@@ -293,7 +295,7 @@ describe("User client", function() {
     });
   });
 
-  it("can create channel to subcategory", function(done) {
+  it('can create channel to subcategory', function(done) {
     set_field('category', {usage: 3}, function() {
       user_connect(function(socket) {
         load_fixture(function() {
@@ -301,8 +303,8 @@ describe("User client", function() {
             parent: 'category',
             type: 'channel',
             header: 'foo',
-            body: 'bar'
-          }
+            body: 'bar',
+          };
           socket.emit('fruum:add', payload);
           socket.on('fruum:add', function(response) {
             socket.removeListener('fruum:add', this);
@@ -315,7 +317,7 @@ describe("User client", function() {
     });
   });
 
-  it("cannot create channel to subcategory with disabled channels", function(done) {
+  it('cannot create channel to subcategory with disabled channels', function(done) {
     set_field('category', {usage: 4}, function() {
       user_connect(function(socket) {
         load_fixture(function() {
@@ -323,8 +325,8 @@ describe("User client", function() {
             parent: 'category',
             type: 'channel',
             header: 'foo',
-            body: 'bar'
-          }
+            body: 'bar',
+          };
           socket.emit('fruum:add', payload);
           socket.on('fruum:add', function(response) {
             socket.removeListener('fruum:add', this);
@@ -337,7 +339,7 @@ describe("User client", function() {
     });
   });
 
-  it("cannot archive thread", function(done) {
+  it('cannot archive thread', function(done) {
     user_connect(function(socket) {
       load_fixture(function() {
         socket.emit('fruum:archive', { id: 'thread' });
@@ -351,7 +353,7 @@ describe("User client", function() {
     });
   });
 
-  it("cannot sticky thread", function(done) {
+  it('cannot sticky thread', function(done) {
     user_connect(function(socket) {
       load_fixture(function() {
         socket.emit('fruum:field', { id: 'thread', field: 'sticky', value: true });
@@ -365,12 +367,12 @@ describe("User client", function() {
     });
   });
 
-  it("can add reactions", function(done) {
+  it('can add reactions', function(done) {
     user_connect(function(socket) {
       load_fixture(function() {
         socket.emit('fruum:react', {
           id: 'thread',
-          reaction: 'up'
+          reaction: 'up',
         });
         socket.on('fruum:react', function(payload) {
           socket.removeListener('fruum:react', this);
@@ -384,7 +386,7 @@ describe("User client", function() {
     });
   });
 
-  it("cannot move thread", function(done) {
+  it('cannot move thread', function(done) {
     user_connect(function(socket) {
       load_fixture(function() {
         socket.emit('fruum:move', { id: 'move_thread', category: 'home' });
@@ -398,7 +400,7 @@ describe("User client", function() {
     });
   });
 
-  it("can set onboarding", function(done) {
+  it('can set onboarding', function(done) {
     user_connect(function(socket) {
       socket.emit('fruum:onboard', { onboard: 1234 });
       socket.on('fruum:onboard', function(response) {
@@ -410,12 +412,12 @@ describe("User client", function() {
     });
   });
 
-  it("cannot block user", function(done) {
+  it('cannot block user', function(done) {
     bob_create(function() {
       user_connect(function(socket) {
         var payload = {
-          id: 'bob'
-        }
+          id: 'bob',
+        };
         socket.emit('fruum:user:block', payload);
         socket.on('fruum:user:block', function(response) {
           socket.removeListener('fruum:user:block', this);
@@ -427,12 +429,12 @@ describe("User client", function() {
     });
   });
 
-  it("cannot unblock user", function(done) {
+  it('cannot unblock user', function(done) {
     bob_create(function() {
       user_connect(function(socket) {
         var payload = {
-          id: 'bob'
-        }
+          id: 'bob',
+        };
         socket.emit('fruum:user:unblock', payload);
         socket.on('fruum:user:unblock', function(response) {
           socket.removeListener('fruum:user:unblock', this);
@@ -444,19 +446,19 @@ describe("User client", function() {
     });
   });
 
-  it("can view profile", function(done) {
+  it('can view profile', function(done) {
     load_bob(function() {
       user_connect(function(socket) {
         var payload = {
-          id: 'bob'
-        }
+          id: 'bob',
+        };
         socket.emit('fruum:profile', payload);
         socket.on('fruum:profile', function(response) {
           socket.removeListener('fruum:profile', this);
           expect(response).toEqual(jasmine.objectContaining({
             id: 'bob',
             topics: 2,
-            replies: 0
+            replies: 0,
           }));
           socket.disconnect();
           done();
@@ -465,19 +467,19 @@ describe("User client", function() {
     });
   });
 
-  it("can view profile feed", function(done) {
+  it('can view profile feed', function(done) {
     load_bob(function() {
       user_connect(function(socket) {
         var payload = {
           id: 'bob',
-          feed: 'topics'
-        }
+          feed: 'topics',
+        };
         socket.emit('fruum:user:feed', payload);
         socket.on('fruum:user:feed', function(response) {
           socket.removeListener('fruum:user:feed', this);
           expect(response).toEqual(jasmine.objectContaining({
             id: 'bob',
-            feed: 'topics'
+            feed: 'topics',
           }));
           expect(response.docs.length).toBe(2);
           socket.disconnect();
@@ -486,5 +488,4 @@ describe("User client", function() {
       });
     });
   });
-
 });
