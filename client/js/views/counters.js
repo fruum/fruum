@@ -2,14 +2,15 @@
  Counters
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     Fruum.views = Fruum.views || {};
 
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
-        Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette;
 
     Fruum.views.CountersView = Marionette.ItemView.extend({
@@ -19,17 +20,17 @@
         up: '.fruum-js-filter-up',
         watch: '[data-action="watch"]',
         unwatch: '[data-action="unwatch"]',
-        share: '[data-action="share"]'
+        share: '[data-action="share"]',
       },
       modelEvents: {
-        'change:total_entries change:viewing_from change:viewing_to change:viewing change:editing': 'render'
+        'change:total_entries change:viewing_from change:viewing_to change:viewing change:editing': 'render',
       },
       events: {
         'click @ui.down': 'onDown',
         'click @ui.up': 'onUp',
         'click @ui.watch': 'onWatch',
         'click @ui.unwatch': 'onUnwatch',
-        'click @ui.share': 'onShare'
+        'click @ui.share': 'onShare',
       },
       onDown: function() {
         Fruum.io.trigger('fruum:scroll_bottom');
@@ -71,9 +72,9 @@
             viewing = this.model.get('viewing');
         return {
           hide_actions: this.model.get('searching') || !viewing.id ||
-                        _.contains(['thread', 'article', 'blog'], editing.type)
+                        _.contains(['thread', 'article', 'blog'], editing.type),
         };
-      }
+      },
     });
   });
 })();

@@ -2,22 +2,23 @@
 Handles move document
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     Fruum.views = Fruum.views || {};
 
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
-        Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette,
         Messages = Fruum.messages;
 
     Fruum.views.MoveItemView = Marionette.ItemView.extend({
       template: '#fruum-template-move-entry',
       triggers: {
-        'click': 'select:category'
-      }
+        'click': 'select:category',
+      },
     });
 
     Fruum.views.MoveCollectionView = Marionette.CollectionView.extend({
@@ -27,19 +28,19 @@ Handles move document
       },
       filter: function(child, index, collection) {
         return child.get('id') != this.ui_state.get('viewing').id;
-      }
+      },
     });
 
     Fruum.views.MoveView = Marionette.LayoutView.extend({
       template: '#fruum-template-move',
       regions: {
-        list: '.fruum-js-move-entries'
+        list: '.fruum-js-move-entries',
       },
       ui: {
-        close: '.fruum-js-close'
+        close: '.fruum-js-close',
       },
       events: {
-        'click @ui.close': 'onClose'
+        'click @ui.close': 'onClose',
       },
       initialize: function(options) {
         _.bindAll(this, 'onKey');
@@ -52,7 +53,7 @@ Handles move document
         if (confirm(Messages.move)) {
           Fruum.io.trigger('fruum:move', {
             id: this.move_document.id,
-            category: event.model.get('id')
+            category: event.model.get('id'),
           });
           this.onClose();
         }
@@ -73,7 +74,7 @@ Handles move document
         this.el_container = this.$el.parent();
         this.showChildView('list', new Fruum.views.MoveCollectionView({
           ui_state: this.ui_state,
-          collection: this.all_categories
+          collection: this.all_categories,
         }));
       },
       show: function(document) {
@@ -87,10 +88,9 @@ Handles move document
       },
       templateHelpers: function() {
         return {
-          move_document: this.move_document
-        }
-      }
+          move_document: this.move_document,
+        };
+      },
     });
-
   });
 })();

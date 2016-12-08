@@ -2,14 +2,15 @@
 Search button
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     Fruum.views = Fruum.views || {};
 
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
-        Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette;
 
     Fruum.views.FiltersView = Marionette.ItemView.extend({
@@ -17,13 +18,13 @@ Search button
       ui: {
         search: '.fruum-js-search',
         search_input: '.fruum-js-search-input',
-        search_close: '.fruum-js-search-close'
+        search_close: '.fruum-js-search-close',
       },
       events: {
         'keyup @ui.search_input': 'onSearchKeyup',
         'blur @ui.search_input': 'onSearchBlur',
         'click @ui.search': 'onSearchOpen',
-        'click @ui.search_close': 'onSearchClose'
+        'click @ui.search_close': 'onSearchClose',
       },
       initialize: function(options) {
         _.bindAll(this, '_search');
@@ -83,7 +84,7 @@ Search button
         this.search_timer = null;
         this._updateStatus();
         Fruum.io.trigger('fruum:search', this.ui.search_input.val());
-      }
+      },
     });
   });
 })();

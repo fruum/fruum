@@ -2,20 +2,20 @@
 Handles sharing functionality
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     Fruum.views = Fruum.views || {};
 
     var $ = Fruum.libs.$,
-        _ = Fruum.libs._,
-        Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette;
 
     Fruum.views.ShareView = Marionette.View.extend({
       events: {
         'click .fruum-popup-close': 'onClose',
-        'click textarea': 'onSelect'
+        'click textarea': 'onSelect',
       },
       initialize: function(options) {
         this.ui_state = options.ui_state;
@@ -24,7 +24,7 @@ Handles sharing functionality
       },
       onShare: function(el_caller, post_index) {
         if (el_caller) {
-          this.$el.css('top', (el_caller.offset().top - this.$el.parent().offset().top) + 'px')
+          this.$el.css('top', (el_caller.offset().top - this.$el.parent().offset().top) + 'px');
         }
         this.$el.removeClass('fruum-nodisplay').find('textarea').
           val(Fruum.utils.permaLink(this.ui_state.get('viewing').id, post_index)).
@@ -43,7 +43,7 @@ Handles sharing functionality
       },
       onSelect: function(event) {
         $(event.target).focus().select();
-      }
+      },
     });
   });
 })();

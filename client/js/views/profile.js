@@ -2,9 +2,11 @@
 User profile view
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     Fruum.views = Fruum.views || {};
 
     var $ = Fruum.libs.$,
@@ -18,24 +20,24 @@ User profile view
 
     var HeaderView = Marionette.ItemView.extend({
       template: '#fruum-template-profile-header',
-      modelEvents: { 'change': 'render' }
+      modelEvents: { 'change': 'render' },
     });
 
     var MainCardView = Marionette.ItemView.extend({
       template: '#fruum-template-profile-maincard',
-      modelEvents: { 'change': 'render' }
+      modelEvents: { 'change': 'render' },
     });
 
     var TabsView = Marionette.ItemView.extend({
       template: '#fruum-template-profile-tabs',
       modelEvents: {
-        'change:topics change:replies change:id': 'render'
+        'change:topics change:replies change:id': 'render',
       },
       ui: {
-        tabs: '[data-tab]'
+        tabs: '[data-tab]',
       },
       events: {
-        'click @ui.tabs': 'onTab'
+        'click @ui.tabs': 'onTab',
       },
       initialize: function(options) {
         this.controller = options.controller;
@@ -50,14 +52,14 @@ User profile view
       onDomRefresh: function() {
         var tab = this.controller.get('tab');
         if (!tab ||
-            tab && !(this.$('[data-tab="' + tab + '"]').length))
-        {
-          if (this.templateHelpers().notifications)
+            tab && !(this.$('[data-tab="' + tab + '"]').length)
+        ) {
+          if (this.templateHelpers().notifications) {
             this.controller.set('tab', 'notifications');
-          else
+          } else {
             this.controller.set('tab', this.$('[data-tab]').eq(0).data('tab') || '');
-        }
-        else {
+          }
+        } else {
           this.highlightTab();
         }
       },
@@ -76,13 +78,14 @@ User profile view
       },
       templateHelpers: function() {
         var notifications = 0;
-        if (Fruum.user.id == this.model.get('id'))
+        if (Fruum.user.id == this.model.get('id')) {
           notifications = Fruum.userUtils.countNotifications();
+        }
         return {
           notifications: notifications,
-          users: this.ui_state.get('profile_total_users')
-        }
-      }
+          users: this.ui_state.get('profile_total_users'),
+        };
+      },
     });
 
     var ActionsView = Marionette.ItemView.extend({
@@ -90,8 +93,8 @@ User profile view
       modelEvents: { 'change': 'render' },
       triggers: {
         'click [data-action="block"]': 'action:block',
-        'click [data-action="unblock"]': 'action:unblock'
-      }
+        'click [data-action="unblock"]': 'action:unblock',
+      },
     });
 
     // -------------------------------------------------------------------------
@@ -99,15 +102,15 @@ User profile view
     var DocumentView = TRANSITION(Marionette.ItemView.extend({
       template: '#fruum-template-profile-document',
       ui: {
-        navigate: '.fruum-js-navigate'
+        navigate: '.fruum-js-navigate',
       },
       events: {
-        'click @ui.navigate': 'onNavigate'
+        'click @ui.navigate': 'onNavigate',
       },
       initialize: function(options) {
         this.templateHelpers = {
-          is_notification: options.is_notification
-        }
+          is_notification: options.is_notification,
+        };
       },
       onNavigate: function(event) {
         if (event) {
@@ -118,21 +121,22 @@ User profile view
         if (this.model.get('type') === 'post') id = this.model.get('parent');
         Fruum.io.trigger('fruum:profile');
         Fruum.io.trigger('fruum:view', { id: id });
-      }
+      },
     }));
+
     var DocumentsView = Marionette.CollectionView.extend({
       childView: DocumentView,
       initialize: function(options) {
         this.childViewOptions = {
-          is_notification: options.is_notification
-        }
+          is_notification: options.is_notification,
+        };
       },
       onAttach: function() {
         this.triggerMethod('resize');
         this.listenTo(this.collection, 'add remove reset', function() {
           this.triggerMethod('resize');
         });
-      }
+      },
     });
 
     // -------------------------------------------------------------------------
@@ -140,10 +144,10 @@ User profile view
     var UserView = TRANSITION(Marionette.ItemView.extend({
       template: '#fruum-template-profile-user',
       events: {
-        'click': 'onSelect'
+        'click': 'onSelect',
       },
       modelEvents: {
-        'change': 'render'
+        'change': 'render',
       },
       onSelect: function(event) {
         if (event) {
@@ -152,9 +156,9 @@ User profile view
         }
         Fruum.io.trigger('fruum:profile', {
           id: this.model.get('id'),
-          username: this.model.get('username')
+          username: this.model.get('username'),
         });
-      }
+      },
     }));
     var UsersView = Marionette.CollectionView.extend({
       childView: UserView,
@@ -163,7 +167,7 @@ User profile view
         this.listenTo(this.collection, 'add remove reset', function() {
           this.triggerMethod('resize');
         });
-      }
+      },
     });
 
     // -------------------------------------------------------------------------
@@ -176,14 +180,14 @@ User profile view
         maincard: '.fruum-js-profile-region-maincard',
         tabs: '.fruum-js-profile-tabs',
         content: '.fruum-js-profile-content',
-        actions: '.fruum-js-profile-actions'
+        actions: '.fruum-js-profile-actions',
       },
       ui: {
         close: '[data-action="close"]',
-        nano: '.nano'
+        nano: '.nano',
       },
       events: {
-        'click @ui.close': 'onClose'
+        'click @ui.close': 'onClose',
       },
       initialize: function(options) {
         var that = this;
@@ -194,37 +198,36 @@ User profile view
         this.topics = options.topics;
         this.replies = options.replies;
         this.users = options.users;
-        //profile controller model
+        // profile controller model
         this.controller = new Backbone.Model({ tab: '' });
-        //show/hide panel
+        // show/hide panel
         this.listenTo(this.ui_state, 'change:profile', function() {
           if (!this.ui_state.get('profile')) {
             that.topics.reset();
             that.replies.reset();
             that.notifications.reset();
-            if (that.ui_state.get('viewing').id)
+            if (that.ui_state.get('viewing').id) {
               Fruum.io.trigger('fruum:restore_view_route');
-            else
+            } else {
               Fruum.io.trigger('fruum:view_default');
+            }
             this.parent.fadeOut('fast', function() {
               that.parent.addClass('fruum-nodisplay');
             });
-          }
-          else if (!this.ui_state.previous('profile')) {
-            //hide onboarding
+          } else if (!this.ui_state.previous('profile')) {
+            // hide onboarding
             Fruum.io.trigger('fruum:set_onboard');
             this.parent.removeClass('fruum-nodisplay').fadeIn('fast', function() {
               that.$(that.regions.actions).toggle(that.canDisplayActions());
               that.resize();
             });
-          }
-          else {
+          } else {
             that.$(that.regions.actions).toggle(that.canDisplayActions());
             that.resize();
           }
         });
         this.listenTo(this.ui_state, 'change:connected', function() {
-          //display the action area only if user is admin
+          // display the action area only if user is admin
           this.$(this.regions.actions).toggle(this.canDisplayActions());
           if (!this.parent.hasClass('fruum-nodisplay')) this.resize();
         });
@@ -240,13 +243,13 @@ User profile view
         this.showChildView('tabs', new TabsView({
           model: this.model,
           controller: this.controller,
-          ui_state: this.ui_state
+          ui_state: this.ui_state,
         }));
         this.showChildView('actions', new ActionsView({ model: this.model }));
         this.ui.nano.nanoScroller({
           preventPageScrolling: true,
           iOSNativeScrolling: true,
-          disableResize: true
+          disableResize: true,
         }).bind('scrollend', this.nextFeed);
       },
       onClose: function(event) {
@@ -279,18 +282,18 @@ User profile view
       resize: function() {
         this.ui.nano.height(
           this.parent.height() - this.$(this.regions.navigation).outerHeight() -
-          (this.canDisplayActions()?this.$(this.regions.actions).outerHeight():0)
+          (this.canDisplayActions() ? this.$(this.regions.actions).outerHeight() : 0)
         ).nanoScroller({ reset: true });
       },
       nextFeed: function() {
         if (!this.model.get('id')) return;
-        switch(this.controller.get('tab')) {
+        switch (this.controller.get('tab')) {
           case 'topics':
             Fruum.io.trigger('fruum:user:feed', {
               id: this.model.get('id'),
               feed: 'topics',
               from: this.topics.length,
-              size: PAGE_SIZE
+              size: PAGE_SIZE,
             });
             break;
           case 'replies':
@@ -298,32 +301,32 @@ User profile view
               id: this.model.get('id'),
               feed: 'replies',
               from: this.replies.length,
-              size: PAGE_SIZE
+              size: PAGE_SIZE,
             });
             break;
           case 'users':
             Fruum.io.trigger('fruum:user:list', {
               from: this.users.length,
-              size: PAGE_SIZE
+              size: PAGE_SIZE,
             });
             break;
         }
       },
       renderContent: function() {
-        switch(this.controller.get('tab')) {
+        switch (this.controller.get('tab')) {
           case 'topics':
             if (!this.topics.length) {
               Fruum.io.trigger('fruum:user:feed', {
                 id: this.model.get('id'),
                 feed: 'topics',
                 from: 0,
-                size: PAGE_SIZE
+                size: PAGE_SIZE,
               });
             }
             this.showChildView('content', new DocumentsView({
               collection: this.topics,
               ui_state: this.ui_state,
-              is_notification: false
+              is_notification: false,
             }));
             break;
           case 'replies':
@@ -332,13 +335,13 @@ User profile view
                 id: this.model.get('id'),
                 feed: 'replies',
                 from: 0,
-                size: PAGE_SIZE
+                size: PAGE_SIZE,
               });
             }
             this.showChildView('content', new DocumentsView({
               collection: this.replies,
               ui_state: this.ui_state,
-              is_notification: false
+              is_notification: false,
             }));
             break;
           case 'notifications':
@@ -348,25 +351,25 @@ User profile view
             this.showChildView('content', new DocumentsView({
               collection: this.notifications,
               ui_state: this.ui_state,
-              is_notification: true
+              is_notification: true,
             }));
             break;
           case 'users':
             if (!this.users.length) {
               Fruum.io.trigger('fruum:user:list', {
                 from: 0,
-                size: PAGE_SIZE
+                size: PAGE_SIZE,
               });
             }
             this.showChildView('content', new UsersView({
               collection: this.users,
-              ui_state: this.ui_state
+              ui_state: this.ui_state,
             }));
             break;
         }
         this.ui.nano.nanoScroller && this.ui.nano.nanoScroller({ scroll: 'top' });
         _.defer(this.resize);
-      }
+      },
     });
   });
 })();

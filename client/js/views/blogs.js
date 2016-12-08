@@ -2,14 +2,14 @@
 Blog view
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     Fruum.views = Fruum.views || {};
 
     var $ = Fruum.libs.$,
-        _ = Fruum.libs._,
-        Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
 
@@ -20,24 +20,24 @@ Blog view
         navigate: '.fruum-js-navigate',
         manage: '.fruum-js-manage',
         move: '[data-action="move"]',
-        delete: '[data-action="delete"]'
+        delete: '[data-action="delete"]',
       },
       modelEvents: {
-        'change': 'render'
+        'change': 'render',
       },
       events: {
         'click @ui.search': 'onSearch',
         'click @ui.manage': 'onManage',
         'click @ui.navigate': 'onNavigate',
         'click @ui.delete': 'onDelete',
-        'click @ui.move': 'onMove'
+        'click @ui.move': 'onMove',
       },
       templateHelpers: function() {
         return {
           is_new: Fruum.utils.isNewVisit(
             this.model.get('id'), this.model.get('updated')
-          )
-        }
+          ),
+        };
       },
       onSearch: function(event) {
         if (event) {
@@ -79,10 +79,11 @@ Blog view
         }
         Fruum.io.trigger('fruum:close_manage');
         Fruum.io.trigger('fruum:show_move', this.model.toJSON());
-      }
+      },
     }));
+
     Fruum.views.BlogsView = Marionette.CollectionView.extend({
-      childView: Fruum.views.BlogView
+      childView: Fruum.views.BlogView,
     });
   });
 })();

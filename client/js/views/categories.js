@@ -2,15 +2,14 @@
 Categories view
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     Fruum.views = Fruum.views || {};
 
-    var $ = Fruum.libs.$,
-        _ = Fruum.libs._,
-        Backbone = Fruum.libs.Backbone,
-        Marionette = Fruum.libs.Marionette,
+    var Marionette = Fruum.libs.Marionette,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
 
     Fruum.views.CategoryView = TRANSITION(Marionette.ItemView.extend({
@@ -19,17 +18,17 @@ Categories view
         manage: '.fruum-js-manage',
         up: '[data-action="up"]',
         down: '[data-action="down"]',
-        delete: '[data-action="delete"]'
+        delete: '[data-action="delete"]',
       },
       modelEvents: {
-        'change': 'render'
+        'change': 'render',
       },
       events: {
         'click @ui.manage': 'onManage',
         'click @ui.navigate': 'onNavigate',
         'click @ui.up': 'onUp',
         'click @ui.down': 'onDown',
-        'click @ui.delete': 'onDelete'
+        'click @ui.delete': 'onDelete',
       },
       initialize: function(options) {
         this.ui_state = options.ui_state;
@@ -39,14 +38,15 @@ Categories view
           viewing: this.ui_state.get('viewing'),
           is_new: Fruum.utils.isNewVisit(
             this.model.get('id'), this.model.get('updated')
-          )
-        }
+          ),
+        };
       },
       getTemplate: function() {
-        if (this.model.get('type') == 'bookmark')
+        if (this.model.get('type') == 'bookmark') {
           return '#fruum-template-bookmark';
-        else
+        } else {
           return '#fruum-template-category';
+        }
       },
       onNavigate: function(event) {
         if (event) {
@@ -84,11 +84,12 @@ Categories view
           event.stopPropagation();
         }
         Fruum.io.trigger('fruum:close_manage');
-        if (this.model.get('type') == 'bookmark')
+        if (this.model.get('type') == 'bookmark') {
           Fruum.io.trigger('fruum:delete', { id: this.model.get('id') });
-        else
+        } else {
           Fruum.io.trigger('fruum:archive', { id: this.model.get('id') });
-      }
+        }
+      },
     }));
     Fruum.views.CategoriesView = Marionette.CollectionView.extend({
       childView: Fruum.views.CategoryView,
@@ -97,7 +98,7 @@ Categories view
       },
       childViewOptions: function(model, index) {
         return { ui_state: this.ui_state };
-      }
+      },
     });
   });
 })();

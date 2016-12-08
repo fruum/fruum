@@ -2,14 +2,14 @@
 Articles view
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     Fruum.views = Fruum.views || {};
 
     var $ = Fruum.libs.$,
-        _ = Fruum.libs._,
-        Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
 
@@ -22,10 +22,10 @@ Articles view
         up: '[data-action="up"]',
         down: '[data-action="down"]',
         move: '[data-action="move"]',
-        delete: '[data-action="delete"]'
+        delete: '[data-action="delete"]',
       },
       modelEvents: {
-        'change': 'render'
+        'change': 'render',
       },
       events: {
         'click @ui.search': 'onSearch',
@@ -34,14 +34,14 @@ Articles view
         'click @ui.delete': 'onDelete',
         'click @ui.up': 'onUp',
         'click @ui.down': 'onDown',
-        'click @ui.move': 'onMove'
+        'click @ui.move': 'onMove',
       },
       templateHelpers: function() {
         return {
           is_new: Fruum.utils.isNewVisit(
             this.model.get('id'), this.model.get('updated')
-          )
-        }
+          ),
+        };
       },
       onSearch: function(event) {
         if (event) {
@@ -99,10 +99,11 @@ Articles view
         }
         Fruum.io.trigger('fruum:close_manage');
         Fruum.io.trigger('fruum:show_move', this.model.toJSON());
-      }
+      },
     }));
+
     Fruum.views.ArticlesView = Marionette.CollectionView.extend({
-      childView: Fruum.views.ArticleView
+      childView: Fruum.views.ArticleView,
     });
   });
 })();
