@@ -8,18 +8,16 @@ var _ = require('underscore'),
     logger = require('../../../logger');
 
 module.exports = function(options, client, self) {
-
   // -------------------------------- SETUP -- ---------------------------------
 
   self.setup = function() {
     client.indices.create({
-      index: self.toMasterIndex()
+      index: self.toMasterIndex(),
     }, function(error, response) {
       if (error) {
         logger.error('applications', 'setup', error);
-      }
-      else {
-        //add mapping
+      } else {
+        // add mapping
         client.indices.putMapping({
           index: self.toMasterIndex(),
           type: 'info',
@@ -39,10 +37,10 @@ module.exports = function(options, client, self) {
                 private_key: { type: 'string', index: 'not_analyzed' },
                 notifications_email: { type: 'string', index: 'not_analyzed' },
                 contact_email: { type: 'string', index: 'not_analyzed' },
-                meta: { type: 'object', enabled: false }
-              }
-            }
-          }
+                meta: { type: 'object', enabled: false },
+              },
+            },
+          },
         });
       }
     });
@@ -51,7 +49,7 @@ module.exports = function(options, client, self) {
   // --------------------------------- MIGRATE ---------------------------------
 
   self.migrate = function() {
-    //Here follows a list of migration examples
+    // Here follows a list of migration examples
 
     // ------------- MASTER SCHEMA MIGRATION -------------
 
@@ -175,7 +173,7 @@ module.exports = function(options, client, self) {
       });
     });
     */
-  }
+  };
 
   // -------------------------------- TEARDOWN ---------------------------------
 
@@ -183,26 +181,24 @@ module.exports = function(options, client, self) {
     self.list_apps(function(apps) {
       _.each(apps, function(app) {
         client.indices.delete({
-          index: self.toAppIndex(app.get('id'))
+          index: self.toAppIndex(app.get('id')),
         }, function(error, response) {
           if (error) {
             logger.error(0, 'teardown_app', error);
-          }
-          else {
+          } else {
             logger.info(app.get('id'), 'teardown_app', app);
           }
         });
       });
       client.indices.delete({
-        index: self.toMasterIndex()
+        index: self.toMasterIndex(),
       }, function(error, response) {
         if (error) {
           logger.error(0, 'teardown', error);
-        }
-        else {
+        } else {
           logger.system('teardown_applications');
         }
       });
     });
   };
-}
+};

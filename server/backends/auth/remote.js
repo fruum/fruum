@@ -19,53 +19,48 @@ function RemoteAuth(options, storage) {
   this.authenticate = function(application, user_payload, callback) {
     logger.info(application.get('id'), 'remote_auth_request', user_payload);
     if (!application.get('auth_url')) {
-      //try to match the payload in the storage
+      // try to match the payload in the storage
       if (user_payload && user_payload.id) {
         storage.get_user(application.get('id'), user_payload.id, function(user) {
           if (user) {
-            //verify user payload
+            // verify user payload
             for (var key in user_payload) {
               if (user.get(key) != user_payload[key]) {
                 callback(new Models.User());
                 return;
               }
             }
-            //we found our user
+            // we found our user
             callback(user);
-          }
-          else callback(new Models.User());
+          } else callback(new Models.User());
         });
-      }
-      else callback(new Models.User());
-    }
-    else {
-      //continue with Single Sign On
+      } else callback(new Models.User());
+    } else {
+      // continue with Single Sign On
       request({
         method: 'POST',
         url: application.get('auth_url'),
         json: true,
-        body: user_payload
+        body: user_payload,
       }, function(err, res, body) {
         if (!err) {
           try {
             logger.info(application.get('id'), 'remote_auth_response', body);
             var u = new Models.User(body || {});
-            //make sure that username does not contain spaces
+            // make sure that username does not contain spaces
             u.set('username', (u.get('username') || '').replace(/\s+/g, '_'));
             callback(u);
             return;
-          }
-          catch(e) {
+          } catch (e) {
             logger.error(application.get('id'), 'remote_auth_response', e);
           }
-        }
-        else {
+        } else {
           logger.error(application.get('id'), 'remote_auth_response', err);
         }
-        //continue as anonymous
+        // continue as anonymous
         callback(new Models.User());
       });
     }
-  }
+  };
 }
 module.exports = RemoteAuth;

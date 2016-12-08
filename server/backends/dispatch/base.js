@@ -22,7 +22,7 @@ module.exports = function(options) {
     _.each(callbacks, function(cb) {
       cb(payload);
     });
-  }
+  };
 
   /*
   Summary:
@@ -32,9 +32,10 @@ module.exports = function(options) {
   - callback: function callback passing the payload as parameter
   */
   this.on = function(callback) {
-    if (!_.contains(callbacks, callback))
+    if (!_.contains(callbacks, callback)) {
       callbacks.push(callback);
-  }
+    }
+  };
 
   /*
   Summary:
@@ -44,9 +45,10 @@ module.exports = function(options) {
   - callback: function callback that was previously registered with "on"
   */
   this.off = function(callback) {
-    if (_.contains(callbacks, callback))
+    if (_.contains(callbacks, callback)) {
       callbacks = _.without(callbacks, callback);
-  }
+    }
+  };
 
   /*
   Summary:
@@ -54,5 +56,5 @@ module.exports = function(options) {
   */
   this.getCallbacks = function() {
     return callbacks;
-  }
-}
+  };
+};

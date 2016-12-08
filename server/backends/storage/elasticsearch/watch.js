@@ -5,20 +5,17 @@
 'use strict';
 
 var _ = require('underscore'),
-    validators = require('./validator'),
     logger = require('../../../logger');
 
 module.exports = function(options, client, self) {
-
   // -------------------------------- WATCH ------------------------------------
 
   self.watch = function(app_id, document, user, callback) {
-    //get latest user
+    // get latest user
     self.get_user(app_id, user.get('id'), function(latest_user) {
       if (!latest_user) {
         callback();
-      }
-      else {
+      } else {
         var watchlist = latest_user.get('watch') || [],
             doc_id = document.get('id');
         if (watchlist.indexOf(doc_id) == -1) {
@@ -28,23 +25,21 @@ module.exports = function(options, client, self) {
             logger.info(app_id, 'watch:' + doc_id, user);
             callback(document);
           });
-        }
-        else {
+        } else {
           callback(document);
         }
       }
     });
-  }
+  };
 
   // -------------------------------- UNWATCH ----------------------------------
 
   self.unwatch = function(app_id, document, user, callback) {
-    //get latest user
+    // get latest user
     self.get_user(app_id, user.get('id'), function(latest_user) {
       if (!latest_user) {
         callback();
-      }
-      else {
+      } else {
         var watchlist = latest_user.get('watch') || [],
             doc_id = document.get('id');
         if (watchlist.indexOf(doc_id) >= 0) {
@@ -54,11 +49,10 @@ module.exports = function(options, client, self) {
             logger.info(app_id, 'unwatch:' + doc_id, user);
             callback(document);
           });
-        }
-        else {
+        } else {
           callback(document);
         }
       }
     });
-  }
-}
+  };
+};

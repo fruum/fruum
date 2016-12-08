@@ -10,7 +10,6 @@ var _ = require('underscore'),
     Models = require('../../../models');
 
 module.exports = function(options, client, self) {
-
   // ------------------------------- ADD USER ----------------------------------
 
   self.add_user = function(app_id, user, callback) {
@@ -18,17 +17,16 @@ module.exports = function(options, client, self) {
       index: self.toAppIndex(app_id),
       type: 'user',
       id: user.get('id'),
-      body: user.toJSON()
+      body: user.toJSON(),
     }, function(error, response) {
       if (error) {
         logger.error(app_id, 'add_user', error);
-      }
-      else {
+      } else {
         logger.info(app_id, 'add_user', user);
       }
       callback(user);
     });
-  }
+  };
 
   // ---------------------------- UPDATE USER ----------------------------------
 
@@ -40,59 +38,55 @@ module.exports = function(options, client, self) {
       id: user_id,
       retryOnConflict: options.elasticsearch.retry_on_conflict,
       body: {
-        doc: attributes || user.toJSON()
-      }
+        doc: attributes || user.toJSON(),
+      },
     }, function(error, response) {
       if (error) {
         logger.error(app_id, 'update_user', error);
-      }
-      else {
+      } else {
         if (attributes) {
           user.set(attributes);
           logger.info(app_id, 'update_user_attributes: ' + user.get('username'), attributes);
-        }
-        else {
+        } else {
           logger.info(app_id, 'update_user', user);
         }
         if (!attributes ||
-            (attributes && (attributes.username || attributes.displayname || attributes.avatar)))
-        {
+            (attributes && (attributes.username || attributes.displayname || attributes.avatar))
+        ) {
           self.bulk_update(
             app_id,
-            user_id, //q
-            ['user_id'], //fields
+            user_id, // q
+            ['user_id'], // fields
             {
               user_username: user.get('username'),
               user_displayname: user.get('displayname'),
-              user_avatar: user.get('avatar')
-            }, //attributes to change
-            validators.user_id, //validator function
+              user_avatar: user.get('avatar'),
+            }, // attributes to change
+            validators.user_id, // validator function
             function() {}
           );
         }
       }
       callback(user);
     });
-  }
+  };
 
   // ---------------------------- DELETE USER ----------------------------------
 
   self.delete_user = function(app_id, user, callback) {
-    var user_id = user.get('id');
     client.delete({
       index: self.toAppIndex(app_id),
       type: 'user',
-      id: user.get('id')
+      id: user.get('id'),
     }, function(error, response) {
       if (error) {
         logger.error(app_id, 'delete_user', error);
         callback();
-      }
-      else {
+      } else {
         callback(user);
       }
     });
-  }
+  };
 
   // ------------------------------- GET USER ----------------------------------
 
@@ -101,16 +95,15 @@ module.exports = function(options, client, self) {
       index: self.toAppIndex(app_id),
       type: 'user',
       id: id,
-      refresh: true
+      refresh: true,
     }, function(error, response) {
       if (error) {
         callback();
-      }
-      else if (response._source){
+      } else if (response._source) {
         callback(new Models.User(response._source));
       }
     });
-  }
+  };
 
   // ------------------------------- MATCH USERS -------------------------------
 
@@ -120,7 +113,7 @@ module.exports = function(options, client, self) {
       var entry = {};
       entry[key] = attributes[key];
       matches.push({
-        term: entry
+        term: entry,
       });
     }
     var body = {
@@ -130,19 +123,19 @@ module.exports = function(options, client, self) {
         filtered: {
           filter: {
             bool: {
-              must: matches
-            }
-          }
-        }
-      }
-    }
+              must: matches,
+            },
+          },
+        },
+      },
+    };
     if (params) {
       if (params.from > 0) body.from = params.from;
       if (params.size > 0) body.size = params.size;
       if (params.skipfields && params.skipfields.length) {
         body._source = {
-          exclude: params.skipfields
-        }
+          exclude: params.skipfields,
+        };
       }
       if (params.sort && params.sort.length) {
         body.sort = params.sort;
@@ -152,7 +145,7 @@ module.exports = function(options, client, self) {
       index: self.toAppIndex(app_id),
       type: 'user',
       refresh: true,
-      body: body
+      body: body,
     }, function(error, response) {
       var results = [];
       if (!error && response && response.hits && response.hits.hits) {
@@ -164,7 +157,7 @@ module.exports = function(options, client, self) {
       }
       callback(results);
     });
-  }
+  };
 
   // ------------------------------- COUNT USERS -------------------------------
 
@@ -174,7 +167,7 @@ module.exports = function(options, client, self) {
       var entry = {};
       entry[key] = attributes[key];
       matches.push({
-        term: entry
+        term: entry,
       });
     }
     client.count({
@@ -186,23 +179,22 @@ module.exports = function(options, client, self) {
           filtered: {
             filter: {
               bool: {
-                must: matches
-              }
-            }
-          }
-        }
-      }
+                must: matches,
+              },
+            },
+          },
+        },
+      },
     }, function(error, response) {
       if (error) {
         logger.error(app_id, 'count_users', error);
         callback(0);
         return;
-      }
-      else {
+      } else {
         callback(response.count || 0);
       }
     });
-  }
+  };
 
   // ---------------------FIND USERS THAT ARE WATCHING -------------------------
 
@@ -217,10 +209,10 @@ module.exports = function(options, client, self) {
         query: {
           multi_match: {
             query: watch_list,
-            fields: ['watch']
-          }
-        }
-      }
+            fields: ['watch'],
+          },
+        },
+      },
     }, function(error, response) {
       var results = [];
       if (!error && response && response.hits && response.hits.hits) {
@@ -232,7 +224,7 @@ module.exports = function(options, client, self) {
       }
       callback(results);
     });
-  }
+  };
 
   // --------------------------------- SEARCH ----------------------------------
 
@@ -248,10 +240,10 @@ module.exports = function(options, client, self) {
         query: {
           query_string: {
             query: q,
-            fields: ['username', 'displayname']
-          }
-        }
-      }
+            fields: ['username', 'displayname'],
+          },
+        },
+      },
     }, function(error, response) {
       var results = [];
       if (!error && response && response.hits && response.hits.hits) {
@@ -261,5 +253,5 @@ module.exports = function(options, client, self) {
       }
       callback(results);
     });
-  }
-}
+  };
+};

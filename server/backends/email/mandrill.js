@@ -12,34 +12,34 @@ var _ = require('underscore'),
 module.exports = function(options, storage) {
   _.extend(this, new Base(options, storage));
 
-  //abort if we do not have an api key
+  // abort if we do not have an api key
   if (!options.mandrill.api_key) return;
 
-  //create mandrill client
+  // create mandrill client
   var mandrill_client = new mandrill.Mandrill(options.mandrill.api_key);
 
-  //send message
+  // send message
   this.send = function(application, user, message, callback) {
     if (user.get('email')) {
       logger.info(application.get('id'), 'sending_email_to', user.get('email'));
-      //get inline images
+      // get inline images
       var images = [];
-      var body = (message.html || '').replace(/src=\"([^\"]*)\"/g, function(match, url) {
+      var body = (message.html || '').replace(/src=\"([^\"]*)\"/g, function(match, url) { // eslint-disable-line
+        var name;
         if (url.indexOf('data:image/png;base64,') == 0) {
-          var name = 'image' + images.length;
+          name = 'image' + images.length;
           images.push({
             type: 'image/png',
             name: name,
-            content: url.replace('data:image/png;base64,', '')
+            content: url.replace('data:image/png;base64,', ''),
           });
           return match.replace(url, 'cid:' + name);
-        }
-        else if (url.indexOf('data:image/jpeg;base64,') == 0) {
-          var name = 'image' + images.length;
+        } else if (url.indexOf('data:image/jpeg;base64,') == 0) {
+          name = 'image' + images.length;
           images.push({
             type: 'image/jpeg',
             name: name,
-            content: url.replace('data:image/jpeg;base64,', '')
+            content: url.replace('data:image/jpeg;base64,', ''),
           });
           return match.replace(url, 'cid:' + name);
         }
@@ -55,15 +55,15 @@ module.exports = function(options, storage) {
             to: [{
               email: user.get('email'),
               name: user.get('displayname') || user.get('username'),
-              type: 'to'
+              type: 'to',
             }],
-            images: images
-          }
+            images: images,
+          },
         });
+      } catch (err) {
+        logger.error(application.get('id'), 'mandrill_client', err);
       }
-      catch(err) { logger.error(application.get('id'), 'mandrill_client', err); }
     }
     callback();
-  }
-
-}
+  };
+};

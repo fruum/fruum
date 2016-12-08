@@ -40,5 +40,5 @@ module.exports = function(options, storage) {
   - queue: Name of the cache queue
   - key: Key name
   */
-  this.del = function(queue, key) {}
-}
+  this.del = function(queue, key) {};
+};

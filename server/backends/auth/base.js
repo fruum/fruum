@@ -47,5 +47,5 @@ module.exports = function(options, storage) {
   */
   this.authenticate = function(application, user_payload, callback) {
     callback();
-  }
-}
+  };
+};

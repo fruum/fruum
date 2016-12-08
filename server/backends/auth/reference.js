@@ -14,6 +14,6 @@ function ReferenceAuth(options, storage) {
     user_payload = user_payload || {};
     user_payload.id = user_payload.id || '' + _.random(1, 1000);
     callback(new Models.User(user_payload));
-  }
+  };
 }
 module.exports = ReferenceAuth;
