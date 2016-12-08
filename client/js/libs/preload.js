@@ -4,10 +4,10 @@ window.__remarkablejs__ = window.Remarkable;
 window.__dompurify__ = window.DOMPurify;
 window.__toMarkdown__ = window.toMarkdown;
 if (window.define) {
-	window.__define__ = window.define;
-	window.define = undefined;
+  window.__define__ = window.define;
+  window.define = undefined;
 }
 if (window.exports) {
-	window.__exports__ = window.exports;
-	window.exports = undefined;
+  window.__exports__ = window.exports;
+  window.exports = undefined;
 }
