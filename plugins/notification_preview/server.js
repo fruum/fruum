@@ -27,8 +27,8 @@ function EmailPreview(options, instance) {
     markdown += '| data   | path to data files to supply the data that will be passed into templates. |\n';
     markdown += '| engine | engine to be used for processing templates. Handlebars is the default. |\n';
     markdown += '| ext    | extension to be used for dest files. |    \n\n';
-    markdown += '[link](https://fruum.github.io)\n\n'
-    markdown += '![image](https://fruum.github.io/style/images/bg-track.jpg)'
+    markdown += '[link](https://fruum.github.io)\n\n';
+    markdown += '![image](https://fruum.github.io/style/images/bg-track.jpg)';
 
     instance.storage.get_app(app_id, function(application) {
       if (application) {
@@ -36,24 +36,24 @@ function EmailPreview(options, instance) {
           res.send(instance.email.inlineCSS(data.html({
             date: moment(new Date()).format('D MMM YYYY'),
             application: {
-              name: 'MyAwesomeApp'
+              name: 'MyAwesomeApp',
             },
             getShareURL: function() { return ''; },
             user: {
               username: 'username',
-              displayname: 'displayname'
+              displayname: 'displayname',
             },
             reporter: {
               username: 'reporter_username',
-              displayname: 'reporter_displayname'
+              displayname: 'reporter_displayname',
             },
             reaction_user: {
               username: 'reaction_user_username',
-              displayname: 'reaction_user_displayname'
+              displayname: 'reaction_user_displayname',
             },
             administrator: {
               username: 'administrator_username',
-              displayname: 'administrator_displayname'
+              displayname: 'administrator_displayname',
             },
             total: 3,
             digest: '2 new threads',
@@ -62,22 +62,22 @@ function EmailPreview(options, instance) {
               header: 'Document header1',
               body: markdown,
               user_username: 'user1',
-              user_displayname: 'first1 last1'
+              user_displayname: 'first1 last1',
             })),
             documents: [
               instance.email.prettyJSON(new Models.Document({
                 header: 'Document header1',
                 body: markdown,
                 user_username: 'user1',
-                user_displayname: 'first1 last1'
+                user_displayname: 'first1 last1',
               })),
               instance.email.prettyJSON(new Models.Document({
                 header: 'Document header2',
                 body: 'Small text here',
                 user_username: 'user2',
-                user_displayname: 'first2 last2'
+                user_displayname: 'first2 last2',
               }))
-            ]
+            ],
           })));
         });
       }

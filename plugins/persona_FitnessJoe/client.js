@@ -11,7 +11,7 @@
   // variables: <username>, <categoryname>, <search>
   var messages = {
     empty_home: {
-      read: ['Hey <username>, we have nothing to show yet! People here are working hard to bring you the best content!',],
+      read: ['Hey <username>, we have nothing to show yet! People here are working hard to bring you the best content!'],
       write: [
         'Hey <username>. Seems like you are the right person to start creating some content in here!<br>Step 1: Clear your mind and try to relax!',
         'Hey <username>, seems like there is no content here yet! You are the person to start fixing this! If you have an idea start adding you content. Otherwise I advise a small walk outside to clear your mind, this works miracles on me!'
@@ -85,7 +85,7 @@
       ],
       text: [
         'Seems like somebody gave you a wrong link. Don&#39;t give up!<br>Try searching for something similar or return <a class="fruum-link" href="javascript:;" data-navigate="home">Home</a>.'
-      ]
+      ],
     },
     private_forum: {
       topic: [
@@ -93,22 +93,22 @@
       ],
       text: [
         'If somebody gave you that link, you can tell him that you have a permission problem accessing that topic.'
-      ]
+      ],
     },
     idle: {
       read: [],
       write: [],
     },
-  }
+  };
 
   var defaults = {
     avatar_initials: 'JOE',
     avatar_url: persona_avatar,
     name: persona_name,
-    default_username: 'guest'
-  }
+    default_username: 'guest',
+  };
 
-  window.Fruum.plugins.push(function () {
+  window.Fruum.plugins.push(function() {
     var _ = window.Fruum.libs._;
 
     this.personaSays = function(payload) {
@@ -117,7 +117,7 @@
       if (payload.action == 'not_found' || payload.action == 'private_forum') {
         return _.extend({
           topic: action.topic[_.random(0, action.topic.length - 1)],
-          text: action.text[_.random(0, action.text.length - 1)]
+          text: action.text[_.random(0, action.text.length - 1)],
         }, defaults);
       }
       if (action && action[perm] && action[perm].length) {
@@ -125,6 +125,6 @@
         var entry = entries[_.random(0, entries.length - 1)];
         return _.extend({ text: entry }, defaults);
       }
-    }
+    };
   });
 })();

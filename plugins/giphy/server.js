@@ -13,8 +13,8 @@ function GiphyProcessor(options) {
       if (body.indexOf('/giphy ') === 0) {
         body = body.substr(7);
         giphy.random({
-          tag: body
-        }, function(err, res) {
+          tag: body,
+        }, function(err, res) { // eslint-disable-line
           if (res && res.data && res.data.image_url) {
             document.set('body',
               '*' + document.get('body') + '*\n\n' +
@@ -27,7 +27,7 @@ function GiphyProcessor(options) {
       }
     }
     callback(null, payload);
-  }
+  };
 }
 
 module.exports = GiphyProcessor;

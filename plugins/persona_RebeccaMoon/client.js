@@ -11,7 +11,7 @@
   // variables: <username>, <categoryname>, <search>
   var messages = {
     empty_home: {
-      read: ['Hi <username>! Some people are writing nice thoughts to warm this place up :)',],
+      read: ['Hi <username>! Some people are writing nice thoughts to warm this place up :)'],
       write: [
         'Hi <username>, would love to see your thoughts expressed here!',
         'Hi <username>, you are the one that can bring some life in here! <b>Start writing amazing ideas and thoughts</b>!'
@@ -86,7 +86,7 @@
       ],
       text: [
         'Hi <b><username></b>, this link is not working. I suggest we head back <a class="fruum-link" href="#" data-navigate="home">home</a>'
-      ]
+      ],
     },
     private_forum: {
       topic: [
@@ -94,22 +94,22 @@
       ],
       text: [
         'I&#39;m really sorry, but you don&#39;t have permissions to view the content in here.'
-      ]
+      ],
     },
     idle: {
       read: [],
       write: [],
     },
-  }
+  };
 
   var defaults = {
     avatar_initials: 'REM',
     avatar_url: persona_avatar,
     name: persona_name,
-    default_username: 'friend'
-  }
+    default_username: 'friend',
+  };
 
-  window.Fruum.plugins.push(function () {
+  window.Fruum.plugins.push(function() {
     var _ = window.Fruum.libs._;
 
     this.personaSays = function(payload) {
@@ -118,7 +118,7 @@
       if (payload.action == 'not_found' || payload.action == 'private_forum') {
         return _.extend({
           topic: action.topic[_.random(0, action.topic.length - 1)],
-          text: action.text[_.random(0, action.text.length - 1)]
+          text: action.text[_.random(0, action.text.length - 1)],
         }, defaults);
       }
       if (action && action[perm] && action[perm].length) {
@@ -126,6 +126,6 @@
         var entry = entries[_.random(0, entries.length - 1)];
         return _.extend({ text: entry }, defaults);
       }
-    }
+    };
   });
 })();

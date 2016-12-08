@@ -4,7 +4,7 @@
 
 (function() {
   'use strict';
-  window.Fruum.plugins.push(function () {
+  window.Fruum.plugins.push(function() {
     var re = /(?:^|\s)https?:\/\/.*?\.(?:png|jpg|jpeg|gif)(?:$|\s)/ig;
 
     this.post_content = function(markdown) {
@@ -12,6 +12,6 @@
         match = match.trim();
         return ' ![' + match + '](' + match + ') ';
       });
-    }
+    };
   });
 })();

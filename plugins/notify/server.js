@@ -4,8 +4,7 @@ Sends notification emails to users based on watched documents
 'use strict';
 
 var _ = require('underscore'),
-    moment = require('moment'),
-    logger = require('../../server/logger');
+    moment = require('moment');
 
 var at_user = ['@[.+-_0-9A-Za-z\xaa\xb5\xba\xc0-\xd6\xd8-\xf6',
   '\xf8-\u02c1\u02c6-\u02d1\u02e0-\u02e4\u02ec\u02ee\u0370-\u0374\u0376',
@@ -74,7 +73,7 @@ var at_user = ['@[.+-_0-9A-Za-z\xaa\xb5\xba\xc0-\xd6\xd8-\xf6',
 
 var re_mention = new RegExp('(^|\\s)' + at_user, 'g');
 
-//find user mentions from text
+// find user mentions from text
 function find_mentions(text) {
   var matched = (text || '').match(re_mention), users = [];
   if (matched && matched.length) {
@@ -89,7 +88,7 @@ function find_mentions(text) {
 }
 
 function Notify(options, instance) {
-  //find user mentions from text (exposed for testing)
+  // find user mentions from text (exposed for testing)
   this.find_mentions = find_mentions;
 
   function notify(application, user, email_template, document) {
@@ -99,28 +98,28 @@ function Notify(options, instance) {
       application: application.toJSON(),
       getShareURL: application.getShareURL.bind(application),
       user: user.toJSON(),
-      document: instance.email.prettyJSON(document)
-    }
+      document: instance.email.prettyJSON(document),
+    };
     instance.email.send(application, user, {
       subject: email_template.subject(context),
-      html: instance.email.inlineCSS(email_template.html(context))
+      html: instance.email.inlineCSS(email_template.html(context)),
     }, function() {});
   }
 
-  //process mentions
+  // process mentions
   function process_mentions(payload, exclude_users) {
     var document = payload.document;
-    //find mentions
+    // find mentions
     var user_mentions = find_mentions(document.get('body'));
-    //exlude watched users
+    // exlude watched users
     user_mentions = _.difference(user_mentions, _.map(exclude_users, function(u) {
       return u.get('username');
     }));
     if (user_mentions.length) {
-      //find application
+      // find application
       instance.storage.get_app(payload.app_id, function(application) {
         if (!application) return;
-        //construct email
+        // construct email
         instance.engine.notificationTemplate(application, 'mention', function(email_template) {
           _.each(user_mentions, function(username) {
             instance.storage.match_users(payload.app_id, { username: username }, function(matched_users) {
@@ -137,34 +136,34 @@ function Notify(options, instance) {
   }
 
   this.afterAdd = function(payload, callback) {
-    //proceed without locking
+    // proceed without locking
     callback(null, payload);
 
     var document = payload.document;
-    //skip channels
+    // skip channels
     if (document.get('parent_type') === 'channel') {
       process_mentions(payload, []);
       return;
     }
-    //get parent
+    // get parent
     var watch_id = document.get('parent');
-    //find users who are watching
+    // find users who are watching
     instance.storage.find_watch_users(payload.app_id, [watch_id], function(users) {
       var online_users = {};
       _.each(instance.engine.app_users[payload.app_id], function(user) {
         online_users[user.get('id')] = true;
       });
-      //find a list of users who are not online
+      // find a list of users who are not online
       users = _.filter(users, function(user) {
         return online_users[user.get('id')] !== true &&
                 user.get('id') != document.get('user_id') &&
                 (user.get('admin') || document.get('visible'));
       });
       if (users.length) {
-        //find application
+        // find application
         instance.storage.get_app(payload.app_id, function(application) {
           if (!application) return;
-          //construct email
+          // construct email
           instance.engine.notificationTemplate(application, 'notify', function(email_template) {
             _.each(users, function(user) {
               notify(application, user, email_template, document);
@@ -174,9 +173,9 @@ function Notify(options, instance) {
       }
       process_mentions(payload, users);
     });
-  }
+  };
 
-  // -------------------------------- REACTION ---------------------------------
+  // -------------------------------- REACTION --------------------------------
 
   this.beforeReact = function(payload, callback) {
     var reaction,
@@ -184,23 +183,23 @@ function Notify(options, instance) {
         user = payload.user,
         previous_count = (document.get('react_' + payload.reaction) || []).length;
 
-    switch(payload.reaction) {
+    switch (payload.reaction) {
       case 'up': reaction = '+1'; break;
       case 'down': reaction = '-1'; break;
     }
 
-    //proceed without locking
+    // proceed without locking
     callback(null, payload);
 
     if (!reaction || previous_count || user.get('id') == document.get('user_id')) return;
-    //find application
+    // find application
     instance.storage.get_app(payload.app_id, function(application) {
       if (!application) return;
-      //find user of the document
+      // find user of the document
       instance.storage.get_user(payload.app_id, document.get('user_id'), function(doc_user) {
         if (!doc_user) return;
         if (doc_user.get('blocked')) return;
-        //construct email
+        // construct email
         instance.engine.notificationTemplate(application, 'reaction', function(email_template) {
           var context = {
             date: moment(new Date()).format('D MMM YYYY'),
@@ -209,17 +208,16 @@ function Notify(options, instance) {
             user: doc_user.toJSON(),
             reaction_user: user.toJSON(),
             reaction: reaction,
-            document: instance.email.prettyJSON(document)
-          }
+            document: instance.email.prettyJSON(document),
+          };
           instance.email.send(application, doc_user, {
             subject: email_template.subject(context),
-            html: instance.email.inlineCSS(email_template.html(context))
+            html: instance.email.inlineCSS(email_template.html(context)),
           }, function() {});
         });
       });
     });
-  }
-
+  };
 }
 
 module.exports = Notify;
