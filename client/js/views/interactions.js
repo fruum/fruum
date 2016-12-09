@@ -528,8 +528,48 @@ Handles the bottom input part
             Fruum.io.trigger('fruum:set_onboard', 'preview');
             Fruum.io.trigger('fruum:set_onboard', 'attachments');
           }
+          // smart markdown
+          this.onSmartText(event);
         }
         this.autocomplete_view.onKey(event);
+      },
+      onSmartText: function(event) {
+        // smart markdown, get last line
+        var curretPos = this.ui.field_body.prop('selectionStart');
+        if (curretPos) {
+          // get last line
+          var text = this.ui.field_body.val() || '',
+              line_start = text.lastIndexOf('\n', curretPos - 1);
+
+          if (line_start < curretPos) {
+            var line = text.substr(line_start + 1, curretPos) || '',
+                tabs = line.search(/\S/) || 0,
+                smart_text;
+
+            line = $.trim(line);
+            // check for list
+            if (line.indexOf('* ') == 0) {
+              smart_text = Fruum.utils.padFactory(' ', tabs) + '* ';
+            } else if (line.indexOf('+ ') == 0) {
+              smart_text = Fruum.utils.padFactory(' ', tabs) + '+ ';
+            } else if (line.indexOf('- ') == 0) {
+              smart_text = Fruum.utils.padFactory(' ', tabs) + '- ';
+            } else {
+              // numbered list
+              var match = line.match(/(^\d+)\. /);
+              if (match && match[1] | 0) {
+                match = (match[1] | 0) + 1;
+                smart_text = Fruum.utils.padFactory(' ', tabs) + match + '. ';
+              }
+            }
+            // inject smart text
+            if (smart_text) {
+              this.ui.field_body.val(Fruum.utils.injectString(text, '\n' + smart_text, curretPos));
+              Fruum.utils.setCaretPosition(this.ui.field_body, curretPos + smart_text.length + 1);
+              event.preventDefault();
+            }
+          }
+        }
       },
       onKeyBody: function(event) {
         var editing = this.ui_state.get('editing');
@@ -584,6 +624,36 @@ Handles the bottom input part
               event.preventDefault();
               this.ui.field_body.replaceSelection(text);
             } catch (err) {}
+            return;
+          }
+          // try text plain
+          text = clp.getData('text/plain') || clp.getData('Text');
+          if (text) {
+            // find links
+            if (Fruum.utils.startsWith(text, 'https://') ||
+                Fruum.utils.startsWith(text, 'http://')
+            ) {
+              // check for image
+              if (_.some(['.png', '.jpg', '.jpeg', '.gif'], function(ext) {
+                return Fruum.utils.endsWith(text, ext);
+              })) {
+                text = '![image](' + text + ')';
+              } else {
+                text = '[link](' + text + ')';
+              }
+              event.preventDefault();
+              this.ui.field_body.replaceSelection(text);
+              // select field
+              var curretPos = this.ui.field_body.prop('selectionStart'),
+                  el = this.ui.field_body.get(0);
+              if (curretPos && el && el.setSelectionRange) {
+                var value = this.ui.field_body.val() || '';
+                el.setSelectionRange(
+                  value.lastIndexOf('[', curretPos) + 1,
+                  value.lastIndexOf(']', curretPos)
+                );
+              }
+            }
           }
         }
       },

@@ -337,6 +337,43 @@ Utilities
       return text.replace(/\{\{\{(.+?)\}\}\}/g, '<span class="highlight">$1</span>');
     };
 
+    // ------------------------------- STRING ---------------------------------
+
+    Fruum.utils.injectString = function(text, needle, position) {
+      position = position || text.length;
+      return text.substr(0, position) +
+        needle + text.substr(position, text.length);
+    };
+
+    Fruum.utils.padFactory = function(needle, count) {
+      return (new Array(count + 1)).join(needle);
+    };
+
+    Fruum.utils.startsWith = function(text, prefix) {
+      return text.indexOf(prefix) == 0;
+    };
+
+    Fruum.utils.endsWith = function(text, suffix) {
+      if (text.length < suffix.length) return false;
+      return text.lastIndexOf(suffix) == text.length - suffix.length;
+    };
+
+    Fruum.utils.setCaretPosition = function($el, caretPos) {
+      var el = $el.get(0);
+      if (!el) return;
+
+      if (el.createTextRange) {
+        var range = el.createTextRange();
+        range.move('character', caretPos);
+        range.select();
+      } else if (el.selectionStart || el.selectionStart === 0) {
+        el.focus();
+        el.setSelectionRange(caretPos, caretPos);
+      } else {
+        el.focus();
+      }
+    };
+
     // ------------------------------- GENERIC --------------------------------
 
     // analyze url

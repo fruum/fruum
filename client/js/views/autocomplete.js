@@ -50,6 +50,7 @@
       },
       onShortcut: function(event) {
         if (!this.$el.is(':visible')) return;
+        event.preventDefault();
         var el;
         switch (event.which) {
           case 27: { // escape
@@ -63,7 +64,6 @@
             if (el.length) {
               this.onSelect({ target: el });
               this.hide();
-              event.preventDefault();
               event._autocomplete_consumed = true;
             }
             break;
@@ -95,7 +95,6 @@
               if (this.items[index]) {
                 el.removeClass('fruum-option-selected');
                 this.$('[data-item="' + this.items[index] + '"]').addClass('fruum-option-selected');
-                event.preventDefault();
               }
             }
             event._autocomplete_consumed = true;
@@ -139,19 +138,27 @@
       },
       onSelect: function(event) {
         var item = $(event.target).closest('[data-item]').data('item'),
-            field = this.interactions.ui.field_body;
-        if (item && this.match) {
-          field.val(
-            field.val().replace(new RegExp(_.escape(this.match) + '$'), item + ' ')
-          );
-          _.defer((function() { // eslint-disable-line
+            field = this.interactions.ui.field_body,
+            text = field.val(),
+            curret = field.prop('selectionStart');
+        if (text && item && this.match && curret) {
+          var start_index = text.lastIndexOf(this.match, curret);
+          text = text.substr(0, start_index) + item +
+            ' ' + text.substr(curret);
+          field.val(text);
+          _.defer(function() {
             field.focus();
-          }).bind(this)); // eslint-disable-line
+            Fruum.utils.setCaretPosition(field, start_index + item.length + 1);
+          });
         }
       },
       onTimer: function() {
         this.timer = null;
-        var text = this.interactions.ui.field_body.val(), match;
+        var text = this.interactions.ui.field_body.val() || '',
+            curret = this.interactions.ui.field_body.prop('selectionStart') || text.length,
+            match;
+        // check from curret position
+        text = text.substr(0, curret);
         // find emoji
         match = Fruum.utils.autocompleteEmoji(text);
         if (match) {

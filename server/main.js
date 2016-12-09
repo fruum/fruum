@@ -582,6 +582,9 @@ function FruumServer(options, cli_cmd, ready) {
           socket.on('fruum:user:unblock', function(payload) {
             engine.unblock_user(socket, payload || {});
           });
+          socket.on('fruum:user:remove', function(payload) {
+            engine.remove_user(socket, payload || {});
+          });
           socket.on('fruum:user:feed', function(payload) {
             engine.user_feed(socket, payload || {});
           });

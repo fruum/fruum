@@ -92,8 +92,9 @@ User profile view
       template: '#fruum-template-profile-actions',
       modelEvents: { 'change': 'render' },
       triggers: {
-        'click [data-action="block"]': 'action:block',
-        'click [data-action="unblock"]': 'action:unblock',
+        'click [data-action="account:block"]': 'action:account:block',
+        'click [data-action="account:unblock"]': 'action:account:unblock',
+        'click [data-action="account:remove"]': 'action:account:remove',
       },
     });
 
@@ -205,6 +206,7 @@ User profile view
           if (!this.ui_state.get('profile')) {
             that.topics.reset();
             that.replies.reset();
+            that.users.reset();
             that.notifications.reset();
             if (that.ui_state.get('viewing').id) {
               Fruum.io.trigger('fruum:restore_view_route');
@@ -259,19 +261,27 @@ User profile view
         }
         this.ui_state.set('profile', '');
       },
-      onChildviewActionBlock: function() {
+      onChildviewActionAccountBlock: function() {
         if (!Fruum.user.admin) return;
         Fruum.io.trigger('fruum:user:block', { id: this.model.get('id') });
         this.model.set('blocked', true);
         var user = this.users.get(this.model.get('id'));
         if (user) user.set('blocked', true);
       },
-      onChildviewActionUnblock: function() {
+      onChildviewActionAccountUnblock: function() {
         if (!Fruum.user.admin) return;
         Fruum.io.trigger('fruum:user:unblock', { id: this.model.get('id') });
         this.model.set('blocked', false);
         var user = this.users.get(this.model.get('id'));
         if (user) user.set('blocked', false);
+      },
+      onChildviewActionAccountRemove: function() {
+        if (!Fruum.user.admin) return;
+        if (confirm('Are you sure you want to delete user @' + this.model.get('username') + '?')) {
+          this.onClose();
+          Fruum.io.trigger('fruum:user:remove', { id: this.model.get('id') });
+          this.ui_state.set('profile_total_users', this.ui_state.get('profile_total_users') - 1);
+        }
       },
       onChildviewResize: function() {
         this.resize();

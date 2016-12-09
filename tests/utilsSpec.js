@@ -118,3 +118,26 @@ describe('Reaction tooltips', function() {
     expect(Fruum.utils.printReactionTooltip('+1', ['Joe', 'Mike', 'Nick', 'Paul', 'Mary', 'Rebecca'])).toBe('+1 by you, Mike, Nick, Paul, Mary and 1 more. Click to revoke');
   });
 });
+
+describe('String utils', function() {
+  it('injectString works', function() {
+    expect(Fruum.utils.injectString('foo', 'bar')).toBe('foobar');
+    expect(Fruum.utils.injectString('foo', 'bar', 1)).toBe('fbaroo');
+    expect(Fruum.utils.injectString('foo', 'bar', 1000)).toBe('foobar');
+  });
+  it('padFactory works', function() {
+    expect(Fruum.utils.padFactory('x', 0)).toBe('');
+    expect(Fruum.utils.padFactory('x', 2)).toBe('xx');
+  });
+  it('startsWith works', function() {
+    expect(Fruum.utils.startsWith('http://foo.com', 'http://')).toBe(true);
+    expect(Fruum.utils.startsWith('http://foo.com', 'https://')).toBe(false);
+    expect(Fruum.utils.startsWith('', 'https://')).toBe(false);
+  });
+  it('endsWith works', function() {
+    expect(Fruum.utils.endsWith('http://foo.com', 'http://')).toBe(false);
+    expect(Fruum.utils.endsWith('http://foo.com', '.com')).toBe(true);
+    expect(Fruum.utils.endsWith('', 'https://')).toBe(false);
+    expect(Fruum.utils.endsWith('yo', 'yo')).toBe(true);
+  });
+});

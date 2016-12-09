@@ -266,6 +266,23 @@ describe('Anonymous client', function() {
     });
   });
 
+  it('cannot remove user', function(done) {
+    bob_create(function() {
+      anonymous_connect(function(socket) {
+        var payload = {
+          id: 'bob',
+        };
+        socket.emit('fruum:user:remove', payload);
+        socket.on('fruum:user:remove', function(response) {
+          socket.removeListener('fruum:user:remove', this);
+          expect(response).toBeUndefined();
+          socket.disconnect();
+          done();
+        });
+      });
+    });
+  });
+
   it('can view profile', function(done) {
     load_bob(function() {
       anonymous_connect(function(socket) {

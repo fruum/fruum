@@ -326,6 +326,23 @@ describe('Admin client', function() {
     });
   });
 
+  it('can remove user', function(done) {
+    bob_create(function() {
+      admin_connect(function(socket) {
+        var payload = {
+          id: 'bob',
+        };
+        socket.emit('fruum:user:remove', payload);
+        socket.on('fruum:user:remove', function(response) {
+          socket.removeListener('fruum:user:remove', this);
+          expect(response).toEqual(jasmine.objectContaining(payload));
+          socket.disconnect();
+          done();
+        });
+      });
+    });
+  });
+
   it('can view profile', function(done) {
     load_bob(function() {
       admin_connect(function(socket) {
