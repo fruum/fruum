@@ -2,14 +2,15 @@
  Attachments panel
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     Fruum.views = Fruum.views || {};
 
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
-        Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette;
 
     Fruum.views.AttachmentsView = Marionette.View.extend({
@@ -18,7 +19,7 @@
       ui: {
         plus: '#fruum-file-upload',
         image: '[data-attachment]',
-        close: '.fruum-js-close'
+        close: '.fruum-js-close',
       },
       events: {
         'click @ui.close': 'hide',
@@ -26,7 +27,7 @@
         'dragover': 'onDragOver',
         'dragleave': 'onDragLeave',
         'drop': 'onDrop',
-        'change @ui.plus': 'onChange'
+        'change @ui.plus': 'onChange',
       },
       initialize: function(options) {
         _.bindAll(this, 'onKey', 'onPaste');
@@ -64,8 +65,8 @@
       },
       onDrop: function(event) {
         this.$el.find('.fruum-options-list').removeClass('fruum-droppable');
-        if (event.originalEvent.dataTransfer){
-          if(event.originalEvent.dataTransfer.files.length) {
+        if (event.originalEvent.dataTransfer) {
+          if (event.originalEvent.dataTransfer.files.length) {
             event.preventDefault();
             event.stopPropagation();
             this.handleFiles(event.originalEvent.dataTransfer.files);
@@ -86,8 +87,8 @@
             editing.attachments
           ),
           type: payload.type,
-          data: payload.data
-        }
+          data: payload.data,
+        };
         editing.attachments.push(attachment);
         this.render();
         var body = this.interactions.ui.field_body.val() || '';
@@ -101,22 +102,22 @@
       handleFiles: function(files) {
         if (!files) return;
         _.each(files, function(file) {
-          var reader = new FileReader()
+          var reader = new FileReader();
           reader.onload = function(e) {
             var data = e.target.result;
             if (data.indexOf('data:image/png') == 0 ||
-                data.indexOf('data:image/jpeg') == 0)
-            {
-              //send it to server for minification
+                data.indexOf('data:image/jpeg') == 0
+            ) {
+              // send it to server for minification
               Fruum.utils.resizeImage(data, 800, 800, function(resized_data) {
                 Fruum.io.trigger('fruum:optimize', {
                   name: file.name || '',
                   type: 'image',
-                  data: resized_data
+                  data: resized_data,
                 });
               });
             }
-          }
+          };
           reader.readAsDataURL(file);
         });
       },
@@ -147,7 +148,7 @@
       render: function() {
         this.$el.html(this.template({
           attachments: this.ui_state.get('editing').attachments || [],
-          optimizing: this.ui_state.get('optimizing')
+          optimizing: this.ui_state.get('optimizing'),
         }));
       },
       show: function() {
@@ -164,11 +165,12 @@
         $(document).off('paste', this.onPaste);
       },
       toggle: function() {
-        if (this.$el.is(':visible'))
+        if (this.$el.is(':visible')) {
           this.hide();
-        else
+        } else {
           this.show();
-      }
+        }
+      },
     });
   });
 })();

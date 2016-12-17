@@ -5,12 +5,10 @@
 'use strict';
 
 var _ = require('underscore'),
-    validators = require('./validator'),
     logger = require('../../../logger'),
     Models = require('../../../models');
 
 module.exports = function(options, client, self) {
-
   // ------------------------------ LIST APPS ----------------------------------
 
   self.list_apps = function(callback) {
@@ -20,7 +18,7 @@ module.exports = function(options, client, self) {
       type: 'info',
       from: 0,
       size: options.elasticsearch.max_children,
-      refresh: true
+      refresh: true,
     }, function(error, response) {
       if (!error && response && response.hits && response.hits.hits) {
         _.each(response.hits.hits, function(hit) {
@@ -29,34 +27,32 @@ module.exports = function(options, client, self) {
       }
       callback(values);
     });
-  }
+  };
 
   // -------------------------------- ADD APP ----------------------------------
 
   self.add_app = function(application, callback) {
-    //update creation date
+    // update creation date
     var app_id = application.get('id');
     client.create({
       index: self.toMasterIndex(),
       type: 'info',
       id: app_id,
-      body: application.toJSON()
+      body: application.toJSON(),
     }, function(error, response) {
       if (error) {
         logger.error(app_id, 'add_app', error);
         callback();
-      }
-      else {
-        //create index
+      } else {
+        // create index
         client.indices.create({
-          index: self.toAppIndex(app_id)
+          index: self.toAppIndex(app_id),
         }, function(error, response) {
           if (error) {
             logger.error(app_id, 'add_index', error);
             callback();
-          }
-          else {
-            //add mapping for users
+          } else {
+            // add mapping for users
             client.indices.putMapping({
               index: self.toAppIndex(app_id),
               type: 'user',
@@ -78,16 +74,16 @@ module.exports = function(options, client, self) {
                     onboard: { type: 'integer' },
                     karma: { type: 'integer' },
                     logout_karma: { type: 'integer' },
-                    meta: { type: 'object', enabled: false }
-                  }
-                }
-              }
+                    meta: { type: 'object', enabled: false },
+                  },
+                },
+              },
             }, function(error, response) {
               if (error) {
                 logger.error(app_id, 'put_mapping', error);
               }
             });
-            //add mapping for doc
+            // add mapping for doc
             client.indices.putMapping({
               index: self.toAppIndex(app_id),
               type: 'doc',
@@ -118,22 +114,21 @@ module.exports = function(options, client, self) {
                     children_count: { type: 'integer' },
                     archived: { type: 'boolean' },
                     archived_ts: { type: 'long' },
-                    meta: { type: 'object', enabled: false }
-                  }
-                }
-              }
+                    meta: { type: 'object', enabled: false },
+                  },
+                },
+              },
             }, function(error, response) {
               if (error) {
                 logger.error(app_id, 'put_mapping', error);
                 callback();
-              }
-              else {
+              } else {
                 var home_document = (new Models.Document()).toHome();
                 client.create({
                   index: self.toAppIndex(app_id),
                   type: 'doc',
                   id: home_document.get('id'),
-                  body: home_document.toJSON()
+                  body: home_document.toJSON(),
                 }, function(error, response) {
                   if (error) {
                     logger.info(app_id, 'add_app', error);
@@ -146,7 +141,7 @@ module.exports = function(options, client, self) {
         });
       }
     });
-  }
+  };
 
   // ------------------------------- UPDATE APP --------------------------------
 
@@ -158,19 +153,18 @@ module.exports = function(options, client, self) {
       id: app_id,
       retryOnConflict: options.elasticsearch.retry_on_conflict,
       body: {
-        doc: attributes || application.toJSON()
-      }
+        doc: attributes || application.toJSON(),
+      },
     }, function(error, response) {
       if (error) {
         logger.error(app_id, 'update_app', error);
         callback();
-      }
-      else {
+      } else {
         if (attributes) application.set(attributes);
         callback(application);
       }
     });
-  }
+  };
 
   // ------------------------------- DELETE APP --------------------------------
 
@@ -179,23 +173,22 @@ module.exports = function(options, client, self) {
     client.delete({
       index: self.toMasterIndex(),
       type: 'info',
-      id: app_id
+      id: app_id,
     }, function(error, response) {
       if (error) {
         logger.error(app_id, 'delete_app', error);
         callback();
-      }
-      else {
+      } else {
         callback(application);
-        //delete documents and users or index
+        // delete documents and users or index
         client.indices.delete({
-          index: self.toAppIndex(app_id)
+          index: self.toAppIndex(app_id),
         }, function(error, response) {
           if (error) logger.error(app_id, 'delete_index', error);
         });
       }
     });
-  }
+  };
 
   // --------------------------------- GET APP ---------------------------------
 
@@ -203,16 +196,15 @@ module.exports = function(options, client, self) {
     client.get({
       index: self.toMasterIndex(),
       type: 'info',
-      id: app_id
+      id: app_id,
     }, function(error, response) {
       if (error) {
         callback();
-      }
-      else if (response._source) {
+      } else if (response._source) {
         callback(new Models.Application(response._source));
       }
     });
-  }
+  };
 
   // -------------------------- GET APP FROM API_KEY ---------------------------
 
@@ -227,26 +219,26 @@ module.exports = function(options, client, self) {
         query: {
           multi_match: {
             query: api_key,
-            fields: ['api_keys']
-          }
-        }
-      }
+            fields: ['api_keys'],
+          },
+        },
+      },
     }, function(error, response) {
       if (error) {
-        logger.error(app_id, 'get_api_key', error);
-      }
-      else if (response.hits && response.hits.hits && response.hits.hits.length) {
+        logger.error(api_key, 'get_api_key', error);
+      } else if (response.hits && response.hits.hits && response.hits.hits.length) {
         var application = null;
         _.each(response.hits.hits, function(hit) {
-          if (hit._source.api_keys.indexOf(api_key) >= 0)
+          if (hit._source.api_keys.indexOf(api_key) >= 0) {
             application = new Models.Application(hit._source);
+          }
         });
         callback(application);
         return;
       }
       callback();
     });
-  }
+  };
 
   // ------------------------------ RESET USERS --------------------------------
 
@@ -257,21 +249,20 @@ module.exports = function(options, client, self) {
       type: 'user',
       body: {
         query: {
-          bool : {
-            must: [{ match_all: {}}]
-          }
-        }
-      }
+          bool: {
+            must: [{ match_all: {} }],
+          },
+        },
+      },
     }, function(error, response) {
       if (error) {
         logger.error(app_id, 'reset_users', error);
-      }
-      else {
+      } else {
         logger.info(app_id, 'reset_users', response);
       }
       callback();
     });
-  }
+  };
 
   // ------------------------------- PROPERTIES --------------------------------
 
@@ -284,35 +275,31 @@ module.exports = function(options, client, self) {
       id: app_id,
       retryOnConflict: options.elasticsearch.retry_on_conflict,
       body: {
-        doc: doc
-      }
+        doc: doc,
+      },
     }, function(error, response) {
       if (error) {
         logger.error(app_id, 'set_app_property', error);
         callback();
-      }
-      else {
+      } else {
         callback(property, value);
       }
     });
-  }
+  };
 
   self.get_app_property = function(app_id, property, callback) {
     client.get({
       index: self.toMasterIndex(),
       type: 'info',
-      id: app_id
+      id: app_id,
     }, function(error, response) {
       if (error) {
         callback();
-      }
-      else if (response._source && response._source[Models.PROPERTY_PREFIX + property] != undefined) {
+      } else if (response._source && response._source[Models.PROPERTY_PREFIX + property] != undefined) {
         callback(property, response._source[Models.PROPERTY_PREFIX + property]);
-      }
-      else {
+      } else {
         callback();
       }
     });
-  }
-
-}
+  };
+};

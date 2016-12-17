@@ -17,8 +17,9 @@ function ElasticSearch(options) {
   options.elasticsearch.index_prefix = options.elasticsearch.index_prefix || '';
 
   var client_params = { host: options.elasticsearch.host };
-  if (options.elasticsearch.apiVersion)
+  if (options.elasticsearch.apiVersion) {
     client_params.apiVersion = options.elasticsearch.apiVersion;
+  }
   var client = new elasticsearch.Client(client_params);
 
   // ------------------------------- PARTIALS= ---------------------------------

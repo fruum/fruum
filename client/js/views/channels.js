@@ -2,15 +2,14 @@
 Channels view
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     Fruum.views = Fruum.views || {};
 
-    var $ = Fruum.libs.$,
-        _ = Fruum.libs._,
-        Backbone = Fruum.libs.Backbone,
-        Marionette = Fruum.libs.Marionette,
+    var Marionette = Fruum.libs.Marionette,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
 
     Fruum.views.ChannelView = TRANSITION(Marionette.ItemView.extend({
@@ -19,24 +18,24 @@ Channels view
         navigate: '.fruum-js-navigate',
         manage: '.fruum-js-manage',
         move: '[data-action="move"]',
-        delete: '[data-action="delete"]'
+        delete: '[data-action="delete"]',
       },
       modelEvents: {
-        'change': 'render'
+        'change': 'render',
       },
       events: {
         'click @ui.manage': 'onManage',
         'click @ui.navigate': 'onNavigate',
         'click @ui.delete': 'onDelete',
-        'click @ui.move': 'onMove'
+        'click @ui.move': 'onMove',
       },
       initialize: function(options) {
         this.options = options;
       },
       templateHelpers: function() {
         return {
-          online: this.options.online
-        }
+          online: this.options.online,
+        };
       },
       onNavigate: function(event) {
         if (event) {
@@ -67,7 +66,7 @@ Channels view
         }
         Fruum.io.trigger('fruum:close_manage');
         Fruum.io.trigger('fruum:show_move', this.model.toJSON());
-      }
+      },
     }));
     Fruum.views.ChannelsView = Marionette.CollectionView.extend({
       childView: Fruum.views.ChannelView,
@@ -76,9 +75,9 @@ Channels view
       },
       childViewOptions: function(model, index) {
         return {
-          online: this.ui_state.get('online')
-        }
-      }
+          online: this.ui_state.get('online'),
+        };
+      },
     });
   });
 })();

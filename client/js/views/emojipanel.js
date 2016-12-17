@@ -2,21 +2,22 @@
  Emoji panel
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     Fruum.views = Fruum.views || {};
 
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
-        Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette;
 
     Fruum.views.EmojiPanelView = Marionette.View.extend({
       $el_root: $('#fruum'),
       el: '.fruum-js-emoji',
       events: {
-        'click [data-item]': 'onSelect'
+        'click [data-item]': 'onSelect',
       },
       initialize: function(options) {
         _.bindAll(this, 'onKey');
@@ -33,7 +34,7 @@
         if (item) {
           field.val(field.val() + ' ' + item + ' ');
           this.hide();
-          _.defer( (function() { field.focus(); }).bind(this) );
+          _.defer(function() { field.focus(); });
         }
       },
       onKey: function(event) {
@@ -50,11 +51,12 @@
         $(document).off('keydown', this.onKey);
       },
       toggle: function() {
-        if (this.$el.is(':visible'))
+        if (this.$el.is(':visible')) {
           this.hide();
-        else
+        } else {
           this.show();
-      }
+        }
+      },
     });
   });
 })();

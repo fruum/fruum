@@ -2,11 +2,9 @@
   Karma plugin
 *******************************************************************************/
 
-var _ = require('underscore'),
-    logger = require('../../server/logger');
+var logger = require('../../server/logger');
 
 function Karma(options, instance) {
-
   options.karma = options.karma || {};
   options.karma.added_category = options.karma.added_category || 0;
   options.karma.added_thread = options.karma.added_thread || 0;
@@ -25,20 +23,18 @@ function Karma(options, instance) {
       if (!user) {
         logger.error(app_id, 'karma_invalid_user_id', user_id);
         return;
-      }
-      else {
+      } else {
         user.set('karma', user.get('karma') + karma);
         instance.storage.update_user(app_id, user, { karma: user.get('karma') }, function(updated_user) {
           if (updated_user) {
             logger.info(app_id, 'karma', user);
-            //notify user for karma change
+            // notify user for karma change
             var u = instance.engine.findOnlineUser(app_id, user_id);
             if (u && u.get('socket')) {
               u.set('karma', user.get('karma'));
               u.get('socket').emit('fruum:karma', { karma: user.get('karma') });
             }
-          }
-          else {
+          } else {
             logger.error(app_id, 'karma_fail_update', user);
           }
         });
@@ -52,7 +48,7 @@ function Karma(options, instance) {
     instance.storage.get(payload.app_id, payload.document.get('parent'), function(parent_doc) {
       if (!parent_doc) return;
       var karma = 0;
-      switch(payload.document.get('type')) {
+      switch (payload.document.get('type')) {
         case 'category':
           karma = options.karma.added_category;
           break;
@@ -77,47 +73,48 @@ function Karma(options, instance) {
       }
       add_karma(payload.app_id, payload.user.get('id'), karma);
     });
-  }
+  };
 
   this.afterField = function(payload, callback) {
     callback(null, payload);
     if (payload.document.get('user_id') != payload.user.get('id') &&
-        payload.field == 'inappropriate')
-    {
+        payload.field == 'inappropriate'
+    ) {
       add_karma(
         payload.app_id,
         payload.document.get('user_id'),
-        options.karma.got_inappropriate * (payload.value?1:-1));
+        options.karma.got_inappropriate * (payload.value ? 1 : -1));
     }
-  }
+  };
 
   this.afterReact = function(payload, callback) {
     callback(null, payload);
 
     if (payload.document.get('user_id') != payload.user.get('id')) {
       var karma = 0;
-      switch(payload.reaction) {
+      switch (payload.reaction) {
         case 'up':
           karma = options.karma.got_react_up;
-          if (payload.balance == 0)
+          if (payload.balance == 0) {
             karma -= options.karma.got_react_down;
-          else
+          } else {
             karma *= payload.balance;
+          }
           break;
         case 'down':
           karma = options.karma.got_react_down;
-          if (payload.balance == 0)
+          if (payload.balance == 0) {
             karma -= options.karma.got_react_up;
-          else
+          } else {
             karma *= payload.balance;
+          }
           break;
       }
       add_karma(payload.app_id,
                 payload.document.get('user_id'),
                 karma);
     }
-  }
-
-}
+  };
+};
 
 module.exports = Karma;

@@ -70,10 +70,15 @@
       <div class="fruum-interactions-buttons">
         <% if (Fruum.user.admin && id != Fruum.user.id) { %>
           <% if (blocked) { %>
-        <button class="fruum-main-button" data-action="unblock">Unblock @<%- username %></button>
+        <button class="fruum-main-button" data-action="account:unblock">Unblock @<%- username %></button>
           <% } else { %>
-        <button class="fruum-main-button" data-action="block">Block @<%- username %></button>
+        <button class="fruum-main-button" data-action="account:block">Block @<%- username %></button>
           <% } %>
+        <% } %>
+      </div>
+      <div class="fruum-user-account">
+        <% if (Fruum.user.admin && id != Fruum.user.id) { %>
+        <button class="fruum-secondary-button fruum-negative" data-action="account:remove">Delete</button>
         <% } %>
       </div>
     </div>

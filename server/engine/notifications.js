@@ -17,7 +17,6 @@ module.exports = function(options, instance, self) {
 
   self.notifications = function(socket, payload) {
     var app_id = socket.app_id,
-        id = payload.id,
         user = socket.fruum_user,
         is_admin = user.get('admin');
 
@@ -31,21 +30,22 @@ module.exports = function(options, instance, self) {
       storage.mget(app_id, payload.ids, function(documents) {
         var response = [];
         _.each(documents, function(document) {
-          if ( (is_admin || document.get('visible')) && !document.get('archived') )
+          if ((is_admin || document.get('visible')) && !document.get('archived')) {
             response.push(document.toJSON());
+          }
         });
         socket.emit('fruum:notifications', {
-          notifications: response
+          notifications: response,
         });
         self.success(payload);
       }, { skipfields: ['attachments'] });
     }
-  }
+  };
 
   self.notify = function(socket, payload) {
-    //noop
+    // noop
     self.success(payload);
-  }
+  };
 
   self.unnotify = function(socket, payload) {
     if (!self.validatePayloadID(socket, payload, 'unnotify')) {
@@ -53,7 +53,6 @@ module.exports = function(options, instance, self) {
       return;
     }
     var app_id = socket.app_id,
-        id = payload.id,
         user = socket.fruum_user;
 
     if (user.get('anonymous')) {
@@ -63,7 +62,7 @@ module.exports = function(options, instance, self) {
       return;
     }
     if ((user.get('notifications') || []).indexOf(payload.id) != -1) {
-      //get latest user
+      // get latest user
       storage.get_user(app_id, user.get('id'), function(storage_user) {
         if (storage_user) {
           var notifications = _.without(storage_user.get('notifications') || [], payload.id);
@@ -75,7 +74,7 @@ module.exports = function(options, instance, self) {
     }
     socket.emit('fruum:unnotify', { id: payload.id });
     self.success(payload);
-  }
+  };
 
   self.typing = function(socket, payload) {
     if (!self.validatePayloadID(socket, null, 'typing')) {
@@ -96,13 +95,13 @@ module.exports = function(options, instance, self) {
     _.each(app, function(app_user) {
       if (user != app_user &&
           app_user.get('viewing') == doc_id &&
-          app_user.get('socket'))
-      {
+          app_user.get('socket')
+      ) {
         app_user.get('socket').emit('fruum:typing', user.get('username'));
       }
     });
     self.success(payload);
-  }
+  };
 
   self.onboard = function(socket, payload) {
     if (!self.validatePayloadID(socket, null, 'onboard')) {
@@ -110,7 +109,7 @@ module.exports = function(options, instance, self) {
       return;
     }
     var app_id = socket.app_id,
-        onboard = payload.onboard|0,
+        onboard = payload.onboard | 0,
         user = socket.fruum_user;
 
     if (user.get('anonymous')) {
@@ -120,7 +119,7 @@ module.exports = function(options, instance, self) {
       return;
     }
 
-    //get latest user
+    // get latest user
     storage.get_user(app_id, user.get('id'), function(storage_user) {
       if (storage_user) {
         user.set('onboard', onboard);
@@ -128,36 +127,35 @@ module.exports = function(options, instance, self) {
           if (updated_user) {
             socket.emit('fruum:onboard', payload);
             self.success(payload);
-          }
-          else {
+          } else {
             socket.emit('fruum:onboard');
             self.fail(payload);
           }
         });
       }
     });
-  }
+  };
 
   // ------------------------------- TEMPLATES ---------------------------------
 
   self.notificationTemplate = function(application, template, success, fail) {
     var email = {};
-    //read subject
+    // read subject
     fs.readFile(__dirname + '/../../notifications/' + template + '/subject.txt', 'utf8', function(err, data) {
       if (err) { fail && fail(application, template); return; }
       email.subject = data || '';
-      //read html
+      // read html
       fs.readFile(__dirname + '/../../notifications/' + template + '/body.html', 'utf8', function(err, data) {
         if (err) { fail && fail(application, template); return; }
         email.html = data || '';
-        //read application sass
+        // read application sass
         application.getThemeSass(function(overrides) {
-          //read main sass
-          fs.readFile(__dirname + '/../../notifications/style.scss','utf8', function(err, data) {
+          // read main sass
+          fs.readFile(__dirname + '/../../notifications/style.scss', 'utf8', function(err, data) {
             if (err) { fail && fail(application, template); return; }
             var style = data || '';
             style = style.replace('//__APPLICATION_CUSTOM_SASS__', overrides);
-            //build css
+            // build css
             sass.render({
               data: style,
               outputStyle: 'compressed',
@@ -171,12 +169,11 @@ module.exports = function(options, instance, self) {
                           style;
                 logger.error(application.get('id'), 'sass', msg);
                 fail && fail(application, template);
-              }
-              else {
+              } else {
                 email.html = email.html.replace('<!--STYLE.SCSS-->', '<style>' + result.css + '</style>');
                 success && success({
                   subject: _.template(email.subject),
-                  html: _.template(email.html)
+                  html: _.template(email.html),
                 });
               }
             });
@@ -184,6 +181,5 @@ module.exports = function(options, instance, self) {
         });
       });
     });
-  }
-
-}
+  };
+};

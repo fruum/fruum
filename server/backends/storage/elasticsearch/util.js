@@ -11,32 +11,32 @@ var _ = require('underscore'),
 
 module.exports = function(options, client, self) {
   var index_prefix = options.elasticsearch.index_prefix;
-  //helpers
+  // helpers
   self.toAppIndex = function(app_id) {
     return index_prefix + 'app:' + app_id;
-  }
+  };
   self.toMasterIndex = function() {
     return index_prefix + 'applications';
-  }
-  //try to find a unique slug based on header (truncate to max 64 characters)
+  };
+  // try to find a unique slug based on header (truncate to max 64 characters)
   self.unique = function(app_id, document, doc_id, counter, callback) {
-    var new_id = doc_id + (counter?'-' + counter:'');
+    var new_id = doc_id + (counter ? '-' + counter : '');
     client.exists({
       index: self.toAppIndex(app_id),
       type: 'doc',
       id: new_id,
-      refresh: true
-    }, function(error, exists) {
+      refresh: true,
+    }, function(error, exists) { // eslint-disable-line
       if (exists === true) {
         self.unique(app_id, document, doc_id, counter + 1, callback);
-      }
-      else {
+      } else {
         document.set('id', new_id);
         callback(document);
       }
     });
-  }
-  //find a unique slug for the document id
+  };
+
+  // find a unique slug for the document id
   self.slugify = function(app_id, document, callback) {
     var existing_id = document.get('id');
     if (existing_id && existing_id.length > 2) {
@@ -49,73 +49,74 @@ module.exports = function(options, client, self) {
       return;
     }
     self.unique(app_id, document, slug(
-      document.get('header').substr(0, 64).toLowerCase().replace(/\[(.*?)\]/g, '')
+      document.get('header').substr(0, 64).toLowerCase().replace(/\[(.*?)\]/g, '') // eslint-disable-line
     ), 0, callback);
-  }
-  //refresh index
+  };
+
+  // refresh index
   self.refreshIndex = function(app_id, callback) {
     client.indices.refresh({
-      index: self.toAppIndex(app_id)
+      index: self.toAppIndex(app_id),
     }, function(error, response) {
       if (error) {
         logger.error(app_id, '_refreshIndex', error);
       }
       callback && callback();
     });
-  }
-  //count search results based on qsl
+  };
+
+  // count search results based on qsl
   self.count = function(app_id, body_qsl, callback) {
     self.refreshIndex(app_id, function() {
       client.count({
         index: self.toAppIndex(app_id),
         type: 'doc',
         refresh: true,
-        body: body_qsl
+        body: body_qsl,
       }, function(error, response) {
         if (error) {
           logger.error(app_id, '_count', error);
           callback(0);
           return;
-        }
-        else {
+        } else {
           callback(response.count || 0);
         }
       });
     });
-  }
-  //bulk operations
+  };
+
+  // bulk operations
   self.bulk_update = function(app_id, q, fields, attributes, validator, callback) {
     var body_qsl = {
       query: {
         multi_match: {
           query: q,
-          fields: fields
-        }
-      }
-    }
+          fields: fields,
+        },
+      },
+    };
     self.count(app_id, body_qsl, function(count) {
       body_qsl = _.extend(body_qsl, {
         from: 0,
-        size: Math.max(count, options.elasticsearch.max_children)
+        size: Math.max(count, options.elasticsearch.max_children),
       });
       client.search({
         index: self.toAppIndex(app_id),
         type: 'doc',
         refresh: true,
-        body: body_qsl
+        body: body_qsl,
       }, function(error, response) {
         if (error) {
           logger.error(app_id, 'update_bulk_search', error);
-        }
-        else if (response.hits && response.hits.hits && response.hits.hits.length) {
+        } else if (response.hits && response.hits.hits && response.hits.hits.length) {
+          var body = [];
           if (options.elasticsearch.use_bulk) {
-            var body = [];
             _.each(response.hits.hits, function(hit) {
               if (validator(hit._source, q)) {
                 body.push({ update: {
                   _index: self.toAppIndex(app_id),
                   _type: 'doc',
-                  _id: hit._source.id
+                  _id: hit._source.id,
                 }});
                 body.push({ doc: attributes });
               }
@@ -124,12 +125,11 @@ module.exports = function(options, client, self) {
               index: self.toAppIndex(app_id),
               type: 'doc',
               refresh: true,
-              body: body
+              body: body,
             }, function(error, response) {
               if (error) {
                 logger.error(app_id, 'update_bulk', error);
-              }
-              else {
+              } else {
                 logger.info(app_id, 'update_bulk', (body.length / 2) + ' updates on ' + q + ' with ' + JSON.stringify(attributes));
                 if (response.errors) {
                   logger.error(app_id, 'update_bulk', JSON.stringify(body));
@@ -138,9 +138,7 @@ module.exports = function(options, client, self) {
               }
               callback();
             });
-          }
-          else {
-            var body = [];
+          } else {
             _.each(response.hits.hits, function(hit) {
               if (validator(hit._source, q)) {
                 body.push({
@@ -149,8 +147,8 @@ module.exports = function(options, client, self) {
                   id: hit._source.id,
                   retryOnConflict: options.elasticsearch.retry_on_conflict,
                   body: {
-                    doc: attributes
-                  }
+                    doc: attributes,
+                  },
                 });
               }
             });
@@ -169,39 +167,38 @@ module.exports = function(options, client, self) {
         callback();
       });
     });
-  }
+  };
   self.bulk_delete = function(app_id, q, fields, validator, callback) {
     var body_qsl = {
       query: {
         multi_match: {
           query: q,
-          fields: fields
-        }
-      }
-    }
+          fields: fields,
+        },
+      },
+    };
     self.count(app_id, body_qsl, function(count) {
       body_qsl = _.extend(body_qsl, {
         from: 0,
-        size: Math.max(count, options.elasticsearch.max_children)
+        size: Math.max(count, options.elasticsearch.max_children),
       });
       client.search({
         index: self.toAppIndex(app_id),
         type: 'doc',
         refresh: true,
-        body: body_qsl
+        body: body_qsl,
       }, function(error, response) {
         if (error) {
           logger.error(app_id, 'delete_bulk_search', error);
-        }
-        else if (response.hits && response.hits.hits && response.hits.hits.length) {
+        } else if (response.hits && response.hits.hits && response.hits.hits.length) {
+          var body = [];
           if (options.elasticsearch.use_bulk) {
-            var body = [];
             _.each(response.hits.hits, function(hit) {
               if (validator(hit._source, q)) {
                 body.push({ delete: {
                   _index: self.toAppIndex(app_id),
                   _type: 'doc',
-                  _id: hit._source.id
+                  _id: hit._source.id,
                 }});
               }
             });
@@ -209,12 +206,11 @@ module.exports = function(options, client, self) {
               index: self.toAppIndex(app_id),
               type: 'doc',
               refresh: true,
-              body: body
+              body: body,
             }, function(error, response) {
               if (error) {
                 logger.error(app_id, 'delete_bulk', error);
-              }
-              else {
+              } else {
                 logger.info(app_id, 'delete_bulk', body.length + ' deletions on ' + q);
                 if (response.errors) {
                   logger.error(app_id, 'delete_bulk', JSON.stringify(body));
@@ -223,15 +219,13 @@ module.exports = function(options, client, self) {
               }
               callback();
             });
-          }
-          else {
-            var body = [];
+          } else {
             _.each(response.hits.hits, function(hit) {
               if (validator(hit._source, q)) {
                 body.push({
                   index: self.toAppIndex(app_id),
                   type: 'doc',
-                  id: hit._source.id
+                  id: hit._source.id,
                 });
               }
             });
@@ -250,48 +244,44 @@ module.exports = function(options, client, self) {
         callback();
       });
     });
-  }
+  };
 
   self.createSearchQSL = function(attributes) {
     var matches = [], not_matches = [], filter = {};
     for (var key in attributes) {
-      var term = {},
-          value = attributes[key],
+      var value = attributes[key],
           range = key.match(/__lte|__lt|__gte|__gt/),
-          negative = key.match(/__not/);
+          negative = key.match(/__not/),
+          term_val = {};
 
       if (key === 'ids') {
         filter = {
           ids: {
-            values: value
-          }
-        }
-      }
-      else if (range && range.length) {
-        var term_val = {};
+            values: value,
+          },
+        };
+      } else if (range && range.length) {
         range = range[0];
         key = key.replace(range, '');
         range = range.replace('__', '');
         term_val[key] = {};
         term_val[key][range] = value;
         matches.push({ range: term_val });
-      }
-      else if (negative && negative.length) {
-        var term_val = {};
+      } else if (negative && negative.length) {
         key = key.replace(negative, '');
         term_val[key] = value;
-        if (_.isArray(value))
+        if (_.isArray(value)) {
           not_matches.push({ terms: term_val });
-        else
+        } else {
           not_matches.push({ term: term_val });
-      }
-      else {
-        var term_val = {};
+        }
+      } else {
         term_val[key] = value;
-        if (_.isArray(value))
+        if (_.isArray(value)) {
           matches.push({ terms: term_val });
-        else
+        } else {
           matches.push({ term: term_val });
+        }
       }
     }
     return {
@@ -300,10 +290,10 @@ module.exports = function(options, client, self) {
         query: {
           bool: {
             must: matches,
-            must_not: not_matches
-          }
-        }
-      }
-    }
-  }
-}
+            must_not: not_matches,
+          },
+        },
+      },
+    };
+  };
+};

@@ -5,7 +5,6 @@
 'use strict';
 
 module.exports = function(options) {
-
   // ------------------------------ MANAGEMENT ---------------------------------
 
   /*
@@ -87,7 +86,7 @@ module.exports = function(options) {
   - application: Application model
   - callback: done function callback
   */
-  this.reset_users = function(application, callback) { callback(); }
+  this.reset_users = function(application, callback) { callback(); };
 
   /*
   Summary:
@@ -99,7 +98,7 @@ module.exports = function(options) {
   - callback: function callback, passing the application model or undefined if
     app_id is invalid
   */
-  this.get_app = function(app_id, callback) { callback(); }
+  this.get_app = function(app_id, callback) { callback(); };
 
   /*
   Summary:
@@ -110,7 +109,7 @@ module.exports = function(options) {
   - callback: function callback, passing the application model or undefined if
     api_key is invalid
   */
-  this.get_api_key = function(api_key, callback) { callback(); }
+  this.get_api_key = function(api_key, callback) { callback(); };
 
   /*
   Summary:
@@ -123,7 +122,7 @@ module.exports = function(options) {
   - callback: function callback, passing property and value
     on success
   */
-  this.set_app_property = function(app_id, property, value, callback) { callback(); }
+  this.set_app_property = function(app_id, property, value, callback) { callback(); };
 
   /*
   Summary:
@@ -134,7 +133,7 @@ module.exports = function(options) {
   - property: string defining property name
   - callback: function callback, passing property and value on success
   */
-  this.get_app_property = function(app_id, property, callback) { callback(); }
+  this.get_app_property = function(app_id, property, callback) { callback(); };
 
   /*
   Summary:
@@ -144,7 +143,7 @@ module.exports = function(options) {
   - callback: function callback, passing an array of application models that
     are registered in the backend
   */
-  this.list_apps = function(callback) { callback([]); }
+  this.list_apps = function(callback) { callback([]); };
 
   // ---------------------------------- DOCUMENT ---------------------------------
 
@@ -161,7 +160,7 @@ module.exports = function(options) {
       skipfields: ['attachments', 'body', ...] //skip document fields
     }
   */
-  this.children = function(app_id, document, callback, params) { callback([]); }
+  this.children = function(app_id, document, callback, params) { callback([]); };
 
   /*
   Summary:
@@ -177,7 +176,7 @@ module.exports = function(options) {
       skipfields: ['attachments', 'body', ...] //skip document fields
     }
   */
-  this.get = function(app_id, id, callback, params) { callback(); }
+  this.get = function(app_id, id, callback, params) { callback(); };
 
   /*
   Summary:
@@ -193,7 +192,7 @@ module.exports = function(options) {
       skipfields: ['attachments', 'body', ...] //skip document fields
     }
   */
-  this.mget = function(app_id, id_array, callback, params) { callback({}); }
+  this.mget = function(app_id, id_array, callback, params) { callback({}); };
 
   /*
   Summary:
@@ -209,7 +208,7 @@ module.exports = function(options) {
   - callback: function callback, passing the document model as parameter or
     undefined if add operation failed
   */
-  this.add = function(app_id, document, callback) { callback(); }
+  this.add = function(app_id, document, callback) { callback(); };
 
   /*
   Summary:
@@ -226,7 +225,7 @@ module.exports = function(options) {
   - callback: function callback, passing the document model as parameter or
     undefined if add operation failed
   */
-  this.update = function(app_id, document, attributes, callback) { callback(); }
+  this.update = function(app_id, document, attributes, callback) { callback(); };
 
   /*
   Summary:
@@ -239,7 +238,7 @@ module.exports = function(options) {
   - callback: function callback, passing the document model as parameter or
     undefined if add operation failed
   */
-  this.update_subtree = function(app_id, document, attributes, callback) { callback(); }
+  this.update_subtree = function(app_id, document, attributes, callback) { callback(); };
 
   // ---------------------------------- ARCHIVE --------------------------------
 
@@ -253,7 +252,7 @@ module.exports = function(options) {
   - callback: function callback, passing the document model as parameter or
     undefined if delete operation failed
   */
-  this.delete = function(app_id, document, callback) { callback(); }
+  this.delete = function(app_id, document, callback) { callback(); };
 
   /*
   Summary:
@@ -265,7 +264,7 @@ module.exports = function(options) {
   - callback: function callback, passing the document model as parameter or
     undefined if archive operation failed
   */
-  this.archive = function(app_id, document, callback) { callback(); }
+  this.archive = function(app_id, document, callback) { callback(); };
 
   /*
   Summary:
@@ -277,13 +276,34 @@ module.exports = function(options) {
   - callback: function callback, passing the document model as parameter or
     undefined if restore operation failed
   */
-  this.restore = function(app_id, document, callback) { callback(); }
+  this.restore = function(app_id, document, callback) { callback(); };
 
   // ---------------------------------- SEARCH ---------------------------------
 
   /*
   Summary:
-  Fuzzy search in forum, excluding channels and category names
+  Fuzzy search in forum, excluding channels and category names.
+  Text should be able to handle special directives such as:
+
+  #tag (must include tag)
+  -#tag (must not include tag)
+  +#tag (may include tag)
+
+  @username (must include username)
+  -@username (must not include username)
+  +@username (may include username)
+
+  type:<article|thread|blog|post> (must be of document type)
+  -type:<article|thread|blog|post> (must not be of document type)
+  +type:<article|thread|blog|post> (may be of document type)
+
+  parent:<slug> (must have parent)
+  -parent:<slug> (must not have parent)
+  +parent:<slug> (may have parent)
+
+  maxresults:<number> (maximum number of results)
+  highlight:<true|yes|1> (highlight results)
+  sort:<created|created_desc|updated|updated_desc|user|user_asc|user_desc> (sort by)
 
   Parameters:
   - app_id: the application id
@@ -303,7 +323,7 @@ module.exports = function(options) {
       skipfields: ['attachments', 'body', ...], //skip document fields
     }
   */
-  this.search = function(app_id, payload, callback, params) { callback([]); }
+  this.search = function(app_id, payload, callback, params) { callback([]); };
 
   /*
   Summary:
@@ -322,7 +342,7 @@ module.exports = function(options) {
       sort: [{ <field> : {order : 'asc|desc'} }]
     }
   */
-  this.search_attributes = function(app_id, attributes, callback, params) { callback([]); }
+  this.search_attributes = function(app_id, attributes, callback, params) { callback([]); };
 
   /*
   Summary:
@@ -333,7 +353,7 @@ module.exports = function(options) {
   - attributes: an object of fields to search, e.g. { header: 'foo', body: 'bar' }
   - callback: function callback, passing an integer counter of search results
   */
-  this.count_attributes = function(app_id, attributes, callback) { callback(0); }
+  this.count_attributes = function(app_id, attributes, callback) { callback(0); };
 
   // ---------------------------------- WATCH ----------------------------------
 
@@ -348,7 +368,7 @@ module.exports = function(options) {
   - callback: function callback, passing the document as parameter on success,
     undefined on error
   */
-  this.watch = function(app_id, document, user, callback) { callback(); }
+  this.watch = function(app_id, document, user, callback) { callback(); };
 
   /*
   Summary:
@@ -361,7 +381,7 @@ module.exports = function(options) {
   - callback: function callback, passing the document as parameter on success,
     undefined on error
   */
-  this.unwatch = function(app_id, document, user, callback) { callback(); }
+  this.unwatch = function(app_id, document, user, callback) { callback(); };
 
   // ---------------------------------- USERS ----------------------------------
 
@@ -375,7 +395,7 @@ module.exports = function(options) {
   - callback: function callback, passing the user as parameter on success,
     undefined on error
   */
-  this.add_user = function(app_id, user, callback) { callback(); }
+  this.add_user = function(app_id, user, callback) { callback(); };
 
   /*
   Summary:
@@ -389,7 +409,7 @@ module.exports = function(options) {
   - callback: function callback, passing the user as parameter on success,
     undefined on error
   */
-  this.update_user = function(app_id, user, attributes, callback) { callback(user); }
+  this.update_user = function(app_id, user, attributes, callback) { callback(user); };
 
   /*
   Summary:
@@ -401,7 +421,7 @@ module.exports = function(options) {
   - callback: function callback, passing the user as parameter on success,
     undefined on error
   */
-  this.delete_user = function(app_id, user, callback) { callback(user); }
+  this.delete_user = function(app_id, user, callback) { callback(user); };
 
   /*
   Summary:
@@ -413,7 +433,7 @@ module.exports = function(options) {
   - callback: function callback, passing the user as parameter on success,
     undefined if user id or app_id is invalid
   */
-  this.get_user = function(app_id, id, callback) { callback(); }
+  this.get_user = function(app_id, id, callback) { callback(); };
 
   /*
   Summary:
@@ -432,7 +452,7 @@ module.exports = function(options) {
       sort: [{ <field> : {order : 'asc|desc'} }]
     }
   */
-  this.match_users = function(app_id, attributes, callback, params) { callback([]); }
+  this.match_users = function(app_id, attributes, callback, params) { callback([]); };
 
   /*
   Summary:
@@ -444,7 +464,7 @@ module.exports = function(options) {
   - callback: function callback, passing the number of users that match the
     specified attributes
   */
-  this.count_users = function(app_id, attributes, callback) { callback(0); }
+  this.count_users = function(app_id, attributes, callback) { callback(0); };
 
   /*
   Summary:
@@ -456,7 +476,7 @@ module.exports = function(options) {
   - callback: function callback, passing a list of user models that watch at
     at least one document id in the watch_list array
   */
-  this.find_watch_users = function(app_id, watch_list, callback) { callback([]); }
+  this.find_watch_users = function(app_id, watch_list, callback) { callback([]); };
 
   /*
   Summary:
@@ -467,7 +487,7 @@ module.exports = function(options) {
   - q: query to search
   - callback: function callback, passing a list of user models that match q
   */
-  this.search_users = function(app_id, q, callback) { callback([]); }
+  this.search_users = function(app_id, q, callback) { callback([]); };
 
   // ---------------------------------- GC -------------------------------------
 
@@ -484,7 +504,7 @@ module.exports = function(options) {
   - timestamp: a unix timestamp
   - callback: done function callback
   */
-  this.gc_archived = function(app_id, timestamp, callback) { callback(); }
+  this.gc_archived = function(app_id, timestamp, callback) { callback(); };
 
   /*
   Summary:
@@ -499,7 +519,7 @@ module.exports = function(options) {
   - timestamp: a unix timestamp
   - callback: done function callback
   */
-  this.gc_chat = function(app_id, timestamp, callback) { callback(); }
+  this.gc_chat = function(app_id, timestamp, callback) { callback(); };
 
   /*
   Summary:
@@ -514,7 +534,7 @@ module.exports = function(options) {
   - timestamp: a unix timestamp
   - callback: done function callback
   */
-  this.gc_users = function(app_id, timestamp, callback) { callback(); }
+  this.gc_users = function(app_id, timestamp, callback) { callback(); };
 
   /*
   Summary:
@@ -529,5 +549,5 @@ module.exports = function(options) {
   - timestamp: a unix timestamp
   - callback: done function callback
   */
-  this.gc_onboard = function(app_id, timestamp, callback) { callback(); }
-}
+  this.gc_onboard = function(app_id, timestamp, callback) { callback(); };
+};

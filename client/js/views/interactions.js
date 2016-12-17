@@ -2,15 +2,16 @@
 Handles the bottom input part
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     Fruum.views = Fruum.views || {};
 
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
         toMarkdown = Fruum.libs.toMarkdown,
-        Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette;
 
     Fruum.views.InteractionsView = Marionette.ItemView.extend({
@@ -48,13 +49,13 @@ Handles the bottom input part
         option_permission: '[data-permission]',
         channel_input: '.fruum-js-channel-input',
         popup_usage: '.fruum-js-choose-usage',
-        popup_permission: '.fruum-js-choose-permission'
+        popup_permission: '.fruum-js-choose-permission',
       },
       modelEvents: {
         'change:editing change:viewing change:searching change:has_search_string': 'onChange',
         'change:interacting change:connected': 'onInteracting',
         'change:search_helper': 'onSearchHelper',
-        'change:updates_count': 'onUpdatesCount'
+        'change:updates_count': 'onUpdatesCount',
       },
       events: {
         'click @ui.search': 'onSearch',
@@ -82,20 +83,20 @@ Handles the bottom input part
         'click @ui.cancel': 'onCancel',
         'click @ui.preview': 'onPreview',
         'click @ui.show_profile': 'onShowProfile',
-        //capture changes and store them
+        // capture changes and store them
         'blur @ui.field_body': 'onBodyBlur',
         'keyup @ui.field_body': 'onKeyBody',
         'keyup @ui.field_header': 'onKeyHeader',
         'keyup @ui.field_initials': 'onKeyInitials',
         'keyup @ui.field_tags': 'onKeyTags',
-        'paste @ui.field_body': 'onPasteBody'
+        'paste @ui.field_body': 'onPasteBody',
       },
       initialize: function(options) {
         _.bindAll(this,
           'typeNotificationStart', 'typeNotificationEnd',
           '_clearSearch', '_updatesCount', '_onboard'
         );
-        //helper to mark how many posts the user has submitted for onboarding
+        // helper to mark how many posts the user has submitted for onboarding
         this.post_count = 0;
         this.new_karma = 0;
         this.ui_state = this.model;
@@ -117,17 +118,17 @@ Handles the bottom input part
         this.mode = this._getMode();
         this.autocomplete_view = new Fruum.views.AutocompleteView({
           ui_state: this.ui_state,
-          interactions: this
+          interactions: this,
         });
         this.emojipanel_view = new Fruum.views.EmojiPanelView({
           ui_state: this.ui_state,
-          interactions: this
+          interactions: this,
         });
         this.attachments_view = new Fruum.views.AttachmentsView({
           ui_state: this.ui_state,
-          interactions: this
+          interactions: this,
         });
-        this.help_tab = Fruum.utils.isDesktop()?'shortcuts':'text';
+        this.help_tab = Fruum.utils.isDesktop() ? 'shortcuts' : 'text';
       },
       getTemplate: function() {
         if (Fruum.user.anonymous) return '#fruum-template-interactions-anonymous';
@@ -136,7 +137,7 @@ Handles the bottom input part
         if (this.ui_state.get('searching')) {
           return '#fruum-template-interactions-searching';
         }
-        switch(editing.type) {
+        switch (editing.type) {
           case 'category':
             return '#fruum-template-interactions-edit-category';
           case 'article':
@@ -150,7 +151,7 @@ Handles the bottom input part
           case 'post':
             return '#fruum-template-interactions-edit-post';
         }
-        switch(viewing.type) {
+        switch (viewing.type) {
           case 'thread':
           case 'article':
           case 'blog':
@@ -173,8 +174,7 @@ Handles the bottom input part
             clearTimeout(this.__update_drawer_timer);
           }
           this._updatesCount();
-        }
-        else {
+        } else {
           if (!this.__update_drawer_timer) {
             this.__update_drawer_timer = setTimeout(this._updatesCount, 1500);
           }
@@ -185,8 +185,7 @@ Handles the bottom input part
         var count = this.ui_state.get('updates_count');
         if (!count) {
           this.$('.fruum-js-updates-drawer').stop(true, true).slideUp('fast');
-        }
-        else {
+        } else {
           this.$('.fruum-js-updates-number').html(count);
           this.$('.fruum-js-updates-drawer').stop(true, true).slideDown('fast');
         }
@@ -197,8 +196,7 @@ Handles the bottom input part
           this.ui.field_notifications.html(notifications).fadeIn();
           this.ui.avatar_container.removeClass('fruum-link-disabled').
             attr('data-fruumtipsy-right', this.ui.avatar_container.attr('data-fruumtipsy-original'));
-        }
-        else {
+        } else {
           this.ui.field_notifications.html(notifications).fadeOut();
           this.ui.avatar_container.addClass('fruum-link-disabled').removeAttr('data-fruumtipsy-right');
         }
@@ -219,7 +217,7 @@ Handles the bottom input part
         }
         Fruum.io.trigger('fruum:profile', {
           username: Fruum.user.username,
-          id: Fruum.user.id
+          id: Fruum.user.id,
         });
       },
       onNewKarma: function(diff) {
@@ -229,7 +227,9 @@ Handles the bottom input part
       consumeKarma: function() {
         var el = this.$(this.ui.karma_notify);
         if (this.new_karma && el.length) {
-          el.find('.fruum-js-karma-diff').html( (this.new_karma > 0?'+':'-') + this.new_karma );
+          el.find('.fruum-js-karma-diff').html(
+            (this.new_karma > 0 ? '+' : '-') + this.new_karma
+          );
           el.delay(500).fadeIn('fast').delay(4000).fadeOut('slow');
           this.new_karma = 0;
         }
@@ -248,9 +248,9 @@ Handles the bottom input part
         );
       },
       onSearchHelper: function() {
-        if (this.ui_state.get('search_helper') && !this.ui_state.get('editing').type)
+        if (this.ui_state.get('search_helper') && !this.ui_state.get('editing').type) {
           Fruum.io.trigger('fruum:message', 'search');
-        else {
+        } else {
           if (this.timer_clearsearch) clearTimeout(this.timer_clearsearch);
           this.timer_clearsearch = setTimeout(this._clearSearch, 700);
         }
@@ -265,8 +265,7 @@ Handles the bottom input part
       onMessage: function(msg_type) {
         if (msg_type) {
           this.$('[data-message="' + msg_type + '"]').slideDown();
-        }
-        else {
+        } else {
           this.$('[data-message]').slideUp('fast');
         }
       },
@@ -274,13 +273,17 @@ Handles the bottom input part
       // -------------------------- INTERACTION --------------------------------
 
       onInteracting: function() {
+        var el = this.$el.parent();
         if (this.ui_state.get('interacting') || !this.ui_state.get('connected')) {
           this.$('input, textarea').attr('disabled', 'disabled');
-          this.$el.parent().addClass('fruum-interaction-unavailable');
-        }
-        else {
+          el.addClass('fruum-interaction-unavailable').
+            removeClass('fruum-interacting');
+        } else {
           this.$('input, textarea').removeAttr('disabled');
-          this.$el.parent().removeClass('fruum-interaction-unavailable');
+          el.removeClass('fruum-interaction-unavailable');
+          if (this.$('.fruum-js-interacting').length) {
+            el.addClass('fruum-interacting');
+          }
         }
       },
       onRender: function() {
@@ -301,9 +304,9 @@ Handles the bottom input part
       onHelp: function() {
         this.emojipanel_view.hide();
         this.attachments_view.hide();
-        if (this.ui.help_panel.is(':visible'))
+        if (this.ui.help_panel.is(':visible')) {
           this.ui.help_panel.slideUp('show', 'easeInOutBack');
-        else {
+        } else {
           this._selectHelpTab(this.help_tab);
           this.ui.help_panel.slideDown('show', 'easeInOutBack');
         }
@@ -324,9 +327,8 @@ Handles the bottom input part
         this.$('[data-help-content="' + tab + '"]').removeClass('fruum-nodisplay');
       },
 
-
       onResize: function() {
-        switch(this.ui_state.get('editing').type) {
+        switch (this.ui_state.get('editing').type) {
           case 'thread':
           case 'article':
           case 'blog':
@@ -354,38 +356,38 @@ Handles the bottom input part
         var that = this;
         var el = this.$el.parent();
         Fruum.io.trigger('fruum:resize_to_bottom');
-        el.stop(true,true).animate({
-          bottom: (-el.outerHeight()) + 'px'
+        el.stop(true, true).animate({
+          bottom: (-el.outerHeight()) + 'px',
         }, 100, function() {
           that.render();
           if (that.$('.fruum-js-interacting').length) {
             el.addClass('fruum-interacting');
-          }
-          else {
+          } else {
             el.removeClass('fruum-interacting');
           }
           that.onResize();
           el.css('bottom', (-el.outerHeight()) + 'px').
-            stop(true,true).
+            stop(true, true).
             animate({
-              bottom: '0px'
+              bottom: '0px',
             }, 'fast', that._getEasing(), function() {
               Fruum.io.trigger('fruum:resize');
               if (that.ui_state.get('viewing').type === 'channel') {
                 that.ui.channel_input.focus();
                 Fruum.io.trigger('fruum:scroll_bottom');
-              }
-              else switch(that.ui_state.get('editing').type) {
-                case 'thread':
-                case 'article':
-                case 'blog':
-                case 'channel':
-                case 'category':
-                  that.ui.field_header.focus().select();
-                  break;
-                case 'post':
-                  that.ui.field_body.focus();
-                  break;
+              } else {
+                switch (that.ui_state.get('editing').type) {
+                  case 'thread':
+                  case 'article':
+                  case 'blog':
+                  case 'channel':
+                  case 'category':
+                    that.ui.field_header.focus().select();
+                    break;
+                  case 'post':
+                    that.ui.field_body.focus();
+                    break;
+                }
               }
               that.startOnboard();
               that.consumeKarma();
@@ -393,13 +395,13 @@ Handles the bottom input part
         });
       },
       _getEasing: function() {
-        switch(this.ui_state.get('editing').type) {
+        switch (this.ui_state.get('editing').type) {
           case 'thread':
           case 'article':
           case 'blog':
             return 'easeOutSine';
         }
-        return 'easeInOutBack'
+        return 'easeInOutBack';
       },
       _getMode: function() {
         if (Fruum.user.anonymous) return 'anonymous';
@@ -421,7 +423,7 @@ Handles the bottom input part
         if (this.ui.preview.hasClass('fruum-is-active')) {
           var h = this.ui.field_body.height();
           this.ui.field_body.hide();
-          this.ui.preview_panel.css('display','inline-block').height(h).html(
+          this.ui.preview_panel.css('display', 'inline-block').height(h).html(
             Fruum.utils.xssProtect(
               Fruum.utils.print(
                 this.ui.field_body.val(),
@@ -429,8 +431,7 @@ Handles the bottom input part
               )
             )
           );
-        }
-        else {
+        } else {
           this.ui.preview_panel.hide();
           this.ui.field_body.show();
         }
@@ -474,24 +475,26 @@ Handles the bottom input part
         this.ui.field_initials.parent().attr('data-initials', Fruum.utils.printInitials(this.ui.field_initials.val()));
       },
       onChannelKey: function(event) {
-        switch(event.which) {
-          case 13: //Enter
-            if (!event._autocomplete_consumed)
+        switch (event.which) {
+          case 13: // Enter
+            if (!event._autocomplete_consumed) {
               this.onPost(event);
+            }
             break;
-          case 27: //Escape
-            if (!event._autocomplete_consumed)
+          case 27: // Escape
+            if (!event._autocomplete_consumed) {
               this.ui.channel_input.val('').blur();
+            }
             break;
         }
       },
       onBodyKeydown: function(event) {
-        //send type notification
+        // send type notification
         this.typeNotificationStart();
         if (event.metaKey || event.ctrlKey) {
           var selection = null;
-          switch(event.which) {
-            case 13: //enter
+          switch (event.which) {
+            case 13: // enter
               if (this.ui_state.get('editing').type == 'post') {
                 var that = this;
                 this.ui.post.addClass('fruum-button-active');
@@ -501,34 +504,79 @@ Handles the bottom input part
                 }, 100);
               }
               break;
-            case 66: //b
-            case 73: //i
+            case 66: // b
+            case 73: // i
               selection = (this.ui.field_body.getSelection() || {}).text;
               event.preventDefault();
               break;
           }
-          switch(event.which) {
-            case 66: //b
+          switch (event.which) {
+            case 66: // b
               if (selection) this.ui.field_body.replaceSelection('**' + selection + '**');
               else this.ui.field_body.val(this.ui.field_body.val() + ' **bold**');
               break;
-            case 73: //i
+            case 73: // i
               if (selection) this.ui.field_body.replaceSelection('*' + selection + '*');
               else this.ui.field_body.val(this.ui.field_body.val() + ' *italics*');
               break;
           }
-        }
-        else if (event.which == 13) {
-          //onboard
+        } else if (event.which == 13) {
+          // onboard
           if (this.post_count % 2) {
             Fruum.io.trigger('fruum:set_onboard', 'help');
-          }
-          else {
+          } else {
             Fruum.io.trigger('fruum:set_onboard', 'preview');
             Fruum.io.trigger('fruum:set_onboard', 'attachments');
           }
+          // smart markdown
+          this.onSmartText(event);
         }
         this.autocomplete_view.onKey(event);
+      },
+      onSmartText: function(event) {
+        // smart markdown, get last line
+        var curretPos = this.ui.field_body.prop('selectionStart');
+        if (curretPos) {
+          // get last line
+          var text = this.ui.field_body.val() || '',
+              line_start = text.lastIndexOf('\n', curretPos - 1);
+
+          if (line_start < curretPos) {
+            var line = text.substr(line_start + 1, curretPos - line_start - 1) || '',
+                tabs = line.search(/\S/) || 0,
+                smart_text;
+
+            line = $.trim(line);
+            // check for list or empty list
+            if (line == '*' || line == '+' || line == '-') {
+              // remove line
+              this.ui.field_body.val(
+                Fruum.utils.truncateString(text, line_start + 1, curretPos, '\n')
+              );
+              Fruum.utils.setCaretPosition(this.ui.field_body, line_start + 2);
+              event.preventDefault();
+            } else if (line.indexOf('* ') == 0) {
+              smart_text = Fruum.utils.padFactory(' ', tabs) + '* ';
+            } else if (line.indexOf('+ ') == 0) {
+              smart_text = Fruum.utils.padFactory(' ', tabs) + '+ ';
+            } else if (line.indexOf('- ') == 0) {
+              smart_text = Fruum.utils.padFactory(' ', tabs) + '- ';
+            } else {
+              // numbered list
+              var match = line.match(/(^\d+)\. /);
+              if (match && match[1] | 0) {
+                match = (match[1] | 0) + 1;
+                smart_text = Fruum.utils.padFactory(' ', tabs) + match + '. ';
+              }
+            }
+            // inject smart text
+            if (smart_text) {
+              this.ui.field_body.val(Fruum.utils.injectString(text, '\n' + smart_text, curretPos));
+              Fruum.utils.setCaretPosition(this.ui.field_body, curretPos + smart_text.length + 1);
+              event.preventDefault();
+            }
+          }
+        }
       },
       onKeyBody: function(event) {
         var editing = this.ui_state.get('editing');
@@ -545,7 +593,7 @@ Handles the bottom input part
         editing.initials = this.ui.field_initials.val() || '';
       },
       onKeyTags: function(event) {
-        //check for trailing space
+        // check for trailing space
         if (event.which == 32) {
           var tags = this.ui.field_tags.val() || '';
           if (tags.charAt(tags.length - 1) == ' ' && tags.charAt(tags.length - 2) != ',') {
@@ -556,7 +604,7 @@ Handles the bottom input part
       },
       onKeyAny: function(event) {
         if (event && event.which == 27) {
-          //check if all fields are empty
+          // check if all fields are empty
           if (!this.ui.field_header.val() && !this.ui.field_body.val()) {
             this.onCancel();
           }
@@ -573,17 +621,46 @@ Handles the bottom input part
                   filter: ['html', 'body', 'span', 'div'],
                   replacement: function(innerHTML) {
                     return innerHTML;
-                  }
+                  },
                 },
                 {
                   filter: ['head', 'script', 'style', 'input', 'form'],
-                  replacement: function() { return ''; }
+                  replacement: function() { return ''; },
                 }
               ]});
               event.preventDefault();
-              this.ui.field_body.replaceSelection(text)
+              this.ui.field_body.replaceSelection(text);
+            } catch (err) {}
+            return;
+          }
+          // try text plain
+          text = clp.getData('text/plain') || clp.getData('Text');
+          if (text) {
+            // find links
+            if (Fruum.utils.startsWith(text, 'https://') ||
+                Fruum.utils.startsWith(text, 'http://')
+            ) {
+              // check for image
+              if (_.some(['.png', '.jpg', '.jpeg', '.gif'], function(ext) {
+                return Fruum.utils.endsWith(text, ext);
+              })) {
+                text = '![image](' + text + ')';
+              } else {
+                text = '[link](' + text + ')';
+              }
+              event.preventDefault();
+              this.ui.field_body.replaceSelection(text);
+              // select field
+              var curretPos = this.ui.field_body.prop('selectionStart'),
+                  el = this.ui.field_body.get(0);
+              if (curretPos && el && el.setSelectionRange) {
+                var value = this.ui.field_body.val() || '';
+                el.setSelectionRange(
+                  value.lastIndexOf('[', curretPos) + 1,
+                  value.lastIndexOf(']', curretPos)
+                );
+              }
             }
-            catch(err) {}
           }
         }
       },
@@ -602,7 +679,7 @@ Handles the bottom input part
         this.ui_state.set('editing', {
           type: 'category',
           parent: this.ui_state.get('viewing').id,
-          permission: this.ui_state.get('viewing').permission
+          permission: this.ui_state.get('viewing').permission,
         });
         this.ui.field_header.focus();
       },
@@ -614,7 +691,7 @@ Handles the bottom input part
         Fruum.io.trigger('fruum:unset_onboard', 'add_stream');
         this.ui_state.set('editing', {
           type: 'article',
-          parent: this.ui_state.get('viewing').id
+          parent: this.ui_state.get('viewing').id,
         });
         this.ui.field_header.focus();
       },
@@ -626,7 +703,7 @@ Handles the bottom input part
         Fruum.io.trigger('fruum:unset_onboard', 'add_stream');
         this.ui_state.set('editing', {
           type: 'blog',
-          parent: this.ui_state.get('viewing').id
+          parent: this.ui_state.get('viewing').id,
         });
         this.ui.field_header.focus();
       },
@@ -638,7 +715,7 @@ Handles the bottom input part
         Fruum.io.trigger('fruum:unset_onboard', 'add_stream');
         this.ui_state.set('editing', {
           type: 'thread',
-          parent: this.ui_state.get('viewing').id
+          parent: this.ui_state.get('viewing').id,
         });
         this.ui.field_header.focus();
       },
@@ -650,7 +727,7 @@ Handles the bottom input part
         Fruum.io.trigger('fruum:unset_onboard', 'add_stream');
         this.ui_state.set('editing', {
           type: 'channel',
-          parent: this.ui_state.get('viewing').id
+          parent: this.ui_state.get('viewing').id,
         });
         this.ui.field_header.focus();
       },
@@ -662,7 +739,7 @@ Handles the bottom input part
         Fruum.io.trigger('fruum:unset_onboard', 'add_stream');
         this.ui_state.set('editing', {
           type: 'post',
-          parent: this.ui_state.get('viewing').id
+          parent: this.ui_state.get('viewing').id,
         });
         this.ui.field_body.focus();
       },
@@ -672,7 +749,7 @@ Handles the bottom input part
           event.stopPropagation();
         }
         Fruum.io.trigger('fruum:show_bookmark', {
-          body: this.ui_state.get('search')
+          body: this.ui_state.get('search'),
         });
       },
       onPost: function(event) {
@@ -683,10 +760,10 @@ Handles the bottom input part
         var editing = this.ui_state.get('editing'),
             id = editing.id || '',
             order = 0;
-        switch(this.ui.field_type.val()) {
+        switch (this.ui.field_type.val()) {
           case 'category':
             order = this.collections.categories.length + 1;
-            //set default if they do not exist
+            // set default if they do not exist
             if (this.ui.field_initials.length && !this.ui.field_initials.val()) {
               this.ui.field_initials.val((this.ui.field_header.val() || '').substr(0, 3));
             }
@@ -699,7 +776,7 @@ Handles the bottom input part
           id = editing.id;
           order = editing.order || order;
         }
-        //prepare tags
+        // prepare tags
         var tags = _.uniq(_.compact(
           (this.ui.field_tags.val() || '').
             replace(/ /g, ',').
@@ -712,7 +789,7 @@ Handles the bottom input part
             type = this.ui.field_type.val() || '';
         if (type == 'post' && !body) return;
         if (type != 'post' && !header) return;
-        Fruum.io.trigger(id?'fruum:update':'fruum:add', {
+        Fruum.io.trigger(id ? 'fruum:update' : 'fruum:add', {
           id: id,
           parent: this.ui.field_parent.val() || '',
           initials: this.ui.field_initials.val() || '',
@@ -721,13 +798,13 @@ Handles the bottom input part
           body: body,
           attachments: this.cleanAttachments(body, editing.attachments || []),
           tags: tags,
-          usage: this.ui.field_usage.data('value')|0,
-          permission: this.ui.field_permission.data('value')|0,
-          order: order
+          usage: this.ui.field_usage.data('value') | 0,
+          permission: this.ui.field_permission.data('value') | 0,
+          order: order,
         });
         this.post_count++;
       },
-      //remove unused attachments
+      // remove unused attachments
       cleanAttachments: function(body, attachments) {
         for (var i = attachments.length - 1; i >= 0; --i) {
           var attachment = attachments[i];
@@ -752,7 +829,7 @@ Handles the bottom input part
           event.preventDefault();
           event.stopPropagation();
         }
-        var usage = $(event.target).closest('[data-usage]').data('usage')|0;
+        var usage = $(event.target).closest('[data-usage]').data('usage') | 0;
         this.ui.field_usage.data('value', usage).html(Fruum.usage[usage]);
         this.ui.popup_usage.addClass('fruum-nodisplay');
       },
@@ -771,10 +848,10 @@ Handles the bottom input part
           event.preventDefault();
           event.stopPropagation();
         }
-        var permission = $(event.target).closest('[data-permission]').data('permission')|0;
+        var permission = $(event.target).closest('[data-permission]').data('permission') | 0;
         this.ui.field_permission.data('value', permission).html(Fruum.permission[permission]);
         this.ui.popup_permission.addClass('fruum-nodisplay');
-      }
+      },
     });
   });
 })();

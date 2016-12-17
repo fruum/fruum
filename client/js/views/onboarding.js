@@ -2,9 +2,11 @@
 Onboarding widget
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     Fruum.views = Fruum.views || {};
 
     var $ = Fruum.libs.$,
@@ -14,45 +16,45 @@ Onboarding widget
     var MESSAGES = {
       breadcrumb: {
         tip: '<strong>Psst!</strong> You can use the breadcrumb to go back.',
-        key: 1 << 1
+        key: 1 << 1,
       },
       add_stream: {
         tip: 'Share your thoughts and ideas by clicking here.',
-        key: 1 << 2
+        key: 1 << 2,
       },
       add_category: {
         tip: '<strong>Psst!</strong> You can click here and add categories to organize your topics.',
-        key: 1 << 3
+        key: 1 << 3,
       },
       edit: {
         tip: '<strong>Hey!</strong> In case you want to edit your __type__ click here.',
-        key: 1 << 4
+        key: 1 << 4,
       },
       manage: {
         tip: '<strong>Hey!</strong> In case you want to manage this __type__ click here.',
-        key: 1 << 5
+        key: 1 << 5,
       },
       watch: {
         tip: '<strong>Hey!</strong> You&#39;re watching this __type__! You will receive notifications on updates.',
-        key: 1 << 6
+        key: 1 << 6,
       },
       preview: {
         tip: '<strong>Psst!</strong> Preview how your __type__ will look like by clicking this button.',
-        key: 1 << 7
+        key: 1 << 7,
       },
       attachments: {
         tip: 'An image is worth a thousand words, you can add some by clicking here.',
-        key: 1 << 8
+        key: 1 << 8,
       },
       help: {
         tip: '<strong>Hey!</strong> Enhance your messages with markdown typography, click to see how.',
-        key: 1 << 9
-      }
-    }
+        key: 1 << 9,
+      },
+    };
 
     Fruum.views.OnboardingView = Backbone.View.extend({
       events: {
-        'click .fruum-js-onboarding-ok': 'onOK'
+        'click .fruum-js-onboarding-ok': 'onOK',
       },
       show_delay: 2000,
       hide_delay: 9000,
@@ -89,7 +91,7 @@ Onboarding widget
       addMessage: function(message) {
         if (Fruum.user.anonymous) return;
         if (!message) {
-          //purge all
+          // purge all
           this.queue = [];
           this.delay_offset = 0;
           if (this.timer_show) {
@@ -126,7 +128,7 @@ Onboarding widget
           that.undelegateEvents();
           that.$el = null;
           that.viewing = null;
-          //consume next
+          // consume next
           if (that.queue.length) {
             if (that.timer_show) clearTimeout(that.timer_show);
             that.timer_show = setTimeout(that.consume, that.show_delay + that.delay_offset);
@@ -135,7 +137,7 @@ Onboarding widget
       },
       consume: function() {
         this.timer_show = null;
-        while(this.queue.length) {
+        while (this.queue.length) {
           var message = this.queue.shift();
           if (this.validate(message)) {
             this.viewing = message;
@@ -143,7 +145,8 @@ Onboarding widget
 
             var target = this.root_el.find('[data-onboard="' + message + '"]').eq(0),
                 target_top = target.offset().top - this.root_el.offset().top,
-                target_center = target.offset().left - this.root_el.offset().left + target.innerWidth() / 2,
+                target_center = target.offset().left - this.root_el.offset().left +
+                                target.innerWidth() / 2,
                 anim = { opacity: 1 },
                 tip = MESSAGES[message].tip,
                 that = this;
@@ -156,16 +159,15 @@ Onboarding widget
               this.root_el.append(this.template_top({
                 left: target_center,
                 top: top + this.anim_yoffset,
-                tip: tip
+                tip: tip,
               }));
-            }
-            else {
+            } else {
               var bottom = this.root_el.height() - target_top;
               anim.bottom = bottom + 'px';
               this.root_el.append(this.template_bottom({
                 left: target_center,
                 bottom: bottom + this.anim_yoffset,
-                tip: tip
+                tip: tip,
               }));
             }
 
@@ -191,7 +193,7 @@ Onboarding widget
           this.hide();
           Fruum.io.trigger('fruum:onboard', { onboard: Fruum.user.onboard });
         }
-      }
+      },
     });
   });
 })();

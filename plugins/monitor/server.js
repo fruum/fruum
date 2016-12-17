@@ -5,13 +5,11 @@ Monitors activity and send a digest to administrators
 
 var _ = require('underscore'),
     moment = require('moment'),
-    Models = require('../../server/models'),
     logger = require('../../server/logger');
 
 function Monitor(options, instance) {
-
   function report(application, documents) {
-    //get admins
+    // get admins
     instance.storage.match_users(application.get('id'), { admin: true }, function(administrators) {
       administrators = instance.engine.administratorsOrDefaults(administrators);
       if (administrators.length) {
@@ -20,7 +18,7 @@ function Monitor(options, instance) {
             date: moment(new Date()).format('D MMM YYYY'),
             application: application.toJSON(),
             getShareURL: application.getShareURL.bind(application),
-            documents: []
+            documents: [],
           };
           var stats = {
             channels: [],
@@ -28,10 +26,10 @@ function Monitor(options, instance) {
             articles: [],
             categories: [],
             blogs: [],
-            replies: []
+            replies: [],
           };
           _.each(documents, function(doc) {
-            switch(doc.get('type')) {
+            switch (doc.get('type')) {
               case 'channel':
                 stats.channels.push(doc);
                 break;
@@ -68,9 +66,9 @@ function Monitor(options, instance) {
           context.digest = '';
           _.each(stats, function(value, key) {
             if (value.length) {
-              //un-pluralize
+              // un-pluralize
               if (value.length == 1) {
-                switch(key) {
+                switch (key) {
                   case 'channels':
                     key = 'channel';
                     break;
@@ -94,17 +92,16 @@ function Monitor(options, instance) {
               context.digest += ' ' + value.length + ' new ' + key + ',';
             }
           }, this);
-          //remove trailing comma
+          // remove trailing comma
           context.digest = context.digest.slice(0, -1).trim();
           var email = {
             subject: email_template.subject(context),
-            html: instance.email.inlineCSS(email_template.html(context))
+            html: instance.email.inlineCSS(email_template.html(context)),
           };
           _.each(administrators, function(admin) {
             if (admin.get('blocked')) {
               logger.info(application.get('id'), 'monitor_notify_skip_blocked_user', admin);
-            }
-            else {
+            } else {
               logger.info(application.get('id'), 'monitor_notify', admin);
               instance.email.send(application, admin, email, function() {});
             }
@@ -119,17 +116,17 @@ function Monitor(options, instance) {
         last_monitor_ts = meta.last_monitor_ts || 0,
         now = Date.now();
 
-    //update last report timestamp
+    // update last report timestamp
     meta.last_monitor_ts = now;
     instance.storage.update_app(application, { meta: meta }, function() {});
 
-    //fetch the documents that were updated in the interval
+    // fetch the documents that were updated in the interval
     instance.storage.search_attributes(
       application.get('id'),
       {
         archived: false,
         created__gte: last_monitor_ts,
-        created__lt: now
+        created__lt: now,
       },
       function(documents) {
         if (documents.length) {
@@ -140,11 +137,11 @@ function Monitor(options, instance) {
   }
 
   this.cron = function() {
-    //get all applications
+    // get all applications
     instance.storage.list_apps(function(apps) {
       _.each(apps, process_app);
     });
-  }
+  };
 }
 
 module.exports = Monitor;

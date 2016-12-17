@@ -20,22 +20,21 @@ var path = require('path'),
     logger = require('./logger');
 
 function FruumServer(options, cli_cmd, ready) {
-  logger.system("Starting Fruum");
+  logger.system('Starting Fruum');
   options = options || {};
 
-  //start sentry
+  // start sentry
   if (options.sentry && options.sentry.dsn) {
-    logger.system("Sentry is enabled");
+    logger.system('Sentry is enabled');
     var sentry_client = new raven.Client(options.sentry.dsn);
     sentry_client.patchGlobal(function() {
       process.exit(1);
     });
-  }
-  else {
-    logger.system("Sentry is disabled");
+  } else {
+    logger.system('Sentry is disabled');
   }
 
-  //defaults
+  // defaults
   options.static_root = path.resolve(
      __dirname + '/../' + (options.static_root || 'static')
   );
@@ -57,18 +56,18 @@ function FruumServer(options, cli_cmd, ready) {
   options.docs.max_channel_name_size = Math.max(0, options.docs.max_channel_name_size || 0);
   options.docs.max_post_size = Math.max(0, options.docs.max_post_size || 0);
 
-  //client folder absolute path
+  // client folder absolute path
   var client_root = path.resolve(__dirname + '/../client');
   var loader_root = path.resolve(__dirname + '/../loader');
   var fruum_root = path.resolve(__dirname + '/..');
 
-  //create logs folder
+  // create logs folder
   if (!fs.existsSync(options.logs)) {
-    logger.system("Creating logs folder: " + options.logs);
+    logger.system('Creating logs folder: ' + options.logs);
     fs.mkdirSync(options.logs);
   }
 
-  //suppress plugins on CLI
+  // suppress plugins on CLI
   if (cli_cmd) delete options.plugins;
 
   // ------------------------------ SERVER SETUP -------------------------------
@@ -77,27 +76,27 @@ function FruumServer(options, cli_cmd, ready) {
     app.use(raven.middleware.express.requestHandler(options.sentry.dsn));
   }
 
-  //enable CORS
+  // enable CORS
   app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
   });
 
-  //enable compression on express
+  // enable compression on express
   app.use(compress());
 
-  //enable body parse (required for POST)
+  // enable body parse (required for POST)
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
 
   // ------------------------------ ENGINE START -------------------------------
 
-  //start Engine
+  // start Engine
   var ENGINE = require('./engine');
   var instance = {
-    server: app
-  }
+    server: app,
+  };
   var engine = new ENGINE(options, instance);
 
   // ----------------------------- COMMAND LINE --------------------------------
@@ -161,29 +160,28 @@ function FruumServer(options, cli_cmd, ready) {
 
   // -------------------------------- PLUGINS ----------------------------------
 
-  //load client plugins
+  // load client plugins
   var plugin_templates = [], plugin_js = [];
   if (options.plugins) {
-    //loop through plugins, initialize them and put them in the appropriate
-    //plugin bucket
+    // loop through plugins, initialize them and put them in the appropriate
+    // plugin bucket
     _.each(options.plugins, function(plugin_name) {
-      //check if plugin exists
+      // check if plugin exists
       try {
         var path = __dirname + '/../plugins/' + plugin_name + '/';
-        //check for javascript
+        // check for javascript
         var stats = fs.lstatSync(path + 'client.js');
         if (stats.isFile()) {
           plugin_js.push('plugins/' + plugin_name + '/client.js');
           logger.system('Using client plugin: ' + plugin_name);
         }
-        //check for template
+        // check for template
         stats = fs.lstatSync(path + 'template.html');
         if (stats.isFile()) {
           plugin_templates.push('plugins/' + plugin_name + '/template.html');
           logger.system('Using client template: ' + plugin_name);
         }
-      }
-      catch(err) {}
+      } catch (err) {}
     });
   }
 
@@ -222,8 +220,8 @@ function FruumServer(options, cli_cmd, ready) {
 
   // -------------------------------- HELPERS ----------------------------------
 
-  //Validate api_id in request GET params and returned cached response or
-  //hit callback if not cache exists
+  // Validate api_id in request GET params and returned cached response or
+  // hit callback if not cache exists
   function req_api_key(req, res, cache_namespace, callback) {
     var app_id = req.params.app_id || req.query.app_id;
     if (!app_id) {
@@ -244,7 +242,7 @@ function FruumServer(options, cli_cmd, ready) {
       callback(app_id, cache_key, cache_entry.queue);
     });
   }
-  //same as above but return application object as well
+  // same as above but return application object as well
   function req_api_key_and_application(req, res, cache_namespace, callback) {
     req_api_key(req, res, cache_namespace, function(app_id, cache_key, cache_queue) {
       engine.get_app(app_id, function(application) {
@@ -262,11 +260,11 @@ function FruumServer(options, cli_cmd, ready) {
   function _get_js_bundle(req, res) {
     req_api_key(req, res, 'get/js/bundle', function(app_id, cache_key, cache_queue) {
       var benchmark = Date.now();
-      var builder = buildify()
-        .setDir(fruum_root)
-        .concat(_.union(
+      var builder = buildify().
+        setDir(fruum_root).
+        concat(_.union(
           [
-            //Libraries
+            // Libraries
             'client/js/libs/preload.js',
             'client/js/libs/jquery.js',
             'client/js/libs/underscore.js',
@@ -282,13 +280,13 @@ function FruumServer(options, cli_cmd, ready) {
           web_app,
           plugin_js,
           ['client/js/main.js']));
-      //minimize js only when we are on cache mode
+      // minimize js only when we are on cache mode
       if (options.compress) builder = builder.uglify();
-      //get output
+      // get output
       var cache_data = builder.getContent().replace('__url__', options.url);
       logger.info(
         app_id, 'get/js/bundle',
-        'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024)|0) + 'kb'
+        'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024) | 0) + 'kb'
       );
       engine.cache.put(cache_queue, cache_key, cache_data);
       res.type('text/javascript');
@@ -302,23 +300,23 @@ function FruumServer(options, cli_cmd, ready) {
   function _get_js_compact(req, res) {
     req_api_key(req, res, 'get/js/compact', function(app_id, cache_key, cache_queue) {
       var benchmark = Date.now();
-      var builder = buildify()
-        .setDir(fruum_root)
-        .concat(_.union(
+      var builder = buildify().
+        setDir(fruum_root).
+        concat(_.union(
           [
-            //Libraries
+            // Libraries
             'client/js/libs/bindlibs.js'
           ],
           web_app,
           plugin_js,
           ['client/js/main.js']));
-      //minimize js only when we are on cache mode
+      // minimize js only when we are on cache mode
       if (options.compress) builder = builder.uglify({mangle: false});
-      //get output
+      // get output
       var cache_data = builder.getContent().replace('__url__', options.url);
       logger.info(
         app_id, 'get/js/compact',
-        'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024)|0) + 'kb'
+        'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024) | 0) + 'kb'
       );
       engine.cache.put(cache_queue, cache_key, cache_data);
       res.type('text/javascript');
@@ -332,10 +330,10 @@ function FruumServer(options, cli_cmd, ready) {
   function _get_html(req, res) {
     req_api_key(req, res, 'get/html', function(app_id, cache_key, cache_queue) {
       var benchmark = Date.now();
-      var cache_data = buildify()
-        .setDir(fruum_root)
-        .load('client/templates/main.html')
-        .concat(_.union([
+      var cache_data = buildify().
+        setDir(fruum_root).
+        load('client/templates/main.html').
+        concat(_.union([
           'client/templates/profile.html',
           'client/templates/persona.html',
           'client/templates/breadcrumb.html',
@@ -356,12 +354,13 @@ function FruumServer(options, cli_cmd, ready) {
           'client/templates/filters.html',
           'client/templates/counters.html',
           'client/templates/move.html',
-          'client/templates/posts.html'], plugin_templates))
-        .getContent();
+          'client/templates/posts.html'], plugin_templates)).getContent();
+
       logger.info(
         app_id, 'get/html',
-        'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024)|0) + 'kb'
+        'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024) | 0) + 'kb'
       );
+
       engine.cache.put(cache_queue, cache_key, cache_data);
       res.type('text/html');
       res.send(cache_data);
@@ -390,12 +389,11 @@ function FruumServer(options, cli_cmd, ready) {
                       main_sass;
             logger.error(application.get('id'), 'sass', msg);
             res.status(500).send(msg);
-          }
-          else {
+          } else {
             var cache_data = result.css;
             logger.info(
               application.get('id'), 'get/style',
-              'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024)|0) + 'kb'
+              'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024) | 0) + 'kb'
             );
             engine.cache.put(cache_queue, cache_key, cache_data);
             res.type('text/css');
@@ -428,34 +426,34 @@ function FruumServer(options, cli_cmd, ready) {
                       main_sass;
             logger.error(application.get('id'), 'sass', msg);
             res.status(500).send(msg);
-          }
-          else {
+          } else {
             var css = result.css;
-            //load templates
-            var html = buildify()
-              .setDir(fruum_root)
-              .load('loader/template.html')
-              .getContent();
-            //load javascript
-            var builder_js = buildify()
-              .setDir(fruum_root)
-              .concat(['loader/loader.js']);
-              //minimize js only when we are on cache mode
+            // load templates
+            var html = buildify().
+              setDir(fruum_root).
+              load('loader/template.html').
+              getContent();
+            // load javascript
+            var builder_js = buildify().
+              setDir(fruum_root).
+              concat(['loader/loader.js']);
+              // minimize js only when we are on cache mode
             if (options.compress) builder_js = builder_js.uglify();
-              //get output
+              // get output
             var js = builder_js.getContent();
             html = html.replace(/\n/g, '');
             css = _.escape(css).replace(/\n/g, '');
-            var cache_data = js.replace(/"/g,  "'").replace('__css__', css).
-                              replace('__app_id__', application.get('id')).
-                              replace('__fullpage_url__', application.get('fullpage_url')).
-                              replace('__pushstate__', application.get('pushstate')?'1':'0').
-                              replace('__sso__', application.get('auth_url')?'1':'0').
-                              replace('__html__', html).
-                              replace('__url__', options.url);
+            var cache_data = js.replace(/"/g, "'").
+              replace('__css__', css).
+              replace('__app_id__', application.get('id')).
+              replace('__fullpage_url__', application.get('fullpage_url')).
+              replace('__pushstate__', application.get('pushstate') ? '1' : '0').
+              replace('__sso__', application.get('auth_url') ? '1' : '0').
+              replace('__html__', html).
+              replace('__url__', options.url);
             logger.info(
               application.get('id'), 'get/loader',
-              'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024)|0) + 'kb'
+              'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024) | 0) + 'kb'
             );
             engine.cache.put(cache_queue, cache_key, cache_data);
             res.type('text/javascript');
@@ -465,7 +463,7 @@ function FruumServer(options, cli_cmd, ready) {
       });
     });
   }
-  app.get('/loader.js', _get_loader); //DEPRECATED
+  app.get('/loader.js', _get_loader); // DEPRECATED
   app.get('/go/:app_id', _get_loader);
 
   // ----------------------------------- SEO -----------------------------------
@@ -479,7 +477,7 @@ function FruumServer(options, cli_cmd, ready) {
         return;
       }
       engine.robot(app_id, doc_id, function(response) {
-        //get template
+        // get template
         fs.readFile(__dirname + '/../loader/robot.html', 'utf8', function(err, data) {
           if (err) {
             res.status(500).send('Could not load template');
@@ -502,15 +500,15 @@ function FruumServer(options, cli_cmd, ready) {
 
   // --------------------------------- CONNECT ---------------------------------
 
-  io.on('connection', function(socket){
+  io.on('connection', function(socket) {
     engine.connect(socket);
     socket.on('disconnect', function() {
       engine.disconnect(socket);
     });
     socket.on('fruum:auth', function(payload) {
-      //authenticate
+      // authenticate
       engine.authenticate(socket, payload || {}, function() {
-        //bind callbacks on successful auth
+        // bind callbacks on successful auth
         if (socket.fruum_user) {
           socket.on('fruum:view', function(payload) {
             engine.view(socket, payload || {});
@@ -584,6 +582,9 @@ function FruumServer(options, cli_cmd, ready) {
           socket.on('fruum:user:unblock', function(payload) {
             engine.unblock_user(socket, payload || {});
           });
+          socket.on('fruum:user:remove', function(payload) {
+            engine.remove_user(socket, payload || {});
+          });
           socket.on('fruum:user:feed', function(payload) {
             engine.user_feed(socket, payload || {});
           });
@@ -601,10 +602,10 @@ function FruumServer(options, cli_cmd, ready) {
 
   // ----------------------------- HTTP SERVER ---------------------------------
 
-  http.listen(process.env.PORT || options.port, function(){
-    logger.system("Listening connection on port " + (process.env.PORT || options.port));
+  http.listen(process.env.PORT || options.port, function() {
+    logger.system('Listening connection on port ' + (process.env.PORT || options.port));
     ready && ready();
   });
-
 }
+
 module.exports = FruumServer;

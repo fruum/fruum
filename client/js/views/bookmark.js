@@ -2,44 +2,45 @@
 Handles bookmark search
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     Fruum.views = Fruum.views || {};
 
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
-        Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
 
     Fruum.views.BookmarkItemView = Marionette.ItemView.extend({
       template: '#fruum-template-bookmark-category',
       triggers: {
-        'click': 'select:category'
-      }
+        'click': 'select:category',
+      },
     });
 
     Fruum.views.BookmarkCollectionView = Marionette.CollectionView.extend({
-      childView: Fruum.views.BookmarkItemView
+      childView: Fruum.views.BookmarkItemView,
     });
 
     Fruum.views.BookmarkEditView = Marionette.LayoutView.extend({
       template: '#fruum-template-bookmark-edit',
       regions: {
-        list: '.fruum-js-bookmark-categories'
+        list: '.fruum-js-bookmark-categories',
       },
       ui: {
         close: '.fruum-js-close',
         delete: '.fruum-js-delete',
         header: '[data-field="header"]',
         body: '[data-field="body"]',
-        store: '.fruum-js-store'
+        store: '.fruum-js-store',
       },
       events: {
         'click @ui.close': 'onClose',
         'click @ui.delete': 'onDelete',
-        'click @ui.store': 'onStore'
+        'click @ui.store': 'onStore',
       },
       initialize: function(options) {
         _.bindAll(this, 'onKey');
@@ -91,13 +92,13 @@ Handles bookmark search
         var header = $.trim(this.ui.header.val() || ''),
             body = $.trim(this.ui.body.val() || '') || this.bookmark.body;
         if (!header || !body) return;
-        Fruum.io.trigger(this.bookmark.id?'fruum:update':'fruum:add', {
+        Fruum.io.trigger(this.bookmark.id ? 'fruum:update' : 'fruum:add', {
           id: this.bookmark.id || '',
           parent: this.bookmark.parent,
           header: header,
           type: 'bookmark',
           body: body,
-          order: this.bookmark.id?this.bookmark.order:(this.categories.length + 1)
+          order: this.bookmark.id ? this.bookmark.order : (this.categories.length + 1),
         });
         this.onClose();
         if (!this.bookmark.id) Fruum.io.trigger('fruum:clear_search');
@@ -108,7 +109,7 @@ Handles bookmark search
       onRender: function() {
         this.el_container = this.$el.parent();
         this.showChildView('list', new Fruum.views.BookmarkCollectionView({
-          collection: this.all_categories
+          collection: this.all_categories,
         }));
       },
       show: function(bookmark) {
@@ -123,20 +124,20 @@ Handles bookmark search
       },
       templateHelpers: function() {
         return {
-          bookmark: this.bookmark || {}
-        }
-      }
+          bookmark: this.bookmark || {},
+        };
+      },
     });
 
     Fruum.views.BookmarkSearchResultView = TRANSITION(Marionette.ItemView.extend({
       template: '#fruum-template-bookmarksearch',
       ui: {
         search: '[data-search-shortcut]',
-        navigate: '.fruum-js-navigate'
+        navigate: '.fruum-js-navigate',
       },
       events: {
         'click @ui.search': 'onSearch',
-        'click @ui.navigate': 'onNavigate'
+        'click @ui.navigate': 'onNavigate',
       },
       onSearch: function(event) {
         if (event) {
@@ -157,11 +158,11 @@ Handles bookmark search
         var id = this.model.get('id');
         if (this.model.get('type') === 'post') id = this.model.get('parent');
         Fruum.io.trigger('fruum:view', { id: id });
-      }
+      },
     }));
-    Fruum.views.BookmarkSearchView = Marionette.CollectionView.extend({
-      childView: Fruum.views.BookmarkSearchResultView
-    });
 
+    Fruum.views.BookmarkSearchView = Marionette.CollectionView.extend({
+      childView: Fruum.views.BookmarkSearchResultView,
+    });
   });
 })();

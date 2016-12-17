@@ -2,69 +2,73 @@
 Models
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     var _ = Fruum.libs._;
     var Backbone = Fruum.libs.Backbone;
-    //Document
+
+    // Document
     Fruum.models.Document = Backbone.Model.extend({
       defaults: {
-        //document id
+        // document id
         id: '',
-        //breadcrumb path
+        // breadcrumb path
         breadcrumb: [],
-        //document parent id
+        // document parent id
         parent: '',
-        //document parent type
+        // document parent type
         parent_type: '',
-        //category, thread, article, blog, post, bookmark, channel
+        // category, thread, article, blog, post, bookmark, channel
         type: '',
-        //creation date in unix timestamp
+        // creation date in unix timestamp
         created: 0,
-        //last update date in unix timestamp
+        // last update date in unix timestamp
         updated: 0,
-        //category or thread initials
+        // category or thread initials
         initials: '',
-        //header e.g. category or thread/channel title
+        // header e.g. category or thread/channel title
         header: '',
-        //body e.g. description or post message or bookmark search query
+        // body e.g. description or post message or bookmark search query
         body: '',
-        //if category/thread is sticky
+        // if category/thread is sticky
         sticky: false,
-        //permissions
+        // permissions
         locked: false,
         visible: true,
         inappropriate: false,
-        //0: everyone, 1: logged-in, 2: admins
+        // 0: everyone, 1: logged-in, 2: admins
         permission: 0,
-        //0: discussion, 1: helpdesk, 2: blog, 3: chat, 4: categories
+        // 0: discussion, 1: helpdesk, 2: blog, 3: chat, 4: categories
         usage: 0,
-        //denormalized author details
+        // denormalized author details
         user_id: '',
         user_username: '',
         user_displayname: '',
         user_avatar: '',
-        //reactions (array of usernames)
+        // reactions (array of usernames)
         react_up: [],
         react_down: [],
-        //order
+        // order
         order: 0,
-        //total number of children
+        // total number of children
         children_count: 0,
-        //if document is marked for deletion
+        // if document is marked for deletion
         archived: false,
-        //archived date unix timestamp
+        // archived date unix timestamp
         archived_ts: 0,
-        //tags
+        // tags
         tags: [],
-        //attachments, array of [{ name: '', type: 'image', data: 'base64' }, ..]
+        // attachments, array of [{ name: '', type: 'image', data: 'base64' }, ..]
         attachments: [],
-        //metadata
-        meta: {}
-      }
+        // metadata
+        meta: {},
+      },
     });
-    //User profile
+
+    // User profile
     Fruum.models.Profile = Backbone.Model.extend({
       defaults: {
         id: '',
@@ -74,13 +78,14 @@ Models
         karma: 0,
         admin: false,
         blocked: false,
-        joined: 0, //timestamp
-        last_login: 0, //timestamp or 'online'.
+        joined: 0, // timestamp
+        last_login: 0, // timestamp or 'online'.
         topics: 0,
-        replies: 0
-      }
+        replies: 0,
+      },
     });
-    //UI state
+
+    // UI state
     Fruum.models.UIState = Backbone.Model.extend({
       defaults: {
         breadcrumb: [],
@@ -112,20 +117,23 @@ Models
         navigation_height: 0,
         interactions_height: 0,
         content_height: 0,
-        panel_height: 0
-      }
+        panel_height: 0,
+      },
     });
-    //User
+
+    // User
     Fruum.user = {
       anonymous: true,
-      admin: false
+      admin: false,
     };
+
     Fruum.userUtils = {
       watch: function(docid) {
         if (!docid) return;
         Fruum.user.watch = Fruum.user.watch || [];
-        if (Fruum.user.watch.indexOf(docid) < 0)
+        if (Fruum.user.watch.indexOf(docid) < 0) {
           Fruum.user.watch.push(docid);
+        }
       },
       unwatch: function(docid) {
         if (!docid || !Fruum.user.watch) return;
@@ -141,8 +149,9 @@ Models
       addNotification: function(docid) {
         if (!docid) return;
         Fruum.user.notifications = Fruum.user.notifications || [];
-        if (Fruum.user.notifications.indexOf(docid) < 0)
+        if (Fruum.user.notifications.indexOf(docid) < 0) {
           Fruum.user.notifications.push(docid);
+        }
       },
       removeNotification: function(docid) {
         if (!docid || !Fruum.user.notifications) return;
@@ -152,9 +161,10 @@ Models
       countNotifications: function() {
         if (!Fruum.user.notifications) return 0;
         return Fruum.user.notifications.length;
-      }
-    }
-    //Cross view communication channel
+      },
+    };
+
+    // Cross view communication channel
     Fruum.io = _.clone(Backbone.Events);
   });
 })();

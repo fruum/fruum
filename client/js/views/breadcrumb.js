@@ -2,29 +2,28 @@
 Breadcrumb view
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     Fruum.views = Fruum.views || {};
 
     var $ = Fruum.libs.$,
-        _ = Fruum.libs._,
-        Messages = Fruum.messages,
-        Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette;
 
     Fruum.views.BreadcrumbView = Marionette.ItemView.extend({
       template: '#fruum-template-breadcrumb',
       ui: {
         navigate: '.fruum-js-navigate',
-        close_search: '.fruum-js-search-close'
+        close_search: '.fruum-js-search-close',
       },
       modelEvents: {
-        'change:viewing change:searching': 'render'
+        'change:viewing change:searching': 'render',
       },
       events: {
         'click @ui.close_search': 'onCloseSearch',
-        'click @ui.navigate': 'onNavigate'
+        'click @ui.navigate': 'onNavigate',
       },
       onNavigate: function(event) {
         if (event) {
@@ -40,7 +39,7 @@ Breadcrumb view
           event.stopPropagation();
         }
         Fruum.io.trigger('fruum:clear_search');
-      }
+      },
     });
   });
 })();

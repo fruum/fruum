@@ -2,27 +2,29 @@
 Utilities
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     var remarkable = new Fruum.libs.Remarkable({
           html: true,
           breaks: true,
-          linkify: true
+          linkify: true,
         }),
         sanitize = Fruum.libs.DOMPurify.sanitize,
         _ = Fruum.libs._;
 
-    //custom validator
+    // custom validator
     if (remarkable.inline && remarkable.inline.validateLink) {
       remarkable.inline.__validateLink = remarkable.inline.validateLink;
       remarkable.inline.validateLink = function(url) {
         if (!remarkable.inline.__validateLink(url)) {
-          //allow inline images
+          // allow inline images
           return url.indexOf('data:image') == 0;
         }
         return true;
-      }
+      };
     }
 
     var at_user = ['@[.+-_0-9A-Za-z\xaa\xb5\xba\xc0-\xd6\xd8-\xf6',
@@ -93,10 +95,10 @@ Utilities
     var re_mention = new RegExp('(^|\\s)' + at_user, 'g'),
         re_autocomplete_user = new RegExp('\\B' + at_user + '$');
 
-    //Escape regex
+    // Escape regex
     Fruum.utils.escape_regex = function(re) {
-      return re.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-    }
+      return re.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"); // eslint-disable-line
+    };
 
     // --------------------------------- VISITS --------------------------------
 
@@ -104,55 +106,61 @@ Utilities
     Fruum.utils.resetVisits = function() {
       visit_date = {};
       visit_updates = {};
-    }
+    };
+
     Fruum.utils.addVisitUpdate = function(view_id) {
       visit_updates[view_id] = true;
-    }
+    };
+
     Fruum.utils.setVisitDate = function(view_id) {
       delete visit_updates[view_id];
       if (Fruum.user.anonymous) return;
       visit_date[view_id] = Date.now() - (Fruum.user.time_diff || 0);
-    }
+    };
+
     Fruum.utils.isNewVisit = function(view_id, timestamp) {
       return visit_updates[view_id] ||
              (!Fruum.user.anonymous &&
              (timestamp > (visit_date[view_id] || Fruum.user.last_visit)) &&
              (timestamp < Fruum.user.server_now));
-    }
+    };
 
-    // --------------------------------- VIEWS ---------------------------------
+    // --------------------------------- VIEWS --------------------------------
 
-    //Make Marionette itemviews work without the parent div
+    // Make Marionette itemviews work without the parent div
     Fruum.utils.marionette_itemview_without_tag = function(view) {
       return view.extend({
         onRender: function() {
           this.$el = this.$el.children();
           this.$el.unwrap();
           this.setElement(this.$el);
-        }
+        },
       });
-    }
-    //Item view with fade transition
+    };
+
+    // Item view with fade transition
     Fruum.utils.marionette_itemview_transition = function(view) {
       return view.extend({
-        onBeforeAttach: function(){
+        onBeforeAttach: function() {
           this.$el.css('opacity', 0);
         },
         onAttach: function() {
-          this.$el.delay(this.__delay_transition || 10).
-                  animate({ opacity: 1 }, 200);
-        }
+          this.$el.
+            delay(this.__delay_transition || 10).
+            animate({ opacity: 1 }, 200);
+        },
       });
-    }
+    };
 
-    // ------------------------------- DISPLAY ---------------------------------
+    // ------------------------------- DISPLAY --------------------------------
 
-    //Check if string is url
+    // Check if string is url
     Fruum.utils.isLink = function(url) {
       url = (url || '').trim().toLowerCase();
       return url.indexOf('http://') == 0 || url.indexOf('https://') == 0;
-    }
-    //Get initials from username
+    };
+
+    // Get initials from username
     Fruum.utils.getInitials = function(name) {
       name = (name || '').toUpperCase().split(' ');
       var response = '';
@@ -160,165 +168,222 @@ Utilities
         if (name[i]) response += name[i][0];
       }
       return response;
-    }
-    //Print initials
+    };
+
+    // Print initials
     Fruum.utils.printInitials = function(initials) {
       return (initials || '').toUpperCase();
-    }
-    //Print tags
+    };
+
+    // Print tags
     Fruum.utils.tagify = function(text) {
-      return text.replace(/\[(.*?)\]/g, function(a,b) {
+      return text.replace(/\[(.*?)\]/g, function(a, b) { // eslint-disable-line
         return '<span class="fruum-tag" data-initials="' + b.toUpperCase()[0] + '">' + b + '</span>';
       });
-    }
-    //Highlight user mentions
+    };
+
+    // Highlight user mentions
     Fruum.utils.mentions = function(text) {
-      var matched = re_mention.exec(text);
-      text = text.replace(re_mention,function(matched) {
+      text = text.replace(re_mention, function(matched) {
         var ret = '**' + matched.trim() + '**';
-        if (matched[0] === '\n' || matched[0] === ' ')
+        if (matched[0] === '\n' || matched[0] === ' ') {
           ret = matched[0] + ret;
+        }
         return ret;
       });
       return text;
-    }
-    //get autocomplete for @user
+    };
+
+    // get autocomplete for @user
     Fruum.utils.autocompleteUser = function(text) {
       var m = (text || '').match(re_autocomplete_user);
       if (m) return m[0];
-    }
-    //get autocomplete for emoji
+    };
+
+    // get autocomplete for emoji
     Fruum.utils.autocompleteEmoji = function(text) {
-      var m = (text || '').match(/\B:([\-+\w]*)$/);
+      var m = (text || '').match(/\B:([\-+\w]*)$/); // eslint-disable-line
       if (m && m[0].length > 1) return m[0];
-    }
-    //XSS protect
+    };
+
+    // XSS protect
     Fruum.utils.xssProtect = function(text) {
       text = text || '';
-      //find code blocks
+      // find code blocks
       text = text.replace(/```([^`]+)```/g, function(a, b) { return '```' + _.escape(b) + '```'; });
       text = sanitize(text);
-      //revert code blocks
+      // revert code blocks
       text = text.replace(/```([^`]+)```/g, function(a, b) { return '```' + _.unescape(b) + '```'; });
       return text;
-    }
-    //Persona processor
+    };
+
+    // Persona processor
     Fruum.utils.personaSays = function(payload) {
-      //build all available responses
+      // build all available responses
       var responses = [];
       _.each(Fruum.processors.persona, function(persona) {
         var response = persona(payload);
         if (response) responses.push(response);
       });
       if (!responses.length) responses.push({});
-      //pick a random one
+      // pick a random one
       var final = responses[_.random(0, responses.length - 1)];
-      //add failsafes
+      // add failsafes
       final.avatar_url = final.avatar_url || '';
       final.avatar_initials = final.avatar_initials || '';
       final.name = final.name || '';
       final.text = final.text || 'Least said sooner mended. Something went really wrong!';
       final.topic = final.topic || '';
-      //do some variable processing
+      // do some variable processing
       var username = Fruum.user.displayname || final.default_username || 'user';
       final.text = final.text.
         replace(/<username>/g, username).
         replace(/<categoryname>/g, payload.categoryname || 'category').
         replace(/<search>/g, payload.search || '');
       return final;
-    }
-    //Markdown display
+    };
+
+    // Markdown display
     Fruum.utils.print = function(post, attachments) {
-      //remove escaping of > and ` used by markdown
+      // remove escaping of > and ` used by markdown
       post = (post || '').replace(/&gt;/g, '>').replace(/&#x60;/g, '`');
-      //process post through plugins
+      // process post through plugins
       post = Fruum.utils.chain(Fruum.processors.post, post);
-      //emoji processing
+      // emoji processing
       post = Fruum.emoji.convert(post);
-      //user mentions processing
+      // user mentions processing
       post = Fruum.utils.mentions(post);
-      //attachments processing
+      // attachments processing
       if (attachments && attachments.length) {
         _.each(attachments, function(attachment) {
           if (attachment.type == 'image') {
             post = post.replace(
               new RegExp(Fruum.utils.escape_regex('[[' + attachment.type + ':' + attachment.name + ']]'), 'g'),
               '![' + attachment.name + '](' + attachment.data + ')'
-            )
+            );
           }
         });
       }
       return remarkable.render(post);
-    }
+    };
+
     Fruum.utils.printHeader = function(text) {
-      //emojify
+      // emojify
       text = Fruum.emoji.convert(_.escape(text || ''));
       return text;
-    }
+    };
+
     Fruum.utils.printReaction = function(count) {
       if (!count) return '';
       if (count < 1000) return '' + count;
       return (count / 1000).toFixed(1) + 'K';
-    }
+    };
+
     Fruum.utils.printReactionTooltip = function(action, reactions) {
       if (!reactions.length) return '';
       var users = _.without(reactions.slice(0), Fruum.user.username),
-          ret = '', has_you = false;
+          ret = '', has_you = false, i;
       if (users.length != reactions.length) {
         has_you = true;
         users.unshift('you');
       }
       if (users.length > 5) {
-        for (var i = 0; i < 4; ++i) {
+        for (i = 0; i < 4; ++i) {
           ret += users[i] + ', ';
         }
         ret += users[4] + ' and ' + (users.length - 5) + ' more';
-      }
-      else if (users.length > 1) {
-        for (var i = 0; i < users.length - 2; ++i) {
+      } else if (users.length > 1) {
+        for (i = 0; i < users.length - 2; ++i) {
           ret += users[i] + ', ';
         }
         ret += users[users.length - 2] + ' and ' + users[users.length - 1];
-      }
-      else {
+      } else {
         ret += users[0];
       }
       if (has_you) {
         ret += '. Click to revoke';
       }
       return action + ' by ' + ret;
-    }
-    //if message contains attachment
+    };
+
+    // if message contains attachment
     Fruum.utils.usesAttachment = function(message, attachment) {
       return Boolean(message.match(new RegExp(Fruum.utils.escape_regex('[[' + attachment.type + ':' + attachment.name + ']]'), 'g')));
-    }
+    };
+
     Fruum.utils.permaLink = function(doc_id, post_index) {
       var ret = Fruum.application.fullpage_url +
-                (Fruum.application.pushstate?'':'#') +
+                (Fruum.application.pushstate ? '' : '#') +
                 'v/' + doc_id;
       if (post_index > 0) ret += '/' + post_index;
       return ret;
-    }
+    };
+
     Fruum.utils.printSummary = function(text) {
       text = Fruum.utils.print(text).
         replace(/(<h[123456]\b[^>]*>)[^<>]*(<\/h[123456]>)/gi, '').
         replace(/<(?:.|\n)*?>/gm, '').
-        replace(/\[\[\b\S+?\b\]\]/g, '');
-      if (text.length > 170)
+        replace(/\[\[\b\S+?\b\]\]/g, ''); // eslint-disable-line
+
+      if (text.length > 170) {
         text = text.substr(0, 170) + '...';
+      }
       return text;
-    }
+    };
+
     Fruum.utils.printSearch = function(text) {
       text = Fruum.utils.printSummary(text);
-      //do some highlighting
+      // do some highlighting
       return text.replace(/\{\{\{(.+?)\}\}\}/g, '<span class="highlight">$1</span>');
-    }
+    };
 
-    // ------------------------------- GENERIC ---------------------------------
+    // ------------------------------- STRING ---------------------------------
 
-    //analyze url
+    Fruum.utils.injectString = function(text, needle, position) {
+      position = position || text.length;
+      return text.substr(0, position) +
+        needle + text.substr(position, text.length);
+    };
+
+    Fruum.utils.truncateString = function(text, startindex, endindex, needle) {
+      needle = needle || '';
+      return text.substr(0, startindex) + needle + text.substr(endindex);
+    };
+
+    Fruum.utils.padFactory = function(needle, count) {
+      return (new Array(count + 1)).join(needle);
+    };
+
+    Fruum.utils.startsWith = function(text, prefix) {
+      return text.indexOf(prefix) == 0;
+    };
+
+    Fruum.utils.endsWith = function(text, suffix) {
+      if (text.length < suffix.length) return false;
+      return text.lastIndexOf(suffix) == text.length - suffix.length;
+    };
+
+    Fruum.utils.setCaretPosition = function($el, caretPos) {
+      var el = $el.get(0);
+      if (!el) return;
+
+      if (el.createTextRange) {
+        var range = el.createTextRange();
+        range.move('character', caretPos);
+        range.select();
+      } else if (el.selectionStart || el.selectionStart === 0) {
+        el.focus();
+        el.setSelectionRange(caretPos, caretPos);
+      } else {
+        el.focus();
+      }
+    };
+
+    // ------------------------------- GENERIC --------------------------------
+
+    // analyze url
     Fruum.utils.getLocation = function(href) {
-      var match = href.match(/^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)(\/[^?#]*)(\?[^#]*|)(#.*|)$/);
+      var match = href.match(/^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)(\/[^?#]*)(\?[^#]*|)(#.*|)$/); // eslint-disable-line
       if (match) {
         return {
           protocol: match[1],
@@ -327,10 +392,9 @@ Utilities
           port: match[4],
           pathname: match[5],
           search: match[6],
-          hash: match[7]
-        }
-      }
-      else {
+          hash: match[7],
+        };
+      } else {
         return {
           protocol: '',
           host: '',
@@ -338,62 +402,71 @@ Utilities
           port: '',
           pathname: '',
           search: '',
-          hash: ''
-        }
+          hash: '',
+        };
       }
-    }
-    //If computer is Mac or IOS
+    };
+
+    // If computer is Mac or IOS
     Fruum.utils.isMacLike = function() {
-      return (navigator.platform || '').match(/(Mac|iPhone|iPod|iPad)/i)?true:false;
-    }
-    //If computer is Mac
+      return (navigator.platform || '').match(/(Mac|iPhone|iPod|iPad)/i) ? true : false; // eslint-disable-line
+    };
+
+    // If computer is Mac
     Fruum.utils.isMac = function() {
-      return (navigator.platform || '').match(/(Mac)/i)?true:false;
-    }
-    //If computer is Windows
+      return (navigator.platform || '').match(/(Mac)/i) ? true : false; // eslint-disable-line
+    };
+
+    // If computer is Windows
     Fruum.utils.isWindows = function() {
-      return (navigator.platform || '').match(/(Win)/i)?true:false;
-    }
-    //If computer is Linux
+      return (navigator.platform || '').match(/(Win)/i) ? true : false; // eslint-disable-line
+    };
+
+    // If computer is Linux
     Fruum.utils.isLinux = function() {
-      return (navigator.platform || '').match(/(Linux)/i)?true:false;
-    }
-    //If computer is desktop
+      return (navigator.platform || '').match(/(Linux)/i) ? true : false; // eslint-disable-line
+    };
+
+    // If computer is desktop
     Fruum.utils.isDesktop = function() {
-      return (navigator.platform || '').match(/(Linux|Win|Mac)/i)?true:false;
-    }
-    //If browser is Chrome
+      return (navigator.platform || '').match(/(Linux|Win|Mac)/i) ? true : false; // eslint-disable-line
+    };
+
+    // If browser is Chrome
     Fruum.utils.isChrome = function() {
       return !!window.chrome;
-    }
-    //print shortcut using mac/win modifier
+    };
+
+    // print shortcut using mac/win modifier
     Fruum.utils.shortcutModifier = function(key) {
-      return (Fruum.utils.isMacLike()?'Cmd':'Ctrl') + '+' + key;
-    }
-    //chain execute array of functions
+      return (Fruum.utils.isMacLike() ? 'Cmd' : 'Ctrl') + '+' + key;
+    };
+
+    // chain execute array of functions
     Fruum.utils.chain = function(fn_array, data, params) {
-      //process post through plugins
+      // process post through plugins
       if (fn_array.length) {
         _.each(fn_array, function(fn) {
           data = fn(data, params);
         });
       }
       return data;
-    }
-    //session storage
+    };
+
+    // session storage
     Fruum.utils.sessionStorage = function(key, value) {
       if (window.sessionStorage &&
           window.sessionStorage.setItem &&
-          window.sessionStorage.getItem)
-      {
+          window.sessionStorage.getItem
+      ) {
         try {
           if (value != undefined) window.sessionStorage.setItem(key, value);
           else return window.sessionStorage.getItem(key);
-        }
-        catch(err) {}
+        } catch (err) {}
       }
-    }
-    //move categories/articles up/down
+    };
+
+    // move categories/articles up/down
     Fruum.utils.orderUp = function(model, top) {
       if (!model || !model.collection) return;
       var collection = model.collection;
@@ -401,34 +474,36 @@ Utilities
       if (index <= 0) return;
       if (top) {
         var reorder = [{
-          id: model.get('id'),
-          order: 1
-        }], order = 1;
+              id: model.get('id'),
+              order: 1,
+            }],
+            order = 1;
+
         collection.each(function(m) {
           if (m != model) {
             order++;
             reorder.push({
               id: m.get('id'),
-              order: order
+              order: order,
             });
           }
         });
         _.each(reorder, function(entry) {
           Fruum.io.trigger('fruum:field', {
-            id: entry.id, field: 'order', value: entry.order
+            id: entry.id, field: 'order', value: entry.order,
           });
         });
-      }
-      else {
+      } else {
         var prev_model = collection.models[index - 1];
         Fruum.io.trigger('fruum:field', {
-          id: model.get('id'), field: 'order', value: prev_model.get('order')
+          id: model.get('id'), field: 'order', value: prev_model.get('order'),
         });
         Fruum.io.trigger('fruum:field', {
-          id: prev_model.get('id'), field: 'order', value: model.get('order')
+          id: prev_model.get('id'), field: 'order', value: model.get('order'),
         });
       }
-    }
+    };
+
     Fruum.utils.orderDown = function(model, bottom) {
       if (!model || !model.collection) return;
       var collection = model.collection;
@@ -441,38 +516,38 @@ Utilities
             order++;
             reorder.push({
               id: m.get('id'),
-              order: order
+              order: order,
             });
           }
         });
         order++;
         reorder.push({
           id: model.get('id'),
-          order: order
+          order: order,
         });
         _.each(reorder, function(entry) {
           Fruum.io.trigger('fruum:field', {
-            id: entry.id, field: 'order', value: entry.order
+            id: entry.id, field: 'order', value: entry.order,
           });
         });
-      }
-      else {
+      } else {
         var next_model = collection.models[index + 1];
         Fruum.io.trigger('fruum:field', {
-          id: model.get('id'), field: 'order', value: next_model.get('order')
+          id: model.get('id'), field: 'order', value: next_model.get('order'),
         });
         Fruum.io.trigger('fruum:field', {
-          id: next_model.get('id'), field: 'order', value: model.get('order')
+          id: next_model.get('id'), field: 'order', value: model.get('order'),
         });
       }
-    }
+    };
+
     Fruum.utils.resizeImage = function(base64, max_width, max_height, done) {
       var img = document.createElement('img');
       img.onload = function() {
         try {
           var width = img.width,
               height = img.height;
-          if (width <= max_width && height <=max_height) {
+          if (width <= max_width && height <= max_height) {
             done(base64);
             return;
           }
@@ -487,8 +562,7 @@ Utilities
               height *= max_width / width;
               width = max_width;
             }
-          }
-          else {
+          } else {
             if (height > max_height) {
               width *= max_height / height;
               height = max_height;
@@ -499,14 +573,13 @@ Utilities
           ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
 
-          var mime = base64.indexOf('data:image/jpeg') == 0?'image/jpeg':'image/png';
+          var mime = base64.indexOf('data:image/jpeg') == 0 ? 'image/jpeg' : 'image/png';
           done(canvas.toDataURL(mime));
-        }
-        catch(err) {
+        } catch (err) {
           done(base64);
         }
-      }
+      };
       img.src = base64;
-    }
+    };
   });
 })();

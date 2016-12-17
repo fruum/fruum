@@ -9,7 +9,6 @@ var _ = require('underscore'),
     Models = require('../../../models');
 
 module.exports = function(options, client, self) {
-
   // -------------------------------- GET SINGLE--------------------------------
 
   self.get = function(app_id, id, callback, params) {
@@ -17,17 +16,16 @@ module.exports = function(options, client, self) {
       index: self.toAppIndex(app_id),
       type: 'doc',
       id: id,
-      refresh: true
+      refresh: true,
     }, function(error, response) {
       if (error) {
-        //not found
+        // not found
         callback();
-      }
-      else if (response._source) {
+      } else if (response._source) {
         callback(new Models.Document(response._source));
       }
     });
-  }
+  };
 
   // ------------------------------ GET MULTIPLE -------------------------------
 
@@ -36,15 +34,15 @@ module.exports = function(options, client, self) {
       index: self.toAppIndex(app_id),
       type: 'doc',
       refresh: true,
-      body: { ids: id_array }
+      body: { ids: id_array },
     };
     if (params && params.skipfields && params.skipfields.length) {
       data._sourceExclude = params.skipfields;
     }
     client.mget(data, function(error, response) {
       var values = {};
-      if (error) {}
-      else if (response && response.docs) {
+      if (error) {
+      } else if (response && response.docs) {
         _.each(response.docs, function(hit) {
           if (validators.mget(hit._source, id_array)) {
             values[hit._source.id] = new Models.Document(hit._source);
@@ -53,7 +51,7 @@ module.exports = function(options, client, self) {
       }
       callback(values);
     });
-  }
+  };
 
   // -------------------------------- CHILDREN ---------------------------------
 
@@ -65,7 +63,7 @@ module.exports = function(options, client, self) {
     var body = {
       from: 0,
       size: options.elasticsearch.max_children,
-      sort: [{ created : {order : order}}],
+      sort: [{ created: {order: order} }],
       query: {
         filtered: {
           filter: {
@@ -73,26 +71,26 @@ module.exports = function(options, client, self) {
               must: [
                 { term: { parent: id } },
                 { term: { archived: false } }
-              ]
-            }
-          }
-        }
-      }
+              ],
+            },
+          },
+        },
+      },
     };
     if (params && params.skipfields && params.skipfields.length) {
       body._source = {
-        exclude: params.skipfields
-      }
+        exclude: params.skipfields,
+      };
     }
     client.search({
       index: self.toAppIndex(app_id),
       type: 'doc',
       refresh: true,
-      body: body
+      body: body,
     }, function(error, response) {
       var values = [];
-      if(error) {}
-      else if (response && response.hits && response.hits.hits) {
+      if (error) {
+      } else if (response && response.hits && response.hits.hits) {
         _.each(response.hits.hits, function(hit) {
           if (validators.children(hit._source, id)) {
             values.push(new Models.Document(hit._source));
@@ -101,5 +99,5 @@ module.exports = function(options, client, self) {
       }
       callback(values);
     });
-  }
-}
+  };
+};

@@ -4,7 +4,7 @@
 
 (function() {
   'use strict';
-  window.Fruum.plugins.push(function () {
+  window.Fruum.plugins.push(function() {
     var $ = window.Fruum.libs.$,
         _ = window.Fruum.libs._,
         template = _.template($('#fruum-plugin-template-twitchtv').html()),
@@ -14,6 +14,6 @@
       return markdown.replace(re, function(match) {
         return template({ channel: match });
       });
-    }
+    };
   });
 })();

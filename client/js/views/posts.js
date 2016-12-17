@@ -2,14 +2,14 @@
 Posts view
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     Fruum.views = Fruum.views || {};
 
     var $ = Fruum.libs.$,
-        _ = Fruum.libs._,
-        Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette,
         Messages = Fruum.messages,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
@@ -25,10 +25,10 @@ Posts view
         more_source: '.fruum-js-more-source',
         more_target: '.fruum-js-more-target',
         profile: '.fruum-js-profile',
-        links: 'a[href]'
+        links: 'a[href]',
       },
       modelEvents: {
-        'change': 'render'
+        'change': 'render',
       },
       events: {
         'click @ui.more_source': 'onMore',
@@ -39,7 +39,7 @@ Posts view
         'click @ui.delete': 'onDelete',
         'click @ui.share': 'onShare',
         'click @ui.profile': 'onProfile',
-        'click @ui.links': 'onLink'
+        'click @ui.links': 'onLink',
       },
       initialize: function(options) {
         this.template_helpers = options;
@@ -63,7 +63,7 @@ Posts view
         }
         Fruum.io.trigger('fruum:profile', {
           id: this.model.get('user_id'),
-          username: this.model.get('user_username')
+          username: this.model.get('user_username'),
         });
       },
       onMore: function(event) {
@@ -98,7 +98,7 @@ Posts view
         Fruum.io.trigger('fruum:field', {
           id: this.model.get('id'),
           field: 'inappropriate',
-          value: !this.model.get('inappropriate')
+          value: !this.model.get('inappropriate'),
         });
       },
       onShare: function(event) {
@@ -121,47 +121,49 @@ Posts view
           event.preventDefault();
           event.stopPropagation();
         }
-        if (confirm(Messages.report))
+        if (confirm(Messages.report)) {
           Fruum.io.trigger('fruum:report', { id: this.model.get('id') });
+        }
       },
       onLink: function(event) {
         var href = $(event.target).attr('href') || '';
-        //relative link
+        // relative link
         if (href.indexOf('#fruum:') == 0) {
           event.preventDefault();
           event.stopPropagation();
           href = href.replace('#fruum:', '');
           Fruum.api.open(href);
-        }
-        //absolute forum link
-        else if (href.indexOf(Fruum.utils.permaLink('')) == 0) {
+        } else if (href.indexOf(Fruum.utils.permaLink('')) == 0) {
+          // absolute forum link
           Fruum.api.open(href.replace(Fruum.utils.permaLink(''), ''));
-        }
-        //external link
-        else if (href.toLowerCase().indexOf('http://') == 0 ||
-                 href.toLowerCase().indexOf('https://') == 0)
-        {
+        } else if (href.toLowerCase().indexOf('http://') == 0 ||
+                   href.toLowerCase().indexOf('https://') == 0
+        ) {
+          // external link
           event.preventDefault();
           event.stopPropagation();
           window.open(href, '_blank');
         }
-      }
+      },
     }));
+
     Fruum.views.PostEmptyView = TRANSITION(Marionette.ItemView.extend({
       template: '#fruum-template-persona',
       initialize: function(options) {
         this.viewing = options.viewing;
-        if (this.viewing.type == 'channel')
+        if (this.viewing.type == 'channel') {
           this.__delay_transition = 1000;
+        }
       },
       templateHelpers: function() {
         return Fruum.utils.personaSays({
-          permission: Fruum.user.anonymous?'read':'write',
+          permission: Fruum.user.anonymous ? 'read' : 'write',
           action: 'empty_' + this.viewing.type,
-          categoryname: this.viewing.header
+          categoryname: this.viewing.header,
         });
-      }
+      },
     }));
+
     Fruum.views.PostsView = Marionette.CollectionView.extend({
       childView: Fruum.views.PostView,
       emptyView: Fruum.views.PostEmptyView,
@@ -175,18 +177,17 @@ Posts view
             child_index: index,
             viewing: this.ui_state.get('viewing'),
             previous_user_id: prev_model.get('user_id'),
-            previous_created: prev_model.get('created')
-          }
-        }
-        else {
+            previous_created: prev_model.get('created'),
+          };
+        } else {
           return {
             child_index: index,
             viewing: this.ui_state.get('viewing'),
             previous_user_id: '',
-            previous_created: 0
-          }
+            previous_created: 0,
+          };
         }
-      }
+      },
     });
   });
 })();

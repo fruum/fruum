@@ -4,12 +4,10 @@
 
 'use strict';
 
-var _ = require('underscore'),
-    logger = require('../logger');
+var logger = require('../logger');
 
 module.exports = function(options, instance, self) {
-  var engine = instance.engine,
-      storage = self.storage,
+  var storage = self.storage,
       plugins = self.plugins;
 
   // -------------------------------- DELETE -----------------------------------
@@ -35,13 +33,13 @@ module.exports = function(options, instance, self) {
         self.fail(payload);
         return;
       }
-      //process plugins
+      // process plugins
       var plugin_payload = {
         app_id: app_id,
         document: document,
-        user: user
+        user: user,
       };
-      plugins.beforeDelete(plugin_payload, function(err, plugin_payload) {
+      plugins.beforeDelete(plugin_payload, function(err, plugin_payload) { // eslint-disable-line
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:delete', document.toJSON());
@@ -63,7 +61,7 @@ module.exports = function(options, instance, self) {
         });
       });
     });
-  }
+  };
 
   // -------------------------------- ARCHIVE -----------------------------------
 
@@ -88,13 +86,13 @@ module.exports = function(options, instance, self) {
         self.fail(payload);
         return;
       }
-      //process plugins
+      // process plugins
       var plugin_payload = {
         app_id: app_id,
         document: document,
-        user: user
+        user: user,
       };
-      plugins.beforeArchive(plugin_payload, function(err, plugin_payload) {
+      plugins.beforeArchive(plugin_payload, function(err, plugin_payload) { // eslint-disable-line
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:archive', document.toJSON());
@@ -116,7 +114,7 @@ module.exports = function(options, instance, self) {
         });
       });
     });
-  }
+  };
 
   // ------------------------------- RESTORE -----------------------------------
 
@@ -141,13 +139,13 @@ module.exports = function(options, instance, self) {
         self.fail(payload);
         return;
       }
-      //process plugins
+      // process plugins
       var plugin_payload = {
         app_id: app_id,
         document: document,
-        user: user
+        user: user,
       };
-      plugins.beforeRestore(plugin_payload, function(err, plugin_payload) {
+      plugins.beforeRestore(plugin_payload, function(err, plugin_payload) { // eslint-disable-line
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:restore', document.toJSON());
@@ -169,5 +167,5 @@ module.exports = function(options, instance, self) {
         });
       });
     });
-  }
-}
+  };
+};

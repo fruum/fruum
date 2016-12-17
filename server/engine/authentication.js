@@ -10,8 +10,7 @@ var _ = require('underscore'),
     logger = require('../logger');
 
 module.exports = function(options, instance, self) {
-  var cache = self.cache,
-      storage = self.storage,
+  var storage = self.storage,
       auth = self.auth,
       app_users = self.app_users,
       app_applications = self.app_applications;
@@ -19,22 +18,21 @@ module.exports = function(options, instance, self) {
   // --------------------------------- CONNECT ---------------------------------
 
   self.connect = function(socket) {
-  }
+  };
 
   // ------------------------------- DISCONNECT --------------------------------
 
   self.disconnect = function(socket) {
-    //unregister user
+    // unregister user
     var user = socket.fruum_user;
     if (user) {
       var app_id = user.get('app_id'),
           app = app_users[app_id];
       if (!app) {
         logger.error(socket.app_id, 'disconnect: cannot not find app', user);
-      }
-      else {
+      } else {
         app_users[app_id] = _.without(app, user);
-        //remove from channel
+        // remove from channel
         if (user.get('channel_id') && user.get('channel_parent')) {
           var online = {};
           online[user.get('channel_id')] = self.countNormalUsers(app_id, user.get('channel_id'));
@@ -43,25 +41,24 @@ module.exports = function(options, instance, self) {
             'fruum:online', online
           );
         }
-        //if app is empty, then delete it
+        // if app is empty, then delete it
         if (!app_users[app_id].length) {
           delete app_users[app_id];
           delete app_applications[app_id];
         }
-        //update last logout timestamp and karma
+        // update last logout timestamp and karma
         if (user.get('id')) {
           var now = Date.now();
           storage.update_user(app_id, user, {
             last_logout: now,
-            logout_karma: user.get('karma')
+            logout_karma: user.get('karma'),
           }, function(updated_user) {
             if (updated_user) {
               logger.info(app_id, 'update_last_logout',
                           updated_user.get('username') + ': ' + now);
               logger.info(app_id, 'update_logout_karma',
                           updated_user.get('username') + ': ' + updated_user.get('logout_karma'));
-            }
-            else {
+            } else {
               logger.error(app_id, 'update_last_logout_failed', user);
             }
           });
@@ -70,12 +67,12 @@ module.exports = function(options, instance, self) {
       user.set('socket', null);
       delete socket.fruum_user;
     }
-  }
+  };
 
   // ----------------------------- AUTHENTICATE --------------------------------
 
   self.authenticate = function(socket, payload, onready) {
-    //app_id is a required field
+    // app_id is a required field
     if (!payload || !payload.app_id) {
       logger.system('auth: Missing app_id from payload');
       socket.emit('fruum:auth');
@@ -86,96 +83,93 @@ module.exports = function(options, instance, self) {
     var app_id = payload.app_id;
 
     function register_cb(user) {
-      var app = app_applications[app_id];
       app_users[app_id] = app_users[app_id] || [];
       app_users[app_id].push(user);
-      //add default last visit timestamp
+      // add default last visit timestamp
       user.set('last_visit', user.get('last_logout') || Date.now());
-      //add a server time now
+      // add a server time now
       user.set('server_now', Date.now());
       socket.emit('fruum:auth', {
-        user: user.toJSON()
+        user: user.toJSON(),
       });
-      //add additional data
+      // add additional data
       user.set({
         viewing: 0,
         socket: socket,
         app_id: socket.app_id,
         session: uuid.v1(),
-        permission: 0
+        permission: 0,
       });
-      //add permission level
-      if (user.get('admin'))
+      // add permission level
+      if (user.get('admin')) {
         user.set('permission', 2);
-      else if (!user.get('anonymous'))
+      } else if (!user.get('anonymous')) {
         user.set('permission', 1);
-      //ready to roll
+      }
+      // ready to roll
       onready();
     }
-    //get app by app_id
+    // get app by app_id
     if (!app_users[app_id]) {
-      //app is not cached, query it
+      // app is not cached, query it
       storage.get_app(app_id, function(application) {
         if (!application) {
           logger.error(app_id, 'auth: Invalid app_id');
           socket.emit('fruum:auth');
           socket.disconnect();
-        }
-        else {
+        } else {
           app_applications[app_id] = application;
           _register_user(socket, payload, register_cb);
         }
       });
-    }
-    else _register_user(socket, payload, register_cb);
-  }
+    } else _register_user(socket, payload, register_cb);
+  };
 
-  //register user
+  // register user
   function _register_user(socket, payload, onready) {
-    //create a new user and put it in the right collection
-    //based on the app_id
+    // create a new user and put it in the right collection
+    // based on the app_id
     var app_id = payload.app_id,
         user = new Models.User();
-    //bind user object to socket for quick access
+    // bind user object to socket for quick access
     socket.fruum_user = user;
     socket.app_id = app_id;
-    //if user is defined in the payload try to authenticate using
-    //the authentication engine, otherwise consider user to be anonymous
+    // if user is defined in the payload try to authenticate using
+    // the authentication engine, otherwise consider user to be anonymous
     if (payload.user) {
-      //authenticate user
+      // authenticate user
       auth.authenticate(app_applications[app_id], payload.user, function(auth_user) {
         if (auth_user && !auth_user.get('anonymous')) {
-          //update user object with authentication results
+          // update user object with authentication results
           user.set(auth_user.toJSON());
-          //check for updating user details
+          // check for updating user details
           storage.get_user(app_id, user.get('id'), function(storage_user) {
             var now = Date.now();
             if (!storage_user) {
-              //add new user since it does not exist
+              // add new user since it does not exist
               user.set({
                 created: now,
-                last_login: now
+                last_login: now,
               });
               storage.add_user(app_id, user, function() {
                 onready(user);
               });
-            }
-            else {
-              //check for blocked user
+            } else {
+              // check for blocked user
               if (storage_user.get('blocked')) {
-                //continue as anonymous
+                // continue as anonymous
                 user.set(user.defaults);
                 onready(user);
                 return;
               }
-              //find new notifications
+              // find new notifications
               storage.search_attributes(
                 app_id,
                 {
                   archived: false,
                   updated__gte: storage_user.get('last_logout'),
                   type__not: 'post',
-                  ids: storage_user.get('watch')
+                  ids: storage_user.get('watch'),
                 },
                 function(documents) {
                   if (documents.length) {
@@ -186,7 +180,7 @@ module.exports = function(options, instance, self) {
                     notifications = _.union(notifications, storage_user.get('notifications'));
                     storage_user.set('notifications', notifications);
                   }
-                  //proceed to last step
+                  // proceed to last step
                   user.set({
                     watch: storage_user.get('watch'),
                     notifications: storage_user.get('notifications'),
@@ -194,30 +188,34 @@ module.exports = function(options, instance, self) {
                     karma: storage_user.get('karma'),
                     logout_karma: storage_user.get('logout_karma'),
                     meta: storage_user.get('meta'),
-                    last_logout: storage_user.get('last_logout')
+                    last_logout: storage_user.get('last_logout'),
                   });
                   if (storage_user.needsUpdate(user)) {
-                    //update user details (including posts)
+                    // update user details (including posts)
                     user.set('last_login', now);
                     storage.update_user(app_id, user, null, function(updated_user) {
                       onready(updated_user);
                     });
-                  } // user not modified
-                  else {
+                  } else {
+                    // user not modified
                     storage.update_user(app_id, user, { last_login: now, notifications: user.get('notifications') }, function(updated_user) {
                       onready(updated_user);
                     });
                   }
                 }, {
-                  skipfields: ['header', 'body', 'tags', 'attachments']
+                  skipfields: ['header', 'body', 'tags', 'attachments'],
                 }
               );
             }
           });
-        } //user not authenticated
-        else { onready(user); }
+        } else {
+          // user not authenticated
+          onready(user);
+        }
       });
-    } //no payload user object
-    else { onready(user); }
+    } else {
+      // no payload user object
+      onready(user);
+    }
   }
-}
+};

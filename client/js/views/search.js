@@ -2,14 +2,14 @@
 Handles search results
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     Fruum.views = Fruum.views || {};
 
     var $ = Fruum.libs.$,
-        _ = Fruum.libs._,
-        Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
 
@@ -20,28 +20,29 @@ Handles search results
         this.listenTo(this.ui_state, 'change:search', function() {
           var current = this.ui_state.get('search'),
               previous = this.ui_state.previous('search');
-          if ( (current && !previous) || (previous && !current) ) this.render();
+          if ((current && !previous) || (previous && !current)) this.render();
         });
       },
       templateHelpers: function() {
-        //get persona message
+        // get persona message
         var search = this.ui_state.get('search');
         return Fruum.utils.personaSays({
-          permission: Fruum.user.admin?'write':'read',
-          action: search?'no_search_results':'type_to_search',
-          search: search
+          permission: Fruum.user.admin ? 'write' : 'read',
+          action: search ? 'no_search_results' : 'type_to_search',
+          search: search,
         });
-      }
+      },
     }));
+
     Fruum.views.SearchResultView = TRANSITION(Marionette.ItemView.extend({
       template: '#fruum-template-search',
       ui: {
         search: '[data-search-shortcut]',
-        navigate: '.fruum-js-navigate'
+        navigate: '.fruum-js-navigate',
       },
       events: {
         'click @ui.search': 'onSearch',
-        'click @ui.navigate': 'onNavigate'
+        'click @ui.navigate': 'onNavigate',
       },
       onSearch: function(event) {
         if (event) {
@@ -63,7 +64,7 @@ Handles search results
         if (this.model.get('type') === 'post') id = this.model.get('parent');
         Fruum.io.trigger('fruum:view', { id: id });
         Fruum.io.trigger('fruum:clear_search');
-      }
+      },
     }));
     Fruum.views.SearchView = Marionette.CollectionView.extend({
       emptyView: Fruum.views.SearchResultEmptyView,
@@ -73,7 +74,7 @@ Handles search results
       },
       childViewOptions: function() {
         return { ui_state: this.ui_state };
-      }
+      },
     });
   });
 })();

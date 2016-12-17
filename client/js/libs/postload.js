@@ -18,12 +18,16 @@ delete window.toMarkdown;
 
 if (window.___socket_io___)
   window.io = window.___socket_io___;
+
 if (window.__momentjs__)
   window.moment = window.__momentjs__;
+
 if (window.__remarkablejs__)
   window.Remarkable = window.__remarkablejs__;
+
 if (window.__dompurify__)
   window.DOMPurify = window.__dompurify__;
+
 if (window.__toMarkdown__)
   window.toMarkdown = window.__toMarkdown__;
 
@@ -34,10 +38,10 @@ delete window.__dompurify__;
 delete window.__toMarkdown__;
 
 if (window.__define__) {
-	window.define = window.__define__;
-	delete window.__define__;
+  window.define = window.__define__;
+  delete window.__define__;
 }
 if (window.__exports__) {
-	window.exports = window.__exports__;
-	delete window.__exports__;
+  window.exports = window.__exports__;
+  delete window.__exports__;
 }

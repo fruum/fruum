@@ -19,8 +19,7 @@ module.exports = function(options, instance, self) {
       if (!application) {
         logger.error(payload.app_id, 'invalid_app_id');
         self.fail(payload);
-      }
-      else {
+      } else {
         var api_keys = application.get('api_keys') || [];
         var key = payload.using || uuid.v1();
         api_keys.push(key);
@@ -31,14 +30,13 @@ module.exports = function(options, instance, self) {
             console.log(key);
             console.log('[END]');
             self.success(payload);
-          }
-          else {
+          } else {
             self.fail(payload);
           }
         });
       }
     });
-  }
+  };
 
   // ---------------------------- DELETE API KEY -------------------------------
 
@@ -47,8 +45,7 @@ module.exports = function(options, instance, self) {
       if (!application) {
         logger.error(payload.api_key, 'invalid_api_key');
         self.fail(payload);
-      }
-      else {
+      } else {
         var api_keys = application.get('api_keys');
         var index = api_keys.indexOf(payload.api_key);
         if (index >= 0) {
@@ -58,13 +55,12 @@ module.exports = function(options, instance, self) {
             logger.info(updated_application.get('id'), 'delete_api_key', payload.api_key);
             self.success(payload);
           });
-        }
-        else {
+        } else {
           self.fail(payload);
         }
       }
     });
-  }
+  };
 
   // ---------------------------- LIST API KEYS --------------------------------
 
@@ -73,8 +69,7 @@ module.exports = function(options, instance, self) {
       if (!application) {
         logger.error(payload.app_id, 'invalid_app_id');
         self.fail(payload);
-      }
-      else {
+      } else {
         console.log('[BEGIN]');
         _.each(application.get('api_keys'), function(key) {
           console.log(key);
@@ -83,7 +78,7 @@ module.exports = function(options, instance, self) {
         self.success(payload);
       }
     });
-  }
+  };
 
   // -------------------------------- LIST APPS --------------------------------
 
@@ -94,7 +89,7 @@ module.exports = function(options, instance, self) {
       });
       self.success(payload);
     });
-  }
+  };
 
   // --------------------------------- GET APP ---------------------------------
 
@@ -102,7 +97,7 @@ module.exports = function(options, instance, self) {
     storage.get_app(app_id, function(application) {
       callback(application);
     });
-  }
+  };
 
   // --------------------------------- ADD APP ---------------------------------
 
@@ -119,13 +114,13 @@ module.exports = function(options, instance, self) {
       contact_email: payload.contact_email || '',
       theme: payload.theme || '',
       private_key: uuid.v1(),
-      created: Date.now()
+      created: Date.now(),
     });
     storage.add_app(application, function() {
       logger.info(payload.app_id, 'add_app', application);
       self.success(payload);
     });
-  }
+  };
 
   // ------------------------------- UPDATE APP --------------------------------
 
@@ -134,8 +129,7 @@ module.exports = function(options, instance, self) {
       if (!application) {
         logger.error(payload.app_id, 'update_app: Invalid app_id', payload);
         self.fail(payload);
-      }
-      else {
+      } else {
         if (payload.name != undefined) application.set('name', payload.name);
         if (payload.description != undefined) application.set('description', payload.description);
         if (payload.url != undefined) application.set('url', payload.url);
@@ -152,7 +146,7 @@ module.exports = function(options, instance, self) {
         });
       }
     });
-  }
+  };
 
   // ------------------------------- DELETE APP --------------------------------
 
@@ -161,8 +155,7 @@ module.exports = function(options, instance, self) {
       if (!application) {
         logger.error(payload.app_id, 'delete_app: Invalid app_id', payload);
         self.fail(payload);
-      }
-      else {
+      } else {
         storage.delete_app(application, function() {
           self.invalidateApplication(payload.app_id);
           logger.info(payload.app_id, 'delete_app', application);
@@ -170,7 +163,7 @@ module.exports = function(options, instance, self) {
         });
       }
     });
-  }
+  };
 
   // ------------------------------- RESET USERS -------------------------------
 
@@ -179,15 +172,14 @@ module.exports = function(options, instance, self) {
       if (!application) {
         logger.error(payload.app_id, 'reset_users: Invalid app_id', payload);
         self.fail(payload);
-      }
-      else {
+      } else {
         storage.reset_users(application, function() {
           logger.info(payload.app_id, 'reset_users', application);
           self.success(payload);
         });
       }
     });
-  }
+  };
 
   // ------------------------------- LIST USERS -------------------------------
 
@@ -199,7 +191,7 @@ module.exports = function(options, instance, self) {
       console.log('Total users: ' + list.length);
       self.success(payload);
     });
-  }
+  };
 
   // ------------------------------- SEARCH USERS -------------------------------
 
@@ -211,7 +203,7 @@ module.exports = function(options, instance, self) {
       console.log('Total users: ' + list.length);
       self.success(payload);
     });
-  }
+  };
 
   // ------------------------------- DELETE USER -------------------------------
 
@@ -222,19 +214,17 @@ module.exports = function(options, instance, self) {
           if (deleted_user) {
             logger.info(payload.app_id, 'delete_user', deleted_user);
             self.success(payload);
-          }
-          else {
+          } else {
             logger.error(payload.app_id, 'delete_user_failed', user);
             self.fail(payload);
           }
         });
-      }
-      else {
+      } else {
         logger.error(payload.app_id, 'delete_user_id_not_found', payload.value);
         self.fail(payload);
       }
     });
-  }
+  };
 
   // ------------------------------- PROPERTIES -------------------------------
 
@@ -243,13 +233,12 @@ module.exports = function(options, instance, self) {
       if (property) {
         logger.info(payload.app_id, 'set_app_property', payload);
         self.success(payload);
-      }
-      else {
+      } else {
         logger.error(payload.app_id, 'set_app_property failed', payload);
         self.fail(payload);
       }
     });
-  }
+  };
 
   self.get_app_property = function(payload) {
     storage.get_app_property(payload.app_id, payload.property, function(property, value) {
@@ -258,11 +247,10 @@ module.exports = function(options, instance, self) {
         console.log(value);
         console.log('[END]');
         self.success(payload);
-      }
-      else {
+      } else {
         logger.error(payload.app_id, 'get_app_property failed', payload);
         self.fail(payload);
       }
     });
-  }
-}
+  };
+};

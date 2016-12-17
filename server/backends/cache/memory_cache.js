@@ -11,24 +11,24 @@ var queues = {
   static: {
     hash: {},
     array: [],
-    max_size: 50
+    max_size: 50,
   },
   views: {
     hash: {},
     array: [],
-    max_size: 10
+    max_size: 10,
   },
   properties: {
     hash: {},
     array: [],
-    max_size: 100
+    max_size: 100,
   },
   default: {
     hash: {},
     array: [],
-    max_size: 10
-  }
-}
+    max_size: 10,
+  },
+};
 
 function get_queue(queue) {
   return queues[queue] || queues.default;
@@ -42,29 +42,29 @@ module.exports = function(options, storage) {
     queues.properties.max_size = queues.properties.max_size || options.memory_cache.properties;
     queues.default.max_size = queues.default.max_size || options.memory_cache.default;
   }
-  //store a value in cache
+  // store a value in cache
   this.put = function(queue, key, value) {
     var q = get_queue(queue);
-    //check for existing entry
+    // check for existing entry
     var entry = q.hash[key];
     if (entry) {
       entry.value = value;
       return;
     }
-    //check for reaching cache limits
-    while(q.array.length >= q.max_size) {
+    // check for reaching cache limits
+    while (q.array.length >= q.max_size) {
       entry = q.array.shift();
       delete q.hash[entry.key];
     }
-    //add new entry
+    // add new entry
     entry = {
       key: key,
-      value: value
-    }
+      value: value,
+    };
     q.hash[key] = entry;
     q.array.push(entry);
   };
-  //get a value from cache
+  // get a value from cache
   this.get = function(queue, key, callback) {
     var q = get_queue(queue),
         entry = q.hash[key],
@@ -73,7 +73,7 @@ module.exports = function(options, storage) {
     if (entry) value = entry.value;
     callback(value);
   };
-  //delete a value from cache
+  // delete a value from cache
   this.del = function(queue, key) {
     var q = get_queue(queue);
     var entry = q.hash[key];
@@ -82,5 +82,5 @@ module.exports = function(options, storage) {
       var index = q.array.indexOf(entry);
       q.array.splice(index, 1);
     }
-  }
-}
+  };
+};

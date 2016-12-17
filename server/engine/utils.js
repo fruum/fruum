@@ -9,7 +9,7 @@ var _ = require('underscore'),
     logger = require('../logger');
 
 function _gen_cache_key(app_id, admin, doc_id) {
-  return app_id + ':' + (admin|0) + ':' + doc_id;
+  return app_id + ':' + (admin | 0) + ':' + doc_id;
 }
 
 var re_mention = new RegExp(['(^|\\s)@[.+-_0-9A-Za-z\xaa\xb5\xba\xc0-\xd6\xd8-\xf6',
@@ -78,8 +78,7 @@ var re_mention = new RegExp(['(^|\\s)@[.+-_0-9A-Za-z\xaa\xb5\xba\xc0-\xd6\xd8-\x
   '-\uffd7\uffda-\uffdc]+'].join(''), 'g');
 
 module.exports = function(options, instance, self) {
-  var app_users = self.app_users,
-      app_applications = self.app_applications;
+  var app_users = self.app_users;
 
   // ------------------------------ CALLBACKS ----------------------------------
 
@@ -88,13 +87,14 @@ module.exports = function(options, instance, self) {
       if (payload._success) payload._success(payload);
       if (payload._always) payload._always(payload);
     }
-  }
+  };
+
   self.fail = function(payload) {
     if (payload) {
       if (payload._fail) payload._fail(payload);
       if (payload._always) payload._always(payload);
     }
-  }
+  };
 
   // ------------------------------ VALIDATORS ---------------------------------
 
@@ -110,21 +110,22 @@ module.exports = function(options, instance, self) {
       return false;
     }
     return true;
-  }
-  //helper function to check if a document id is valid
+  };
+
+  // helper function to check if a document id is valid
   self.isID = function(obj) {
     return (typeof obj === 'string') || (typeof obj === 'number');
   };
 
   // ------------------------------- BROADCAST ---------------------------------
 
-  //emits notification signals to all users watching this document
+  // emits notification signals to all users watching this document
   self.broadcastNotifications = function(by_user, document) {
     instance.dispatch.emit({
       type: 'notify',
       app_id: by_user.get('app_id'),
       user_session: by_user.get('session'),
-      document: document.toJSON()
+      document: document.toJSON(),
     });
   };
   function __broadcastNotifications(payload) {
@@ -140,16 +141,16 @@ module.exports = function(options, instance, self) {
           socket = user.get('socket');
       if (user.get('session') != payload.user_session && socket && viewing != doc_id && watch.indexOf(doc_id) != -1) {
         if ((user.get('admin') || document.get('visible')) &&
-            document.get('permission') <= user.get('permission'))
-        {
+            document.get('permission') <= user.get('permission')
+        ) {
           socket.emit('fruum:notify', { id: doc_id });
         }
       }
     });
   }
 
-  //emits a signal to all users viewing the same parent, in order to request
-  //a refresh
+  // emits a signal to all users viewing the same parent, in order to request
+  // a refresh
   self.broadcast = function(by_user, document, action, no_admin_check) {
     instance.dispatch.emit({
       type: 'default',
@@ -157,7 +158,7 @@ module.exports = function(options, instance, self) {
       user_session: by_user.get('session'),
       document: document.toJSON(),
       action: action,
-      no_admin_check: no_admin_check
+      no_admin_check: no_admin_check,
     });
   };
   function __broadcast(payload) {
@@ -173,21 +174,21 @@ module.exports = function(options, instance, self) {
           socket = user.get('socket');
       if ((viewing == parent || viewing == id) && user.get('session') != payload.user_session && socket) {
         if (((user.get('admin') || document.get('visible')) &&
-           document.get('permission') <= user.get('permission')) || payload.no_admin_check)
-        {
+           document.get('permission') <= user.get('permission')) || payload.no_admin_check
+        ) {
           socket.emit(payload.action || 'fruum:dirty', json);
         }
       }
     });
   }
 
-  //emits an update signal
+  // emits an update signal
   self.broadcastInfo = function(by_user, document) {
     instance.dispatch.emit({
       type: 'info',
       app_id: by_user.get('app_id'),
       user_session: by_user.get('session'),
-      document: document.toJSON()
+      document: document.toJSON(),
     });
   };
   function __broadcastInfo(payload) {
@@ -199,41 +200,43 @@ module.exports = function(options, instance, self) {
           id: document.get('id'),
           type: document.get('type'),
           children_count: document.get('children_count'),
-          updated: document.get('updated')
+          updated: document.get('updated'),
         };
     _.each(app, function(user) {
       var socket = user.get('socket');
       if (user.get('session') != payload.user_session && socket) {
         if (((user.get('admin') || document.get('visible')) &&
-           document.get('permission') <= user.get('permission')))
-        {
+           document.get('permission') <= user.get('permission'))
+        ) {
           socket.emit('fruum:info', json);
         }
       }
     });
   }
 
-  //broadbast to all users viewing a document
+  // broadbast to all users viewing a document
   self.broadcastRaw = function(app_id, doc_id, action, json) {
     instance.dispatch.emit({
       type: 'raw',
       app_id: app_id,
       doc_id: doc_id,
       action: action,
-      json: json
+      json: json,
     });
-  }
+  };
+
   function __broadcastRaw(payload) {
     if (!payload) return;
     var app = app_users[payload.app_id];
     if (!app) return;
     _.each(app, function(user) {
-      if (user.get('viewing') == payload.doc_id && user.get('socket'))
-        user.get('socket').emit(payload.action, payload.json)
+      if (user.get('viewing') == payload.doc_id && user.get('socket')) {
+        user.get('socket').emit(payload.action, payload.json);
+      }
     });
   }
 
-  //register dispatch events
+  // register dispatch events
   instance.dispatch.on(function(payload) {
     switch (payload.type) {
       case 'raw':
@@ -253,7 +256,7 @@ module.exports = function(options, instance, self) {
 
   // --------------------------------- USERS -----------------------------------
 
-  //find online user based on user id
+  // find online user based on user id
   self.findOnlineUser = function(app_id, user_id) {
     var app = app_users[app_id];
     if (!app) return;
@@ -263,7 +266,8 @@ module.exports = function(options, instance, self) {
     });
     return ret;
   };
-  //count normal users viewing a document
+
+  // count normal users viewing a document
   self.countNormalUsers = function(app_id, doc_id) {
     var app = app_users[app_id];
     if (!app) return 0;
@@ -273,7 +277,8 @@ module.exports = function(options, instance, self) {
     });
     return counter;
   };
-  //find user mentions, returns a list of usernames
+
+  // find user mentions, returns a list of usernames
   self.findMentions = function(text) {
     var users = [];
     _.each(re_mention.match(text), function(user) {
@@ -283,28 +288,32 @@ module.exports = function(options, instance, self) {
       }
     });
     return _.unique(users);
-  }
+  };
 
   // ------------------------------ CACHE UTILS --------------------------------
 
-  //high level function add document to cache
+  // high level function add document to cache
   self.cacheResponse = function(app_id, user, doc_id, response) {
     if (!user) return;
     self.cache.put('views', _gen_cache_key(app_id, user.get('admin'), doc_id), JSON.stringify(response));
-  }
+  };
+
   self.invalidateCache = function(app_id, doc_id) {
     self.cache.del('views', _gen_cache_key(app_id, true, doc_id));
     self.cache.del('views', _gen_cache_key(app_id, false, doc_id));
-  }
+  };
+
   self.invalidateDocument = function(app_id, document) {
     self.invalidateCache(app_id, document.get('id'));
     self.invalidateCache(app_id, document.get('parent'));
-  }
+  };
+
   self.invalidateApplication = function(app_id) {
     _.each(self.CACHE_DEFS, function(value, key) {
       self.cache.del(value.queue, value.key.replace('{app_id}', app_id));
     });
-  }
+  };
+
   self.getCachedResponse = function(app_id, user, doc_id, hit, miss) {
     if (!user) return;
     var key = _gen_cache_key(app_id, user.get('admin'), doc_id);
@@ -312,23 +321,21 @@ module.exports = function(options, instance, self) {
       if (value) {
         try {
           value = JSON.parse(value);
-        }
-        catch(err) {
+        } catch (err) {
           value = undefined;
         }
       }
       if (value) {
         hit && hit(value);
-      }
-      else {
+      } else {
         miss && miss();
       }
     });
-  }
+  };
 
   // ---------------------------------- EMAIL UTILS ----------------------------
 
-  //exlude users with no email address
+  // exlude users with no email address
   self.filterUsersWithEmail = function(users) {
     var recipients = [];
     _.each(users, function(user) {
@@ -337,21 +344,21 @@ module.exports = function(options, instance, self) {
       }
     });
     return recipients;
-  }
+  };
 
-  //get a list of administrators or admins defaults as defined on config.json
+  // get a list of administrators or admins defaults as defined on config.json
   self.administratorsOrDefaults = function(administrators) {
     administrators = self.filterUsersWithEmail(administrators);
     if (!administrators.length) {
-      //add failsafe admins
+      // add failsafe admins
       _.each(options.notifications.defaults.administrators, function(email) {
         administrators.push(new Models.User({
           username: 'admin',
           displayname: 'Administrator',
-          email: email
+          email: email,
         }));
       });
     }
     return administrators;
-  }
-}
+  };
+};

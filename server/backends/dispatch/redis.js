@@ -12,18 +12,18 @@ var _ = require('underscore'),
 module.exports = function(options) {
   _.extend(this, new Base(options));
 
-  //abort if we do not have an api key
+  // abort if we do not have an api key
   if (!options.redis.host) return;
 
   var sub = redis.createClient({
     host: options.redis.host,
     port: options.redis.port,
-    password: options.redis.password
+    password: options.redis.password,
   });
   var pub = redis.createClient({
     host: options.redis.host,
     port: options.redis.port,
-    password: options.redis.password
+    password: options.redis.password,
   });
   var ready = false, that = this;
   sub.on('subscribe', function(channel) {
@@ -39,14 +39,13 @@ module.exports = function(options) {
       _.each(that.getCallbacks(), function(cb) {
         cb(message);
       });
-    }
-    catch(err) {}
+    } catch (err) {}
   });
   sub.subscribe('fruum');
 
-  //override emit function
+  // override emit function
   this.emit = function(payload) {
     if (!ready) return;
     pub.publish('fruum', JSON.stringify(payload));
-  }
-}
+  };
+};

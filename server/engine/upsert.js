@@ -5,14 +5,11 @@
 'use strict';
 
 var _ = require('underscore'),
-    Backbone = require('backbone'),
     Models = require('../models'),
     logger = require('../logger');
 
 module.exports = function(options, instance, self) {
-  var cache = self.cache,
-      engine = self.engine,
-      storage = self.storage,
+  var storage = self.storage,
       plugins = self.plugins;
 
   // --------------------------------- ADD -------------------------------------
@@ -29,7 +26,7 @@ module.exports = function(options, instance, self) {
       user_id: user.get('id'),
       user_username: user.get('username'),
       user_displayname: user.get('displayname'),
-      user_avatar: user.get('avatar')
+      user_avatar: user.get('avatar'),
     });
     if (user.get('anonymous')) {
       logger.error(app_id, 'add_anonymous_noperm', user);
@@ -50,7 +47,7 @@ module.exports = function(options, instance, self) {
       self.fail(payload);
       return;
     }
-    //get parent
+    // get parent
     storage.get(app_id, document.get('parent'), function(parent_doc) {
       if (!parent_doc) {
         logger.error(app_id, 'add_noparent', document);
@@ -59,7 +56,7 @@ module.exports = function(options, instance, self) {
         return;
       }
       var is_valid = false, parent_type = parent_doc.get('type');
-      switch(document.get('type')) {
+      switch (document.get('type')) {
         case 'category':
           is_valid = (parent_type == 'category');
           break;
@@ -83,7 +80,7 @@ module.exports = function(options, instance, self) {
           is_valid = (parent_type == 'category' && parent_doc.get('usage') == 3);
           break;
       }
-      //check permissions
+      // check permissions
       is_valid = is_valid && (parent_doc.get('permission') <= user.get('permission'));
       if (!is_valid) {
         logger.error(app_id, 'add_invalid_parent_perm', document);
@@ -91,76 +88,98 @@ module.exports = function(options, instance, self) {
         self.fail(payload);
         return;
       }
-      //conform to document constraints
+      // conform to document constraints
       switch (document.get('type')) {
         case 'bookmark':
           document.set({
-            header: options.docs.max_bookmark_title_size?document.get('header').substr(0, options.docs.max_bookmark_title_size):document.get('header')
+            header: options.docs.max_bookmark_title_size
+              ? document.get('header').substr(0, options.docs.max_bookmark_title_size)
+              : document.get('header'),
           });
           break;
         case 'category':
           document.set({
-            header: options.docs.max_category_title_size?document.get('header').substr(0, options.docs.max_category_title_size):document.get('header'),
-            body: options.docs.max_category_description_size?document.get('body').substr(0, options.docs.max_category_description_size):document.get('body')
+            header: options.docs.max_category_title_size
+              ? document.get('header').substr(0, options.docs.max_category_title_size)
+              : document.get('header'),
+            body: options.docs.max_category_description_size
+              ? document.get('body').substr(0, options.docs.max_category_description_size)
+              : document.get('body'),
           });
           break;
         case 'article':
-          //update fields (denormalization for search)
+          // update fields (denormalization for search)
           document.set({
             initials: parent_doc.get('initials'),
-            header: options.docs.max_article_title_size?document.get('header').substr(0, options.docs.max_article_title_size):document.get('header'),
-            body: options.docs.max_post_size?document.get('body').substr(0, options.docs.max_post_size):document.get('body')
+            header: options.docs.max_article_title_size
+              ? document.get('header').substr(0, options.docs.max_article_title_size)
+              : document.get('header'),
+            body: options.docs.max_post_size
+              ? document.get('body').substr(0, options.docs.max_post_size)
+              : document.get('body'),
           });
           break;
         case 'blog':
-          //update fields (denormalization for search)
+          // update fields (denormalization for search)
           document.set({
             initials: parent_doc.get('initials'),
-            header: options.docs.max_blog_title_size?document.get('header').substr(0, options.docs.max_blog_title_size):document.get('header'),
-            body: options.docs.max_post_size?document.get('body').substr(0, options.docs.max_post_size):document.get('body')
+            header: options.docs.max_blog_title_size
+              ? document.get('header').substr(0, options.docs.max_blog_title_size)
+              : document.get('header'),
+            body: options.docs.max_post_size
+              ? document.get('body').substr(0, options.docs.max_post_size)
+              : document.get('body'),
           });
           break;
         case 'thread':
-          //update fields (denormalization for search)
+          // update fields (denormalization for search)
           document.set({
             initials: parent_doc.get('initials'),
-            header: options.docs.max_thread_title_size?document.get('header').substr(0, options.docs.max_thread_title_size):document.get('header'),
-            body: options.docs.max_post_size?document.get('body').substr(0, options.docs.max_post_size):document.get('body')
+            header: options.docs.max_thread_title_size
+              ? document.get('header').substr(0, options.docs.max_thread_title_size)
+              : document.get('header'),
+            body: options.docs.max_post_size
+              ? document.get('body').substr(0, options.docs.max_post_size)
+              : document.get('body'),
           });
           break;
         case 'channel':
-          //update fields (denormalization for search)
+          // update fields (denormalization for search)
           document.set({
             initials: parent_doc.get('initials'),
-            header: options.docs.max_channel_name_size?document.get('header').substr(0, options.docs.max_channel_name_size):document.get('header')
+            header: options.docs.max_channel_name_size
+              ? document.get('header').substr(0, options.docs.max_channel_name_size)
+              : document.get('header'),
           });
           break;
         case 'post':
-          //update fields (denormalization for search)
+          // update fields (denormalization for search)
           document.set({
             header: parent_doc.get('header'),
             initials: parent_doc.get('initials'),
-            body: options.docs.max_post_size?document.get('body').substr(0, options.docs.max_post_size):document.get('body')
+            body: options.docs.max_post_size
+              ? document.get('body').substr(0, options.docs.max_post_size)
+              : document.get('body'),
           });
           break;
       }
-      //update parent (breadcrumb and parent type)
+      // update parent (breadcrumb and parent type)
       document.setParentDocument(parent_doc);
-      //set timestamps
+      // set timestamps
       var now = Date.now();
       document.set({
         created: now,
-        updated: now
+        updated: now,
       });
-      //escape document
+      // escape document
       document.escape();
-      //process plugins
+      // process plugins
       var plugin_payload = {
         app_id: app_id,
         document: document,
-        user: user
+        user: user,
       };
-      plugins.beforeAdd(plugin_payload, function(err, plugin_payload) {
+      plugins.beforeAdd(plugin_payload, function(err, plugin_payload) { // eslint-disable-line
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:add', document.toJSON());
@@ -170,7 +189,7 @@ module.exports = function(options, instance, self) {
         }
         storage.add(app_id, document, function(new_document) {
           if (new_document) {
-            //success
+            // success
             if (new_document.get('parent_type') != 'channel') {
               self.refreshChildrenCount(app_id, new_document.get('parent'), function() {
                 self.refreshUpdateTS(app_id, new_document.get('parent'), now, user);
@@ -186,16 +205,15 @@ module.exports = function(options, instance, self) {
             plugins.afterAdd(plugin_payload, function() {
               self.success(payload);
             });
-          }
-          else {
-            //fail
+          } else {
+            // fail
             socket.emit('fruum:add');
             self.fail(payload);
           }
         });
       });
     });
-  }
+  };
 
   // --------------------------------- UPDATE ----------------------------------
 
@@ -239,21 +257,23 @@ module.exports = function(options, instance, self) {
         self.fail(payload);
         return;
       }
-      //escape document based on difference with previous
+      // escape document based on difference with previous
       var update_timestamp = false,
           update_permission = false,
           now = Date.now();
       document.escape(doc_to_update);
-      //alter timestamp only when we have changes in the body
+      // alter timestamp only when we have changes in the body
       if (document.get('body') != doc_to_update.get('body')) {
         update_timestamp = true;
         doc_to_update.set('updated', now);
       }
-      switch(doc_to_update.get('type')) {
+      switch (doc_to_update.get('type')) {
         case 'bookmark':
           doc_to_update.set({
-            header: options.docs.max_bookmark_title_size?document.get('header').substr(0, options.docs.max_bookmark_title_size):document.get('header'),
-            body: document.get('body')
+            header: options.docs.max_bookmark_title_size
+              ? document.get('header').substr(0, options.docs.max_bookmark_title_size)
+              : document.get('header'),
+            body: document.get('body'),
           });
           break;
         case 'category':
@@ -262,64 +282,83 @@ module.exports = function(options, instance, self) {
             initials: document.get('initials'),
             usage: document.get('usage'),
             permission: document.get('permission'),
-            header: options.docs.max_category_title_size?document.get('header').substr(0, options.docs.max_category_title_size):document.get('header'),
-            body: options.docs.max_category_description_size?document.get('body').substr(0, options.docs.max_category_description_size):document.get('body')
+            header: options.docs.max_category_title_size
+              ? document.get('header').substr(0, options.docs.max_category_title_size)
+              : document.get('header'),
+            body: options.docs.max_category_description_size
+              ? document.get('body').substr(0, options.docs.max_category_description_size)
+              : document.get('body'),
           });
           break;
         case 'article':
           doc_to_update.set({
-            header: options.docs.max_article_title_size?document.get('header').substr(0, options.docs.max_article_title_size):document.get('header'),
-            body: options.docs.max_post_size?document.get('body').substr(0, options.docs.max_post_size):document.get('body'),
+            header: options.docs.max_article_title_size
+              ? document.get('header').substr(0, options.docs.max_article_title_size)
+              : document.get('header'),
+            body: options.docs.max_post_size
+              ? document.get('body').substr(0, options.docs.max_post_size)
+              : document.get('body'),
             tags: document.get('tags'),
-            attachments: document.get('attachments')
+            attachments: document.get('attachments'),
           });
           break;
         case 'blog':
           doc_to_update.set({
-            header: options.docs.max_blog_title_size?document.get('header').substr(0, options.docs.max_blog_title_size):document.get('header'),
-            body: options.docs.max_post_size?document.get('body').substr(0, options.docs.max_post_size):document.get('body'),
+            header: options.docs.max_blog_title_size
+              ? document.get('header').substr(0, options.docs.max_blog_title_size)
+              : document.get('header'),
+            body: options.docs.max_post_size
+              ? document.get('body').substr(0, options.docs.max_post_size)
+              : document.get('body'),
             tags: document.get('tags'),
-            attachments: document.get('attachments')
+            attachments: document.get('attachments'),
           });
           break;
         case 'thread':
           doc_to_update.set({
-            header: options.docs.max_thread_title_size?document.get('header').substr(0, options.docs.max_thread_title_size):document.get('header'),
-            body: options.docs.max_post_size?document.get('body').substr(0, options.docs.max_post_size):document.get('body'),
+            header: options.docs.max_thread_title_size
+              ? document.get('header').substr(0, options.docs.max_thread_title_size)
+              : document.get('header'),
+            body: options.docs.max_post_size
+              ? document.get('body').substr(0, options.docs.max_post_size)
+              : document.get('body'),
             tags: document.get('tags'),
-            attachments: document.get('attachments')
+            attachments: document.get('attachments'),
           });
           break;
         case 'channel':
           doc_to_update.set({
-            header: options.docs.max_channel_name_size?document.get('header').substr(0, options.docs.max_channel_name_size):document.get('header')
+            header: options.docs.max_channel_name_size
+              ? document.get('header').substr(0, options.docs.max_channel_name_size)
+              : document.get('header'),
           });
           break;
         case 'post':
           doc_to_update.set({
-            body: options.docs.max_post_size?document.get('body').substr(0, options.docs.max_post_size):document.get('body'),
-            attachments: document.get('attachments')
+            body: options.docs.max_post_size
+              ? document.get('body').substr(0, options.docs.max_post_size)
+              : document.get('body'),
+            attachments: document.get('attachments'),
           });
           break;
       }
-      //check for moving bookmark around
+      // check for moving bookmark around
       if (doc_to_update.get('type') == 'bookmark' &&
-          doc_to_update.get('parent') != document.get('parent'))
-      {
+          doc_to_update.get('parent') != document.get('parent')
+      ) {
         self.delete(socket, _.extend(_.clone(payload), {
           _success: function() {
             self.add(socket, payload);
-          }
+          },
         }));
-      }
-      else {
-        //process plugins
+      } else {
+        // process plugins
         var plugin_payload = {
           app_id: app_id,
           document: doc_to_update,
-          user: user
+          user: user,
         };
-        plugins.beforeUpdate(plugin_payload, function(err, plugin_payload) {
+        plugins.beforeUpdate(plugin_payload, function(err, plugin_payload) { // eslint-disable-line
           doc_to_update = plugin_payload.document || doc_to_update;
           if (plugin_payload.storage_noop) {
             socket.emit('fruum:update', doc_to_update.toJSON());
@@ -334,7 +373,7 @@ module.exports = function(options, instance, self) {
               if (!plugin_payload.broadcast_noop) self.broadcast(user, updated_document);
               plugin_payload.document = updated_document;
               plugins.afterUpdate(plugin_payload, function() {});
-              //update parent timestamp
+              // update parent timestamp
               if (update_timestamp) {
                 storage.update(
                   app_id,
@@ -345,23 +384,22 @@ module.exports = function(options, instance, self) {
               }
               if (update_permission) {
                 storage.update_subtree(app_id, updated_document, {
-                  permission: updated_document.get('permission')
+                  permission: updated_document.get('permission'),
                 }, function(updated_document2) {
                   if (updated_document2) {
                     self.invalidateDocument(app_id, updated_document2);
                     socket.emit('fruum:field', updated_document2.toJSON());
                     self.broadcast(user, updated_document2, 'fruum:dirty', true);
                     self.success(payload);
-                  }
-                  else {
+                  } else {
                     socket.emit('fruum:field');
                     self.fail(payload);
                   }
                 });
+              } else {
+                self.success(payload);
               }
-              else self.success(payload);
-            }
-            else {
+            } else {
               socket.emit('fruum:update');
               self.fail(payload);
             }
@@ -369,7 +407,7 @@ module.exports = function(options, instance, self) {
         });
       }
     });
-  }
+  };
 
   // --------------------------- UPDATE FIELD ----------------------------------
 
@@ -400,20 +438,21 @@ module.exports = function(options, instance, self) {
         self.fail(payload);
         return;
       }
-      //process plugins
+      // process plugins
       var plugin_payload = {
         app_id: app_id,
         document: document,
         user: user,
         field: payload.field,
-        value: payload.value
+        value: payload.value,
       };
-      plugins.beforeField(plugin_payload, function(err, plugin_payload) {
+      plugins.beforeField(plugin_payload, function(err, plugin_payload) { // eslint-disable-line
         document = plugin_payload.document || document;
         if (plugin_payload.storage_noop) {
           socket.emit('fruum:field', document.toJSON());
-          if (!plugin_payload.broadcast_noop)
+          if (!plugin_payload.broadcast_noop) {
             self.broadcast(user, document, 'fruum:dirty', true);
+          }
           self.success(payload);
           return;
         }
@@ -429,14 +468,12 @@ module.exports = function(options, instance, self) {
               plugins.afterField(plugin_payload, function() {
                 self.success(payload);
               });
-            }
-            else {
+            } else {
               socket.emit('fruum:field');
               self.fail(payload);
             }
           });
-        }
-        else {
+        } else {
           storage.update(app_id, document, attributes, function(updated_document) {
             if (updated_document) {
               self.invalidateDocument(app_id, updated_document);
@@ -446,8 +483,7 @@ module.exports = function(options, instance, self) {
               plugins.afterField(plugin_payload, function() {
                 self.success(payload);
               });
-            }
-            else {
+            } else {
               socket.emit('fruum:field');
               self.fail(payload);
             }
@@ -455,5 +491,5 @@ module.exports = function(options, instance, self) {
         }
       });
     });
-  }
-}
+  };
+};

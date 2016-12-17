@@ -1,19 +1,26 @@
+/* globals window:true, describe, it, expect */
+
 window = {};
 window.Fruum = {};
 window.Fruum.plugins = [];
 window.Fruum.libs = {
   _: {
-    template: function() { return function(context) {
-      return '<embed>' + context.channel + '</embed>';
-    }; }
+    template: function() {
+      return function(context) {
+        return '<embed>' + context.channel + '</embed>';
+      };
+    },
   },
-  $: function() { this.html = function() {}; return this; }
+  $: function() {
+    this.html = function() {};
+    return this;
+  },
 };
 eval(require('fs').readFileSync(__dirname + '/../../plugins/twitchtv/client.js', 'utf8'));
 var plugin = new window.Fruum.plugins[0]();
 
-describe("Twitchtv plugin", function() {
-  it("properly embeds", function() {
+describe('Twitchtv plugin', function() {
+  it('properly embeds', function() {
     var share = 'http://www.twitch.tv/tarik_tv';
     expect(plugin.post_content(share)).toEqual(
       '<embed>' + share + '</embed>'

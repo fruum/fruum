@@ -11,30 +11,30 @@ var fs = require('fs'),
     logger = require('./logger');
 
 function Engine(options, instance) {
-  //Load storage engine class
-  logger.system("Using storage engine: " + options.storage_engine);
+  // Load storage engine class
+  logger.system('Using storage engine: ' + options.storage_engine);
   var StorageEngine = require('./backends/storage/' + options.storage_engine);
-  //Load authentication engine class
-  logger.system("Using auth engine: " + options.auth_engine);
+  // Load authentication engine class
+  logger.system('Using auth engine: ' + options.auth_engine);
   var AuthEngine = require('./backends/auth/' + options.auth_engine);
-  //Load cache engine class
-  logger.system("Using cache engine: " + options.cache_engine);
+  // Load cache engine class
+  logger.system('Using cache engine: ' + options.cache_engine);
   var CacheEngine = require('./backends/cache/' + options.cache_engine);
-  //Load email engine class
-  logger.system("Using email engine: " + options.email_engine);
+  // Load email engine class
+  logger.system('Using email engine: ' + options.email_engine);
   var EmailEngine = require('./backends/email/' + options.email_engine);
-  //Load dispatch engine class
-  logger.system("Using dispatch engine: " + options.dispatch_engine);
+  // Load dispatch engine class
+  logger.system('Using dispatch engine: ' + options.dispatch_engine);
   var DispatchEngine = require('./backends/dispatch/' + options.dispatch_engine);
 
-  //Engine instances
+  // Engine instances
   var storage = new StorageEngine(options);
   var auth = new AuthEngine(options, storage);
   var cache = new CacheEngine(options, storage);
   var email = new EmailEngine(options, storage);
   var dispatch = new DispatchEngine(options);
 
-  //register backends to instance
+  // register backends to instance
   instance.storage = storage;
   instance.auth = auth;
   instance.cache = cache;
@@ -42,7 +42,7 @@ function Engine(options, instance) {
   instance.dispatch = dispatch;
   instance.engine = this;
 
-  //Load plugins
+  // Load plugins
   var plugins = {
     beforeAdd: [],
     afterAdd: [],
@@ -75,30 +75,30 @@ function Engine(options, instance) {
     afterReport: [],
 
     beforeField: [],
-    afterField: []
+    afterField: [],
   };
 
-  //schedule cron on plugin
+  // schedule cron on plugin
   function cronify(name, plugin, crondef) {
     logger.system('Scheduling cronjob for ' + name + ' at ' + crondef);
-    var j = schedule.scheduleJob(crondef, function() {
+    schedule.scheduleJob(crondef, function() {
       logger.system('Running cronjob: ' + name);
       plugin.cron();
     });
   }
 
   if (options.plugins) {
-    //loop through plugins, initialize them and put them in the appropriate
-    //plugin bucket
+    // loop through plugins, initialize them and put them in the appropriate
+    // plugin bucket
     _.each(options.plugins, function(plugin_name) {
-      //check if server plugin exists
+      // check if server plugin exists
       try {
         var path = __dirname + '/../plugins/' + plugin_name + '/';
         var stats = fs.lstatSync(path + 'server.js');
         if (stats.isFile()) {
           try {
             var plugin = require(path + 'server');
-            plugin = new plugin(options, instance);
+            plugin = new plugin(options, instance); // eslint-disable-line
             logger.system('Using server plugin: ' + plugin_name);
             if (plugin.beforeAdd) plugins.beforeAdd.push(plugin.beforeAdd);
             if (plugin.afterAdd) plugins.afterAdd.push(plugin.afterAdd);
@@ -136,17 +136,15 @@ function Engine(options, instance) {
             if (plugin.cron && options.cron[plugin_name]) {
               cronify(plugin_name, plugin, options.cron[plugin_name]);
             }
-          }
-          catch(err) {
+          } catch (err) {
             logger.system(err);
           }
         }
-      }
-      catch(err) {}
+      } catch (err) {}
     });
   }
 
-  //convert plugins to async composed functions
+  // convert plugins to async composed functions
   plugins.beforeAdd = async.compose.apply(async.compose, plugins.beforeAdd);
   plugins.afterAdd = async.compose.apply(async.compose, plugins.afterAdd);
 
@@ -180,7 +178,7 @@ function Engine(options, instance) {
   plugins.beforeField = async.compose.apply(async.compose, plugins.beforeField);
   plugins.afterField = async.compose.apply(async.compose, plugins.afterField);
 
-  //User collection per app
+  // User collection per app
   var app_users = {}, app_applications = {};
 
   // -------------------------------- BINDINGS ---------------------------------
@@ -199,28 +197,29 @@ function Engine(options, instance) {
   this.CACHE_DEFS = {
     'get/js/bundle': {
       queue: 'static',
-      key: 'get_js_bundle:{app_id}'
+      key: 'get_js_bundle:{app_id}',
     },
     'get/js/compact': {
       queue: 'static',
-      key: 'get_js_compact:{app_id}'
+      key: 'get_js_compact:{app_id}',
     },
     'get/html': {
       queue: 'static',
-      key: 'get_html:{app_id}'
+      key: 'get_html:{app_id}',
     },
     'get/style': {
       queue: 'static',
-      key: 'get_style:{app_id}'
+      key: 'get_style:{app_id}',
     },
     'get/loader': {
       queue: 'static',
-      key: 'get_loader:{app_id}'
-    }
-  }
+      key: 'get_loader:{app_id}',
+    },
+  };
 
   // ---------------------------------- API ------------------------------------
 
+  /* eslint-disable */
   var api_v1 = require('./api_v1');
   new api_v1(options, instance);
 
@@ -241,6 +240,7 @@ function Engine(options, instance) {
   new require('./engine/optimize')(options, instance, this);
   new require('./engine/profile')(options, instance, this);
   new require('./engine/user')(options, instance, this);
-
+  /* eslint-enable */
 }
+
 module.exports = Engine;

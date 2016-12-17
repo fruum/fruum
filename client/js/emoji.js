@@ -6,7 +6,7 @@ Emoji support
   'use strict';
 
   function escape_re(re) {
-    return re.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+    return re.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"); // eslint-disable-line
   }
 
   window.Fruum.emoji = {
@@ -128,8 +128,9 @@ Emoji support
         }
         return all;
       });
-    }
-  }
+    },
+  };
+
   var keys = [];
   for (var key in window.Fruum.emoji.symbols) {
     keys.push(escape_re(key));

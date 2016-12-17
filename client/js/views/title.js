@@ -2,15 +2,16 @@
 Handles the top part
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     Fruum.views = Fruum.views || {};
 
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
         Messages = Fruum.messages,
-        Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette;
 
     Fruum.views.TitleView = Marionette.ItemView.extend({
@@ -21,10 +22,10 @@ Handles the top part
         edit: '[data-action="edit"]',
         visible: '[data-action="visible"]',
         delete: '[data-action="delete"]',
-        locked: '[data-action="locked"]'
+        locked: '[data-action="locked"]',
       },
       modelEvents: {
-        'change:viewing change:searching': 'render'
+        'change:viewing change:searching': 'render',
       },
       events: {
         'click @ui.search': 'onSearch',
@@ -32,7 +33,7 @@ Handles the top part
         'click @ui.edit': 'onEdit',
         'click @ui.delete': 'onDelete',
         'click @ui.visible': 'onVisible',
-        'click @ui.locked': 'onLocked'
+        'click @ui.locked': 'onLocked',
       },
       onSearch: function(event) {
         if (event) {
@@ -63,7 +64,7 @@ Handles the top part
           Fruum.io.trigger('fruum:field', {
             id: viewing.id,
             field: 'locked',
-            value: !viewing.locked
+            value: !viewing.locked,
           });
         }
       },
@@ -73,11 +74,11 @@ Handles the top part
           event.stopPropagation();
         }
         var viewing = this.model.get('viewing');
-        if (viewing.id && confirm(viewing.visible?Messages.private:Messages.public)) {
+        if (viewing.id && confirm(viewing.visible ? Messages.private : Messages.public)) {
           Fruum.io.trigger('fruum:field', {
             id: viewing.id,
             field: 'visible',
-            value: !viewing.visible
+            value: !viewing.visible,
           });
         }
       },
@@ -89,8 +90,7 @@ Handles the top part
         var viewing = _.clone(this.model.get('viewing'));
         if (viewing.type == 'bookmark') {
           Fruum.io.trigger('fruum:show_bookmark', viewing);
-        }
-        else {
+        } else {
           Fruum.io.trigger('fruum:unset_onboard', 'edit');
           Fruum.io.trigger('fruum:edit', viewing);
         }
@@ -102,7 +102,7 @@ Handles the top part
         }
         var viewing = this.model.get('viewing');
         if (viewing.id) Fruum.io.trigger('fruum:archive', { id: viewing.id });
-      }
+      },
     });
   });
 })();

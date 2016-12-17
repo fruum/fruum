@@ -2,14 +2,14 @@
 Threads view
 *******************************************************************************/
 
+/* globals Fruum */
+
 (function() {
   'use strict';
-  window.Fruum.require.push(function () {
+  window.Fruum.require.push(function() {
     Fruum.views = Fruum.views || {};
 
     var $ = Fruum.libs.$,
-        _ = Fruum.libs._,
-        Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
 
@@ -21,10 +21,10 @@ Threads view
         manage: '.fruum-js-manage',
         sticky: '[data-action="sticky"]',
         move: '[data-action="move"]',
-        delete: '[data-action="delete"]'
+        delete: '[data-action="delete"]',
       },
       modelEvents: {
-        'change': 'render'
+        'change': 'render',
       },
       events: {
         'click @ui.search': 'onSearch',
@@ -32,14 +32,14 @@ Threads view
         'click @ui.navigate': 'onNavigate',
         'click @ui.sticky': 'onSticky',
         'click @ui.delete': 'onDelete',
-        'click @ui.move': 'onMove'
+        'click @ui.move': 'onMove',
       },
       templateHelpers: function() {
         return {
           is_new: Fruum.utils.isNewVisit(
             this.model.get('id'), this.model.get('updated')
-          )
-        }
+          ),
+        };
       },
       onSearch: function(event) {
         if (event) {
@@ -75,7 +75,7 @@ Threads view
         Fruum.io.trigger('fruum:field', {
           id: this.model.get('id'),
           field: 'sticky',
-          value: !this.model.get('sticky')
+          value: !this.model.get('sticky'),
         });
       },
       onDelete: function(event) {
@@ -93,10 +93,10 @@ Threads view
         }
         Fruum.io.trigger('fruum:close_manage');
         Fruum.io.trigger('fruum:show_move', this.model.toJSON());
-      }
+      },
     }));
     Fruum.views.ThreadsView = Marionette.CollectionView.extend({
-      childView: Fruum.views.ThreadView
+      childView: Fruum.views.ThreadView,
     });
   });
 })();

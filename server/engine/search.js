@@ -19,29 +19,29 @@ module.exports = function(options, instance, self) {
       self.fail(payload);
       return;
     }
-    var app_id = socket.app_id,
-        user = socket.fruum_user,
+    var user = socket.fruum_user,
         is_admin = user.get('admin');
 
     storage.search(socket.app_id, {
       text: payload.q,
       include_hidden: is_admin,
-      permission: user.get('permission')
+      permission: user.get('permission'),
     }, function(results) {
       var response = [];
       _.each(results, function(document) {
-        if (is_admin || document.get('visible'))
+        if (is_admin || document.get('visible')) {
           response.push(document.toJSON());
+        }
       });
       socket.emit('fruum:search', {
         q: payload.q,
-        results: response
+        results: response,
       });
       self.success(payload);
     }, {
-      skipfields: ['attachments']
+      skipfields: ['attachments'],
     });
-  }
+  };
 
   // -------------------------------- AUTOCOMPLETE -----------------------------
 
@@ -52,21 +52,20 @@ module.exports = function(options, instance, self) {
       self.fail(payload);
       return;
     }
-    var app_id = socket.app_id;
     storage.search_users(socket.app_id, payload.q, function(users) {
       var response = [];
       _.each(users, function(user) {
         response.push({
           username: user.get('username'),
           displayname: user.get('displayname'),
-          avatar: user.get('avatar')
+          avatar: user.get('avatar'),
         });
       });
       socket.emit('fruum:autocomplete', {
         q: payload.q,
-        results: response
+        results: response,
       });
       self.success(payload);
     });
-  }
-}
+  };
+};

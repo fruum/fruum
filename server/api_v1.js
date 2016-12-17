@@ -14,7 +14,7 @@ function API_v1(options, instance) {
       engine = instance.engine,
       router = express.Router();
 
-  function serverError(req, res) {
+  function serverError(req, res) { // eslint-disable-line
     res.statusCode = 500;
     res.send('Internal Server Error');
   }
@@ -40,13 +40,11 @@ function API_v1(options, instance) {
     var credentials = auth(req);
     if (!credentials || !credentials.name || !credentials.pass) {
       unauthorized(req, res, 'API Key is missing');
-    }
-    else {
+    } else {
       storage.get_api_key(credentials.pass, function(application) {
         if (application && application.get('id') === credentials.name) {
           callback(application);
-        }
-        else {
+        } else {
           unauthorized(req, res, 'Invalid API Key or Application name');
         }
       });
@@ -58,8 +56,7 @@ function API_v1(options, instance) {
       storage.get_user(application.get('id'), req.params.userid, function(user) {
         if (!user) {
           notFound(req, res, 'User id does not exist');
-        }
-        else {
+        } else {
           callback(user, application);
         }
       });
@@ -82,8 +79,7 @@ function API_v1(options, instance) {
       storage.get(application.get('id'), id, function(document) {
         if (document) {
           res.json(document.toJSON());
-        }
-        else {
+        } else {
           notFound(req, res);
         }
       });
@@ -95,23 +91,21 @@ function API_v1(options, instance) {
     get_app(req, res, function(application) {
       var document = new Models.Document(req.body);
       document.escape();
-      //validate parent exists
+      // validate parent exists
       if (!document.get('parent')) {
         badRequest(req, res, 'Parent document is missing');
         return;
       }
-      //insert
+      // insert
       storage.get(application.get('id'), document.get('id') || '0', function(existing_document) {
         if (existing_document) {
           badRequest(req, res, 'Document already exists');
-        }
-        else {
-          //find parent
+        } else {
+          // find parent
           storage.get(application.get('id'), document.get('parent'), function(parent_doc) {
             if (!parent_doc) {
               badRequest(req, res, 'Invalid parent document');
-            }
-            else {
+            } else {
               document.setParentDocument(parent_doc);
               storage.add(application.get('id'), document, function(document) {
                 engine.invalidateDocument(application.get('id'), document);
@@ -133,20 +127,21 @@ function API_v1(options, instance) {
     get_app(req, res, function(application) {
       storage.get(application.get('id'), id, function(document) {
         if (document) {
-          function apply_permission(root_doc, previous_permission) {
+          function apply_permission(root_doc, previous_permission) { // eslint-disable-line
             if (root_doc.get('permission') != previous_permission) {
               storage.update_subtree(application.get('id'), root_doc, {
-                permission: root_doc.get('permission')
+                permission: root_doc.get('permission'),
               }, function() {
                 res.json(root_doc.toJSON());
               });
+            } else {
+              res.json(root_doc.toJSON());
             }
-            else res.json(root_doc.toJSON());
           }
           var permission = document.get('permission');
-          //home
+          // home
           if (document.get('id') == 'home' && !document.get('parent')) {
-            //update only flags
+            // update only flags
             _.each([
               'header', 'body', 'initials',
               'visible', 'usage', 'permission'
@@ -159,19 +154,18 @@ function API_v1(options, instance) {
               engine.invalidateDocument(application.get('id'), updated_doc);
               apply_permission(updated_doc, permission);
             });
-          }
-          else {
+          } else {
             document.set(req.body);
-            //allow permission changes only on categories
-            if (document.get('type') != 'category')
+            // allow permission changes only on categories
+            if (document.get('type') != 'category') {
               document.set('permission', permission);
+            }
             document.escape();
-            //verify that parent exists
+            // verify that parent exists
             storage.get(application.get('id'), document.get('parent'), function(parent_doc) {
               if (!parent_doc) {
                 badRequest(req, res, 'Invalid document parent');
-              }
-              else {
+              } else {
                 document.setParentDocument(parent_doc);
                 storage.update(application.get('id'), document, null, function(updated_doc) {
                   engine.invalidateDocument(application.get('id'), updated_doc);
@@ -180,8 +174,7 @@ function API_v1(options, instance) {
               }
             });
           }
-        }
-        else {
+        } else {
           notFound(req, res, 'Invalid document');
         }
       });
@@ -201,8 +194,7 @@ function API_v1(options, instance) {
               engine.refreshNotify(application.get('id'), document.get('parent'));
             });
           });
-        }
-        else {
+        } else {
           notFound(req, res, 'Invalid document');
         }
       });
@@ -229,13 +221,13 @@ function API_v1(options, instance) {
     };
   }
 
-  //presence overview
+  // presence overview
   router.get('/presence/overview', function(req, res) {
     get_app(req, res, function(application) {
       var response = {
         total: 0,
         anonymous: 0,
-        authenticated: 0
+        authenticated: 0,
       };
       var users = instance.engine.app_users[application.get('id')];
       if (users) {
@@ -250,14 +242,14 @@ function API_v1(options, instance) {
     });
   });
 
-  //presence overview viewing a document
+  // presence overview viewing a document
   router.get('/presence/overview/:id', function(req, res) {
     var viewing_id = req.params.id;
     get_app(req, res, function(application) {
       var response = {
         total: 0,
         anonymous: 0,
-        authenticated: 0
+        authenticated: 0,
       };
       var users = instance.engine.app_users[application.get('id')];
       if (users) {
@@ -278,12 +270,12 @@ function API_v1(options, instance) {
     });
   });
 
-  //presence document breakdown
+  // presence document breakdown
   router.get('/presence/docs', function(req, res) {
     get_app(req, res, function(application) {
       var response = {
         docs: {},
-        paths: {}
+        paths: {},
       };
       var users = instance.engine.app_users[application.get('id')];
       if (users) {
@@ -294,20 +286,19 @@ function API_v1(options, instance) {
           var doc_entry = response.docs[doc_id] || {
             total: 0,
             anonymous: 0,
-            authenticated: 0
+            authenticated: 0,
           };
           var path_entry = response.paths[path_id] || {
             total: 0,
             anonymous: 0,
-            authenticated: 0
+            authenticated: 0,
           };
           doc_entry.total++;
           path_entry.total++;
           if (user.get('anonymous')) {
             doc_entry.anonymous++;
             path_entry.anonymous++;
-          }
-          else {
+          } else {
             doc_entry.authenticated++;
             path_entry.authenticated++;
           }
@@ -319,7 +310,7 @@ function API_v1(options, instance) {
     });
   });
 
-  //presence users
+  // presence users
   router.get('/presence/users', function(req, res) {
     get_app(req, res, function(application) {
       var response = [];
@@ -335,7 +326,7 @@ function API_v1(options, instance) {
     });
   });
 
-  //presence users
+  // presence users
   router.get('/presence/users/:id', function(req, res) {
     var viewing_id = req.params.id;
     get_app(req, res, function(application) {
@@ -366,76 +357,76 @@ function API_v1(options, instance) {
       storage.add_user(application.get('id'), user, function(new_user) {
         if (new_user) {
           res.json(serialize_user(new_user));
-        }
-        else {
+        } else {
           badRequest(req, res);
         }
       });
     });
   });
+
   router.get('/users/:userid', function(req, res) {
     get_user(req, res, function(user, application) {
       res.json(serialize_user(user));
     });
   });
+
   router.put('/users/:userid', function(req, res) {
     get_user(req, res, function(user, application) {
       user.set(req.body);
       storage.update_user(application.get('id'), user, null, function(updated_user) {
         if (updated_user) {
           res.json(serialize_user(updated_user));
-        }
-        else {
+        } else {
           badRequest(req, res);
         }
       });
     });
   });
+
   router.get('/users/:userid/topics', function(req, res) {
     get_user(req, res, function(user, application) {
-      var permission = (req.query.admin !== undefined)?2:1;
+      var permission = (req.query.admin !== undefined) ? 2 : 1;
       var query = {
         user_id: user.get('id'),
         type: ['thread', 'blog'],
-        permission__lte: permission
+        permission__lte: permission,
       };
       if (req.query.count !== undefined) {
         storage.count_attributes(application.get('id'), query, function(total) {
           res.json(total);
         });
-      }
-      else {
+      } else {
         storage.search_attributes(application.get('id'), query, function(docs) {
           res.json(_.map(docs, function(document) {
             return document.toJSON();
           }));
         }, {
-          sort: [{ updated: { order: 'desc' }}]
+          sort: [{ updated: { order: 'desc' } }],
         });
       }
     });
   });
+
   router.get('/users/:userid/replies', function(req, res) {
     get_user(req, res, function(user, application) {
-      var permission = (req.query.admin !== undefined)?2:1;
+      var permission = (req.query.admin !== undefined) ? 2 : 1;
       var query = {
         user_id: user.get('id'),
         type: 'post',
         parent_type__not: 'channel',
-        permission__lte: permission
+        permission__lte: permission,
       };
       if (req.query.count !== undefined) {
         storage.count_attributes(application.get('id'), query, function(total) {
           res.json(total);
         });
-      }
-      else {
+      } else {
         storage.search_attributes(application.get('id'), query, function(docs) {
           res.json(_.map(docs, function(document) {
             return document.toJSON();
           }));
         }, {
-          sort: [{ updated: { order: 'desc' }}]
+          sort: [{ updated: { order: 'desc' } }],
         });
       }
     });
