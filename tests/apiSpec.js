@@ -25,6 +25,7 @@ describe('Document API', function() {
       done();
     });
   });
+
   it('creates document without id', function(done) {
     var payload = {
       parent: 'home',
@@ -43,6 +44,7 @@ describe('Document API', function() {
       done();
     });
   });
+
   it('does not create document with existing id', function(done) {
     var payload = {
       id: 'foo_id',
@@ -62,6 +64,7 @@ describe('Document API', function() {
       done();
     });
   });
+
   it('does not create document with invalid parent', function(done) {
     var payload = {
       parent: 'home_invalid',
@@ -98,6 +101,7 @@ describe('Document API', function() {
       done();
     });
   });
+
   it('does not update document with invalid parent', function(done) {
     var payload = {
       body: 'bar2',
@@ -114,6 +118,7 @@ describe('Document API', function() {
       done();
     });
   });
+
   it('does not update document with invalid id', function(done) {
     var payload = {
       body: 'bar2',
@@ -146,6 +151,7 @@ describe('Document API', function() {
       done();
     });
   });
+
   it('does not get invalid document', function(done) {
     request({
       method: 'GET',
@@ -174,6 +180,7 @@ describe('Document API', function() {
       done();
     });
   });
+
   it('does not delete invalid document', function(done) {
     request({
       method: 'DELETE',
@@ -206,6 +213,7 @@ describe('API call', function() {
       done();
     });
   });
+
   it('validates application', function(done) {
     var payload = {
       id: 'foo_id',
@@ -224,6 +232,7 @@ describe('API call', function() {
       done();
     });
   });
+
   it('validates doc_id', function(done) {
     request({
       method: 'GET',

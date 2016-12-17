@@ -345,6 +345,11 @@ Utilities
         needle + text.substr(position, text.length);
     };
 
+    Fruum.utils.truncateString = function(text, startindex, endindex, needle) {
+      needle = needle || '';
+      return text.substr(0, startindex) + needle + text.substr(endindex);
+    };
+
     Fruum.utils.padFactory = function(needle, count) {
       return (new Array(count + 1)).join(needle);
     };

@@ -25,22 +25,19 @@
     width: 70px;
     box-shadow: 0 0 4px rgba( 0, 0, 0, 0.3 ) !important;
     overflow: hidden;
-    .fruum-loader {
-      left: $fruum-whitespace;
-      display: block;
-      margin-left: 0;
-    }
   }
   &.fruum-clicked {
     width: optimal-width() + $fruum-whitespace*2;
     max-width: 99%;
     box-shadow: 0 0 4px rgba( 0, 0, 0, 0.3 ) !important;
-    .fruum-loader {
-      display: block;
-    }
   }
   .fruum-nav-about {
     position: relative;
+
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+
     height: relative-ems( 3em, $responsive-tiny-font );
     width: 100%;
     min-width: 250px;
@@ -50,84 +47,125 @@
     background-color: $forum-header-color;
     padding-left: $tiny-font-basegrid*2;
   }
-  .fruum-loader {
-    display: none;
-    top: 40%;
-    left: 50%;
-    margin-left: -36px;
-  }
+
   &.fruum-fullpage {
     position: relative !important;
     width: 100%;
-    max-width: optimal-width() + $fruum-whitespace*2;
+    max-width: 100%;
     margin: 0 auto;
     height: 100%;
-    @if ( lightness($background-helper-base-color) > 10 ) {
-      background-color: fade-out( $background-helper-base-color, 0.92 ) !important;
-    } @else {
-      background-color: fade-out( $background-helper-base-color, 0.9 ) !important;
-    }
+    -webkit-transition: none;
+    transition: none;
+
+    background-color: $background-helper-base-color;
     .fruum-nav-about {
-      background-color: transparent;
       text-align: right;
       padding-right: relative-ems( $fruum-whitespace, $responsive-tiny-font );
     }
-    .fruum-loader {
-      display: block;
+
+    .fruum-content {
+      @if ( lightness($background-helper-base-color) > 10 ) {
+        background-color: rgba( 0, 0, 0, 0.02 );
+      } @else {
+        background-color: rgba( 0, 0, 0, 0.1 );
+      }
     }
   }
-}
 
-.fruum-loader {
-  position: relative;
-  display: block;
-  height: 10px;
-  width: 10px;
-  transform: skewX(-20deg);
-  -moz-transform: skewX(-20deg);
-  -webkit-transform: skewX(-20deg);
-  overflow: hidden;
-  animation: fruum_loader 1.4s linear infinite;
-  -webkit-animation: fruum_loader 1.4s linear infinite;
-  opacity: 1;
-  &:before {
-    content: attr(data-loader);
-    position: absolute;
-    display: block;
-    top: 2px;
-    left: -8px;
-    width: 80px;
-    height: 80px;
-    border: 6px dotted $muted-text-color;
+  .fruum-small-text {
+    font-size: relative-ems( $default-font-basegrid, $responsive-small-font );
+    line-height: basegrid-mod( relative-ems( $default-font-basegrid, $responsive-small-font ) );
   }
 
-  &:after {
-    content: attr(data-loader);
-    position: absolute;
-    display: block;
-    top: 1px;
-    right: 0;
-    width: 8px;
-    height: 8px;
-    background-color: $forum-base-color;
-    z-index: 1;
+  // replicating navigation.scss classes for proper dimensions
+  .fruum-header {
+    background-color: $background-base-color;
+    border-bottom: 1px solid $dividers-colors;
+
+    font-size: $responsive-default-font;
+
+    padding-top: $default-font-basegrid;
+    padding-left: $default-font-basegrid*2;
+    padding-right: $default-font-basegrid*2;
   }
-}
 
-@keyframes fruum_loader {
-  0%   {width: 10px;opacity: 0;}
-  30%  {width: 20px;opacity: 1;}
-  88%  {width: 72px;opacity: 1;}
-  92%  {width: 72px;opacity: 1;}
-  99%  {width: 72px;opacity: 0.1;}
-  100% {width: 10px;opacity: 0;}
-}
+  .fruum-nav-header {
+    height: $default-font-basegrid*4;
 
-@-webkit-keyframes fruum_loader {
-  0%   {width: 10px;opacity: 0;}
-  30%  {width: 20px;opacity: 1;}
-  88%  {width: 72px;opacity: 1;}
-  92%  {width: 72px;opacity: 1;}
-  99%  {width: 72px;opacity: 0.1;}
-  100% {width: 10px;opacity: 0;}
+    margin-bottom: $default-font-basegrid;
+  }
+
+  .fruum-nav-filters {
+    height: $default-font-basegrid*2;
+
+    margin-top: $default-font-basegrid/2;
+    margin-bottom: $default-font-basegrid/2;
+  }
+
+  .fruum-nav-subtitle {
+    margin-top: $default-font-basegrid*0.25;
+  }
+
+  // replicate footer/interactions sections for placeholder
+  .fruum-interactions-footer {
+    min-width: 230px;
+    background-color: $background-base-color;
+    border-top: 1px solid $dividers-colors;
+
+    height: 6em;
+
+    padding: 1em 2em;
+
+    .fruum-avatar-placeholder {
+      float: right;
+
+      width: 4em;
+      height: 4em;
+    }
+  }
+
+
+  .fruum-content {
+    min-width: 330px;
+    font-size: $responsive-default-font;
+    padding: $default-font-basegrid*2;
+  }
+
+  .fruum-content-item {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+
+    clear: both;
+    margin-bottom: $default-font-basegrid*2;
+  }
+
+  .fruum-item-text {
+    float: left;
+    display: block;
+
+    margin-left: $default-font-basegrid*2;
+  }
+
+  // replicating avatar for placeholder use
+  .fruum-avatar-placeholder {
+    float: left;
+    width: $default-font-basegrid*6.5;
+    height: $default-font-basegrid*6.5;
+
+    background-color: $dividers-colors;
+
+    @include block-object-shapes;
+  }
+
+  .fruum-placeholder {
+    display: inline-block;
+
+    height: 1em;
+    width: 100%;
+
+    background-color: $dividers-colors;
+
+    @include block-radius(0.5em);
+  }
 }

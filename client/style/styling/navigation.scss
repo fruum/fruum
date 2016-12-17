@@ -274,6 +274,9 @@
     display: block;
     font-size: 70%;
     font-weight: $base-font-weight;
+
+    // 0.25em margin with compensated value for 70% of font-size
+    margin-top: 0.352em;
   }
 }
 

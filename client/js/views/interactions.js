@@ -542,13 +542,20 @@ Handles the bottom input part
               line_start = text.lastIndexOf('\n', curretPos - 1);
 
           if (line_start < curretPos) {
-            var line = text.substr(line_start + 1, curretPos) || '',
+            var line = text.substr(line_start + 1, curretPos - line_start - 1) || '',
                 tabs = line.search(/\S/) || 0,
                 smart_text;
 
             line = $.trim(line);
-            // check for list
-            if (line.indexOf('* ') == 0) {
+            // check for list or empty list
+            if (line == '*' || line == '+' || line == '-') {
+              // remove line
+              this.ui.field_body.val(
+                Fruum.utils.truncateString(text, line_start + 1, curretPos, '\n')
+              );
+              Fruum.utils.setCaretPosition(this.ui.field_body, line_start + 2);
+              event.preventDefault();
+            } else if (line.indexOf('* ') == 0) {
               smart_text = Fruum.utils.padFactory(' ', tabs) + '* ';
             } else if (line.indexOf('+ ') == 0) {
               smart_text = Fruum.utils.padFactory(' ', tabs) + '+ ';

@@ -1,4 +1,4 @@
-//Socket.io 1.7.1 (copied from socket.io-client npm)
+//Socket.io 1.7.2 (copied from socket.io-client npm)
 //... node_modules/socket.io-client/dist/socket.io.js
 
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -167,7 +167,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 
 	exports.Manager = __webpack_require__(17);
-	exports.Socket = __webpack_require__(45);
+	exports.Socket = __webpack_require__(44);
 
 /***/ },
 /* 1 */
@@ -3234,14 +3234,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 
 	var eio = __webpack_require__(18);
-	var Socket = __webpack_require__(45);
-	var Emitter = __webpack_require__(36);
+	var Socket = __webpack_require__(44);
+	var Emitter = __webpack_require__(35);
 	var parser = __webpack_require__(7);
-	var on = __webpack_require__(47);
-	var bind = __webpack_require__(48);
+	var on = __webpack_require__(46);
+	var bind = __webpack_require__(47);
 	var debug = __webpack_require__(3)('socket.io-client:manager');
-	var indexOf = __webpack_require__(43);
-	var Backoff = __webpack_require__(51);
+	var indexOf = __webpack_require__(42);
+	var Backoff = __webpack_require__(48);
 
 	/**
 	 * IE6+ hasOwnProperty
@@ -3821,13 +3821,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 
 	var transports = __webpack_require__(21);
-	var Emitter = __webpack_require__(36);
+	var Emitter = __webpack_require__(35);
 	var debug = __webpack_require__(3)('engine.io-client:socket');
-	var index = __webpack_require__(43);
+	var index = __webpack_require__(42);
 	var parser = __webpack_require__(27);
 	var parseuri = __webpack_require__(2);
-	var parsejson = __webpack_require__(44);
-	var parseqs = __webpack_require__(37);
+	var parsejson = __webpack_require__(43);
+	var parseqs = __webpack_require__(36);
 
 	/**
 	 * Module exports.
@@ -4567,8 +4567,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var XMLHttpRequest = __webpack_require__(22);
 	var XHR = __webpack_require__(24);
-	var JSONP = __webpack_require__(40);
-	var websocket = __webpack_require__(41);
+	var JSONP = __webpack_require__(39);
+	var websocket = __webpack_require__(40);
 
 	/**
 	 * Export transports.
@@ -4694,8 +4694,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var XMLHttpRequest = __webpack_require__(22);
 	var Polling = __webpack_require__(25);
-	var Emitter = __webpack_require__(36);
-	var inherit = __webpack_require__(38);
+	var Emitter = __webpack_require__(35);
+	var inherit = __webpack_require__(37);
 	var debug = __webpack_require__(3)('engine.io-client:polling-xhr');
 
 	/**
@@ -5124,10 +5124,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 
 	var Transport = __webpack_require__(26);
-	var parseqs = __webpack_require__(37);
+	var parseqs = __webpack_require__(36);
 	var parser = __webpack_require__(27);
-	var inherit = __webpack_require__(38);
-	var yeast = __webpack_require__(39);
+	var inherit = __webpack_require__(37);
+	var yeast = __webpack_require__(38);
 	var debug = __webpack_require__(3)('engine.io-client:polling');
 
 	/**
@@ -5375,7 +5375,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 
 	var parser = __webpack_require__(27);
-	var Emitter = __webpack_require__(36);
+	var Emitter = __webpack_require__(35);
 
 	/**
 	 * Module exports.
@@ -5539,13 +5539,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var keys = __webpack_require__(28);
 	var hasBinary = __webpack_require__(29);
-	var sliceBuffer = __webpack_require__(31);
-	var after = __webpack_require__(32);
-	var utf8 = __webpack_require__(33);
+	var sliceBuffer = __webpack_require__(30);
+	var after = __webpack_require__(31);
+	var utf8 = __webpack_require__(32);
 
 	var base64encoder;
 	if (global && global.ArrayBuffer) {
-	  base64encoder = __webpack_require__(34);
+	  base64encoder = __webpack_require__(33);
 	}
 
 	/**
@@ -5603,7 +5603,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Create a blob api even for blob builder when vendor prefixes exist
 	 */
 
-	var Blob = __webpack_require__(35);
+	var Blob = __webpack_require__(34);
 
 	/**
 	 * Encodes a packet.
@@ -6179,7 +6179,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Module requirements.
 	 */
 
-	var isArray = __webpack_require__(30);
+	var isArray = __webpack_require__(15);
 
 	/**
 	 * Module exports.
@@ -6201,7 +6201,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function _hasBinary(obj) {
 	    if (!obj) return false;
 
-	    if ( (global.Buffer && global.Buffer.isBuffer(obj)) ||
+	    if ( (global.Buffer && global.Buffer.isBuffer && global.Buffer.isBuffer(obj)) ||
 	         (global.ArrayBuffer && obj instanceof ArrayBuffer) ||
 	         (global.Blob && obj instanceof Blob) ||
 	         (global.File && obj instanceof File)
@@ -6216,7 +6216,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	          }
 	      }
 	    } else if (obj && 'object' == typeof obj) {
-	      if (obj.toJSON) {
+	      // see: https://github.com/Automattic/has-binary/pull/4
+	      if (obj.toJSON && 'function' == typeof obj.toJSON) {
 	        obj = obj.toJSON();
 	      }
 
@@ -6237,15 +6238,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 30 */
-/***/ function(module, exports) {
-
-	module.exports = Array.isArray || function (arr) {
-	  return Object.prototype.toString.call(arr) == '[object Array]';
-	};
-
-
-/***/ },
-/* 31 */
 /***/ function(module, exports) {
 
 	/**
@@ -6280,7 +6272,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 32 */
+/* 31 */
 /***/ function(module, exports) {
 
 	module.exports = after
@@ -6314,7 +6306,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 33 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/*! https://mths.be/wtf8 v1.0.0 by @mathias */
@@ -6553,7 +6545,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)(module), (function() { return this; }())))
 
 /***/ },
-/* 34 */
+/* 33 */
 /***/ function(module, exports) {
 
 	/*
@@ -6626,7 +6618,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 35 */
+/* 34 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -6729,7 +6721,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 36 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 
@@ -6898,7 +6890,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 37 */
+/* 36 */
 /***/ function(module, exports) {
 
 	/**
@@ -6941,7 +6933,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 38 */
+/* 37 */
 /***/ function(module, exports) {
 
 
@@ -6953,7 +6945,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 39 */
+/* 38 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -7027,7 +7019,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 40 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -7036,7 +7028,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 
 	var Polling = __webpack_require__(25);
-	var inherit = __webpack_require__(38);
+	var inherit = __webpack_require__(37);
 
 	/**
 	 * Module exports.
@@ -7265,7 +7257,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 41 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -7274,15 +7266,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var Transport = __webpack_require__(26);
 	var parser = __webpack_require__(27);
-	var parseqs = __webpack_require__(37);
-	var inherit = __webpack_require__(38);
-	var yeast = __webpack_require__(39);
+	var parseqs = __webpack_require__(36);
+	var inherit = __webpack_require__(37);
+	var yeast = __webpack_require__(38);
 	var debug = __webpack_require__(3)('engine.io-client:websocket');
 	var BrowserWebSocket = global.WebSocket || global.MozWebSocket;
 	var NodeWebSocket;
 	if (typeof window === 'undefined') {
 	  try {
-	    NodeWebSocket = __webpack_require__(42);
+	    NodeWebSocket = __webpack_require__(41);
 	  } catch (e) { }
 	}
 
@@ -7557,13 +7549,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 42 */
+/* 41 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
 
 /***/ },
-/* 43 */
+/* 42 */
 /***/ function(module, exports) {
 
 
@@ -7578,7 +7570,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 44 */
+/* 43 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -7616,7 +7608,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 45 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -7626,12 +7618,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 
 	var parser = __webpack_require__(7);
-	var Emitter = __webpack_require__(36);
-	var toArray = __webpack_require__(46);
-	var on = __webpack_require__(47);
-	var bind = __webpack_require__(48);
+	var Emitter = __webpack_require__(35);
+	var toArray = __webpack_require__(45);
+	var on = __webpack_require__(46);
+	var bind = __webpack_require__(47);
 	var debug = __webpack_require__(3)('socket.io-client:socket');
-	var hasBin = __webpack_require__(49);
+	var hasBin = __webpack_require__(29);
 
 	/**
 	 * Module exports.
@@ -8037,7 +8029,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 46 */
+/* 45 */
 /***/ function(module, exports) {
 
 	module.exports = toArray
@@ -8056,7 +8048,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 47 */
+/* 46 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -8086,7 +8078,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		}
 
 /***/ },
-/* 48 */
+/* 47 */
 /***/ function(module, exports) {
 
 	/**
@@ -8115,82 +8107,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 49 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(global) {
-	/*
-	 * Module requirements.
-	 */
-
-	var isArray = __webpack_require__(50);
-
-	/**
-	 * Module exports.
-	 */
-
-	module.exports = hasBinary;
-
-	/**
-	 * Checks for binary data.
-	 *
-	 * Right now only Buffer and ArrayBuffer are supported..
-	 *
-	 * @param {Object} anything
-	 * @api public
-	 */
-
-	function hasBinary(data) {
-
-	  function _hasBinary(obj) {
-	    if (!obj) return false;
-
-	    if ( (global.Buffer && global.Buffer.isBuffer && global.Buffer.isBuffer(obj)) ||
-	         (global.ArrayBuffer && obj instanceof ArrayBuffer) ||
-	         (global.Blob && obj instanceof Blob) ||
-	         (global.File && obj instanceof File)
-	        ) {
-	      return true;
-	    }
-
-	    if (isArray(obj)) {
-	      for (var i = 0; i < obj.length; i++) {
-	          if (_hasBinary(obj[i])) {
-	              return true;
-	          }
-	      }
-	    } else if (obj && 'object' == typeof obj) {
-	      // see: https://github.com/Automattic/has-binary/pull/4
-	      if (obj.toJSON && 'function' == typeof obj.toJSON) {
-	        obj = obj.toJSON();
-	      }
-
-	      for (var key in obj) {
-	        if (Object.prototype.hasOwnProperty.call(obj, key) && _hasBinary(obj[key])) {
-	          return true;
-	        }
-	      }
-	    }
-
-	    return false;
-	  }
-
-	  return _hasBinary(data);
-	}
-
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
-
-/***/ },
-/* 50 */
-/***/ function(module, exports) {
-
-	module.exports = Array.isArray || function (arr) {
-	  return Object.prototype.toString.call(arr) == '[object Array]';
-	};
-
-
-/***/ },
-/* 51 */
+/* 48 */
 /***/ function(module, exports) {
 
 

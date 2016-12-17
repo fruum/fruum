@@ -41,6 +41,8 @@
       <span class="fruum-secondary-data">
         <% if (children_count) { %>
           <%- children_count %> posts, last one <%- Fruum.libs.moment(parseInt(updated)).fromNow() %>
+        <% } else { %>
+          created <%- Fruum.libs.moment(parseInt(updated)).fromNow() %>
         <% } %>
       </span>
     </div>

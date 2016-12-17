@@ -56,7 +56,7 @@ module.exports = function(options, client, self) {
       var results = [];
       if (!error && response && response.hits && response.hits.hits) {
         _.each(response.hits.hits, function(hit) {
-          if (!query.highlight) {
+          if (!query.highlight || !query.should.length) {
             results.push(new Models.Document(hit._source));
           } else if (hit.highlight) {
             var found = false;
@@ -137,6 +137,17 @@ module.exports = function(options, client, self) {
       return '';
     }).trim();
 
+    // soft include tags
+    q = q.replace(/(^|\s)(\+#[a-z\d-]+)/ig, function(tag) {
+      tag = tag.replace('+#', '').trim();
+      if (tag) {
+        tag = tag.toLowerCase();
+        tags.push(tag);
+        should.push({ term: { tags: tag } });
+      }
+      return '';
+    }).trim();
+
     // include users
     var users = [];
     q = q.replace(/(^|\s)(@[a-z\d-]+)/ig, function(user) {
@@ -150,10 +161,20 @@ module.exports = function(options, client, self) {
 
     // exclude users
     q = q.replace(/(^|\s)(-@[a-z\d-]+)/ig, function(user) {
-      user = user.replace('-#', '').trim();
+      user = user.replace('-@', '').trim();
       if (user) {
         users.push(user);
         must_not.push({ term: { user_username: user } });
+      }
+      return '';
+    }).trim();
+
+    // soft include users
+    q = q.replace(/(^|\s)(\+@[a-z\d-]+)/ig, function(user) {
+      user = user.replace('+@', '').trim();
+      if (user) {
+        users.push(user);
+        should.push({ term: { user_username: user } });
       }
       return '';
     }).trim();
@@ -174,8 +195,20 @@ module.exports = function(options, client, self) {
           case 'parent':
             must.push({ term: { parent: pair[1] } });
             break;
+          case '-parent':
+            must_not.push({ term: { parent: pair[1] } });
+            break;
+          case '+parent':
+            should.push({ term: { parent: pair[1] } });
+            break;
           case 'type':
             must.push({ term: { type: pair[1] } });
+            break;
+          case '-type':
+            must_not.push({ term: { type: pair[1] } });
+            break;
+          case '+type':
+            should.push({ term: { type: pair[1] } });
             break;
           case 'maxresults':
             query.max_results = pair[1] | 0;

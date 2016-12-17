@@ -65,6 +65,7 @@ describe('Autocomplete', function() {
     );
     expect(Fruum.utils.autocompleteUser('Hello @foo bar')).toBeUndefined();
   });
+
   it('works for :emoji', function() {
     expect(Fruum.utils.autocompleteEmoji('Hello :foo:')).toBeUndefined();
     expect(Fruum.utils.autocompleteEmoji('Hello :')).toBeUndefined();
@@ -94,6 +95,7 @@ describe('Attachments', function() {
       data: 'bar',
     }])).toBe('<p>foo bar <img src="bar" alt="yo"> space <img src="bar" alt="yo"></p>\n');
   });
+
   it('are detected', function() {
     expect(Fruum.utils.usesAttachment('foo [[image:yo]] bar', { type: 'image', name: 'yo' })).toBe(true);
     expect(Fruum.utils.usesAttachment('foo [[image:yo]] bar', { type: 'image', name: 'yo2' })).toBe(false);
@@ -125,19 +127,28 @@ describe('String utils', function() {
     expect(Fruum.utils.injectString('foo', 'bar', 1)).toBe('fbaroo');
     expect(Fruum.utils.injectString('foo', 'bar', 1000)).toBe('foobar');
   });
+
   it('padFactory works', function() {
     expect(Fruum.utils.padFactory('x', 0)).toBe('');
     expect(Fruum.utils.padFactory('x', 2)).toBe('xx');
   });
+
   it('startsWith works', function() {
     expect(Fruum.utils.startsWith('http://foo.com', 'http://')).toBe(true);
     expect(Fruum.utils.startsWith('http://foo.com', 'https://')).toBe(false);
     expect(Fruum.utils.startsWith('', 'https://')).toBe(false);
   });
+
   it('endsWith works', function() {
     expect(Fruum.utils.endsWith('http://foo.com', 'http://')).toBe(false);
     expect(Fruum.utils.endsWith('http://foo.com', '.com')).toBe(true);
     expect(Fruum.utils.endsWith('', 'https://')).toBe(false);
     expect(Fruum.utils.endsWith('yo', 'yo')).toBe(true);
+  });
+
+  it('truncateString works', function() {
+    expect(Fruum.utils.truncateString('foobar', 0, 3)).toBe('bar');
+    expect(Fruum.utils.truncateString('foobar', 5, 10)).toBe('fooba');
+    expect(Fruum.utils.truncateString('foobar', 1, 3, '00')).toBe('f00bar');
   });
 });

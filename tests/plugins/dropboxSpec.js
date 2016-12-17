@@ -12,6 +12,7 @@ describe('Dropbox plugin', function() {
       'https://www.dropbox.com/s/foo.png\n\n![https://www.dropbox.com/s/foo.png](https://dl.dropbox.com/s/foo.png)'
     );
   });
+
   it('to not replace non-images', function() {
     expect(plugin.post_content('https://www.dropbox.com/s/foo.pdf')).toEqual(
       'https://www.dropbox.com/s/foo.pdf'

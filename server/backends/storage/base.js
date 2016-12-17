@@ -282,7 +282,28 @@ module.exports = function(options) {
 
   /*
   Summary:
-  Fuzzy search in forum, excluding channels and category names
+  Fuzzy search in forum, excluding channels and category names.
+  Text should be able to handle special directives such as:
+
+  #tag (must include tag)
+  -#tag (must not include tag)
+  +#tag (may include tag)
+
+  @username (must include username)
+  -@username (must not include username)
+  +@username (may include username)
+
+  type:<article|thread|blog|post> (must be of document type)
+  -type:<article|thread|blog|post> (must not be of document type)
+  +type:<article|thread|blog|post> (may be of document type)
+
+  parent:<slug> (must have parent)
+  -parent:<slug> (must not have parent)
+  +parent:<slug> (may have parent)
+
+  maxresults:<number> (maximum number of results)
+  highlight:<true|yes|1> (highlight results)
+  sort:<created|created_desc|updated|updated_desc|user|user_asc|user_desc> (sort by)
 
   Parameters:
   - app_id: the application id

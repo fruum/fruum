@@ -36,7 +36,7 @@
       test: 'toMarkdown',
     },
     socketio: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.1/socket.io.min.js',
+      url: '//cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.2/socket.io.min.js',
       test: 'io.Socket',
     },
   };
@@ -153,6 +153,7 @@
       el.className += ' ' + className;
     }
   }
+
   function has_class(el, className) {
     if (!el) return false;
     if (el.classList) {
@@ -161,6 +162,15 @@
       return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
     }
   }
+
+  function outer_height(el) {
+    var height = el.offsetHeight;
+    var style = getComputedStyle(el);
+
+    height += parseInt(style.marginTop) + parseInt(style.marginBottom);
+    return height;
+  }
+
   function bind_event(selector, event, fn) {
     var elements = document.querySelectorAll(selector);
     Array.prototype.forEach.call(elements, function(el, i) {
@@ -229,9 +239,31 @@
     var el_preview = document.getElementById('fruum-preview');
     var loaded = false;
 
+    function resize_loader(el) {
+      if (!el) return;
+
+      var el_varying = el_preview.querySelector('.fruum-js-varying'),
+          el_fixed = el_preview.querySelectorAll('.fruum-js-fixed'),
+          el_varying_style = getComputedStyle(el_varying);
+
+      var fixed_height = 0;
+      for (var i = 0; i < el_fixed.length; ++i) {
+        fixed_height += outer_height(el_fixed[i]);
+      }
+      el_varying.style.height = (
+        outer_height(el) - fixed_height -
+        parseInt(el_varying_style.marginTop) -
+        parseInt(el_varying_style.marginBottom)
+      ) + 'px';
+    }
+    setTimeout(function() {
+      resize_loader(el_preview);
+    }, 0);
+
     function launch_fruum() {
       if (!loaded) {
         loaded = true;
+        resize_loader(el_preview);
         if (window.fruumSettings.container) {
           add_class(el_preview, 'fruum-fullpage');
         } else {
@@ -297,6 +329,7 @@
       if (link) {
         var el = document.getElementById('fruum');
         if (el && !has_class(el, 'fruum-hide')) return;
+        resize_loader(el_preview);
         add_class(el_preview, 'fruum-peak');
       }
     }
