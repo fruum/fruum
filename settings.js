@@ -6,6 +6,11 @@
 
 var _ = require('underscore'),
     config = require('./config.json');
+
+try {
+  config = _.extend(config, require('./config.' + process.env.NODE_ENV + '.json'));
+} catch (e) {}
+
 try {
   config = _.extend(config, require('./config.local.json'));
 } catch (e) {}

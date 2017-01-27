@@ -337,6 +337,12 @@ Utilities
       return text.replace(/\{\{\{(.+?)\}\}\}/g, '<span class="highlight">$1</span>');
     };
 
+    Fruum.utils.printCategoryDescription = function(text) {
+      text = Fruum.utils.print(text) || '';
+      // remove <p> tag
+      return text.replace(/<p>/g, '').replace(/<\/p>/g, '');
+    };
+
     // ------------------------------- STRING ---------------------------------
 
     Fruum.utils.injectString = function(text, needle, position) {

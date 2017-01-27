@@ -4,7 +4,7 @@
 
 'use strict';
 
-var _ = require('underscore'),
+var _ = require('underscore'), // eslint-disable-line
     logger = require('../../../logger');
 
 module.exports = function(options, client, self) {
@@ -13,34 +13,52 @@ module.exports = function(options, client, self) {
   self.setup = function() {
     client.indices.create({
       index: self.toMasterIndex(),
+      body: {
+        settings: {
+          index: {
+            number_of_shards: options.elasticsearch.number_of_shards,
+            number_of_replicas: options.elasticsearch.number_of_replicas,
+          },
+        },
+      },
     }, function(error, response) {
       if (error) {
-        logger.error('applications', 'setup', error);
+        logger.error(0, 'setup', error);
       } else {
-        // add mapping
+        logger.system('Created master index: ' + self.toMasterIndex());
+        logger.system('Shards: ' + options.elasticsearch.number_of_shards);
+        logger.system('Replicas: ' + options.elasticsearch.number_of_replicas);
+
+        // add mapping for apps repo
+        var mapping = {};
+        mapping[self.toAppsIndex()] = {
+          _all: { enabled: false },
+          properties: {
+            id: { type: 'string', index: 'not_analyzed' },
+            name: { type: 'string' },
+            description: { type: 'string' },
+            url: { type: 'string', index: 'not_analyzed' },
+            auth_url: { type: 'string', index: 'not_analyzed' },
+            fullpage_url: { type: 'string', index: 'not_analyzed' },
+            pushstate: { type: 'boolean' },
+            theme: { type: 'string', index: 'not_analyzed' },
+            created: { type: 'long' },
+            private_key: { type: 'string', index: 'not_analyzed' },
+            notifications_email: { type: 'string', index: 'not_analyzed' },
+            contact_email: { type: 'string', index: 'not_analyzed' },
+            meta: { type: 'object', enabled: false },
+          },
+        };
         client.indices.putMapping({
           index: self.toMasterIndex(),
-          type: 'info',
-          body: {
-            info: {
-              _all: { enabled: false },
-              properties: {
-                id: { type: 'string', index: 'not_analyzed' },
-                name: { type: 'string' },
-                description: { type: 'string' },
-                url: { type: 'string', index: 'not_analyzed' },
-                auth_url: { type: 'string', index: 'not_analyzed' },
-                fullpage_url: { type: 'string', index: 'not_analyzed' },
-                pushstate: { type: 'boolean' },
-                theme: { type: 'string', index: 'not_analyzed' },
-                created: { type: 'long' },
-                private_key: { type: 'string', index: 'not_analyzed' },
-                notifications_email: { type: 'string', index: 'not_analyzed' },
-                contact_email: { type: 'string', index: 'not_analyzed' },
-                meta: { type: 'object', enabled: false },
-              },
-            },
-          },
+          type: self.toAppsIndex(),
+          body: mapping,
+        }, function(error, response) {
+          if (error) {
+            logger.error('applications', 'setup', error);
+          } else {
+            logger.system('Created master index mapping: ' + self.toAppsIndex());
+          }
         });
       }
     });
@@ -54,16 +72,16 @@ module.exports = function(options, client, self) {
     // ------------- MASTER SCHEMA MIGRATION -------------
 
     /*
+    var mapping = {};
+    mapping[self.toAppsIndex()] = {
+      properties: {
+        meta: { type: 'object', enabled: false }
+      },
+    };
     client.indices.putMapping({
       index: self.toMasterIndex(),
-      type: 'info',
-      body: {
-        info: {
-          properties: {
-            meta: { type: 'object', enabled: false }
-          }
-        }
-      }
+      type: self.toAppsIndex(),
+      body: mapping,
     }, function(error, response) {
       console.log(error?error:response);
     });
@@ -75,20 +93,19 @@ module.exports = function(options, client, self) {
     self.list_apps(function(apps) {
       _.each(apps, function(app) {
         var app_id = app.get('id');
-        //add mapping for doc
+        // add mapping for doc
+        var mapping = {};
+        mapping[self.toDocType(app_id)] = {
+          properties: {
+            thumbnail: { type: 'string', index: 'not_analyzed' },
+          },
+        };
         client.indices.putMapping({
-          index: self.toAppIndex(app_id),
-          type: 'doc',
-          body: {
-            doc: {
-              properties: {
-                permission: { type: 'integer' },
-                usage: { type: 'integer' },
-              }
-            }
-          }
+          index: self.toMasterIndex(),
+          type: self.toDocType(app_id),
+          body: mapping,
         }, function(error, response) {
-          console.log(error?error:response);
+          console.log(error ? error : response);
         });
       });
     });
@@ -101,16 +118,16 @@ module.exports = function(options, client, self) {
       _.each(apps, function(app) {
         var app_id = app.get('id');
         //add mapping for users
+        var mapping = {};
+        mapping[self.toUserType(app_id)] = {
+          properties: {
+            meta: { type: 'object', enabled: false }
+          },
+        };
         client.indices.putMapping({
-          index: self.toAppIndex(app_id),
-          type: 'user',
-          body: {
-            user: {
-              properties: {
-                meta: { type: 'object', enabled: false }
-              }
-            }
-          }
+          index: self.toMasterIndex(),
+          type: self.toUserType(app_id),
+          body: mapping,
         }, function(error, response) {
           console.log(error?error:response);
         });
@@ -125,8 +142,8 @@ module.exports = function(options, client, self) {
       _.each(apps, function(app) {
         var app_id = app.get('id');
         client.search({
-          index: self.toAppIndex(app_id),
-          type: 'doc',
+          index: toMasterIndex(),
+          type: self.toDocType(app_id),
           body: {
             from: 0,
             size: 1000000,
@@ -151,8 +168,8 @@ module.exports = function(options, client, self) {
                 body.type = 'blog';
 
               client.update({
-                index: self.toAppIndex(app_id),
-                type: 'doc',
+                index: self.toMasterIndex(),
+                type: self.toDocType(app_id),
                 id: hit.id,
                 body: {
                   doc: body
@@ -178,27 +195,14 @@ module.exports = function(options, client, self) {
   // -------------------------------- TEARDOWN ---------------------------------
 
   self.teardown = function() {
-    self.list_apps(function(apps) {
-      _.each(apps, function(app) {
-        client.indices.delete({
-          index: self.toAppIndex(app.get('id')),
-        }, function(error, response) {
-          if (error) {
-            logger.error(0, 'teardown_app', error);
-          } else {
-            logger.info(app.get('id'), 'teardown_app', app);
-          }
-        });
-      });
-      client.indices.delete({
-        index: self.toMasterIndex(),
-      }, function(error, response) {
-        if (error) {
-          logger.error(0, 'teardown', error);
-        } else {
-          logger.system('teardown_applications');
-        }
-      });
+    client.indices.delete({
+      index: self.toMasterIndex(),
+    }, function(error, response) {
+      if (error) {
+        logger.error(0, 'teardown', error);
+      } else {
+        logger.system('Deleted master index: ' + self.toMasterIndex());
+      }
     });
   };
 };

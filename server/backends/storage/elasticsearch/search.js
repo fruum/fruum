@@ -48,8 +48,8 @@ module.exports = function(options, client, self) {
       }
     }
     client.search({
-      index: self.toAppIndex(app_id),
-      type: 'doc',
+      index: self.toMasterIndex(),
+      type: self.toDocType(app_id),
       refresh: true,
       body: body,
     }, function(error, response) {
@@ -304,8 +304,8 @@ module.exports = function(options, client, self) {
       }
     }
     client.search({
-      index: self.toAppIndex(app_id),
-      type: 'doc',
+      index: self.toMasterIndex(),
+      type: self.toDocType(app_id),
       refresh: true,
       body: body,
     }, function(error, response) {
@@ -322,8 +322,8 @@ module.exports = function(options, client, self) {
   self.count_attributes = function(app_id, attributes, callback) {
     self.refreshIndex(app_id, function() {
       client.count({
-        index: self.toAppIndex(app_id),
-        type: 'doc',
+        index: self.toMasterIndex(),
+        type: self.toDocType(app_id),
         refresh: true,
         body: {
           query: self.createSearchQSL(attributes),

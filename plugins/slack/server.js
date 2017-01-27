@@ -8,7 +8,6 @@ var _ = require('underscore'),
     logger = require('../../server/logger');
 
 var fruum_username = 'Fruum',
-    // fruum_icon_emoji = ':racing_car:',
     fruum_icon_url = 'https://fruum.github.io/static/slack.png';
 
 function Slack(options, instance) {
@@ -92,21 +91,29 @@ function Slack(options, instance) {
         link = application.getShareURL(document.get('id'));
         pretext += ' created new ' + document.get('type');
       }
+      var body = document.get('body') || '';
+      // remove images
+      body = body.replace(/!\[.*?\)/g, '');
+      // extract links
+      body = body.replace(/\[(.*)]\((.*)\)/, '$2');
+      var json_payload = {
+        attachments: [{
+          pretext: pretext,
+          title: document.get('header'),
+          title_link: link,
+          text: body,
+          mrkdwn_in: ['text', 'pretext'],
+        }],
+      };
+      // add bot details
+      if (!application.getProperty('slack:custom_bot')) {
+        json_payload.username = fruum_username;
+        json_payload.icon_url = fruum_icon_url;
+      }
       request({
         url: webhook,
         method: 'POST',
-        json: {
-          username: fruum_username,
-          // icon_emoji: fruum_icon_emoji,
-          icon_url: fruum_icon_url,
-          attachments: [{
-            pretext: pretext,
-            title: document.get('header'),
-            title_link: link,
-            text: document.get('body'),
-            mrkdwn_in: ['text', 'pretext'],
-          }],
-        },
+        json: json_payload,
       }, function(error, response, body) {
         if (error) logger.error(app_id, 'slack_incoming_webhook_failed', error);
       });

@@ -61,6 +61,11 @@ Search button
         this.model.set('searching', true);
         if (!this.ui.search.hasClass('fruum-search-active')) {
           this.ui.search.addClass('fruum-search-active');
+          // check for stored search
+          var viewing = this.model.get('viewing');
+          if (viewing.type == 'bookmark') {
+            this.ui.search_input.val(viewing.body);
+          }
           this.ui.search_input.focus().select();
           this.searchNow();
         }

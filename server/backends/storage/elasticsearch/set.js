@@ -13,8 +13,8 @@ module.exports = function(options, client, self) {
   self.add = function(app_id, document, callback) {
     self.slugify(app_id, document, function() {
       client.create({
-        index: self.toAppIndex(app_id),
-        type: 'doc',
+        index: self.toMasterIndex(),
+        type: self.toDocType(app_id),
         id: document.get('id'),
         body: document.toJSON(),
       }, function(error, response) {
@@ -33,8 +33,8 @@ module.exports = function(options, client, self) {
 
   self.update = function(app_id, document, attributes, callback) {
     client.update({
-      index: self.toAppIndex(app_id),
-      type: 'doc',
+      index: self.toMasterIndex(),
+      type: self.toDocType(app_id),
       id: document.get('id'),
       retryOnConflict: options.elasticsearch.retry_on_conflict,
       body: {

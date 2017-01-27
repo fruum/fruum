@@ -77,8 +77,6 @@
     margin-bottom: $stream-lineheight;
   }
 
-
-
   table {
     margin: $stream-lineheight 0 $stream-lineheight*3/2;
     th,td {
@@ -86,15 +84,22 @@
     }
   }
 
-
   hr,
   blockquote {
     margin-top: $stream-lineheight;
     margin-bottom: $stream-lineheight;
   }
 
+  pre,
+  code {
+    font-size: 100%;
+  }
 
-
+  table {
+    th,td {
+      font-size: 1em;
+    }
+  }
 
   img,
   object,

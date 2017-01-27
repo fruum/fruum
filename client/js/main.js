@@ -8,6 +8,16 @@ Main client app
   'use strict';
   // here we define the address of the server that is hosting fruum files
   var remote_host = '__url__';
+  // executes a function by string
+  function executeFunctionByName(functionName, context /*, args */) {
+    var args = [].slice.call(arguments).splice(2);
+    var namespaces = functionName.split('.');
+    var func = namespaces.pop();
+    for (var i = 0; i < namespaces.length; i++) {
+      context = context[namespaces[i]];
+    }
+    return context[func].apply(context, args);
+  }
   // loads css and html to display fruum panel
   function setup() {
     // load css
@@ -880,6 +890,14 @@ Main client app
           // check for karma update
           var karma_diff = Fruum.user.karma - Fruum.user.logout_karma;
           if (karma_diff) Fruum.io.trigger('fruum:new_karma', karma_diff);
+          // ready event
+          if (window.fruumSettings.ready) {
+            if (_.isFunction(window.fruumSettings.ready)) {
+              window.fruumSettings.ready();
+            } else if (_.isString(window.fruumSettings.ready)) {
+              executeFunctionByName(window.fruumSettings.ready, window);
+            }
+          }
         });
 
         // ----------------- LIVE UPDATES -----------------
@@ -1609,6 +1627,9 @@ Main client app
     });
     app.on('start', function(options) {
     });
+
+    // register to global Fruum object
+    Fruum.RootView = app.rootView;
 
     // register api
     Fruum.api = {

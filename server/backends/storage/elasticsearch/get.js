@@ -13,8 +13,8 @@ module.exports = function(options, client, self) {
 
   self.get = function(app_id, id, callback, params) {
     client.get({
-      index: self.toAppIndex(app_id),
-      type: 'doc',
+      index: self.toMasterIndex(),
+      type: self.toDocType(app_id),
       id: id,
       refresh: true,
     }, function(error, response) {
@@ -31,8 +31,8 @@ module.exports = function(options, client, self) {
 
   self.mget = function(app_id, id_array, callback, params) {
     var data = {
-      index: self.toAppIndex(app_id),
-      type: 'doc',
+      index: self.toMasterIndex(),
+      type: self.toDocType(app_id),
       refresh: true,
       body: { ids: id_array },
     };
@@ -83,8 +83,8 @@ module.exports = function(options, client, self) {
       };
     }
     client.search({
-      index: self.toAppIndex(app_id),
-      type: 'doc',
+      index: self.toMasterIndex(),
+      type: self.toDocType(app_id),
       refresh: true,
       body: body,
     }, function(error, response) {

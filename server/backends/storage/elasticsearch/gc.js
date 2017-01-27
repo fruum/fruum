@@ -16,7 +16,7 @@ module.exports = function(options, client, self) {
         if (validator(hit._source, timestamp)) {
           body.push({ delete: {
             _index: hit._index,
-            _type: type_index,
+            _type: self.toTypeIndex(app_id, type_index),
             _id: hit._source.id,
           }});
         }
@@ -36,8 +36,8 @@ module.exports = function(options, client, self) {
       _.each(hits, function(hit) {
         if (validator(hit._source, timestamp)) {
           body.push({
-            index: self.toAppIndex(app_id),
-            type: type_index,
+            index: self.toMasterIndex(),
+            type: self.toTypeIndex(app_id, type_index),
             id: hit._source.id,
           });
         }
@@ -61,7 +61,7 @@ module.exports = function(options, client, self) {
         if (validator(hit._source, timestamp)) {
           body.push({ update: {
             _index: hit._index,
-            _type: type_index,
+            _type: self.toTypeIndex(app_id, type_index),
             _id: hit._source.id,
             doc: attributes,
           }});
@@ -82,8 +82,8 @@ module.exports = function(options, client, self) {
       _.each(hits, function(hit) {
         if (validator(hit._source, timestamp)) {
           body.push({
-            index: self.toAppIndex(app_id),
-            type: type_index,
+            index: self.toMasterIndex(),
+            type: self.toTypeIndex(app_id, type_index),
             id: hit._source.id,
             body: { doc: attributes },
           });
@@ -103,8 +103,8 @@ module.exports = function(options, client, self) {
 
   self.gc_archived = function(app_id, timestamp, callback) {
     client.search({
-      index: self.toAppIndex(app_id),
-      type: 'doc',
+      index: self.toMasterIndex(),
+      type: self.toDocType(app_id),
       refresh: true,
       body: {
         from: 0,
@@ -135,8 +135,8 @@ module.exports = function(options, client, self) {
 
   self.gc_chat = function(app_id, timestamp, callback) {
     client.search({
-      index: self.toAppIndex(app_id),
-      type: 'doc',
+      index: self.toMasterIndex(),
+      type: self.toDocType(app_id),
       refresh: true,
       body: {
         from: 0,
@@ -168,8 +168,8 @@ module.exports = function(options, client, self) {
 
   self.gc_users = function(app_id, timestamp, callback) {
     client.search({
-      index: self.toAppIndex(app_id),
-      type: 'user',
+      index: self.toMasterIndex(),
+      type: self.toUserType(app_id),
       refresh: true,
       body: {
         from: 0,
@@ -202,8 +202,8 @@ module.exports = function(options, client, self) {
 
   self.gc_onboard = function(app_id, timestamp, callback) {
     client.search({
-      index: self.toAppIndex(app_id),
-      type: 'user',
+      index: self.toMasterIndex(),
+      type: self.toUserType(app_id),
       refresh: true,
       body: {
         from: 0,

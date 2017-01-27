@@ -33,6 +33,8 @@ Models
         header: '',
         // body e.g. description or post message or bookmark search query
         body: '',
+        // optional thumbnail URL
+        thumbnail: '',
         // if category/thread is sticky
         sticky: false,
         // permissions

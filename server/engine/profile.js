@@ -40,6 +40,7 @@ module.exports = function(options, instance, self) {
         storage.count_attributes(app_id, {
           user_id: user.get('id'),
           type: ['thread', 'blog'],
+          archived__not: true,
           permission__lte: permission,
         }, function(topics) {
           data.topics = topics;
@@ -47,6 +48,7 @@ module.exports = function(options, instance, self) {
           storage.count_attributes(app_id, {
             user_id: user.get('id'),
             type: 'post',
+            archived__not: true,
             parent_type__not: 'channel',
             permission__lte: permission,
           }, function(replies) {
@@ -102,6 +104,7 @@ module.exports = function(options, instance, self) {
           data = {
             user_id: user.get('id'),
             type: ['thread', 'blog'],
+            archived__not: true,
             permission__lte: permission,
           };
         } else {
@@ -109,6 +112,7 @@ module.exports = function(options, instance, self) {
             user_id: user.get('id'),
             type: 'post',
             parent_type__not: 'channel',
+            archived__not: true,
             permission__lte: permission,
           };
         }
