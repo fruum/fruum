@@ -17,7 +17,7 @@
         <% if (viewing.type == 'category') { %>
           <span class="fruum-secondary-data">
             <% if (viewing.body) { %>
-              <%= Fruum.utils.print(viewing.body) %>
+              <%= Fruum.utils.printCategoryDescription(viewing.body) %>
             <% } else { %>
               View thoughts and ideas in category, and share your own
             <% } %>

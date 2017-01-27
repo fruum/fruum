@@ -63,6 +63,8 @@ module.exports = function(options, storage) {
       } catch (err) {
         logger.error(application.get('id'), 'mandrill_client', err);
       }
+    } else {
+      logger.error(application.get('id'), 'user has no email', user);
     }
     callback();
   };

@@ -14,8 +14,6 @@ function build_log(app_id, reason, object) {
       msg += object;
     } else if (object.toLog) { // backbone model
       msg += object.toLog();
-    } else if (object.toString) {
-      msg += object.toString();
     } else {
       msg += JSON.stringify(object);
     }

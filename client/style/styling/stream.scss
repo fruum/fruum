@@ -121,6 +121,7 @@
   pre,
   code {
     font-family: $system-fonts !important;
+    font-size: 90%;
     line-height: $small-stream-lineheight;
     color: $important-text-color;
   }
@@ -227,7 +228,7 @@
     }
 
     th,td {
-      font-size: 2.5em;
+      font-size: 1.3em;
       padding: $table-padding $table-padding;
       &:not(:last-child) {
         border-right: 1px solid $table-borders;

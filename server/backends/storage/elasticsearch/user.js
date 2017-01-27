@@ -14,8 +14,8 @@ module.exports = function(options, client, self) {
 
   self.add_user = function(app_id, user, callback) {
     client.create({
-      index: self.toAppIndex(app_id),
-      type: 'user',
+      index: self.toMasterIndex(),
+      type: self.toUserType(app_id),
       id: user.get('id'),
       body: user.toJSON(),
     }, function(error, response) {
@@ -33,8 +33,8 @@ module.exports = function(options, client, self) {
   self.update_user = function(app_id, user, attributes, callback) {
     var user_id = user.get('id');
     client.update({
-      index: self.toAppIndex(app_id),
-      type: 'user',
+      index: self.toMasterIndex(),
+      type: self.toUserType(app_id),
       id: user_id,
       retryOnConflict: options.elasticsearch.retry_on_conflict,
       body: {
@@ -75,8 +75,8 @@ module.exports = function(options, client, self) {
 
   self.delete_user = function(app_id, user, callback) {
     client.delete({
-      index: self.toAppIndex(app_id),
-      type: 'user',
+      index: self.toMasterIndex(),
+      type: self.toUserType(app_id),
       id: user.get('id'),
     }, function(error, response) {
       if (error) {
@@ -92,8 +92,8 @@ module.exports = function(options, client, self) {
 
   self.get_user = function(app_id, id, callback) {
     client.get({
-      index: self.toAppIndex(app_id),
-      type: 'user',
+      index: self.toMasterIndex(),
+      type: self.toUserType(app_id),
       id: id,
       refresh: true,
     }, function(error, response) {
@@ -142,8 +142,8 @@ module.exports = function(options, client, self) {
       }
     }
     client.search({
-      index: self.toAppIndex(app_id),
-      type: 'user',
+      index: self.toMasterIndex(),
+      type: self.toUserType(app_id),
       refresh: true,
       body: body,
     }, function(error, response) {
@@ -171,8 +171,8 @@ module.exports = function(options, client, self) {
       });
     }
     client.count({
-      index: self.toAppIndex(app_id),
-      type: 'user',
+      index: self.toMasterIndex(),
+      type: self.toUserType(app_id),
       refresh: true,
       body: {
         query: {
@@ -200,8 +200,8 @@ module.exports = function(options, client, self) {
 
   self.find_watch_users = function(app_id, watch_list, callback) {
     client.search({
-      index: self.toAppIndex(app_id),
-      type: 'user',
+      index: self.toMasterIndex(),
+      type: self.toUserType(app_id),
       refresh: true,
       body: {
         from: 0,
@@ -231,8 +231,8 @@ module.exports = function(options, client, self) {
   self.search_users = function(app_id, q, callback) {
     q = '*' + (q || '').replace('@', '') + '*';
     client.search({
-      index: self.toAppIndex(app_id),
-      type: 'user',
+      index: self.toMasterIndex(),
+      type: self.toUserType(app_id),
       refresh: true,
       body: {
         from: 0,

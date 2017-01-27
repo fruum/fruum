@@ -56,6 +56,8 @@ var Document = Backbone.Model.extend({
     header: '',
     // body e.g. description or post message or bookmark search query
     body: '',
+    // optional thumbnail URL
+    thumbnail: '',
     // if thread is sticky
     sticky: false,
     // permissions

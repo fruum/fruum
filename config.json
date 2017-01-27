@@ -20,7 +20,7 @@
   "storage_engine": "elasticsearch",
   "auth_engine": "remote",
   "cache_engine": "memory_cache",
-  "email_engine": "mandrill",
+  "email_engine": "mailgun",
   "dispatch_engine": "base",
 
   "--------------------- DOCUMENT SETTINGS --------------------- ": "",
@@ -61,7 +61,6 @@
 
   "plugins": [
     "persona_GenericEmpty",
-
     "giphy",
     "youtube",
     "vimeo",
@@ -75,6 +74,7 @@
     "notify",
     "slack",
     "karma",
+    "website_scraper",
     "garbage_collect"
   ],
 
@@ -82,7 +82,7 @@
 
   "elasticsearch": {
     "host": "http://localhost:9200",
-    "apiVersion": "1.3",
+    "apiVersion": "2.4",
     "use_bulk": true,
     "max_children": 1000,
     "retry_on_conflict": 3,

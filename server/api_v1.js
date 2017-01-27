@@ -389,6 +389,7 @@ function API_v1(options, instance) {
       var query = {
         user_id: user.get('id'),
         type: ['thread', 'blog'],
+        archived__not: true,
         permission__lte: permission,
       };
       if (req.query.count !== undefined) {
@@ -415,6 +416,7 @@ function API_v1(options, instance) {
         type: 'post',
         parent_type__not: 'channel',
         permission__lte: permission,
+        archived__not: true,
       };
       if (req.query.count !== undefined) {
         storage.count_attributes(application.get('id'), query, function(total) {

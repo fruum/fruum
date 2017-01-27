@@ -16,7 +16,7 @@ var path = require('path'),
     fs = require('fs'),
     _ = require('underscore'),
     buildify = require('buildify'),
-    raven = require('raven'),
+    Raven = require('raven'),
     logger = require('./logger');
 
 function FruumServer(options, cli_cmd, ready) {
@@ -26,8 +26,8 @@ function FruumServer(options, cli_cmd, ready) {
   // start sentry
   if (options.sentry && options.sentry.dsn) {
     logger.system('Sentry is enabled');
-    var sentry_client = new raven.Client(options.sentry.dsn);
-    sentry_client.patchGlobal(function() {
+    Raven.config(options.sentry.dsn).install();
+    Raven.install(function() {
       process.exit(1);
     });
   } else {
@@ -73,7 +73,7 @@ function FruumServer(options, cli_cmd, ready) {
   // ------------------------------ SERVER SETUP -------------------------------
 
   if (options.sentry && options.sentry.dsn) {
-    app.use(raven.middleware.express.requestHandler(options.sentry.dsn));
+    app.use(Raven.requestHandler());
   }
 
   // enable CORS
@@ -597,12 +597,13 @@ function FruumServer(options, cli_cmd, ready) {
   });
 
   if (options.sentry && options.sentry.dsn) {
-    app.use(raven.middleware.express.errorHandler(options.sentry.dsn));
+    app.use(Raven.errorHandler());
   }
 
   // ----------------------------- HTTP SERVER ---------------------------------
 
   http.listen(process.env.PORT || options.port, function() {
+    logger.system('Base URL is: ' + options.url);
     logger.system('Listening connection on port ' + (process.env.PORT || options.port));
     ready && ready();
   });

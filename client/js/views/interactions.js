@@ -796,6 +796,7 @@ Handles the bottom input part
           type: type,
           header: header,
           body: body,
+          thumbnail: editing.thumbnail || '',
           attachments: this.cleanAttachments(body, editing.attachments || []),
           tags: tags,
           usage: this.ui.field_usage.data('value') | 0,
