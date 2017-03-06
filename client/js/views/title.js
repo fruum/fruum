@@ -14,7 +14,7 @@ Handles the top part
         Messages = Fruum.messages,
         Marionette = Fruum.libs.Marionette;
 
-    Fruum.views.TitleView = Marionette.ItemView.extend({
+    Fruum.views.TitleView = Marionette.View.extend({
       template: '#fruum-template-title',
       ui: {
         search: '[data-search-shortcut]',

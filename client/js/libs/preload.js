@@ -3,6 +3,9 @@ window.__momentjs__ = window.moment;
 window.__remarkablejs__ = window.Remarkable;
 window.__dompurify__ = window.DOMPurify;
 window.__toMarkdown__ = window.toMarkdown;
+window.__Marionette__ = window.Marionette;
+window.__Mn__ = window.Mn;
+
 if (window.define) {
   window.__define__ = window.define;
   window.define = undefined;

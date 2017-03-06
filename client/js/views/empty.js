@@ -13,7 +13,7 @@ Handles empty categories
         Marionette = Fruum.libs.Marionette,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
 
-    Fruum.views.EmptyView = TRANSITION(Marionette.ItemView.extend({
+    Fruum.views.EmptyView = TRANSITION(Marionette.View.extend({
       ui: {
         navigate: '[data-navigate]',
       },
@@ -42,7 +42,7 @@ Handles empty categories
           return '#fruum-template-persona';
         }
       },
-      templateHelpers: function() {
+      templateContext: function() {
         var viewing = this.model.get('viewing'),
             load_state = this.model.get('load_state'),
             view_req = this.model.get('view_req'),

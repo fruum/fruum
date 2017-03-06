@@ -13,7 +13,7 @@ Threads view
         Marionette = Fruum.libs.Marionette,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
 
-    Fruum.views.ThreadView = TRANSITION(Marionette.ItemView.extend({
+    Fruum.views.ThreadView = TRANSITION(Marionette.View.extend({
       template: '#fruum-template-thread',
       ui: {
         search: '[data-search-shortcut]',
@@ -34,7 +34,7 @@ Threads view
         'click @ui.delete': 'onDelete',
         'click @ui.move': 'onMove',
       },
-      templateHelpers: function() {
+      templateContext: function() {
         return {
           is_new: Fruum.utils.isNewVisit(
             this.model.get('id'), this.model.get('updated')
@@ -95,6 +95,7 @@ Threads view
         Fruum.io.trigger('fruum:show_move', this.model.toJSON());
       },
     }));
+
     Fruum.views.ThreadsView = Marionette.CollectionView.extend({
       childView: Fruum.views.ThreadView,
     });

@@ -12,16 +12,16 @@ Loader helper view
     var _ = Fruum.libs._,
         Marionette = Fruum.libs.Marionette;
 
-    Fruum.views.LoadingView = (Marionette.ItemView.extend({
+    Fruum.views.LoadingView = Marionette.View.extend({
       template: '#fruum-template-loading',
       modelEvents: {
         'change:loading': 'onLoading',
       },
       initialize: function(options) {
-        _.bindAll(this, 'onShow');
+        _.bindAll(this, 'onRender');
         this.$content = options.content;
       },
-      onShow: function() {
+      onRender: function() {
         this.timer = null;
         this.$el.parent().stop(true, true).fadeIn(1);
         this.$content.stop(true, true).fadeOut(1);
@@ -60,7 +60,7 @@ Loader helper view
             this.$el.parent().stop(true, true).fadeIn(1);
             this.$content.stop(true, true).fadeOut(1);
           } else {
-            if (!this.timer) this.timer = setTimeout(this.onShow, delay);
+            if (!this.timer) this.timer = setTimeout(this.onRender, delay);
           }
         } else {
           if (this.timer) {
@@ -72,6 +72,6 @@ Loader helper view
           this.$content.stop(true, true).fadeTo(100, 1);
         }
       },
-    }));
+    });
   });
 })();

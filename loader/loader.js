@@ -1,86 +1,6 @@
 (function() {
   // namespace
   window.Fruum = window.Fruum || {};
-  // dependencies
-  var dependencies = {
-    jquery: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js',
-      test: 'jQuery',
-    },
-    underscore: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js',
-      test: '_.reduce',
-    },
-    backbone: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone-min.js',
-      test: 'Backbone.Model',
-    },
-    marionette: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.4.7/backbone.marionette.min.js',
-      test: 'Marionette.ItemView',
-    },
-    moment: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js',
-      test: 'moment.isMoment',
-    },
-    remarkable: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/remarkable/1.7.1/remarkable.min.js',
-      test: 'Remarkable',
-    },
-    purify: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/dompurify/0.8.4/purify.min.js',
-      test: 'DOMPurify.sanitize',
-    },
-    to_markdown: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/to-markdown/3.0.3/to-markdown.min.js',
-      test: 'toMarkdown',
-    },
-    socketio: {
-      url: '//cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.2/socket.io.min.js',
-      test: 'io.Socket',
-    },
-  };
-
-  // loads a dependency from the list above
-  function load_dependency(dependency, done) {
-    // test it first
-    var parts = dependency.test.split('.'), exists = false, root = window;
-    while (parts.length) {
-      root = root[parts.shift()];
-      exists = (root != undefined);
-      if (!exists) break;
-    }
-    if (exists) {
-      done && done();
-    } else {
-      load_script(dependency.url, function() {
-        done && done();
-      });
-    }
-  }
-
-  function load_dependencies(done) {
-    load_dependency(dependencies.jquery, function() {
-      load_dependency(dependencies.underscore, function() {
-        load_dependency(dependencies.backbone, function() {
-          load_dependency(dependencies.marionette, function() {
-            // load rest in parallel
-            var libs = ['moment', 'remarkable', 'purify', 'to_markdown', 'socketio'],
-                libs_loaded = 0;
-            function cb() {
-              libs_loaded++;
-              if (libs_loaded == libs.length) {
-                done && done();
-              }
-            }
-            for (var i = 0; i < libs.length; ++i) {
-              load_dependency(dependencies[libs[i]], cb);
-            }
-          });
-        });
-      });
-    });
-  }
 
   // load script
   function load_script(url, callback) {
@@ -294,17 +214,8 @@
           request.send();
         } else {
           // append fruum
-          if (window.fruumSettings.bundle) {
-            load_script(window.fruumSettings.fruum_host +
-                        '/_/get/js/bundle/' +
-                        window.fruumSettings.app_id);
-          } else {
-            load_dependencies(function() {
-              load_script(window.fruumSettings.fruum_host +
-                          '/_/get/js/compact/' +
-                          window.fruumSettings.app_id);
-            });
-          }
+          load_script(window.fruumSettings.fruum_host +
+            '/_/get/js/' + window.fruumSettings.app_id);
         }
       }
     }

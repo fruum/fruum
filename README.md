@@ -1,7 +1,6 @@
 # Fruum
 
 [![Build Status](https://travis-ci.org/fruum/fruum.svg)](https://travis-ci.org/fruum/fruum)
-[![Dependencies Status](https://david-dm.org/fruum/fruum.svg)](https://david-dm.org/fruum/fruum)
 
 An embeddable communications hub for your forum, documentation, and real‐time chat streams, built
 on [node.js](https://nodejs.org).

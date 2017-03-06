@@ -13,6 +13,7 @@ Handles sharing functionality
         Marionette = Fruum.libs.Marionette;
 
     Fruum.views.ShareView = Marionette.View.extend({
+      template: false,
       events: {
         'click .fruum-popup-close': 'onClose',
         'click textarea': 'onSelect',

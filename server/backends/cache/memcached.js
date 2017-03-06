@@ -26,23 +26,17 @@ module.exports = function(options, storage) {
     }
   });
 
-  var expires = {
-    static: options.memcached.expire_static || 0,
-    views: options.memcached.expire_views || 0,
-    properties: options.memcached.expire_properties || 0,
-  };
-
   // store a value in cache
-  this.put = function(queue, key, value) {
-    client.set(queue + ':' + key, value, function(err) {
+  this.put = function(key, value) {
+    client.set(key, value, function(err) {
       if (err) {
         logger.error('memcached', 'put', err);
       }
-    }, expires[queue] || 0);
+    }, options.memcached.expire || 0);
   };
   // get a value from cache
-  this.get = function(queue, key, callback) {
-    client.get(queue + ':' + key, function(err, val) {
+  this.get = function(key, callback) {
+    client.get(key, function(err, val) {
       if (err) {
         logger.error('memcached', 'get', err);
       }
@@ -52,8 +46,8 @@ module.exports = function(options, storage) {
     });
   };
   // delete a value from cache
-  this.del = function(queue, key) {
-    client.delete(queue + ':' + key, function(err) {
+  this.del = function(key) {
+    client.delete(key, function(err) {
       if (err) {
         logger.error('memcached', 'del', err);
       }

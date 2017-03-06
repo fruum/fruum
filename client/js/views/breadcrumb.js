@@ -12,7 +12,7 @@ Breadcrumb view
     var $ = Fruum.libs.$,
         Marionette = Fruum.libs.Marionette;
 
-    Fruum.views.BreadcrumbView = Marionette.ItemView.extend({
+    Fruum.views.BreadcrumbView = Marionette.View.extend({
       template: '#fruum-template-breadcrumb',
       ui: {
         navigate: '.fruum-js-navigate',

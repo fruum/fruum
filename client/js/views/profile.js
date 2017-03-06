@@ -18,17 +18,17 @@ User profile view
 
     // -------------------------------------------------------------------------
 
-    var HeaderView = Marionette.ItemView.extend({
+    var HeaderView = Marionette.View.extend({
       template: '#fruum-template-profile-header',
       modelEvents: { 'change': 'render' },
     });
 
-    var MainCardView = Marionette.ItemView.extend({
+    var MainCardView = Marionette.View.extend({
       template: '#fruum-template-profile-maincard',
       modelEvents: { 'change': 'render' },
     });
 
-    var TabsView = Marionette.ItemView.extend({
+    var TabsView = Marionette.View.extend({
       template: '#fruum-template-profile-tabs',
       modelEvents: {
         'change:topics change:replies change:id': 'render',
@@ -54,7 +54,7 @@ User profile view
         if (!tab ||
             tab && !(this.$('[data-tab="' + tab + '"]').length)
         ) {
-          if (this.templateHelpers().notifications) {
+          if (this.templateContext().notifications) {
             this.controller.set('tab', 'notifications');
           } else {
             this.controller.set('tab', this.$('[data-tab]').eq(0).data('tab') || '');
@@ -76,7 +76,7 @@ User profile view
           this.controller.set('tab', tab);
         }
       },
-      templateHelpers: function() {
+      templateContext: function() {
         var notifications = 0;
         if (Fruum.user.id == this.model.get('id')) {
           notifications = Fruum.userUtils.countNotifications();
@@ -88,7 +88,7 @@ User profile view
       },
     });
 
-    var ActionsView = Marionette.ItemView.extend({
+    var ActionsView = Marionette.View.extend({
       template: '#fruum-template-profile-actions',
       modelEvents: { 'change': 'render' },
       triggers: {
@@ -100,7 +100,7 @@ User profile view
 
     // -------------------------------------------------------------------------
 
-    var DocumentView = TRANSITION(Marionette.ItemView.extend({
+    var DocumentView = TRANSITION(Marionette.View.extend({
       template: '#fruum-template-profile-document',
       ui: {
         navigate: '.fruum-js-navigate',
@@ -109,7 +109,7 @@ User profile view
         'click @ui.navigate': 'onNavigate',
       },
       initialize: function(options) {
-        this.templateHelpers = {
+        this.templateContext = {
           is_notification: options.is_notification,
         };
       },
@@ -142,7 +142,7 @@ User profile view
 
     // -------------------------------------------------------------------------
 
-    var UserView = TRANSITION(Marionette.ItemView.extend({
+    var UserView = TRANSITION(Marionette.View.extend({
       template: '#fruum-template-profile-user',
       events: {
         'click': 'onSelect',
@@ -161,6 +161,7 @@ User profile view
         });
       },
     }));
+
     var UsersView = Marionette.CollectionView.extend({
       childView: UserView,
       onAttach: function() {
@@ -173,10 +174,9 @@ User profile view
 
     // -------------------------------------------------------------------------
 
-    Fruum.views.ProfileView = Marionette.LayoutView.extend({
+    Fruum.views.ProfileView = Marionette.View.extend({
       template: '#fruum-template-profile-layout',
       regions: {
-        navigation: '.fruum-js-profile-navigation',
         header: '.fruum-js-profile-region-header',
         maincard: '.fruum-js-profile-region-maincard',
         tabs: '.fruum-js-profile-tabs',
@@ -184,6 +184,7 @@ User profile view
         actions: '.fruum-js-profile-actions',
       },
       ui: {
+        navigation: '.fruum-js-profile-navigation',
         close: '[data-action="close"]',
         nano: '.nano',
       },
@@ -191,7 +192,6 @@ User profile view
         'click @ui.close': 'onClose',
       },
       initialize: function(options) {
-        var that = this;
         _.bindAll(this, 'resize', 'nextFeed');
         this.parent = options.parent;
         this.ui_state = options.ui_state;
@@ -201,7 +201,24 @@ User profile view
         this.users = options.users;
         // profile controller model
         this.controller = new Backbone.Model({ tab: '' });
+      },
+      onAttach: function() {
+        this.showChildView('header', new HeaderView({ model: this.model }));
+        this.showChildView('maincard', new MainCardView({ model: this.model }));
+        this.showChildView('tabs', new TabsView({
+          model: this.model,
+          controller: this.controller,
+          ui_state: this.ui_state,
+        }));
+        this.showChildView('actions', new ActionsView({ model: this.model }));
+        this.ui.nano.nanoScroller({
+          preventPageScrolling: true,
+          iOSNativeScrolling: true,
+          disableResize: true,
+        }).bind('scrollend', this.nextFeed);
+
         // show/hide panel
+        var that = this;
         this.listenTo(this.ui_state, 'change:profile', function() {
           if (!this.ui_state.get('profile')) {
             that.topics.reset();
@@ -239,21 +256,6 @@ User profile view
           this.controller.set('tab', '');
         });
       },
-      onBeforeShow: function() {
-        this.showChildView('header', new HeaderView({ model: this.model }));
-        this.showChildView('maincard', new MainCardView({ model: this.model }));
-        this.showChildView('tabs', new TabsView({
-          model: this.model,
-          controller: this.controller,
-          ui_state: this.ui_state,
-        }));
-        this.showChildView('actions', new ActionsView({ model: this.model }));
-        this.ui.nano.nanoScroller({
-          preventPageScrolling: true,
-          iOSNativeScrolling: true,
-          disableResize: true,
-        }).bind('scrollend', this.nextFeed);
-      },
       onClose: function(event) {
         if (event) {
           event.preventDefault();
@@ -290,8 +292,8 @@ User profile view
         return Fruum.user.admin && this.model.get('id') != Fruum.user.id;
       },
       resize: function() {
-        this.ui.nano.height(
-          this.parent.height() - this.$(this.regions.navigation).outerHeight() -
+        this.$(this.ui.nano).height(
+          this.parent.height() - this.$(this.ui.navigation).outerHeight() -
           (this.canDisplayActions() ? this.$(this.regions.actions).outerHeight() : 0)
         ).nanoScroller({ reset: true });
       },

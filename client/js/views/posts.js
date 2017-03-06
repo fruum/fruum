@@ -14,7 +14,7 @@ Posts view
         Messages = Fruum.messages,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
 
-    Fruum.views.PostView = TRANSITION(Marionette.ItemView.extend({
+    Fruum.views.PostView = TRANSITION(Marionette.View.extend({
       ui: {
         react: '[data-action="react"]',
         edit: '[data-action="edit"]',
@@ -44,7 +44,7 @@ Posts view
       initialize: function(options) {
         this.template_helpers = options;
       },
-      templateHelpers: function() {
+      templateContext: function() {
         return this.template_helpers;
       },
       getTemplate: function() {
@@ -147,7 +147,7 @@ Posts view
       },
     }));
 
-    Fruum.views.PostEmptyView = TRANSITION(Marionette.ItemView.extend({
+    Fruum.views.PostEmptyView = TRANSITION(Marionette.View.extend({
       template: '#fruum-template-persona',
       initialize: function(options) {
         this.viewing = options.viewing;
@@ -155,7 +155,7 @@ Posts view
           this.__delay_transition = 1000;
         }
       },
-      templateHelpers: function() {
+      templateContext: function() {
         return Fruum.utils.personaSays({
           permission: Fruum.user.anonymous ? 'read' : 'write',
           action: 'empty_' + this.viewing.type,

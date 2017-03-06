@@ -12,7 +12,7 @@ Channels view
     var Marionette = Fruum.libs.Marionette,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
 
-    Fruum.views.ChannelView = TRANSITION(Marionette.ItemView.extend({
+    Fruum.views.ChannelView = TRANSITION(Marionette.View.extend({
       template: '#fruum-template-channel',
       ui: {
         navigate: '.fruum-js-navigate',
@@ -32,7 +32,7 @@ Channels view
       initialize: function(options) {
         this.options = options;
       },
-      templateHelpers: function() {
+      templateContext: function() {
         return {
           online: this.options.online,
         };
@@ -68,6 +68,7 @@ Channels view
         Fruum.io.trigger('fruum:show_move', this.model.toJSON());
       },
     }));
+
     Fruum.views.ChannelsView = Marionette.CollectionView.extend({
       childView: Fruum.views.ChannelView,
       initialize: function(options) {

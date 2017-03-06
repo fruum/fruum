@@ -15,6 +15,8 @@ delete window.moment;
 delete window.Remarkable;
 delete window.DOMPurify;
 delete window.toMarkdown;
+delete window.Marionette;
+delete window.Mn;
 
 if (window.___socket_io___)
   window.io = window.___socket_io___;
@@ -31,11 +33,19 @@ if (window.__dompurify__)
 if (window.__toMarkdown__)
   window.toMarkdown = window.__toMarkdown__;
 
+if (window.__Marionette__)
+  window.Marionette = window.__Marionette__;
+
+if (window.__Mn__)
+   window.Mn = window.__Mn__;
+
 delete window.___socket_io___;
 delete window.__momentjs__;
 delete window.__remarkablejs__;
 delete window.__dompurify__;
 delete window.__toMarkdown__;
+delete window.__Marionette__;
+delete window.__Mn__;
 
 if (window.__define__) {
   window.define = window.__define__;

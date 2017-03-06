@@ -19,8 +19,8 @@
 
   "storage_engine": "elasticsearch",
   "auth_engine": "remote",
-  "cache_engine": "memory_cache",
-  "email_engine": "mailgun",
+  "cache_engine": "base",
+  "email_engine": "base",
   "dispatch_engine": "base",
 
   "--------------------- DOCUMENT SETTINGS --------------------- ": "",
@@ -113,8 +113,8 @@
       "minutes": 0,
       "hours": 0,
       "days": 0,
-      "weeks": 1,
-      "months": 0,
+      "weeks": 0,
+      "months": 6,
       "years": 0
     },
     "reset_onboard_after": {
@@ -142,19 +142,14 @@
   },
 
   "memory_cache": {
-    "static": 50,
-    "views": 10,
-    "properties": 100,
-    "default": 10
+    "size": 10
   },
 
   "memcached": {
     "host": "",
     "username": "",
     "password": "",
-    "expire_static": 0,
-    "expire_views": 900,
-    "expire_properties": 900
+    "expire": 900
   },
 
   "mandrill": {

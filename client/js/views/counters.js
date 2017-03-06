@@ -13,7 +13,7 @@
         _ = Fruum.libs._,
         Marionette = Fruum.libs.Marionette;
 
-    Fruum.views.CountersView = Marionette.ItemView.extend({
+    Fruum.views.CountersView = Marionette.View.extend({
       template: '#fruum-template-counters',
       ui: {
         down: '.fruum-js-filter-down',
@@ -67,7 +67,7 @@
         }
         Fruum.io.trigger('fruum:share', $(event.target));
       },
-      templateHelpers: function() {
+      templateContext: function() {
         var editing = this.model.get('editing'),
             viewing = this.model.get('viewing');
         return {
