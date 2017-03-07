@@ -13,7 +13,7 @@ Search button
         _ = Fruum.libs._,
         Marionette = Fruum.libs.Marionette;
 
-    Fruum.views.FiltersView = Marionette.ItemView.extend({
+    Fruum.views.FiltersView = Marionette.View.extend({
       template: '#fruum-template-filters',
       ui: {
         search: '.fruum-js-search',

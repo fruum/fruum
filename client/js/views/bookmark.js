@@ -14,7 +14,7 @@ Handles bookmark search
         Marionette = Fruum.libs.Marionette,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
 
-    Fruum.views.BookmarkItemView = Marionette.ItemView.extend({
+    Fruum.views.BookmarkItemView = Marionette.View.extend({
       template: '#fruum-template-bookmark-category',
       triggers: {
         'click': 'select:category',
@@ -25,7 +25,7 @@ Handles bookmark search
       childView: Fruum.views.BookmarkItemView,
     });
 
-    Fruum.views.BookmarkEditView = Marionette.LayoutView.extend({
+    Fruum.views.BookmarkEditView = Marionette.View.extend({
       template: '#fruum-template-bookmark-edit',
       regions: {
         list: '.fruum-js-bookmark-categories',
@@ -122,14 +122,14 @@ Handles bookmark search
         Fruum.io.trigger('fruum:categories', {});
         this.ui.header.focus();
       },
-      templateHelpers: function() {
+      templateContext: function() {
         return {
           bookmark: this.bookmark || {},
         };
       },
     });
 
-    Fruum.views.BookmarkSearchResultView = TRANSITION(Marionette.ItemView.extend({
+    Fruum.views.BookmarkSearchResultView = TRANSITION(Marionette.View.extend({
       template: '#fruum-template-bookmarksearch',
       ui: {
         search: '[data-search-shortcut]',

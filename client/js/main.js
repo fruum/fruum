@@ -50,21 +50,36 @@ Main client app
       fullpage_url: window.fruumSettings.fullpage_url,
       pushstate: window.fruumSettings.fullpage_url && window.fruumSettings.pushstate,
     };
+
     // libraries
     var $ = Fruum.libs.$,
         _ = Fruum.libs._,
         Backbone = Fruum.libs.Backbone,
         Marionette = Fruum.libs.Marionette,
         io = Fruum.libs.io;
+
     // load requirements
     _.each(Fruum.require, function(fn) { fn(); });
+
     // cache some stuff
     var Models = Fruum.models,
         Collections = Fruum.collections,
         Views = Fruum.views;
+
     // root view
-    var RootView = Marionette.LayoutView.extend({
+    var RootView = Marionette.View.extend({
+      template: false,
       ui: {
+        navigation: '.fruum-js-navigation-container',
+        content: '.fruum-js-content-container',
+        list: '.fruum-js-objects-list',
+        share: '.fruum-js-share-container',
+
+        divider_category_article: '.fruum-js-divider-category-article',
+        divider_article_blog: '.fruum-js-divider-article-blog',
+        divider_blog_thread: '.fruum-js-divider-blog-thread',
+        divider_thread_channel: '.fruum-js-divider-thread-channel',
+
         message_signin: '.fruum-js-message-signin',
         message_reconnect: '.fruum-js-message-reconnecting',
         message_invalid_app: '.fruum-js-message-invalid-app',
@@ -72,23 +87,17 @@ Main client app
         message_report: '.fruum-js-message-report',
         message_account_removed: '.fruum-js-message-account-removed',
         message_account_not_exists: '.fruum-js-message-account-not-exists',
+
         restore_undo: '.fruum-js-restore-undo',
         sticky_section: '.fruum-section-sticky',
         close: '.fruum-js-panel-close',
         maximize: '.fruum-js-panel-maximize',
       },
       regions: {
-        navigation: '.fruum-js-navigation-section',
-        content: '.fruum-js-content-section',
-        divider_category_article: '.fruum-js-divider-category-article',
-        divider_article_blog: '.fruum-js-divider-article-blog',
-        divider_blog_thread: '.fruum-js-divider-blog-thread',
-        divider_thread_channel: '.fruum-js-divider-thread-channel',
         breadcrumb: '.fruum-js-region-breadcrumb',
         title: '.fruum-section-title',
         filters: '.fruum-js-region-filters',
         counters: '.fruum-js-region-counters',
-        list: '.fruum-objects-list',
         loading: '.fruum-is-loading',
         categories: '.fruum-category-list',
         articles: '.fruum-article-list',
@@ -100,7 +109,6 @@ Main client app
         bookmarksearch: '.fruum-bookmarksearch-list',
         interactions: '.fruum-interactions-section',
         empty: '.fruum-empty-list',
-        share: '.fruum-js-region-share',
         move: '.fruum-js-move',
         bookmark: '.fruum-js-bookmark',
         profile: '.fruum-js-profile',
@@ -166,7 +174,7 @@ Main client app
         }));
         this.showChildView('loading', new Views.LoadingView({
           model: this.ui_state,
-          content: this.getRegion('list').$el,
+          content: this.$(this.ui.list),
         }));
         this.showChildView('categories', new Views.CategoriesView({
           collection: this.categories,
@@ -224,17 +232,17 @@ Main client app
           categories: this.categories,
         }));
         this.showChildView('profile', new Views.ProfileView({
-          model: that.profile,
-          ui_state: that.ui_state,
-          notifications: that.notifications,
-          topics: that.profile_topics,
-          replies: that.profile_replies,
-          users: that.profile_users,
-          parent: that.getRegion('profile').$el,
+          model: this.profile,
+          ui_state: this.ui_state,
+          notifications: this.notifications,
+          topics: this.profile_topics,
+          replies: this.profile_replies,
+          users: this.profile_users,
+          parent: this.$(this.regions.profile),
         }));
         new Views.ShareView({ // eslint-disable-line
           ui_state: this.ui_state,
-          el: this.regions.share,
+          el: this.$(this.ui.share),
         });
         new Views.OnboardingView({ // eslint-disable-line
           ui_state: this.ui_state,
@@ -970,7 +978,7 @@ Main client app
             _.extend(that.ui_state.get('online'), payload)
           );
           // update region counters
-          var el = that.getRegion('channels').$el;
+          var el = that.$(that.regions.channels);
           for (var channel in payload) {
             el.find('[data-channel-members="' + channel + '"]').html(payload[channel]);
           }
@@ -1094,12 +1102,12 @@ Main client app
           this.startRouter();
         }
         // start nano scroller
-        this.getRegion('content').$el.nanoScroller({
+        this.$(this.ui.content).nanoScroller({
           preventPageScrolling: true,
           iOSNativeScrolling: true,
           disableResize: true,
         });
-        this.getRegion('content').$el.on('update', this.onScroll);
+        this.$(this.ui.content).on('update', this.onScroll);
 
         // store open state
         Fruum.utils.sessionStorage('fruum:open:' + window.fruumSettings.app_id, 1);
@@ -1119,54 +1127,54 @@ Main client app
         var viewing_type = this.ui_state.get('viewing').type;
         if (this.ui_state.get('searching')) {
           // Search mode
-          this.getRegion('empty').$el.stop(true, true).hide();
-          this.getRegion('categories').$el.hide();
-          this.getRegion('bookmarksearch').$el.hide();
-          this.getRegion('articles').$el.hide();
-          this.getRegion('blogs').$el.hide();
-          this.getRegion('threads').$el.hide();
-          this.getRegion('channels').$el.hide();
-          this.getRegion('divider_category_article').$el.hide();
-          this.getRegion('divider_article_blog').$el.hide();
-          this.getRegion('divider_blog_thread').$el.hide();
-          this.getRegion('divider_thread_channel').$el.hide();
-          this.getRegion('posts').$el.hide();
-          this.getRegion('search').$el.show();
+          this.$(this.regions.empty).stop(true, true).hide();
+          this.$(this.regions.categories).hide();
+          this.$(this.regions.bookmarksearch).hide();
+          this.$(this.regions.articles).hide();
+          this.$(this.regions.blogs).hide();
+          this.$(this.regions.threads).hide();
+          this.$(this.regions.channels).hide();
+          this.$(this.regions.posts).hide();
+          this.$(this.regions.search).show();
+          this.$(this.ui.divider_category_article).hide();
+          this.$(this.ui.divider_article_blog).hide();
+          this.$(this.ui.divider_blog_thread).hide();
+          this.$(this.ui.divider_thread_channel).hide();
           this.ui_state.set({
             total_entries: this.search.length,
           });
         } else if (viewing_type === 'bookmark') {
-          this.getRegion('empty').$el.stop(true, true).hide();
-          this.getRegion('categories').$el.hide();
-          this.getRegion('bookmarksearch').$el.show();
-          this.getRegion('articles').$el.hide();
-          this.getRegion('blogs').$el.hide();
-          this.getRegion('threads').$el.hide();
-          this.getRegion('channels').$el.hide();
-          this.getRegion('divider_category_article').$el.hide();
-          this.getRegion('divider_article_blog').$el.hide();
-          this.getRegion('divider_blog_thread').$el.hide();
-          this.getRegion('divider_thread_channel').$el.hide();
-          this.getRegion('posts').$el.hide();
-          this.getRegion('search').$el.hide();
+          this.$(this.regions.empty).stop(true, true).hide();
+          this.$(this.regions.categories).hide();
+          this.$(this.regions.bookmarksearch).show();
+          this.$(this.regions.articles).hide();
+          this.$(this.regions.blogs).hide();
+          this.$(this.regions.threads).hide();
+          this.$(this.regions.channels).hide();
+          this.$(this.regions.posts).hide();
+          this.$(this.regions.search).hide();
+          this.$(this.ui.divider_category_article).hide();
+          this.$(this.ui.divider_article_blog).hide();
+          this.$(this.ui.divider_blog_thread).hide();
+          this.$(this.ui.divider_thread_channel).hide();
           this.ui_state.set({
             total_entries: this.bookmarksearch.length,
           });
         } else if (_.contains(['channel', 'thread', 'article', 'blog'], viewing_type)) {
           // Viewing posts
-          this.getRegion('empty').$el.stop(true, true).hide();
-          this.getRegion('search').$el.hide();
-          this.getRegion('categories').$el.hide();
-          this.getRegion('bookmarksearch').$el.hide();
-          this.getRegion('articles').$el.hide();
-          this.getRegion('blogs').$el.hide();
-          this.getRegion('threads').$el.hide();
-          this.getRegion('channels').$el.hide();
-          this.getRegion('divider_category_article').$el.hide();
-          this.getRegion('divider_article_blog').$el.hide();
-          this.getRegion('divider_blog_thread').$el.hide();
-          this.getRegion('divider_thread_channel').$el.hide();
-          this.getRegion('posts').$el.show();
+          this.$(this.regions.empty).stop(true, true).hide();
+          this.$(this.regions.search).hide();
+          this.$(this.regions.categories).hide();
+          this.$(this.regions.bookmarksearch).hide();
+          this.$(this.regions.articles).hide();
+          this.$(this.regions.blogs).hide();
+          this.$(this.regions.threads).hide();
+          this.$(this.regions.channels).hide();
+          this.$(this.regions.posts).show();
+          this.$(this.ui.divider_category_article).hide();
+          this.$(this.ui.divider_article_blog).hide();
+          this.$(this.ui.divider_blog_thread).hide();
+          this.$(this.ui.divider_thread_channel).hide();
           this.ui_state.set({
             total_entries: this.posts.length,
           });
@@ -1174,39 +1182,39 @@ Main client app
             this.blogs.length || this.threads.length ||
             this.channels.length
         ) {
-          this.getRegion('empty').$el.stop(true, true).hide();
-          this.getRegion('search').$el.hide();
-          this.getRegion('categories').$el.show();
-          this.getRegion('bookmarksearch').$el.hide();
-          this.getRegion('articles').$el.show();
-          this.getRegion('blogs').$el.show();
-          this.getRegion('threads').$el.show();
-          this.getRegion('channels').$el.show();
-          this.getRegion('posts').$el.hide();
+          this.$(this.regions.empty).stop(true, true).hide();
+          this.$(this.regions.search).hide();
+          this.$(this.regions.categories).show();
+          this.$(this.regions.bookmarksearch).hide();
+          this.$(this.regions.articles).show();
+          this.$(this.regions.blogs).show();
+          this.$(this.regions.threads).show();
+          this.$(this.regions.channels).show();
+          this.$(this.regions.posts).hide();
           if (this.categories.length &&
               (this.articles.length || this.blogs.length || this.threads.length || this.channels.length)
           ) {
-            this.getRegion('divider_category_article').$el.show();
+            this.$(this.ui.divider_category_article).show();
           } else {
-            this.getRegion('divider_category_article').$el.hide();
+            this.$(this.ui.divider_category_article).hide();
           }
           if (this.articles.length &&
               (this.blogs.length || this.threads.length || this.channels.length)
           ) {
-            this.getRegion('divider_article_blog').$el.show();
+            this.$(this.ui.divider_article_blog).show();
           } else {
-            this.getRegion('divider_article_blog').$el.hide();
+            this.$(this.ui.divider_article_blog).hide();
           }
           if (this.blogs.length &&
               (this.threads.length || this.channels.length)) {
-            this.getRegion('divider_blog_thread').$el.show();
+            this.$(this.ui.divider_blog_thread).show();
           } else {
-            this.getRegion('divider_blog_thread').$el.hide();
+            this.$(this.ui.divider_blog_thread).hide();
           }
           if (this.threads.length && this.channels.length) {
-            this.getRegion('divider_thread_channel').$el.show();
+            this.$(this.ui.divider_thread_channel).show();
           } else {
-            this.getRegion('divider_thread_channel').$el.hide();
+            this.$(this.ui.divider_thread_channel).hide();
           }
           this.ui_state.set({
             total_entries: this.categories.length +
@@ -1216,19 +1224,19 @@ Main client app
                            this.blogs.length,
           });
         } else {
-          this.getRegion('empty').$el.fadeIn('fast');
-          this.getRegion('categories').$el.hide();
-          this.getRegion('bookmarksearch').$el.hide();
-          this.getRegion('search').$el.hide();
-          this.getRegion('articles').$el.hide();
-          this.getRegion('blogs').$el.hide();
-          this.getRegion('threads').$el.hide();
-          this.getRegion('channels').$el.hide();
-          this.getRegion('divider_category_article').$el.hide();
-          this.getRegion('divider_article_blog').$el.hide();
-          this.getRegion('divider_blog_thread').$el.hide();
-          this.getRegion('divider_thread_channel').$el.hide();
-          this.getRegion('posts').$el.hide();
+          this.$(this.regions.empty).fadeIn('fast');
+          this.$(this.regions.categories).hide();
+          this.$(this.regions.bookmarksearch).hide();
+          this.$(this.regions.search).hide();
+          this.$(this.regions.articles).hide();
+          this.$(this.regions.blogs).hide();
+          this.$(this.regions.threads).hide();
+          this.$(this.regions.channels).hide();
+          this.$(this.regions.posts).hide();
+          this.$(this.ui.divider_category_article).hide();
+          this.$(this.ui.divider_article_blog).hide();
+          this.$(this.ui.divider_blog_thread).hide();
+          this.$(this.ui.divider_thread_channel).hide();
           this.ui_state.set({
             total_entries: 0,
           });
@@ -1316,25 +1324,25 @@ Main client app
       },
       resize: function() {
         var panel_h = this.$el.height(),
-            navigation_h = this.getRegion('navigation').$el.outerHeight(),
-            interactions_h = this.getRegion('interactions').$el.outerHeight(),
+            navigation_h = this.$(this.ui.navigation).outerHeight(),
+            interactions_h = this.$(this.regions.interactions).outerHeight(),
             content_h = 0;
-        if (!this.getRegion('interactions').$el.is(':visible')) interactions_h = 0;
+        if (!this.$(this.regions.interactions).is(':visible')) interactions_h = 0;
         content_h = panel_h - navigation_h - interactions_h;
-        this.getRegion('content').$el.height(content_h);
+        this.$(this.ui.content).height(content_h);
         this.ui_state.set({
           navigation_height: navigation_h,
           interactions_height: interactions_h,
           content_height: content_h,
           panel_height: this.$el.height(),
         });
-        this.getRegion('content').$el.nanoScroller({ reset: true });
+        this.$(this.ui.content).nanoScroller({ reset: true });
         this.onScroll();
         Fruum.io.trigger('fruum:layout');
       },
       resize_to_bottom: function() {
-        this.getRegion('content').$el.height(
-           this.$el.height() - this.getRegion('navigation').$el.outerHeight()
+        this.$(this.ui.content).height(
+           this.$el.height() - this.$(this.ui.navigation).outerHeight()
         );
       },
       calculateViewRegions: function() {
@@ -1347,8 +1355,8 @@ Main client app
           entries_cls = '.fruum-js-entry-default';
         }
 
-        var top = this.getRegion('content').$el.offset().top,
-            bottom = top + this.getRegion('content').$el.height(),
+        var top = this.$(this.ui.content).offset().top,
+            bottom = top + this.$(this.ui.content).height(),
             entries = this.$(entries_cls),
             total = entries.length,
             start = 0,
@@ -1374,8 +1382,8 @@ Main client app
           this.ui_state.set('updates_count', 0);
           return;
         }
-        var top = this.getRegion('content').$el.offset().top,
-            bottom = top + this.getRegion('content').$el.height(),
+        var top = this.$(this.ui.content).offset().top,
+            bottom = top + this.$(this.ui.content).height(),
             count = 0;
         // find updates that are not visible
         var entries = this.$('.fruum-js-has-update');
@@ -1420,39 +1428,39 @@ Main client app
         return this.scroll_history[this.ui_state.get('viewing').id];
       },
       _getScrollTop: function() {
-        return this.getRegion('content').$el.find('.nano-content').scrollTop();
+        return this.$(this.ui.content).find('.nano-content').scrollTop();
       },
       isContentOnBottom: function() {
-        var el = this.getRegion('content').$el.find('.nano-content');
+        var el = this.$(this.ui.content).find('.nano-content');
         return (el.get(0).scrollHeight - el.scrollTop()) <= el.outerHeight() + 60;
       },
       // smooth scroll bottom
       _scrollBottom: function() {
-        var el = this.getRegion('content').$el.find('.nano-content');
+        var el = this.$(this.ui.content).find('.nano-content');
         el.stop(true, true).delay(1).animate({ scrollTop: el.get(0).scrollHeight }, 'fast');
       },
       // smooth scroll top
       _scrollTop: function() {
-        var el = this.getRegion('content').$el.find('.nano-content');
+        var el = this.$(this.ui.content).find('.nano-content');
         el.stop(true, true).delay(1).animate({ scrollTop: 0 }, 'fast');
       },
       // hard scroll to position
       _snapTo: function(top) {
-        this.getRegion('content').$el.nanoScroller({ scrollTop: top });
+        this.$(this.ui.content).nanoScroller({ scrollTop: top });
       },
       // hard scroll to el
       _snapToEl: function(el) {
         if (el && el.length) {
-          this.getRegion('content').$el.nanoScroller({ scrollTo: el });
+          this.$(this.ui.content).nanoScroller({ scrollTo: el });
         }
       },
       // hard scroll bottom
       _snapBottom: function() {
-        this.getRegion('content').$el.nanoScroller({ scrollBottom: true });
+        this.$(this.ui.content).nanoScroller({ scrollBottom: true });
       },
       // hard scroll top
       _snapTop: function() {
-        this.getRegion('content').$el.nanoScroller({ scrollTop: true });
+        this.$(this.ui.content).nanoScroller({ scrollTop: true });
       },
       _consumeData: function() {
         if (window.FruumData && window.FruumData.length) {
@@ -1476,7 +1484,7 @@ Main client app
       },
       jumpToPost: function(index) {
         if (index > 0) {
-          this._snapToEl(this.getRegion('posts').$el.find('.fruum-js-entry-default').eq(index - 1));
+          this._snapToEl(this.$(this.regions.posts).find('.fruum-js-entry-default').eq(index - 1));
         }
       },
       onRestore: function(event) {
@@ -1622,10 +1630,6 @@ Main client app
     var app = new Marionette.Application();
     app.rootView = new RootView({
       el: '#fruum',
-    });
-    app.on('before:start', function(options) {
-    });
-    app.on('start', function(options) {
     });
 
     // register to global Fruum object

@@ -192,31 +192,6 @@ function Engine(options, instance) {
   this.app_users = app_users;
   this.app_applications = app_applications;
 
-  // ---------------------------------- CACHE ----------------------------------
-
-  this.CACHE_DEFS = {
-    'get/js/bundle': {
-      queue: 'static',
-      key: 'get_js_bundle:{app_id}',
-    },
-    'get/js/compact': {
-      queue: 'static',
-      key: 'get_js_compact:{app_id}',
-    },
-    'get/html': {
-      queue: 'static',
-      key: 'get_html:{app_id}',
-    },
-    'get/style': {
-      queue: 'static',
-      key: 'get_style:{app_id}',
-    },
-    'get/loader': {
-      queue: 'static',
-      key: 'get_loader:{app_id}',
-    },
-  };
-
   // ---------------------------------- API ------------------------------------
 
   /* eslint-disable */

@@ -12,7 +12,7 @@ Categories view
     var Marionette = Fruum.libs.Marionette,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
 
-    Fruum.views.CategoryView = TRANSITION(Marionette.ItemView.extend({
+    Fruum.views.CategoryView = TRANSITION(Marionette.View.extend({
       ui: {
         navigate: '.fruum-js-navigate',
         manage: '.fruum-js-manage',
@@ -33,7 +33,7 @@ Categories view
       initialize: function(options) {
         this.ui_state = options.ui_state;
       },
-      templateHelpers: function() {
+      templateContext: function() {
         return {
           viewing: this.ui_state.get('viewing'),
           is_new: Fruum.utils.isNewVisit(
@@ -91,6 +91,7 @@ Categories view
         }
       },
     }));
+
     Fruum.views.CategoriesView = Marionette.CollectionView.extend({
       childView: Fruum.views.CategoryView,
       initialize: function(options) {

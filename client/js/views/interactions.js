@@ -14,7 +14,7 @@ Handles the bottom input part
         toMarkdown = Fruum.libs.toMarkdown,
         Marionette = Fruum.libs.Marionette;
 
-    Fruum.views.InteractionsView = Marionette.ItemView.extend({
+    Fruum.views.InteractionsView = Marionette.View.extend({
       ui: {
         search: '.fruum-js-search-category',
         post: '[data-action="post"]',

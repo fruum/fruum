@@ -295,12 +295,12 @@ module.exports = function(options, instance, self) {
   // high level function add document to cache
   self.cacheResponse = function(app_id, user, doc_id, response) {
     if (!user) return;
-    self.cache.put('views', _gen_cache_key(app_id, user.get('admin'), doc_id), JSON.stringify(response));
+    self.cache.put(_gen_cache_key(app_id, user.get('admin'), doc_id), JSON.stringify(response));
   };
 
   self.invalidateCache = function(app_id, doc_id) {
-    self.cache.del('views', _gen_cache_key(app_id, true, doc_id));
-    self.cache.del('views', _gen_cache_key(app_id, false, doc_id));
+    self.cache.del(_gen_cache_key(app_id, true, doc_id));
+    self.cache.del(_gen_cache_key(app_id, false, doc_id));
   };
 
   self.invalidateDocument = function(app_id, document) {
@@ -309,15 +309,12 @@ module.exports = function(options, instance, self) {
   };
 
   self.invalidateApplication = function(app_id) {
-    _.each(self.CACHE_DEFS, function(value, key) {
-      self.cache.del(value.queue, value.key.replace('{app_id}', app_id));
-    });
   };
 
   self.getCachedResponse = function(app_id, user, doc_id, hit, miss) {
     if (!user) return;
     var key = _gen_cache_key(app_id, user.get('admin'), doc_id);
-    self.cache.get('views', key, function(value) {
+    self.cache.get(key, function(value) {
       if (value) {
         try {
           value = JSON.parse(value);

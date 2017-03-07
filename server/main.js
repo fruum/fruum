@@ -14,10 +14,12 @@ var path = require('path'),
     sass = require('node-sass'),
     io = require('socket.io')(http),
     fs = require('fs'),
+    mkdirp = require('mkdirp'),
     _ = require('underscore'),
     buildify = require('buildify'),
     Raven = require('raven'),
-    logger = require('./logger');
+    logger = require('./logger'),
+    BUILD_FOLDER = path.join(__dirname, '/../build');
 
 function FruumServer(options, cli_cmd, ready) {
   logger.system('Starting Fruum');
@@ -33,6 +35,9 @@ function FruumServer(options, cli_cmd, ready) {
   } else {
     logger.system('Sentry is disabled');
   }
+
+  logger.system('Creating build folder');
+  mkdirp.sync(BUILD_FOLDER);
 
   // defaults
   options.static_root = path.resolve(
@@ -218,160 +223,170 @@ function FruumServer(options, cli_cmd, ready) {
     'client/js/views/empty.js'
   ];
 
-  // -------------------------------- HELPERS ----------------------------------
+  // -------------------------- JAVASCRIPT  ------------------------------------
 
-  // Validate api_id in request GET params and returned cached response or
-  // hit callback if not cache exists
-  function req_api_key(req, res, cache_namespace, callback) {
+  var JS_BUILD = {};
+  function _get_js(req, res) {
     var app_id = req.params.app_id || req.query.app_id;
     if (!app_id) {
       res.status(400).send('GET param app_id is not defined');
       return;
     }
-    var cache_entry = engine.CACHE_DEFS[cache_namespace];
-    if (!cache_entry) {
-      res.status(500).send('Cache namespace error');
+    // check for already built lib
+    if (JS_BUILD[app_id]) {
+      res.type('js');
+      res.sendFile(JS_BUILD[app_id], function(err) {
+        if (err) {
+          logger.error(app_id, 'Could not send JS', err);
+          res.status(err.status).end();
+        } else {
+          logger.info(app_id, 'Sent', JS_BUILD[app_id]);
+        }
+      });
       return;
     }
-    var cache_key = cache_entry.key.replace('{app_id}', app_id);
-    engine.cache.get(cache_entry.queue, cache_key, function(value) {
-      if (value) {
-        res.send(value);
-        return;
-      }
-      callback(app_id, cache_key, cache_entry.queue);
-    });
-  }
-  // same as above but return application object as well
-  function req_api_key_and_application(req, res, cache_namespace, callback) {
-    req_api_key(req, res, cache_namespace, function(app_id, cache_key, cache_queue) {
-      engine.get_app(app_id, function(application) {
-        if (!application) {
-          res.status(404).send('Invalid app_id');
-          return;
-        }
-        callback(application, cache_key, cache_queue);
-      });
-    });
-  }
+    // build from scratch
+    var benchmark = Date.now();
+    // build libs
+    var libs_builder = buildify().
+      setDir(fruum_root).
+      concat([
+        // Libraries
+        'client/js/libs/preload.js',
+        'client/js/libs/jquery.js',
+        'client/js/libs/underscore.js',
+        'client/js/libs/backbone.js',
+        'client/js/libs/radio.js',
+        'client/js/libs/marionette.js',
+        'client/js/libs/moment.js',
+        'client/js/libs/remarkable.js',
+        'client/js/libs/purify.js',
+        'client/js/libs/socketio.js',
+        'client/js/libs/to_markdown.js',
+        'client/js/libs/postload.js'
+      ]);
 
-  // -------------------------- JAVASCRIPT BUNDLE -------------------------------
-
-  function _get_js_bundle(req, res) {
-    req_api_key(req, res, 'get/js/bundle', function(app_id, cache_key, cache_queue) {
-      var benchmark = Date.now();
-      var builder = buildify().
-        setDir(fruum_root).
-        concat(_.union(
-          [
-            // Libraries
-            'client/js/libs/preload.js',
-            'client/js/libs/jquery.js',
-            'client/js/libs/underscore.js',
-            'client/js/libs/backbone.js',
-            'client/js/libs/marionette.js',
-            'client/js/libs/moment.js',
-            'client/js/libs/remarkable.js',
-            'client/js/libs/purify.js',
-            'client/js/libs/socketio.js',
-            'client/js/libs/to_markdown.js',
-            'client/js/libs/postload.js'
-          ],
-          web_app,
-          plugin_js,
-          ['client/js/main.js']));
-      // minimize js only when we are on cache mode
-      if (options.compress) builder = builder.uglify();
-      // get output
-      var cache_data = builder.getContent().replace('__url__', options.url);
-      logger.info(
-        app_id, 'get/js/bundle',
-        'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024) | 0) + 'kb'
-      );
-      engine.cache.put(cache_queue, cache_key, cache_data);
-      res.type('text/javascript');
-      res.send(cache_data);
-    });
+    var app_builder = buildify().
+      setDir(fruum_root).
+      concat(_.union(
+        web_app,
+        plugin_js,
+        ['client/js/main.js']
+      ));
+    // minimize js only when we are on cache mode
+    if (options.compress) app_builder = app_builder.uglify({ mangle: false });
+    // get output
+    var output = libs_builder.getContent();
+    output += app_builder.getContent().replace('__url__', options.url);
+    logger.info(
+      app_id, 'get/js',
+      'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((output.length / 1024) | 0) + 'kb'
+    );
+    var build_path = BUILD_FOLDER + '/' + app_id + '.js.out';
+    try {
+      fs.writeFileSync(build_path, output);
+      JS_BUILD[app_id] = build_path;
+      res.type('js');
+      res.sendFile(build_path);
+    } catch (err) {
+      res.status(500).send('Could not build JS file');
+    }
   }
-  app.get('/_/get/js/bundle/:app_id', _get_js_bundle);
-
-  // ------------------------ JAVASCRIPT COMPACT -------------------------------
-
-  function _get_js_compact(req, res) {
-    req_api_key(req, res, 'get/js/compact', function(app_id, cache_key, cache_queue) {
-      var benchmark = Date.now();
-      var builder = buildify().
-        setDir(fruum_root).
-        concat(_.union(
-          [
-            // Libraries
-            'client/js/libs/bindlibs.js'
-          ],
-          web_app,
-          plugin_js,
-          ['client/js/main.js']));
-      // minimize js only when we are on cache mode
-      if (options.compress) builder = builder.uglify({mangle: false});
-      // get output
-      var cache_data = builder.getContent().replace('__url__', options.url);
-      logger.info(
-        app_id, 'get/js/compact',
-        'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024) | 0) + 'kb'
-      );
-      engine.cache.put(cache_queue, cache_key, cache_data);
-      res.type('text/javascript');
-      res.send(cache_data);
-    });
-  }
-  app.get('/_/get/js/compact/:app_id', _get_js_compact);
+  app.get('/_/get/js/:app_id', _get_js);
 
   // ----------------------------------- HTML ----------------------------------
 
+  var HTML_BUILD = {};
   function _get_html(req, res) {
-    req_api_key(req, res, 'get/html', function(app_id, cache_key, cache_queue) {
-      var benchmark = Date.now();
-      var cache_data = buildify().
-        setDir(fruum_root).
-        load('client/templates/main.html').
-        concat(_.union([
-          'client/templates/profile.html',
-          'client/templates/persona.html',
-          'client/templates/breadcrumb.html',
-          'client/templates/interactions.html',
-          'client/templates/autocomplete.html',
-          'client/templates/emojipanel.html',
-          'client/templates/attachments.html',
-          'client/templates/search.html',
-          'client/templates/bookmark.html',
-          'client/templates/onboarding.html',
-          'client/templates/categories.html',
-          'client/templates/loading.html',
-          'client/templates/threads.html',
-          'client/templates/articles.html',
-          'client/templates/blog.html',
-          'client/templates/channels.html',
-          'client/templates/title.html',
-          'client/templates/filters.html',
-          'client/templates/counters.html',
-          'client/templates/move.html',
-          'client/templates/posts.html'], plugin_templates)).getContent();
+    var app_id = req.params.app_id || req.query.app_id;
+    if (!app_id) {
+      res.status(400).send('GET param app_id is not defined');
+      return;
+    }
+    // check for already built html
+    if (HTML_BUILD[app_id]) {
+      res.type('html');
+      res.sendFile(HTML_BUILD[app_id], function(err) {
+        if (err) {
+          logger.error(app_id, 'Could not send HTML', err);
+          res.status(err.status).end();
+        } else {
+          logger.info(app_id, 'Sent', HTML_BUILD[app_id]);
+        }
+      });
+      return;
+    }
+    // build from scratch
+    var benchmark = Date.now();
+    var output = buildify().
+      setDir(fruum_root).
+      load('client/templates/main.html').
+      concat(_.union([
+        'client/templates/profile.html',
+        'client/templates/persona.html',
+        'client/templates/breadcrumb.html',
+        'client/templates/interactions.html',
+        'client/templates/autocomplete.html',
+        'client/templates/emojipanel.html',
+        'client/templates/attachments.html',
+        'client/templates/search.html',
+        'client/templates/bookmark.html',
+        'client/templates/onboarding.html',
+        'client/templates/categories.html',
+        'client/templates/loading.html',
+        'client/templates/threads.html',
+        'client/templates/articles.html',
+        'client/templates/blog.html',
+        'client/templates/channels.html',
+        'client/templates/title.html',
+        'client/templates/filters.html',
+        'client/templates/counters.html',
+        'client/templates/move.html',
+        'client/templates/posts.html'], plugin_templates)).getContent();
 
-      logger.info(
-        app_id, 'get/html',
-        'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024) | 0) + 'kb'
-      );
-
-      engine.cache.put(cache_queue, cache_key, cache_data);
-      res.type('text/html');
-      res.send(cache_data);
-    });
+    logger.info(
+      app_id, 'get/html',
+      'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((output.length / 1024) | 0) + 'kb'
+    );
+    var build_path = BUILD_FOLDER + '/' + app_id + '.html.out';
+    try {
+      fs.writeFileSync(build_path, output);
+      HTML_BUILD[app_id] = build_path;
+      res.type('html');
+      res.sendFile(build_path);
+    } catch (err) {
+      res.status(500).send('Could not build HTML file');
+    }
   }
   app.get('/_/get/html/:app_id', _get_html);
 
   // ---------------------------------- STYLE ----------------------------------
 
+  var STYLE_BUILD = {};
   function _get_style(req, res) {
-    req_api_key_and_application(req, res, 'get/style', function(application, cache_key, cache_queue) {
+    var app_id = req.params.app_id || req.query.app_id;
+    if (!app_id) {
+      res.status(400).send('GET param app_id is not defined');
+      return;
+    }
+    // check for already built style
+    if (STYLE_BUILD[app_id]) {
+      res.type('css');
+      res.sendFile(STYLE_BUILD[app_id], function(err) {
+        if (err) {
+          logger.error(app_id, 'Could not send CSS', err);
+          res.status(err.status).end();
+        } else {
+          logger.info(app_id, 'Sent', STYLE_BUILD[app_id]);
+        }
+      });
+      return;
+    }
+    engine.get_app(app_id, function(application) {
+      if (!application) {
+        res.status(404).send('Invalid app_id');
+        return;
+      }
       var benchmark = Date.now();
       application.getThemeSass(function(overrides) {
         var main_sass = fs.readFileSync(client_root + '/style/fruum.scss', {encoding: 'utf8'});
@@ -390,14 +405,20 @@ function FruumServer(options, cli_cmd, ready) {
             logger.error(application.get('id'), 'sass', msg);
             res.status(500).send(msg);
           } else {
-            var cache_data = result.css;
+            var output = result.css;
             logger.info(
               application.get('id'), 'get/style',
-              'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024) | 0) + 'kb'
+              'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((output.length / 1024) | 0) + 'kb'
             );
-            engine.cache.put(cache_queue, cache_key, cache_data);
-            res.type('text/css');
-            res.send(cache_data);
+            var build_path = BUILD_FOLDER + '/' + app_id + '.css.out';
+            try {
+              fs.writeFileSync(build_path, output);
+              STYLE_BUILD[app_id] = build_path;
+              res.type('css');
+              res.sendFile(build_path);
+            } catch (err) {
+              res.status(500).send('Could not build CSS file');
+            }
           }
         });
       });
@@ -407,8 +428,31 @@ function FruumServer(options, cli_cmd, ready) {
 
   // --------------------------------- LOADER  ---------------------------------
 
+  var LOADER_BUILD = {};
   function _get_loader(req, res) {
-    req_api_key_and_application(req, res, 'get/loader', function(application, cache_key, cache_queue) {
+    var app_id = req.params.app_id || req.query.app_id;
+    if (!app_id) {
+      res.status(400).send('GET param app_id is not defined');
+      return;
+    }
+    // check for already built style
+    if (LOADER_BUILD[app_id]) {
+      res.type('js');
+      res.sendFile(LOADER_BUILD[app_id], function(err) {
+        if (err) {
+          logger.error(app_id, 'Could not send Loader', err);
+          res.status(err.status).end();
+        } else {
+          logger.info(app_id, 'Sent', LOADER_BUILD[app_id]);
+        }
+      });
+      return;
+    }
+    engine.get_app(app_id, function(application) {
+      if (!application) {
+        res.status(404).send('Invalid app_id');
+        return;
+      }
       var benchmark = Date.now();
       application.getThemeSass(function(overrides) {
         var main_sass = fs.readFileSync(loader_root + '/style.scss', {encoding: 'utf8'});
@@ -443,7 +487,7 @@ function FruumServer(options, cli_cmd, ready) {
             var js = builder_js.getContent();
             html = html.replace(/\n/g, '');
             css = _.escape(css).replace(/\n/g, '');
-            var cache_data = js.replace(/"/g, "'").
+            var output = js.replace(/"/g, "'").
               replace('__css__', css).
               replace('__app_id__', application.get('id')).
               replace('__fullpage_url__', application.get('fullpage_url')).
@@ -453,11 +497,17 @@ function FruumServer(options, cli_cmd, ready) {
               replace('__url__', options.url);
             logger.info(
               application.get('id'), 'get/loader',
-              'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((cache_data.length / 1024) | 0) + 'kb'
+              'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((output.length / 1024) | 0) + 'kb'
             );
-            engine.cache.put(cache_queue, cache_key, cache_data);
-            res.type('text/javascript');
-            res.send(cache_data);
+            var build_path = BUILD_FOLDER + '/' + app_id + '.loader.out';
+            try {
+              fs.writeFileSync(build_path, output);
+              LOADER_BUILD[app_id] = build_path;
+              res.type('js');
+              res.sendFile(build_path);
+            } catch (err) {
+              res.status(500).send('Could not build Loader file');
+            }
           }
         });
       });

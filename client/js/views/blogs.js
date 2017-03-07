@@ -13,7 +13,7 @@ Blog view
         Marionette = Fruum.libs.Marionette,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
 
-    Fruum.views.BlogView = TRANSITION(Marionette.ItemView.extend({
+    Fruum.views.BlogView = TRANSITION(Marionette.View.extend({
       template: '#fruum-template-blog',
       ui: {
         search: '[data-search-shortcut]',
@@ -32,7 +32,7 @@ Blog view
         'click @ui.delete': 'onDelete',
         'click @ui.move': 'onMove',
       },
-      templateHelpers: function() {
+      templateContext: function() {
         return {
           is_new: Fruum.utils.isNewVisit(
             this.model.get('id'), this.model.get('updated')

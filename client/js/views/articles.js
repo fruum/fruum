@@ -13,7 +13,7 @@ Articles view
         Marionette = Fruum.libs.Marionette,
         TRANSITION = Fruum.utils.marionette_itemview_transition;
 
-    Fruum.views.ArticleView = TRANSITION(Marionette.ItemView.extend({
+    Fruum.views.ArticleView = TRANSITION(Marionette.View.extend({
       template: '#fruum-template-article',
       ui: {
         search: '[data-search-shortcut]',
@@ -36,7 +36,7 @@ Articles view
         'click @ui.down': 'onDown',
         'click @ui.move': 'onMove',
       },
-      templateHelpers: function() {
+      templateContext: function() {
         return {
           is_new: Fruum.utils.isNewVisit(
             this.model.get('id'), this.model.get('updated')

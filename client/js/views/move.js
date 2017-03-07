@@ -14,7 +14,7 @@ Handles move document
         Marionette = Fruum.libs.Marionette,
         Messages = Fruum.messages;
 
-    Fruum.views.MoveItemView = Marionette.ItemView.extend({
+    Fruum.views.MoveItemView = Marionette.View.extend({
       template: '#fruum-template-move-entry',
       triggers: {
         'click': 'select:category',
@@ -31,7 +31,7 @@ Handles move document
       },
     });
 
-    Fruum.views.MoveView = Marionette.LayoutView.extend({
+    Fruum.views.MoveView = Marionette.View.extend({
       template: '#fruum-template-move',
       regions: {
         list: '.fruum-js-move-entries',
@@ -86,7 +86,7 @@ Handles move document
         $(document).on('keydown', this.onKey);
         Fruum.io.trigger('fruum:categories', {});
       },
-      templateHelpers: function() {
+      templateContext: function() {
         return {
           move_document: this.move_document,
         };
