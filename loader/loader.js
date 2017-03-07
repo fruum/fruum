@@ -107,8 +107,8 @@
     // replaced by server
     window.fruumSettings.app_id = '__app_id__';
     window.fruumSettings.fullpage_url = normalizeUrl('__fullpage_url__');
-    window.fruumSettings.pushstate = Boolean('__pushstate__' | 0);
-    window.fruumSettings.sso = Boolean('__sso__' | 0);
+    window.fruumSettings.pushstate = Boolean(parseInt('__pushstate__'));
+    window.fruumSettings.sso = Boolean(parseInt('__sso__'));
 
     // force fullpage
     if (window.fruumSettings.container && window.fruumSettings.fullpage == undefined) {
