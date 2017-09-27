@@ -68,7 +68,7 @@ Main client app
 
     // root view
     var RootView = Marionette.View.extend({
-      template: false,
+      template: _.noop,
       ui: {
         navigation: '.fruum-js-navigation-container',
         content: '.fruum-js-content-container',

@@ -12,11 +12,14 @@ var _ = require('underscore'),
       breaks: true,
       linkify: true,
     }),
-    DOMPurify = require('dompurify')(require('jsdom').jsdom().defaultView),
+    JSDom = require('jsdom'),
+    DOMPurify = require('dompurify')((new JSDom.JSDOM()).window),
     request = require('request'),
     path = require('path'),
     fs = require('fs'),
     moment = require('moment'),
+    ProfanityFilter = require('bad-words'),
+    wordfilter = new ProfanityFilter({ placeHolder: 'x' }),
     root_path = path.resolve(__dirname + '/..'),
     PROPERTY_PREFIX = 'prop_';
 
@@ -101,6 +104,12 @@ var Document = Backbone.Model.extend({
     // revert code blocks
     body = body.replace(/```([^`]+)```/g, function(a, b) { return '```' + _.unescape(b) + '```'; });
     this.set('body', body);
+  },
+  profanityFilter: function() {
+    // profanity check
+    this.set('body', wordfilter.clean(
+      this.get('body') || ''
+    ));
   },
   // validates that all fields are there depending on document type
   validate: function(attrs, options) {

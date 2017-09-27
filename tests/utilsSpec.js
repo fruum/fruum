@@ -1,12 +1,14 @@
 /* globals describe, it, expect */
 
-var fs = require('fs'), window = {};
+var fs = require('fs'),
+    JSDom = require('jsdom'),
+    window = {};
 
 eval(fs.readFileSync(__dirname + '/../client/js/defs.js', 'utf8'));
 window.Fruum.libs = window.Fruum.libs || {};
 window.Fruum.libs.Remarkable = require('remarkable');
 window.Fruum.libs._ = require('underscore');
-window.Fruum.libs.DOMPurify = require('dompurify')(require('jsdom').jsdom().defaultView);
+window.Fruum.libs.DOMPurify = require('dompurify')((new JSDom.JSDOM()).window);
 var Fruum = window.Fruum;
 eval(fs.readFileSync(__dirname + '/../client/js/utils.js', 'utf8'));
 Fruum.require[0]();

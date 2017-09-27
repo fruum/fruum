@@ -173,6 +173,10 @@ module.exports = function(options, instance, self) {
       });
       // escape document
       document.escape();
+      // profanity
+      if (options.profanity_filter) {
+        document.profanityFilter();
+      }
       // process plugins
       var plugin_payload = {
         app_id: app_id,
@@ -262,6 +266,10 @@ module.exports = function(options, instance, self) {
           update_permission = false,
           now = Date.now();
       document.escape(doc_to_update);
+      // profanity
+      if (options.profanity_filter) {
+        document.profanityFilter();
+      }
       // alter timestamp only when we have changes in the body
       if (document.get('body') != doc_to_update.get('body')) {
         update_timestamp = true;

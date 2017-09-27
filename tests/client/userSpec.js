@@ -191,6 +191,36 @@ describe('User client', function() {
     });
   });
 
+  it('profanity check works', function(done) {
+    user_connect(function(socket) {
+      load_fixture(function() {
+        var payload = {
+          parent: 'thread',
+          type: 'post',
+          body: 'you are an assh0le',
+        };
+        socket.emit('fruum:add', payload);
+        socket.on('fruum:add', function(response) {
+          socket.removeListener('fruum:add', this);
+          expect(response).toEqual(jasmine.objectContaining({
+            body: 'you are an xxxxxxx',
+          }));
+          payload.id = response.id;
+          payload.body = 'This is shit';
+          socket.emit('fruum:update', payload);
+          socket.on('fruum:update', function(response) {
+            socket.removeListener('fruum:update', this);
+            expect(response).toEqual(jasmine.objectContaining({
+              body: 'This is xxxx',
+            }));
+            socket.disconnect();
+            done();
+          });
+        });
+      });
+    });
+  });
+
   it('cannot reply to locked thread', function(done) {
     user_connect(function(socket) {
       load_fixture(function() {

@@ -23,6 +23,10 @@ Handles bookmark search
 
     Fruum.views.BookmarkCollectionView = Marionette.CollectionView.extend({
       childView: Fruum.views.BookmarkItemView,
+      onChildviewSelectCategory: function(childView) {
+        // bubble to parent
+        this.triggerMethod('select:category', childView.model);
+      },
     });
 
     Fruum.views.BookmarkEditView = Marionette.View.extend({
@@ -51,9 +55,9 @@ Handles bookmark search
         this.listenTo(Fruum.io, 'fruum:hide_bookmark', this.onClose);
         this.listenTo(this.all_categories, 'reset', this.onResetCategories);
       },
-      onChildviewSelectCategory: function(event) {
+      onChildviewSelectCategory: function(model) {
         if (!this.bookmark) return;
-        this.bookmark.parent = event.model.get('id');
+        this.bookmark.parent = model.get('id');
         this.onResetCategories();
       },
       onResetCategories: function() {
