@@ -17,6 +17,11 @@ module.exports = function(options, storage) {
     password: options.memcached.password,
   });
 
+  var set_options = {};
+  if (options.memcached.expire) {
+    set_options.expires = options.memcached.expire;
+  }
+
   // reset cache on restart
   client.flush(function(err) {
     if (err) {
@@ -28,11 +33,11 @@ module.exports = function(options, storage) {
 
   // store a value in cache
   this.put = function(key, value) {
-    client.set(key, value, function(err) {
+    client.set(key, value, set_options, function(err) {
       if (err) {
         logger.error('memcached', 'put', err);
       }
-    }, options.memcached.expire || 0);
+    });
   };
   // get a value from cache
   this.get = function(key, callback) {

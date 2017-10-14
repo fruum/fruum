@@ -10,10 +10,11 @@ Handles sharing functionality
     Fruum.views = Fruum.views || {};
 
     var $ = Fruum.libs.$,
+        _ = Fruum.libs._,
         Marionette = Fruum.libs.Marionette;
 
     Fruum.views.ShareView = Marionette.View.extend({
-      template: false,
+      template: _.noop,
       events: {
         'click .fruum-popup-close': 'onClose',
         'click textarea': 'onSelect',

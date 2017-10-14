@@ -46,8 +46,11 @@ module.exports = function(options, client, self) {
       _.each(body, function(entry) {
         client.delete(entry, function(error, response) {
           counter--;
-          if (error) logger.error(app_id, 'delete_bulk', error);
-          else logger.info(app_id, 'delete_bulk', entry.id);
+          if (error) {
+            logger.error(app_id, 'delete_bulk', error);
+          } else {
+            logger.info(app_id, 'delete_bulk', entry.id);
+          }
           if (!counter) callback();
         });
       });
@@ -93,8 +96,11 @@ module.exports = function(options, client, self) {
       _.each(body, function(entry) {
         client.update(entry, function(error, response) {
           counter--;
-          if (error) logger.error(app_id, 'update_bulk', error);
-          else logger.info(app_id, 'update_bulk', entry.id);
+          if (error) {
+            logger.error(app_id, 'update_bulk', error);
+          } else {
+            logger.info(app_id, 'update_bulk', entry.id);
+          }
           if (!counter) callback();
         });
       });

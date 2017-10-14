@@ -14,7 +14,7 @@
         Marionette = Fruum.libs.Marionette;
 
     Fruum.views.AutocompleteView = Marionette.View.extend({
-      template: false,
+      template: _.noop,
       $el_root: $('#fruum'),
       el: '.fruum-js-autocomplete',
       template_autocomplete_user: _.template($('#fruum-template-autocomplete-user').html()),

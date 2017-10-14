@@ -26,6 +26,10 @@ Handles move document
       initialize: function(options) {
         this.ui_state = options.ui_state;
       },
+      onChildviewSelectCategory: function(childView) {
+        // bubble to parent
+        this.triggerMethod('select:category', childView.model);
+      },
       filter: function(child, index, collection) {
         return child.get('id') != this.ui_state.get('viewing').id;
       },
@@ -48,12 +52,12 @@ Handles move document
         this.all_categories = options.all_categories;
         this.listenTo(Fruum.io, 'fruum:show_move', this.show);
       },
-      onChildviewSelectCategory: function(event) {
+      onChildviewSelectCategory: function(model) {
         if (!this.move_document) return;
         if (confirm(Messages.move)) {
           Fruum.io.trigger('fruum:move', {
             id: this.move_document.id,
-            category: event.model.get('id'),
+            category: model.get('id'),
           });
           this.onClose();
         }
@@ -77,9 +81,9 @@ Handles move document
           collection: this.all_categories,
         }));
       },
-      show: function(document) {
-        if (!document) return;
-        this.move_document = document;
+      show: function(move_document) {
+        if (!move_document) return;
+        this.move_document = move_document;
         this.render();
         if (!this.el_container.hasClass('fruum-nodisplay')) return;
         this.el_container.removeClass('fruum-nodisplay');

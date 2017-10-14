@@ -1,5 +1,8 @@
+dist: precise
 language: node_js
 node_js:
-  - "4.1"
+  - "8"
+before_script:
+  - sleep 10
 services:
   - elasticsearch

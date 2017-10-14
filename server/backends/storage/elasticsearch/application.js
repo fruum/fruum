@@ -208,6 +208,7 @@ module.exports = function(options, client, self) {
       id: app_id,
     }, function(error, response) {
       if (error) {
+        logger.error(app_id, 'get_app', error);
         callback();
       } else if (response._source) {
         callback(new Models.Application(response._source));
@@ -296,6 +297,7 @@ module.exports = function(options, client, self) {
       id: app_id,
     }, function(error, response) {
       if (error) {
+        logger.error(app_id, 'get_app_property', error);
         callback();
       } else if (response._source && response._source[Models.PROPERTY_PREFIX + property] != undefined) {
         callback(property, response._source[Models.PROPERTY_PREFIX + property]);

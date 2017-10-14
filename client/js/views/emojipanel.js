@@ -14,7 +14,7 @@
         Marionette = Fruum.libs.Marionette;
 
     Fruum.views.EmojiPanelView = Marionette.View.extend({
-      template: false,
+      template: _.noop,
       $el_root: $('#fruum'),
       el: '.fruum-js-emoji',
       events: {

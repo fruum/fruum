@@ -98,6 +98,7 @@ module.exports = function(options, client, self) {
       refresh: true,
     }, function(error, response) {
       if (error) {
+        logger.error(app_id, 'get_user', error);
         callback();
       } else if (response._source) {
         callback(new Models.User(response._source));
