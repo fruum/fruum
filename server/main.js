@@ -41,7 +41,7 @@ function FruumServer(options, cli_cmd, ready) {
 
   // defaults
   options.static_root = path.resolve(
-     __dirname + '/../' + (options.static_root || 'static')
+    __dirname + '/../' + (options.static_root || 'static')
   );
   options.static_prefix = options.static_prefix || '/static';
   options.port = options.port || 3000;
@@ -481,9 +481,9 @@ function FruumServer(options, cli_cmd, ready) {
             var builder_js = buildify().
               setDir(fruum_root).
               concat(['loader/loader.js']);
-              // minimize js only when we are on cache mode
+            // minimize js only when we are on cache mode
             if (options.compress) builder_js = builder_js.uglify();
-              // get output
+            // get output
             var js = builder_js.getContent();
             html = html.replace(/\n/g, '');
             css = _.escape(css).replace(/\n/g, '');
