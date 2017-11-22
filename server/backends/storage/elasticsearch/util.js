@@ -6,7 +6,7 @@ Elastic search utilities
 
 var _ = require('underscore'),
     uuid = require('uuid'),
-    slug = require('slug'),
+    slug = require('slugify'),
     logger = require('../../../logger');
 
 module.exports = function(options, client, self) {

@@ -9,6 +9,7 @@ var path = require('path'),
     express = require('express'),
     bodyParser = require('body-parser'),
     compress = require('compression'),
+    UglifyJS = require('uglify-js'),
     app = express(),
     http = require('http').Server(app),
     sass = require('node-sass'),
@@ -16,10 +17,25 @@ var path = require('path'),
     fs = require('fs'),
     mkdirp = require('mkdirp'),
     _ = require('underscore'),
-    buildify = require('buildify'),
     Raven = require('raven'),
     logger = require('./logger'),
     BUILD_FOLDER = path.join(__dirname, '/../build');
+
+// concatenate an array of files (synchronously)
+function concat_files(base_dir, files) {
+  var output = '';
+  _.each(files, function(file) {
+    output += fs.readFileSync(path.join(base_dir, file), 'utf8');
+  });
+  return output;
+}
+
+// minify code
+function minify(code) {
+  var result = UglifyJS.minify(code, { mangle: false });
+  if (result.error) throw result.error;
+  return result.code;
+}
 
 function FruumServer(options, cli_cmd, ready) {
   logger.system('Starting Fruum');
@@ -248,36 +264,31 @@ function FruumServer(options, cli_cmd, ready) {
     // build from scratch
     var benchmark = Date.now();
     // build libs
-    var libs_builder = buildify().
-      setDir(fruum_root).
-      concat([
-        // Libraries
-        'client/js/libs/preload.js',
-        'client/js/libs/jquery.js',
-        'client/js/libs/underscore.js',
-        'client/js/libs/backbone.js',
-        'client/js/libs/radio.js',
-        'client/js/libs/marionette.js',
-        'client/js/libs/moment.js',
-        'client/js/libs/remarkable.js',
-        'client/js/libs/purify.js',
-        'client/js/libs/socketio.js',
-        'client/js/libs/to_markdown.js',
-        'client/js/libs/postload.js'
-      ]);
-
-    var app_builder = buildify().
-      setDir(fruum_root).
-      concat(_.union(
+    var output = concat_files(fruum_root, [
+      // Libraries
+      'client/js/libs/preload.js',
+      'client/js/libs/jquery.js',
+      'client/js/libs/underscore.js',
+      'client/js/libs/backbone.js',
+      'client/js/libs/radio.js',
+      'client/js/libs/marionette.js',
+      'client/js/libs/moment.js',
+      'client/js/libs/remarkable.js',
+      'client/js/libs/purify.js',
+      'client/js/libs/socketio.js',
+      'client/js/libs/to_markdown.js',
+      'client/js/libs/postload.js'
+    ]);
+    var app_build = concat_files(fruum_root,
+      _.union(
         web_app,
         plugin_js,
         ['client/js/main.js']
       ));
     // minimize js only when we are on cache mode
-    if (options.compress) app_builder = app_builder.uglify({ mangle: false });
+    if (options.compress) app_build = minify(app_build);
     // get output
-    var output = libs_builder.getContent();
-    output += app_builder.getContent().replace('__url__', options.url);
+    output += app_build.replace('__url__', options.url);
     logger.info(
       app_id, 'get/js',
       'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((output.length / 1024) | 0) + 'kb'
@@ -318,10 +329,9 @@ function FruumServer(options, cli_cmd, ready) {
     }
     // build from scratch
     var benchmark = Date.now();
-    var output = buildify().
-      setDir(fruum_root).
-      load('client/templates/main.html').
-      concat(_.union([
+    var output = concat_files(fruum_root,
+      _.union([
+        'client/templates/main.html',
         'client/templates/profile.html',
         'client/templates/persona.html',
         'client/templates/breadcrumb.html',
@@ -342,7 +352,7 @@ function FruumServer(options, cli_cmd, ready) {
         'client/templates/filters.html',
         'client/templates/counters.html',
         'client/templates/move.html',
-        'client/templates/posts.html'], plugin_templates)).getContent();
+        'client/templates/posts.html'], plugin_templates));
 
     logger.info(
       app_id, 'get/html',
@@ -473,18 +483,16 @@ function FruumServer(options, cli_cmd, ready) {
           } else {
             var css = result.css;
             // load templates
-            var html = buildify().
-              setDir(fruum_root).
-              load('loader/template.html').
-              getContent();
+            var html = concat_files(fruum_root, [
+              'loader/template.html'
+            ]);
             // load javascript
-            var builder_js = buildify().
-              setDir(fruum_root).
-              concat(['loader/loader.js']);
+            var js = concat_files(fruum_root, [
+              'loader/loader.js'
+            ]);
             // minimize js only when we are on cache mode
-            if (options.compress) builder_js = builder_js.uglify();
-            // get output
-            var js = builder_js.getContent();
+            if (options.compress) js = minify(js);
+            // variable replace
             html = html.replace(/\n/g, '');
             css = _.escape(css).replace(/\n/g, '');
             var output = js.replace(/"/g, "'").
