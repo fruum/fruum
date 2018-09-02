@@ -73,7 +73,7 @@ module.exports = function(options, client, self) {
 
   // ---------------------------- DELETE USER ----------------------------------
 
-  self.delete_user = function(app_id, user, callback) {
+  self.delete_user = function(app_id, user, callback, options) {
     client.delete({
       index: self.toMasterIndex(),
       type: self.toUserType(app_id),
@@ -83,6 +83,31 @@ module.exports = function(options, client, self) {
         logger.error(app_id, 'delete_user', error);
         callback();
       } else {
+        if (options && (options.anonymize || options.purge)) {
+          var data = {
+            user_username: '',
+            user_displayname: 'deleted account',
+            user_avatar: '',
+          };
+          if (options.purge) {
+            data = _.extend(data, {
+              header: 'Undisclosed topic',
+              body: '*This content is no longer available*',
+              thumbnail: '',
+              tags: [],
+              attachments: [],
+              meta: {},
+            });
+          }
+          self.bulk_update(
+            app_id,
+            user.get('id'), // q
+            ['user_id'], // fields
+            data, // attributes to change
+            validators.user_id, // validator function
+            function() {}
+          );
+        }
         callback(user);
       }
     });

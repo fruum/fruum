@@ -420,8 +420,13 @@ module.exports = function(options) {
   - user: User model
   - callback: function callback, passing the user as parameter on success,
     undefined on error
+  - options: optional object of:
+    {
+      anonymize: true, (anonymize deleted user across their posts)
+      purge: true (also delete posts)
+    }
   */
-  this.delete_user = function(app_id, user, callback) { callback(user); };
+  this.delete_user = function(app_id, user, callback, options) { callback(user); };
 
   /*
   Summary:

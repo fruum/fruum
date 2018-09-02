@@ -18,8 +18,7 @@ var _ = require('underscore'),
     path = require('path'),
     fs = require('fs'),
     moment = require('moment'),
-    ProfanityFilter = require('bad-words'),
-    wordfilter = new ProfanityFilter({ placeHolder: 'x' }),
+    ProfanityFilter = require('leo-profanity'),
     root_path = path.resolve(__dirname + '/..'),
     PROPERTY_PREFIX = 'prop_';
 
@@ -107,8 +106,8 @@ var Document = Backbone.Model.extend({
   },
   profanityFilter: function() {
     // profanity check
-    this.set('body', wordfilter.clean(
-      this.get('body') || ''
+    this.set('body', ProfanityFilter.clean(
+      this.get('body') || '', 'x'
     ));
   },
   // validates that all fields are there depending on document type

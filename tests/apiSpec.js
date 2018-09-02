@@ -390,6 +390,29 @@ describe('User API', function() {
     });
   });
 
+  it('deletes a user', function(done) {
+    request({
+      method: 'DELETE',
+      url: url + '/api/v1/users/api_user?anonymize&purge',
+      json: true,
+    }, function(err, res, body) {
+      expect(err).toBe(null);
+      expect(body).toEqual(jasmine.objectContaining({
+        id: 'api_user',
+        username: 'api_user',
+      }));
+      request({
+        method: 'GET',
+        url: url + '/api/v1/users/api_user',
+        json: true,
+      }, function(err, res, body) {
+        expect(err).toBe(null);
+        expect(res.statusCode).toBe(404);
+        done();
+      });
+    });
+  });
+
   it('does not get invalid username', function(done) {
     request({
       method: 'GET',

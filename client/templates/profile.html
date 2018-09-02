@@ -60,7 +60,9 @@
   <div class="fruum-helper-tab" data-tab="notifications"><b><%- notifications %></b> <%- (notifications > 1?'notifications':'notification') %></div>
   <% } %>
 
+  <% if (Fruum.user.admin) { %>
   <div class="fruum-helper-tab" data-tab="users"><b><%- users %></b> <%- (users == 1?'member':'members') %></div>
+  <% } %>
 </script>
 
 <!-- Actions -->

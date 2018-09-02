@@ -496,13 +496,13 @@ function FruumServer(options, cli_cmd, ready) {
             html = html.replace(/\n/g, '');
             css = _.escape(css).replace(/\n/g, '');
             var output = js.replace(/"/g, "'").
-              replace('__css__', css).
-              replace('__app_id__', application.get('id')).
-              replace('__fullpage_url__', application.get('fullpage_url')).
-              replace('__pushstate__', application.get('pushstate') ? '1' : '0').
-              replace('__sso__', application.get('auth_url') ? '1' : '0').
-              replace('__html__', html).
-              replace('__url__', options.url);
+              replace(/__css__/g, css).
+              replace(/__app_id__/g, application.get('id')).
+              replace(/__fullpage_url__/g, application.get('fullpage_url')).
+              replace(/__pushstate__/g, application.get('pushstate') ? '1' : '0').
+              replace(/__sso__/g, application.get('auth_url') ? '1' : '0').
+              replace(/__html__/g, html).
+              replace(/__url__/g, options.url);
             logger.info(
               application.get('id'), 'get/loader',
               'Time:' + (Date.now() - benchmark) + 'msec Size:' + ((output.length / 1024) | 0) + 'kb'

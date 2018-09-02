@@ -55,9 +55,9 @@ module.exports = function(options, instance, self) {
           }, function(updated_user) {
             if (updated_user) {
               logger.info(app_id, 'update_last_logout',
-                          updated_user.get('username') + ': ' + now);
+                updated_user.get('username') + ': ' + now);
               logger.info(app_id, 'update_logout_karma',
-                          updated_user.get('username') + ': ' + updated_user.get('logout_karma'));
+                updated_user.get('username') + ': ' + updated_user.get('logout_karma'));
             } else {
               logger.error(app_id, 'update_last_logout_failed', user);
             }

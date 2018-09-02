@@ -4,7 +4,8 @@
 
 'use strict';
 
-var _ = require('underscore');
+var _ = require('underscore'),
+    logger = require('../logger');
 
 module.exports = function(options, instance, self) {
   var storage = self.storage;
@@ -150,7 +151,14 @@ module.exports = function(options, instance, self) {
       return;
     }
 
-    var app_id = socket.app_id;
+    var app_id = socket.app_id,
+        user = socket.fruum_user;
+    if (!user.get('admin')) {
+      logger.error(app_id, 'block_user_noperm', user);
+      socket.emit('fruum:user:list');
+      self.fail(payload);
+      return;
+    }
 
     // default pagination
     payload.from = payload.from || 0;
