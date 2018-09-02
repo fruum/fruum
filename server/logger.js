@@ -4,7 +4,14 @@
 
 'use strict';
 
-var logger = require('winston');
+var winston = require('winston'),
+    logger = winston.createLogger({
+      level: process.env.NODE_ENV == 'test' ? 'none' : 'info',
+      format: winston.format.simple(),
+      transports: [
+        new winston.transports.Console()
+      ],
+    });
 
 function build_log(app_id, reason, object) {
   var msg = '[' + app_id + '] [' + reason + '] ';

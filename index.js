@@ -202,7 +202,7 @@ var cli_definitions = [
   }
 ];
 
-var options = commandLineArgs(cli_definitions);
+var options = commandLineArgs(cli_definitions, { partial: true });
 // parse command line values
 var cli_cmd;
 

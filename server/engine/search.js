@@ -55,6 +55,9 @@ module.exports = function(options, instance, self) {
     storage.search_users(socket.app_id, payload.q, function(users) {
       var response = [];
       _.each(users, function(user) {
+        // do not autocomplete users without karma
+        if (user.get('karma') <= 0) return;
+        // add user to response
         response.push({
           username: user.get('username'),
           displayname: user.get('displayname'),

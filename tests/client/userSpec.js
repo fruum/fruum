@@ -197,7 +197,7 @@ describe('User client', function() {
         var payload = {
           parent: 'thread',
           type: 'post',
-          body: 'you are an assh0le',
+          body: 'you are an asshole',
         };
         socket.emit('fruum:add', payload);
         socket.on('fruum:add', function(response) {

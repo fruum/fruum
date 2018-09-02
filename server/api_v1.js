@@ -383,6 +383,25 @@ function API_v1(options, instance) {
     });
   });
 
+  router.delete('/users/:userid', function(req, res) {
+    get_user(req, res, function(user, application) {
+      var options = {};
+      if (!_.isUndefined(req.query.anonymize)) {
+        options.anonymize = true;
+      }
+      if (!_.isUndefined(req.query.purge)) {
+        options.purge = true;
+      }
+      storage.delete_user(application.get('id'), user, function(deleted_user) {
+        if (deleted_user) {
+          res.json(serialize_user(deleted_user));
+        } else {
+          badRequest(req, res);
+        }
+      }, options);
+    });
+  });
+
   router.get('/users/:userid/topics', function(req, res) {
     get_user(req, res, function(user, application) {
       var permission = (req.query.admin !== undefined) ? 2 : 1;
