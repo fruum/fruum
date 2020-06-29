@@ -1,3 +1,6 @@
+**This project is no longer maintained by initial authors. Looking for maintainers!**
+
+
 # Fruum
 
 [![Build Status](https://travis-ci.org/fruum/fruum.svg)](https://travis-ci.org/fruum/fruum)
