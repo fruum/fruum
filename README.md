@@ -18,7 +18,7 @@ on [node.js](https://nodejs.org).
 * Out of the box plugins for sharing links of popular services, e.g. youtube.
 
 
-Installation instructions, documentation and demo at [fruum.github.io](https://fruum.github.io).
+See installation instructions and documentation at `/docs` folder.
 
 
 ### License
