@@ -25,7 +25,7 @@
     "command-line-usage": "^5.0.5",
     "compression": "^1.7.3",
     "declassify": "^2.1.0",
-    "dompurify": "^1.0.7",
+    "dompurify": "^2.0.17",
     "elastic-deletebyquery": "^1.0.8",
     "elasticsearch": "^15.1.1",
     "express": "^4.16.3",
