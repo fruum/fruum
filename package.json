@@ -55,7 +55,7 @@
     "socket.io-client": "^2.1.1",
     "stream-buffers": "^3.0.2",
     "uglify-js": "^3.4.9",
-    "underscore": "^1.9.1",
+    "underscore": "^1.12.1",
     "uuid": "^3.3.2",
     "winston": "^3.0.0"
   },
