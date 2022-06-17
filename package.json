@@ -30,7 +30,7 @@
     "elasticsearch": "^15.1.1",
     "express": "^4.16.3",
     "giphy-api": "^1.2.7",
-    "jpeg-js": "^0.3.4",
+    "jpeg-js": "^0.4.4",
     "jsdom": "^12.0.0",
     "juice": "^4.3.2",
     "leo-profanity": "^1.2.4",
